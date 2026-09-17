@@ -454,7 +454,8 @@ export function ConnectorPanel() {
       vFields,
       formData.auth,
       (f) => t('workspace.actions.validation.fieldRequired', { field: f.displayName }),
-      (f) => t('workspace.actions.validation.fieldMustBeTrue', { field: f.displayName })
+      (f) => t('workspace.actions.validation.fieldMustBeTrue', { field: f.displayName }),
+      (f, error) => t(`workspace.actions.validation.${error}`, { field: f.displayName })
     );
     if (Object.keys(fieldErrs).length > 0) {
       mergeFormErrors(fieldErrs);
@@ -526,7 +527,7 @@ export function ConnectorPanel() {
         const newConnectorId =
           result?.connector?.connectorId ?? result?._key ?? result?.connectorId;
         if (!newConnectorId) {
-          setSaveError('Create succeeded but no connector id was returned');
+          setSaveError(t('workspace.connectors.errors.missingCreatedId'));
           return;
         }
 
@@ -552,7 +553,7 @@ export function ConnectorPanel() {
           ]);
           setSchemaAndConfig(schemaRes.schema, configRes);
         } catch {
-          setSaveError('Connector was created but configuration could not be loaded. Try reopening the panel.');
+          setSaveError(t('workspace.connectors.errors.createdConfigUnavailable'));
         } finally {
           setIsLoadingConfig(false);
         }
@@ -655,7 +656,7 @@ export function ConnectorPanel() {
       panelConnectorId || useConnectorsStore.getState().panelConnectorId;
 
     if (!currentConnectorId) {
-      setSaveError('No connector ID found. Please complete authentication first.');
+      setSaveError(t('workspace.connectors.errors.authenticateFirst'));
       return;
     }
 
@@ -665,7 +666,15 @@ export function ConnectorPanel() {
     const trimmedCustomValues = trimConnectorConfig(
       formData.sync.customValues
     ) as Record<string, unknown>;
-    const syncFieldErrors = collectSyncCustomFieldErrors(syncCustomFields, trimmedCustomValues);
+    const syncFieldErrors = collectSyncCustomFieldErrors(
+      syncCustomFields,
+      trimmedCustomValues,
+      (field, error) => t(`workspace.actions.validation.${error}`, {
+        field: field.displayName,
+        minLength: field.validation?.minLength,
+        maxLength: field.validation?.maxLength,
+      })
+    );
 
     const syncErrorPatch: Record<string, string | null | undefined> = {};
     for (const f of syncCustomFields) {
@@ -763,7 +772,7 @@ export function ConnectorPanel() {
       panelConnectorId || useConnectorsStore.getState().panelConnectorId;
 
     if (!currentConnectorId) {
-      setSaveError('No connector ID found. Please complete authentication first.');
+      setSaveError(t('workspace.connectors.errors.authenticateFirst'));
       return;
     }
 
@@ -773,7 +782,15 @@ export function ConnectorPanel() {
     const trimmedCustomValues = trimConnectorConfig(
       formData.sync.customValues
     ) as Record<string, unknown>;
-    const syncFieldErrors = collectSyncCustomFieldErrors(syncCustomFields, trimmedCustomValues);
+    const syncFieldErrors = collectSyncCustomFieldErrors(
+      syncCustomFields,
+      trimmedCustomValues,
+      (field, error) => t(`workspace.actions.validation.${error}`, {
+        field: field.displayName,
+        minLength: field.validation?.minLength,
+        maxLength: field.validation?.maxLength,
+      })
+    );
 
     const syncErrorPatch: Record<string, string | null | undefined> = {};
     for (const f of syncCustomFields) {
@@ -981,7 +998,7 @@ export function ConnectorPanel() {
                 {t('workspace.connectors.tabs.authenticate')}
               </Tabs.Trigger>
               {showAuthorizeTab ? (
-                <Tabs.Trigger value="authorize">Authorize</Tabs.Trigger>
+                <Tabs.Trigger value="authorize">{t('workspace.connectors.tabs.authorize')}</Tabs.Trigger>
               ) : null}
               <Tabs.Trigger
                 value="configure"

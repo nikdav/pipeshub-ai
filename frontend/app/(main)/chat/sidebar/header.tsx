@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
+
 import { Flex, IconButton, Tooltip } from '@radix-ui/themes';
 import { Link } from '@/lib/navigation';
 import { HEADER_ELEMENT_SIZE } from '@/app/components/sidebar';
@@ -17,6 +19,7 @@ import { PipesHubIcon } from '@/app/components/ui';
  * so we only need to handle the expanded state here.
  */
 export function ChatSidebarHeader() {
+  const { t } = useTranslation();
   const profile = useUserStore((s) => s.profile);
   const setNavCollapsed = useSidebarWidthStore((s) => s.setNavCollapsed);
   const isMobile = useIsMobile();
@@ -41,10 +44,10 @@ export function ChatSidebarHeader() {
           <IconButton
             variant="ghost"
             color="gray"
-            aria-label="Open profile"
+            aria-label={t('common.openProfile')}
             onClick={() => {
-              toast.info('Coming soon', {
-                description: 'Profile page on mobile is coming soon.',
+              toast.info(t('chat.comingSoon'), {
+                description: t('chat.mobileProfileComingSoon'),
               });
             }}
             style={{ margin: 0, padding: 0, lineHeight: 0, cursor: 'pointer' }}
@@ -52,17 +55,17 @@ export function ChatSidebarHeader() {
             {avatar}
           </IconButton>
         ) : (
-          <Link href="/workspace/profile/" aria-label="Open profile" style={{ textDecoration: 'none', lineHeight: 0 }}>
+          <Link href="/workspace/profile/" aria-label={t('common.openProfile')} style={{ textDecoration: 'none', lineHeight: 0 }}>
             {avatar}
           </Link>
         )}
         {!isMobile && (
-          <Tooltip content="Collapse sidebar" side="right">
+          <Tooltip content={t('sidebar.collapse')} side="right">
             <IconButton
               variant="ghost"
               color="gray"
               size="1"
-              aria-label="Collapse sidebar"
+              aria-label={t('sidebar.collapse')}
               onClick={() => setNavCollapsed(true)}
               style={{ margin: 0, cursor: 'pointer' }}
             >

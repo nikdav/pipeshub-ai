@@ -11,6 +11,8 @@
     "build": "next build",
     "start": "next start -p 3001",
     "lint": "next lint",
+    "i18n:check": "node scripts/check-i18n-parity.mjs",
+    "test:i18n": "node --test scripts/check-i18n-parity.test.mjs",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
     "deploy:dev": "bash scripts/deploy-dev.sh",

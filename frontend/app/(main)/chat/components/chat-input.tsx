@@ -891,7 +891,8 @@ export function ChatInput({
         );
         toast.error(
           t('chat.attachments.uploadFailedNamed', {
-            defaultValue: `Failed to upload ${file.name}: ${errorMessage}`,
+            name: file.name,
+            error: errorMessage,
           }),
         );
       })
@@ -925,7 +926,8 @@ export function ChatInput({
     if (typeRejected.length > 0) {
       toast.error(
         t('chat.attachments.unsupportedType', {
-          defaultValue: `Unsupported file type: ${typeRejected.map((f) => f.name).join(', ')}. Supported types: ${SUPPORTED_FILE_TYPES.join(', ')}.`,
+          names: typeRejected.map((f) => f.name).join(', '),
+          types: SUPPORTED_FILE_TYPES.join(', '),
         })
       );
     }
@@ -942,7 +944,8 @@ export function ChatInput({
     if (sizeRejected.length > 0) {
       toast.error(
         t('chat.attachments.fileTooLarge', {
-          defaultValue: `File too large: ${sizeRejected.map((f) => f.name).join(', ')}. Maximum size is ${Math.round(CHAT_ATTACHMENT_MAX_BYTES / (1024 * 1024))} MB per file.`,
+          names: sizeRejected.map((f) => f.name).join(', '),
+          maxMb: Math.round(CHAT_ATTACHMENT_MAX_BYTES / (1024 * 1024)),
         })
       );
     }
@@ -961,7 +964,7 @@ export function ChatInput({
     if (toAdd.length < sizeValid.length) {
       toast.error(
         t('chat.attachments.tooManyFiles', {
-          defaultValue: `Maximum ${CHAT_ATTACHMENT_MAX_FILES} attachments per message.`,
+          max: CHAT_ATTACHMENT_MAX_FILES,
         })
       );
     }
@@ -1535,7 +1538,7 @@ export function ChatInput({
                 backgroundColor: 'var(--slate-4)',
                 cursor: 'pointer',
               }}
-              aria-label="Scroll attachments left"
+              aria-label={t('chat.scrollAttachmentsLeft')}
             >
               <MaterialIcon name="chevron_left" size={16} color="var(--slate-11)" />
             </Box>
@@ -1728,7 +1731,7 @@ export function ChatInput({
                 backgroundColor: 'var(--slate-4)',
                 cursor: 'pointer',
               }}
-              aria-label="Scroll attachments right"
+              aria-label={t('chat.scrollAttachmentsRight')}
             >
               <MaterialIcon name="chevron_right" size={16} color="var(--slate-11)" />
             </Box>
@@ -2062,7 +2065,7 @@ export function ChatInput({
                   color="gray"
                   size="2"
                   style={{ margin: 0, cursor: 'pointer' }}
-                  aria-label="More options"
+                  aria-label={t('common.moreOptions')}
                 >
                   <MaterialIcon name="tune" size={ICON_SIZES.PRIMARY} color={activeIconColor} />
                 </IconButton>

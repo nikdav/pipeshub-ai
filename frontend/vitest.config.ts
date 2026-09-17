@@ -19,6 +19,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: false,
     include: [
+      'lib/utils/__tests__/validators.test.ts',
+      'app/(main)/workspace/connectors/utils/__tests__/sync-custom-fields-validation.test.ts',
       'app/(main)/notifications/__tests__/store.test.ts',
       'app/(main)/notifications/__tests__/useNotificationSocket.test.tsx',
       'app/components/ui/__tests__/help-tooltip.test.ts',
