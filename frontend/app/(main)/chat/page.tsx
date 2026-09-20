@@ -68,6 +68,7 @@ const footerLinkStyle: React.CSSProperties = {
 };
 
 function ChatFooterLinks() {
+  const { t } = useTranslation();
   const stars = useGitHubStars();
 
   return (
@@ -129,7 +130,7 @@ function ChatFooterLinks() {
           style={{ flexShrink: 0 }}
         />
         <span style={{ fontSize: 12, color: 'var(--olive-9)', whiteSpace: 'nowrap' }}>
-          Docs
+          {t('common.docs')}
         </span>
       </a>
     </Flex>
@@ -1488,7 +1489,7 @@ function ChatContent() {
             <Box
               role="separator"
               aria-orientation="vertical"
-              aria-label="Resize chat and preview panels"
+              aria-label={t('chat.resizePanels')}
               onPointerDown={beginSplitResize}
               style={{
                 width: '8px',
