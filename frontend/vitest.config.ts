@@ -17,6 +17,11 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // Use jsdom's per-window storage instead of Node's native Web Storage.
+    // Older Node versions do not expose this flag.
+    execArgv: process.allowedNodeEnvironmentFlags.has('--no-experimental-webstorage')
+      ? ['--no-experimental-webstorage']
+      : [],
     globals: false,
     // Every unit test under app/ and lib/. A hand-kept list let new test
     // files sit unrun: three never ran, and one of them caught a real bug.
