@@ -1,0 +1,53 @@
+name: Inspect German locale rebase
+on:
+  push:
+    branches:
+      - chore/german-locale-rebase-20260921
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: d73fe0c9fcadb88882d7fd2084c01b35ef64c174
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Inspect rebase without publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "Niklas"
+          git config user.email "55577205+nikdav@users.noreply.github.com"
+          git fetch https://github.com/pipeshub-ai/pipeshub-ai.git 554f5de5f68798c10f58e7815356686ded6005b2
+          git switch -c candidate
+          if git rebase --onto 554f5de5f68798c10f58e7815356686ded6005b2 f291a30c822a6826d62df67f6a3719900dbccc91; then
+            echo REBASE_CLEAN
+          else
+            echo REBASE_CONFLICTS
+            git diff --name-only --diff-filter=U
+            git diff --cc
+          fi
+      - name: Inspect upstream locale delta
+        shell: python
+        run: |
+          import json, subprocess
+          def read(ref, path):
+              return json.loads(subprocess.check_output(['git','show',f'{ref}:{path}'], text=True))
+          def flat(obj, prefix=''):
+              if isinstance(obj, dict):
+                  out={}
+                  for k,v in obj.items():
+                      out.update(flat(v, f'{prefix}.{k}' if prefix else k))
+                  return out
+              return {prefix:obj}
+          base='f291a30c822a6826d62df67f6a3719900dbccc91'
+          up='554f5de5f68798c10f58e7815356686ded6005b2'
+          for locale in ['en-US','de-DE']:
+              path=f'frontend/lib/i18n/locales/{locale}.json'
+              b,u=flat(read(base,path)),flat(read(up,path))
+              print(locale, 'ADDED', json.dumps({k:v for k,v in u.items() if k not in b},ensure_ascii=False))
+              print(locale, 'CHANGED', json.dumps({k:[b[k],v] for k,v in u.items() if k in b and b[k]!=v},ensure_ascii=False))
+              print(locale, 'REMOVED', json.dumps([k for k in b if k not in u]))
