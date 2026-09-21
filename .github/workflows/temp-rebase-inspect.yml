@@ -45,9 +45,13 @@ jobs:
               return {prefix:obj}
           base='f291a30c822a6826d62df67f6a3719900dbccc91'
           up='554f5de5f68798c10f58e7815356686ded6005b2'
+          feature='70ba69f28bf4080e72456256642457917c2e2833'
           for locale in ['en-US','de-DE']:
               path=f'frontend/lib/i18n/locales/{locale}.json'
-              b,u=flat(read(base,path)),flat(read(up,path))
-              print(locale, 'ADDED', json.dumps({k:v for k,v in u.items() if k not in b},ensure_ascii=False))
-              print(locale, 'CHANGED', json.dumps({k:[b[k],v] for k,v in u.items() if k in b and b[k]!=v},ensure_ascii=False))
-              print(locale, 'REMOVED', json.dumps([k for k in b if k not in u]))
+              b,u,fe=flat(read(base,path)),flat(read(up,path)),flat(read(feature,path))
+              up_changed={k for k in set(b)|set(u) if b.get(k,'__MISSING__')!=u.get(k,'__MISSING__')}
+              fe_changed={k for k in set(b)|set(fe) if b.get(k,'__MISSING__')!=fe.get(k,'__MISSING__')}
+              overlap=sorted(up_changed & fe_changed)
+              print(locale, 'OVERLAP_COUNT', len(overlap))
+              for k in overlap:
+                  print(locale, 'OVERLAP', k, json.dumps({'base':b.get(k,'__MISSING__'),'feature':fe.get(k,'__MISSING__'),'upstream':u.get(k,'__MISSING__')},ensure_ascii=False))
