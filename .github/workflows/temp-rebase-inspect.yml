@@ -71,7 +71,7 @@ jobs:
           set -euo pipefail
           git checkout origin/main -- .github/workflows/main.yml
           git add -A
-          git cherry-pick --continue
+          git commit -C 70ba69f28bf4080e72456256642457917c2e2833
           FIRST=$(git rev-parse HEAD)
           git cherry-pick d73fe0c9fcadb88882d7fd2084c01b35ef64c174
           SECOND=$(git rev-parse HEAD)
