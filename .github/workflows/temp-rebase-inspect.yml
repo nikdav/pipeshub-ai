@@ -1,94 +1,28 @@
-name: Build German locale rebase candidate
+name: Validate German locale rebase candidate
 on:
   push:
     branches:
       - chore/german-locale-rebase-20260921
 permissions:
-  contents: write
+  contents: read
 jobs:
-  build:
-    if: github.actor != 'github-actions[bot]'
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: d73fe0c9fcadb88882d7fd2084c01b35ef64c174
+          ref: cb2221d754c4b2dec3e70aaa3cd381f03f51052c
           fetch-depth: 0
-      - name: Rebase first commit semantically
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "Niklas"
-          git config user.email "55577205+nikdav@users.noreply.github.com"
-          git fetch origin main
-          git reset --hard origin/main
-          git cherry-pick --no-commit 70ba69f28bf4080e72456256642457917c2e2833 || true
-      - name: Resolve locale conflicts
-        shell: python
-        run: |
-          import json, subprocess
-          from pathlib import Path
-          BASE='f291a30c822a6826d62df67f6a3719900dbccc91'
-          FEATURE='70ba69f28bf4080e72456256642457917c2e2833'
-          UP='origin/main'
-          MISSING=object()
-          def load(ref,path):
-              return json.loads(subprocess.check_output(['git','show',f'{ref}:{path}'],text=True))
-          def merge(base,feature,up,path=''):
-              if isinstance(base,dict) or isinstance(feature,dict) or isinstance(up,dict):
-                  b=base if isinstance(base,dict) else {}
-                  f=feature if isinstance(feature,dict) else {}
-                  u=up if isinstance(up,dict) else {}
-                  out={}
-                  keys=list(u.keys())+[k for k in f.keys() if k not in u]
-                  for k in keys:
-                      v=merge(b.get(k,MISSING),f.get(k,MISSING),u.get(k,MISSING),f'{path}.{k}' if path else k)
-                      if v is not MISSING: out[k]=v
-                  return out
-              if up is MISSING:
-                  if feature is MISSING: return MISSING
-                  if base is MISSING: return feature
-                  if feature==base: return MISSING
-                  return feature
-              if feature is MISSING:
-                  if base is MISSING: return up
-                  if up==base: return MISSING
-                  return up
-              if base is MISSING:
-                  return up if feature==up else feature
-              if feature==base: return up
-              if up==base: return feature
-              if feature==up: return up
-              raise SystemExit(f'Unexpected overlapping locale change at {path}')
-          for locale in ['en-US','de-DE']:
-              p=f'frontend/lib/i18n/locales/{locale}.json'
-              merged=merge(load(BASE,p),load(FEATURE,p),load(UP,p))
-              Path(p).write_text(json.dumps(merged,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-      - name: Finish first commit and replay use-client commit
-        shell: bash
-        run: |
-          set -euo pipefail
-          git checkout origin/main -- .github/workflows/main.yml
-          git add -A
-          git commit -C 70ba69f28bf4080e72456256642457917c2e2833
-          FIRST=$(git rev-parse HEAD)
-          git cherry-pick d73fe0c9fcadb88882d7fd2084c01b35ef64c174
-          SECOND=$(git rev-parse HEAD)
-          echo "FIRST=$FIRST"
-          echo "SECOND=$SECOND"
-      - name: Validate rebased code
+          persist-credentials: false
+      - name: Validate candidate
         shell: bash
         run: |
           set -euo pipefail
           node frontend/scripts/check-i18n-parity.mjs
           node --test frontend/scripts/check-i18n-parity.test.mjs
-          git diff --check origin/main...HEAD
+          git diff --check d53f12b735d1feb995d4ed7e05a9b4e29ae93cb2...HEAD
+          test "$(git rev-list --count d53f12b735d1feb995d4ed7e05a9b4e29ae93cb2..HEAD)" = "3"
           grep -Fxq "'use client';" frontend/app/components/share/index.ts
           grep -Fxq "'use client';" frontend/app/components/share/types.ts
-          test "$(git rev-list --count origin/main..HEAD)" = "2"
-      - name: Push candidate branch
-        shell: bash
-        run: |
-          set -euo pipefail
-          git push --force origin HEAD:refs/heads/chore/german-locale-rebase-candidate-20260921
+          grep -Fq "}, [onUploadFile, t]);" 'frontend/app/(main)/chat/components/chat-input.tsx'
