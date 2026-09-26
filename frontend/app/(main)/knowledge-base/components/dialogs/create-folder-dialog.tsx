@@ -104,7 +104,7 @@ export function CreateFolderDialog({
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="eg: Engineering"
+                placeholder={t('form.enterTitle')}
                 autoFocus
               />
             </Flex>
@@ -117,7 +117,7 @@ export function CreateFolderDialog({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="eg: Company repository for all the developers"
+                placeholder={t('form.enterDescription')}
               />
             </Flex>
           </Flex>
