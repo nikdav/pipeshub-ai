@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text, Button, Popover, IconButton, Tabs } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 
@@ -121,12 +122,6 @@ const getFirstDayOfMonth = (year: number, month: number): number => {
   return new Date(year, month, 1).getDay();
 };
 
-const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
 const DATE_TYPE_LABELS: Record<DateFilterType, string> = {
   on: 'On',
   between: 'Between',
@@ -186,6 +181,17 @@ export function DateRangePicker({
   triggerVariant = 'toolbar',
   summaryBelowTrigger = false,
 }: DateRangePickerProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
+  const monthFormatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', calendar: 'gregory' }),
+    [locale],
+  );
+  const weekdays = useMemo(() => {
+    const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short', calendar: 'gregory' });
+    // January 1, 2023 was Sunday, matching the existing calendar column order.
+    return Array.from({ length: 7 }, (_, index) => formatter.format(new Date(2023, 0, 1 + index)));
+  }, [locale]);
   const effectiveDateType = fixedDateType ?? dateType ?? defaultDateType;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -433,7 +439,7 @@ export function DateRangePicker({
           handleClear(e);
         }}
       >
-        Clear
+        {t('common.clear')}
       </Button>
     </Flex>
   );
@@ -773,7 +779,7 @@ export function DateRangePicker({
               <MaterialIcon name="chevron_left" size={16} color="var(--slate-11)" />
             </IconButton>
             <Text size="2" weight="bold" style={{ color: 'var(--slate-12)' }}>
-              {MONTHS[currentMonth]} {currentYear}
+              {monthFormatter.format(new Date(currentYear, currentMonth, 1))}
             </Text>
             <IconButton
               variant="outline"
@@ -795,7 +801,7 @@ export function DateRangePicker({
               marginBottom: '4px',
             }}
           >
-            {WEEKDAYS.map((day) => (
+            {weekdays.map((day) => (
               <Flex
                 key={day}
                 align="center"
