@@ -1,6 +1,7 @@
 'use client';
 
 import { Flex, IconButton } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ELEMENT_HEIGHT, ICON_SIZE_DEFAULT } from '@/app/components/sidebar';
 
@@ -30,6 +31,8 @@ export function ChatSectionHeader({
   isCollapsed,
   onToggleCollapse,
 }: ChatSectionHeaderProps) {
+  const { t } = useTranslation();
+
   return (
     <Flex
       align="center"
@@ -60,7 +63,7 @@ export function ChatSectionHeader({
             size="1"
             color="gray"
             onClick={(e) => { e.stopPropagation(); onAdd(); }}
-            aria-label={addAriaLabel ?? 'Add'}
+            aria-label={addAriaLabel ?? t('common.create')}
           >
             <MaterialIcon name="add" size={ICON_SIZE_DEFAULT} color="var(--slate-11)" />
           </IconButton>
@@ -71,7 +74,7 @@ export function ChatSectionHeader({
             size="1"
             color="gray"
             onClick={onToggleCollapse}
-            aria-label={isCollapsed ? 'Expand section' : 'Collapse section'}
+            aria-label={isCollapsed ? t('common.expand') : t('common.collapse')}
             style={{
               transition: 'transform 0.2s ease',
             }}
