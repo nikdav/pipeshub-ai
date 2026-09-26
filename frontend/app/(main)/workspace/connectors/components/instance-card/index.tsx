@@ -58,7 +58,7 @@ export function InstanceCard({
   isRefreshing = false,
   renderExtraActions,
 }: InstanceCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [identityIcon, setIdentityIcon] = useState<string | null>(null);
   const [identityIconError, setIdentityIconError] = useState(false);
   const [enabledByName, setEnabledByName] = useState<string | null>(null);
@@ -102,7 +102,7 @@ export function InstanceCard({
     deriveSyncStatusState(instance, undefined, config);
   const syncStrategy = getSyncStrategyLabel(t, config);
   const syncInterval = getSyncIntervalLabel(t, config);
-  const lastSynced = formatRelativeTime(instance.updatedAtTimestamp);
+  const lastSynced = formatRelativeTime(instance.updatedAtTimestamp, i18n.resolvedLanguage || i18n.language);
 
   const canToggleSync =
     Boolean(instance._key) &&
