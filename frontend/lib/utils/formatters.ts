@@ -105,7 +105,7 @@ export function formatChatMode(chatMode?: string): string {
  * Format a Unix timestamp (ms) as a relative time string.
  * e.g. "Just now", "3 minutes ago", "2 hours ago", "5 days ago", "3 Nov 2025"
  */
-export function formatRelativeTime(timestamp?: number | null): string {
+export function formatRelativeTime(timestamp?: number | null, locale?: string): string {
   if (!timestamp) return '-';
   const now = Date.now();
   const diff = now - timestamp;
@@ -115,7 +115,7 @@ export function formatRelativeTime(timestamp?: number | null): string {
   const days = Math.floor(diff / 86400000);
   const weeks = Math.floor(days / 7);
 
-  const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
 
   if (seconds < 60) return rtf.format(-seconds, 'second');
   if (minutes < 60) return rtf.format(-minutes, 'minute');
@@ -125,7 +125,7 @@ export function formatRelativeTime(timestamp?: number | null): string {
   if (weeks < 4) return rtf.format(-weeks, 'week');
 
   const date = new Date(timestamp);
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(locale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',

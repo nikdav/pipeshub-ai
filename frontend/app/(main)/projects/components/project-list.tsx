@@ -43,7 +43,7 @@ function ProjectCard({
   onUnarchive,
   isUnarchiving = false,
 }: ProjectCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
   const [isTriggerFocused, setIsTriggerFocused] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -132,13 +132,12 @@ function ProjectCard({
         </Text>
         <Flex align="center" justify="between" style={{ marginTop: 'auto' }}>
           <Text size="1" style={{ color: 'var(--slate-9)' }}>
-            {t(
-              project.conversationCount === 1 ? 'projects.chatCount_one' : 'projects.chatCount_other',
-              { count: project.conversationCount },
-            )}
+            {t('projects.chatCount', { count: project.conversationCount })}
           </Text>
           <Text size="1" style={{ color: 'var(--slate-9)' }}>
-            {t('projects.lastActive', { date: formatRelativeTime(project.lastActivityAt) })}
+            {t('projects.lastActive', {
+              date: formatRelativeTime(project.lastActivityAt, i18n.resolvedLanguage || i18n.language),
+            })}
           </Text>
         </Flex>
       </Box>
