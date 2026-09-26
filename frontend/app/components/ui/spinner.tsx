@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface SpinnerProps {
   /** Diameter in pixels. Default: 16 */
@@ -11,7 +12,7 @@ export interface SpinnerProps {
   thickness?: number;
   /** Extra inline styles */
   style?: React.CSSProperties;
-  /** Accessible label (announced to screen readers). Default: "Loading" */
+  /** Accessible label (announced to screen readers). Default: the translated loading message */
   ariaLabel?: string;
 }
 
@@ -29,14 +30,15 @@ export function Spinner({
   color,
   thickness = 2,
   style,
-  ariaLabel = 'Loading',
+  ariaLabel,
 }: SpinnerProps) {
+  const { t } = useTranslation();
   const ringColor = color ?? 'currentColor';
 
   return (
     <span
       role="status"
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? t('common.loading')}
       style={{
         display: 'inline-block',
         width: size,
