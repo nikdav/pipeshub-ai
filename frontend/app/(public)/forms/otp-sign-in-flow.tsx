@@ -41,8 +41,8 @@ export default function OtpSignInFlow({
 }: OtpSignInFlowProps) {
   const { t } = useTranslation();
   const [otp, setOtp] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [otpValidationError, setOtpValidationError] = useState('');
+  const [emailErrorKey, setEmailErrorKey] = useState('');
+  const [otpValidationErrorKey, setOtpValidationErrorKey] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
   const otpRef = useRef<HTMLInputElement>(null);
 
@@ -50,16 +50,16 @@ export default function OtpSignInFlow({
 
   const ensureValidEmail = () => {
     if (!trimmedEmail) {
-      setEmailError(t('auth.common.emailRequired'));
+      setEmailErrorKey('auth.common.emailRequired');
       emailRef.current?.focus();
       return false;
     }
     if (!isValidEmail(trimmedEmail)) {
-      setEmailError(t('auth.common.emailInvalid'));
+      setEmailErrorKey('auth.common.emailInvalid');
       emailRef.current?.focus();
       return false;
     }
-    setEmailError('');
+    setEmailErrorKey('');
     return true;
   };
 
@@ -72,10 +72,10 @@ export default function OtpSignInFlow({
   const handleSubmitOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (otpVerifyLoading) return;
-    setOtpValidationError('');
+    setOtpValidationErrorKey('');
     if (!ensureValidEmail()) return;
     if (otp.length !== OTP_LENGTH) {
-      setOtpValidationError(t('auth.common.otpInvalidLength'));
+      setOtpValidationErrorKey('auth.common.otpInvalidLength');
       otpRef.current?.focus();
       return;
     }
@@ -85,7 +85,7 @@ export default function OtpSignInFlow({
 
   const otpInlineError =
     error?.type === 'generic' && error.message ? error.message : undefined;
-  const otpFieldError = otpInlineError ?? otpValidationError;
+  const otpFieldError = otpInlineError ?? (otpValidationErrorKey ? t(otpValidationErrorKey) : '');
 
   const emailLooksValid = !!trimmedEmail && isValidEmail(trimmedEmail);
   /** Send code only needs a valid email. */
@@ -100,10 +100,10 @@ export default function OtpSignInFlow({
             value={email}
             onChange={(v) => {
               onEmailChange(v);
-              setEmailError('');
+              setEmailErrorKey('');
               clearError();
             }}
-            error={emailError}
+            error={emailErrorKey ? t(emailErrorKey) : ''}
             readOnly={lockEmail}
             autoFocus
           />
@@ -113,7 +113,7 @@ export default function OtpSignInFlow({
             value={otp}
             onChange={(v) => {
               setOtp(v);
-              setOtpValidationError('');
+              setOtpValidationErrorKey('');
               clearError();
             }}
             error={otpFieldError}

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Flex, Text, TextField, IconButton } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 
 export const OTP_LENGTH = 6;
 
@@ -30,6 +31,7 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
   },
   ref,
 ) {
+  const { t } = useTranslation();
   const [focused, setFocused] = useState(false);
   const [visible, setVisible] = useState(false);
 
@@ -86,7 +88,7 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
             variant="ghost"
             color="gray"
             onClick={() => setVisible((v) => !v)}
-            aria-label={visible ? 'Hide OTP' : 'Show OTP'}
+            aria-label={visible ? t('auth.common.hidePassword') : t('auth.common.showPassword')}
           >
             <span
               className="material-icons-outlined"
