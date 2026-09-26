@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import { extractApiErrorMessage } from '@/lib/api/api-error';
@@ -45,6 +46,7 @@ async function readHttpErrorMessage(response: Response): Promise<string> {
  * localStorage by the opener.
  */
 export default function OAuthCallbackPage() {
+  const { t } = useTranslation();
   const [error, setError] = useState('');
   const hasExchanged = useRef(false);
 
@@ -175,7 +177,7 @@ export default function OAuthCallbackPage() {
   return (
     <Flex align="center" justify="center" style={{ minHeight: '100vh' }}>
       <Text size="2" color="gray">
-        Processing sign-in…
+        {t('auth.common.signingIn')}
       </Text>
     </Flex>
   );
