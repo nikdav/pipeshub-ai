@@ -29,7 +29,11 @@ export function formatDate(dateString: string | number): string {
  *
  * Result format: "Month Year"  (e.g. "October 2025")
  */
-export function formatConversationDateForSearch(createdAt: string, updatedAt: string): string {
+export function formatConversationDateForSearch(
+  createdAt: string,
+  updatedAt: string,
+  locale: string = 'en-US',
+): string {
   const created = new Date(createdAt);
   const updated = new Date(updatedAt);
 
@@ -39,7 +43,7 @@ export function formatConversationDateForSearch(createdAt: string, updatedAt: st
     (updated.getMonth() - created.getMonth());
 
   const target = monthsDiff > 1 ? updated : created;
-  return target.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  return target.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
 }
 
 /**
