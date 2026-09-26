@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: cb2221d754c4b2dec3e70aaa3cd381f03f51052c
+          ref: 2edb73f8864faead19428e5358e54c5b7f314c6b
           fetch-depth: 0
           persist-credentials: false
       - name: Validate candidate
@@ -21,8 +21,8 @@ jobs:
           set -euo pipefail
           node frontend/scripts/check-i18n-parity.mjs
           node --test frontend/scripts/check-i18n-parity.test.mjs
-          git diff --check d53f12b735d1feb995d4ed7e05a9b4e29ae93cb2...HEAD
-          test "$(git rev-list --count d53f12b735d1feb995d4ed7e05a9b4e29ae93cb2..HEAD)" = "3"
+          git diff --check f0b93b0b8042893af271fbbcc484d2bd58d3e4bd...HEAD
+          test "$(git rev-list --count f0b93b0b8042893af271fbbcc484d2bd58d3e4bd..HEAD)" = "3"
           grep -Fxq "'use client';" frontend/app/components/share/index.ts
           grep -Fxq "'use client';" frontend/app/components/share/types.ts
           grep -Fq "}, [onUploadFile, t]);" 'frontend/app/(main)/chat/components/chat-input.tsx'
