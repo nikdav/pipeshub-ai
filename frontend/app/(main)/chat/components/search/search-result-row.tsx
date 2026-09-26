@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import { formatConversationDateForSearch } from '@/lib/utils/formatters';
 import type { Conversation } from '@/chat/types';
 
@@ -11,8 +12,13 @@ interface SearchResultRowProps {
 }
 
 export function SearchResultRow({ conversation, onClick }: SearchResultRowProps) {
+  const { i18n } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
-  const dateLabel = formatConversationDateForSearch(conversation.createdAt, conversation.updatedAt);
+  const dateLabel = formatConversationDateForSearch(
+    conversation.createdAt,
+    conversation.updatedAt,
+    i18n.resolvedLanguage || i18n.language,
+  );
 
   return (
     <Flex
