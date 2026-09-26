@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/config';
 import { toast } from '@/lib/store/toast-store';
 import { fetchAndSetCurrentUser } from '@/lib/auth/hydrate-user';
@@ -137,6 +138,7 @@ export function useAuthActions({
   redirectTo,
 }: UseAuthActionsOptions) {
   const router = useRouter();
+  const { i18n } = useTranslation();
   const setTokens = useAuthStore((s) => s.setTokens);
   const setUser = useAuthStore((s) => s.setUser);
 
@@ -201,10 +203,10 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error('Your account has been disabled.', {
+            toast.error(i18n.t('auth.common.accountDisabled'), {
               description:
                 blockedUntilDescription ??
-                'You have entered incorrect credentials too many times',
+                i18n.t('auth.common.tooManyIncorrectCredentials'),
               duration: null,
               showCloseButton: true,
             });
@@ -226,7 +228,7 @@ export function useAuthActions({
         setLoading(false);
       }
     },
-    [email, loading, postAuthRedirectTo, router, setTokens, setUser],
+    [email, loading, postAuthRedirectTo, router, setTokens, setUser, i18n],
   );
 
   // ── Forgot password ─────────────────────────────────────────────────────────
@@ -312,7 +314,7 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error('Your account has been disabled.', {
+            toast.error(i18n.t('auth.common.accountDisabled'), {
               description: blockedUntilDescription ?? 'Please contact your administrator.',
               duration: null,
               showCloseButton: true,
@@ -326,7 +328,7 @@ export function useAuthActions({
         setGoogleLoading(false);
       }
     },
-    [email, googleLoading, postAuthRedirectTo, router, setTokens, setUser],
+    [email, googleLoading, postAuthRedirectTo, router, setTokens, setUser, i18n],
   );
 
   /**
@@ -383,7 +385,7 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error('Your account has been disabled.', {
+            toast.error(i18n.t('auth.common.accountDisabled'), {
               description: blockedUntilDescription ?? 'Please contact your administrator.',
               duration: null,
               showCloseButton: true,
@@ -397,7 +399,7 @@ export function useAuthActions({
         setOauthLoading(false);
       }
     },
-    [email, oauthLoading, postAuthRedirectTo, router, setTokens, setUser],
+    [email, oauthLoading, postAuthRedirectTo, router, setTokens, setUser, i18n],
   );
 
   const sendLoginOtp = useCallback(async (): Promise<boolean> => {
@@ -487,10 +489,10 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error('Your account has been disabled.', {
+            toast.error(i18n.t('auth.common.accountDisabled'), {
               description:
                 blockedUntilDescription ??
-                'You have entered incorrect credentials too many times',
+                i18n.t('auth.common.tooManyIncorrectCredentials'),
               duration: null,
               showCloseButton: true,
             });
@@ -507,7 +509,7 @@ export function useAuthActions({
         setOtpVerifyLoading(false);
       }
     },
-    [email, otpVerifyLoading, postAuthRedirectTo, router, setTokens, setUser],
+    [email, otpVerifyLoading, postAuthRedirectTo, router, setTokens, setUser, i18n],
   );
 
   const signInWithMicrosoft = useCallback(
@@ -550,7 +552,7 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error('Your account has been disabled.', {
+            toast.error(i18n.t('auth.common.accountDisabled'), {
               description: blockedUntilDescription ?? 'Please contact your administrator.',
               duration: null,
               showCloseButton: true,
@@ -565,7 +567,7 @@ export function useAuthActions({
         setMicrosoftLoading(false);
       }
     },
-    [email, microsoftLoading, postAuthRedirectTo, router, setTokens, setUser],
+    [email, microsoftLoading, postAuthRedirectTo, router, setTokens, setUser, i18n],
   );
 
   return {
