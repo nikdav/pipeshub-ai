@@ -36,7 +36,7 @@ import { SidebarExpandButton } from '@/app/components/sidebar/sidebar-expand-but
 import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 import { Flex, Box, Text, Avatar, Tooltip } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
-import { resolveLocalizedText } from '@/lib/i18n/localized-text';
+import { localizedText, resolveLocalizedText } from '@/lib/i18n/localized-text';
 import { FilePreviewInlinePanel, FilePreviewFullscreen } from '@/app/components/file-preview';
 import { ShareSidebar, ShareHeaderGroup } from '@/app/components/share';
 import type { SharedAvatarMember } from '@/app/components/share';
@@ -166,8 +166,6 @@ function ChatContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t } = useTranslation();
-  const tRef = useRef(t);
-  tRef.current = t;
   const conversationId = searchParams.get('conversationId');
   const rawAgentParam = searchParams.get('agentId');
   const agentId = rawAgentParam?.trim() ? rawAgentParam : null;
@@ -428,9 +426,10 @@ function ChatContent() {
           // server code since the agent was last saved (deprecated=true is
           // stamped by the GET /agent/:id handler at read time).
           if (deprecatedToolNames.length > 0) {
-            toast.error(tRef.current('chat.toasts.deprecatedTools'), {
+            toast.error(localizedText('chat.toasts.deprecatedTools'), {
               action: {
-                label: tRef.current('chat.toasts.openAgentBuilder'),
+                label: 'Open Agent Builder',
+                labelText: localizedText('chat.toasts.openAgentBuilder'),
                 onClick: () =>
                   router.push(`/agents/edit?agentKey=${encodeURIComponent(agentId!)}`),
               },
@@ -808,7 +807,7 @@ function ChatContent() {
           });
           // The API client already explains HTTP failures in its own toast.
           if (!isProcessedError(error) && useServicesHealthStore.getState().apiServerReachable) {
-            toast.error(tRef.current('chat.toasts.loadConversationFailed'));
+            toast.error(localizedText('chat.toasts.loadConversationFailed'));
           }
         }
       }
@@ -906,7 +905,7 @@ function ChatContent() {
       if (!cancelled) setProjectDetail(p);
     }).catch(() => {
       if (!cancelled) setProjectDetail(null);
-      toast.error(tRef.current('chat.projects.workspace.failedToLoad'));
+      toast.error(localizedText('chat.projects.workspace.failedToLoad'));
     });
     return () => { cancelled = true; };
   }, [projectId, projectsVersion]);

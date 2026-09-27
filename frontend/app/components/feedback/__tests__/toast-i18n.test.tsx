@@ -44,12 +44,14 @@ describe('Toast localized descriptors', () => {
 
     expect(screen.getByText('English title')).toBeTruthy();
     expect(screen.getByText('English description')).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'English title' })).toBeTruthy();
     expect(screen.getByText('English action')).toBeTruthy();
 
     await act(async () => { await testI18n.changeLanguage('de-DE'); });
 
     expect(screen.getByText('Deutscher Titel')).toBeTruthy();
     expect(screen.getByText('Deutsche Beschreibung')).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Deutscher Titel' })).toBeTruthy();
     expect(screen.getByText('Deutsche Aktion')).toBeTruthy();
   });
 

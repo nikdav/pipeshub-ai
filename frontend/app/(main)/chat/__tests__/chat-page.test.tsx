@@ -457,7 +457,7 @@ describe('Chat page — opening a conversation', () => {
 
     await waitFor(() => expect(toastError).toHaveBeenCalledTimes(1));
     expect(toastError).toHaveBeenCalledWith(
-      "We couldn't open this conversation. Refresh the page to try again.",
+      localizedText('chat.toasts.loadConversationFailed'),
     );
     expect(screen.queryByRole('status')).toBeNull();
   });
@@ -572,8 +572,13 @@ describe('Chat page — agent chats', () => {
     expect(await screen.findByText('Priya Shah')).toBeTruthy();
     expect(getUsersByIds).toHaveBeenCalledWith(['creator-1']);
     expect(toastError).toHaveBeenCalledWith(
-      'This agent has tools that are no longer available. Open the Agent Builder to remove them.',
-      expect.objectContaining({ action: expect.objectContaining({ label: 'Open Agent Builder' }) }),
+      localizedText('chat.toasts.deprecatedTools'),
+      expect.objectContaining({
+        action: expect.objectContaining({
+          label: 'Open Agent Builder',
+          labelText: localizedText('chat.toasts.openAgentBuilder'),
+        }),
+      }),
     );
     const { action } = toastError.mock.calls[0][1] as { action: { onClick: () => void } };
     action.onClick();
@@ -623,7 +628,7 @@ describe('Chat page — projects and previews', () => {
 
     renderPage('projectId=p-1');
 
-    await waitFor(() => expect(toastError).toHaveBeenCalledWith('Failed to load this project'));
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith(localizedText('chat.projects.workspace.failedToLoad')));
   });
 
   it('ignores the project in the address bar when projects are turned off', () => {

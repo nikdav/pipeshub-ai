@@ -161,7 +161,7 @@ export function Toast({ toast, onDismiss, style }: ToastProps) {
           {hasDescription && (
             <Box
               role="region"
-              aria-label={toast.title}
+              aria-label={title}
               tabIndex={0}
               onWheel={handleDescriptionWheel}
               style={{

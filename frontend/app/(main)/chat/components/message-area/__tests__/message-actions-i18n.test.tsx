@@ -6,15 +6,21 @@ import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import en from '@/lib/i18n/locales/en-US.json';
 import de from '@/lib/i18n/locales/de-DE.json';
+import { Toast } from '@/app/components/feedback/toast';
+import { useToastStore } from '@/lib/store/toast-store';
 import { MessageActions } from '../message-actions';
 
 const mocks = vi.hoisted(() => ({
-  writeText: vi.fn(), submitFeedback: vi.fn(), success: vi.fn(), error: vi.fn(),
+  writeText: vi.fn(),
+  submitFeedback: vi.fn(),
+  onTtsError: undefined as ((error: string) => void) | undefined,
 }));
 vi.mock('@/lib/store/command-store', () => ({ useCommandStore: {} }));
-vi.mock('@/lib/store/toast-store', () => ({ toast: { success: mocks.success, error: mocks.error } }));
 vi.mock('@/lib/hooks/use-chat-speech-synthesis', () => ({
-  useChatSpeechSynthesis: () => ({ isSpeaking: false, isSupported: false, speak: vi.fn(), stop: vi.fn() }),
+  useChatSpeechSynthesis: ({ onError }: { onError: (error: string) => void }) => {
+    mocks.onTtsError = onError;
+    return { isSpeaking: false, isSupported: false, speak: vi.fn(), stop: vi.fn() };
+  },
 }));
 vi.mock('../../../api', () => ({ ChatApi: { submitFeedback: mocks.submitFeedback } }));
 vi.mock('../../../store', () => ({
@@ -22,7 +28,9 @@ vi.mock('../../../store', () => ({
 }));
 
 afterEach(() => {
-  cleanup(); vi.clearAllTimers(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.clearAllMocks();
+  cleanup();
+  useToastStore.getState().clearAll();
+  vi.clearAllTimers(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.clearAllMocks();
 });
 
 async function translations() {
@@ -44,9 +52,17 @@ function renderActions(i18n: Awaited<ReturnType<typeof translations>>, props: Re
   });
   return render(
     <Theme>
-      <I18nextProvider i18n={i18n}><MessageActions {...props} /></I18nextProvider>
+      <I18nextProvider i18n={i18n}>
+        <MessageActions {...props} />
+        <StoredToast />
+      </I18nextProvider>
     </Theme>,
   );
+}
+
+function StoredToast() {
+  const currentToast = useToastStore((state) => state.toasts[0]);
+  return currentToast ? <Toast toast={currentToast} onDismiss={() => undefined} /> : null;
 }
 
 describe('message-action language changes', () => {
@@ -75,7 +91,7 @@ describe('message-action language changes', () => {
   it.each([
     ['chat.feedbackCategoryExcellentAnswer', true, 'excellent_answer'],
     ['chat.feedbackCategoryIncorrectInfo', false, 'incorrect_information'],
-  ] as const)('uses the response-time language for %s feedback toasts', async (category, isHelpful, value) => {
+  ] as const)('localizes stored %s feedback toasts after the request and on later language changes', async (category, isHelpful, value) => {
     const i18n = await translations();
     let complete!: () => void;
     mocks.submitFeedback.mockReturnValue(new Promise<void>((resolve) => { complete = resolve; }));
@@ -84,12 +100,14 @@ describe('message-action language changes', () => {
     fireEvent.click(screen.getByRole('button', { name: i18n.t(category) }));
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     await act(async () => { complete(); });
-    expect(mocks.success).toHaveBeenCalledWith(i18n.t('chat.thankYouForFeedback'), {
-      description: i18n.t('chat.feedbackHelpsImprove'),
-    });
+    expect(screen.getByText(i18n.t('chat.thankYouForFeedback'))).toBeTruthy();
+    expect(screen.getByText(i18n.t('chat.feedbackHelpsImprove'))).toBeTruthy();
     expect(mocks.submitFeedback).toHaveBeenCalledWith('original-conversation', 'original-message', {
       isHelpful, categories: [value],
     });
+    await act(async () => { await i18n.changeLanguage('en-US'); });
+    expect(screen.getByText(i18n.t('chat.thankYouForFeedback'))).toBeTruthy();
+    expect(screen.getByText(i18n.t('chat.feedbackHelpsImprove'))).toBeTruthy();
   });
 
   it('localizes feedback errors when the request language has changed', async () => {
@@ -101,7 +119,22 @@ describe('message-action language changes', () => {
     fireEvent.click(screen.getByRole('button', { name: i18n.t('chat.feedbackCategoryExcellentAnswer') }));
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     await act(async () => { fail(new Error('Server failure')); });
-    expect(mocks.error).toHaveBeenCalledWith(i18n.t('chat.feedbackError'));
+    expect(screen.getByText(i18n.t('chat.feedbackError'))).toBeTruthy();
+    await act(async () => { await i18n.changeLanguage('en-US'); });
+    expect(screen.getByText(i18n.t('chat.feedbackError'))).toBeTruthy();
+  });
+
+  it.each([
+    ['not-supported', 'chat.ttsNotSupported'],
+    ['failed', 'chat.ttsFailed'],
+  ] as const)('updates stored TTS toast text for %s when the language changes', async (error, key) => {
+    const i18n = await translations();
+    renderActions(i18n, { content: 'User text' });
+    act(() => { mocks.onTtsError?.(error); });
+    expect(screen.getByText(i18n.t(key))).toBeTruthy();
+
+    await act(async () => { await i18n.changeLanguage('de-DE'); });
+    expect(screen.getByText(i18n.t(key))).toBeTruthy();
   });
 
   it('retranslates built-in mode labels without changing model names', async () => {

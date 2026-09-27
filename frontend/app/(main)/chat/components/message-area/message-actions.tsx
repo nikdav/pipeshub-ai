@@ -5,6 +5,7 @@ import { Flex, Box, Text, IconButton, Popover, Tooltip } from '@radix-ui/themes'
 import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ICON_SIZES } from '@/lib/constants/icon-sizes';
+import { localizedText } from '@/lib/i18n/localized-text';
 import {
   stripMarkdownAndCitations,
   formatChatMode,
@@ -145,9 +146,9 @@ export function MessageActions({
     lang: i18n.language,
     onError: (error) => {
       if (error === 'not-supported') {
-        toast.error(i18n.t('chat.ttsNotSupported'));
+        toast.error(localizedText('chat.ttsNotSupported'));
       } else {
-        toast.error(i18n.t('chat.ttsFailed'));
+        toast.error(localizedText('chat.ttsFailed'));
       }
     },
   });
@@ -183,11 +184,13 @@ export function MessageActions({
     setLikeOpen(false);
     try {
       await submitFeedbackToApi(messageId, { isHelpful: true, categories: [cat.value] });
-      toast.success(i18n.t('chat.thankYouForFeedback'), { description: i18n.t('chat.feedbackHelpsImprove') });
+      toast.success(localizedText('chat.thankYouForFeedback'), {
+        description: localizedText('chat.feedbackHelpsImprove'),
+      });
     } catch {
-      toast.error(i18n.t('chat.feedbackError', 'Failed to submit feedback'));
+      toast.error(localizedText('chat.feedbackError'));
     }
-  }, [messageId, i18n]);
+  }, [messageId]);
 
   const handleLikeOtherSubmit = useCallback(async () => {
     if (!messageId) return;
@@ -200,13 +203,15 @@ export function MessageActions({
       });
       setFeedbackGiven('like');
       setLikeOpen(false);
-      toast.success(i18n.t('chat.thankYouForFeedback'), { description: i18n.t('chat.feedbackHelpsImprove') });
+      toast.success(localizedText('chat.thankYouForFeedback'), {
+        description: localizedText('chat.feedbackHelpsImprove'),
+      });
     } catch {
-      toast.error(i18n.t('chat.feedbackError', 'Failed to submit feedback'));
+      toast.error(localizedText('chat.feedbackError'));
     } finally {
       setLikeSubmitting(false);
     }
-  }, [messageId, likeComment, i18n]);
+  }, [messageId, likeComment]);
 
   const handleLikePopoverClose = useCallback(() => {
     if (switchingRef.current) {
@@ -240,11 +245,13 @@ export function MessageActions({
     setDislikeOpen(false);
     try {
       await submitFeedbackToApi(messageId, { isHelpful: false, categories: [cat.value] });
-      toast.success(i18n.t('chat.thankYouForFeedback'), { description: i18n.t('chat.feedbackHelpsImprove') });
+      toast.success(localizedText('chat.thankYouForFeedback'), {
+        description: localizedText('chat.feedbackHelpsImprove'),
+      });
     } catch {
-      toast.error(i18n.t('chat.feedbackError', 'Failed to submit feedback'));
+      toast.error(localizedText('chat.feedbackError'));
     }
-  }, [messageId, i18n]);
+  }, [messageId]);
 
   const handleDislikeOtherSubmit = useCallback(async () => {
     if (!messageId) return;
@@ -257,13 +264,15 @@ export function MessageActions({
       });
       setFeedbackGiven('dislike');
       setDislikeOpen(false);
-      toast.success(i18n.t('chat.thankYouForFeedback'), { description: i18n.t('chat.feedbackHelpsImprove') });
+      toast.success(localizedText('chat.thankYouForFeedback'), {
+        description: localizedText('chat.feedbackHelpsImprove'),
+      });
     } catch {
-      toast.error(i18n.t('chat.feedbackError', 'Failed to submit feedback'));
+      toast.error(localizedText('chat.feedbackError'));
     } finally {
       setDislikeSubmitting(false);
     }
-  }, [messageId, dislikeComment, i18n]);
+  }, [messageId, dislikeComment]);
 
   const handleDislikePopoverClose = useCallback(() => {
     if (switchingRef.current) {

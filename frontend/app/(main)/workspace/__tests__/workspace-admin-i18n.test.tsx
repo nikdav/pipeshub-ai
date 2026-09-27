@@ -1,6 +1,6 @@
 import React from 'react';
-import { afterEach, describe, expect, it } from 'vitest';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
@@ -75,5 +75,44 @@ describe('workspace admin labels', () => {
     expect(screen.getByText('Unbekannte Person')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Unbekannte Person entfernen' })).toBeTruthy();
     expect(selection).toEqual(['user-1']);
+  });
+
+  it('keeps chip removal keyboard and pointer accessible while respecting disabled state', async () => {
+    const i18n = await createTestI18n();
+    const onEnabledSelectionChange = vi.fn();
+    const onDisabledSelectionChange = vi.fn();
+    render(
+      <I18nextProvider i18n={i18n}><Theme>
+        <SearchableCheckboxDropdown
+          options={[{ id: 'enabled', label: 'Enabled' }]}
+          selectedIds={['enabled']}
+          onSelectionChange={onEnabledSelectionChange}
+        />
+        <SearchableCheckboxDropdown
+          options={[{ id: 'disabled', label: 'Disabled' }]}
+          selectedIds={['disabled']}
+          onSelectionChange={onDisabledSelectionChange}
+          disabled
+        />
+      </Theme></I18nextProvider>,
+    );
+
+    const enabledRemoveButton = screen.getByRole('button', { name: 'Remove Enabled' });
+    const disabledRemoveButton = screen.getByRole('button', { name: 'Remove Disabled' });
+    expect(disabledRemoveButton.getAttribute('aria-disabled')).toBe('true');
+    expect(disabledRemoveButton.getAttribute('tabindex')).toBe('-1');
+
+    fireEvent.click(enabledRemoveButton);
+    fireEvent.keyDown(enabledRemoveButton, { key: 'Enter' });
+    fireEvent.keyDown(enabledRemoveButton, { key: ' ' });
+    fireEvent.click(disabledRemoveButton);
+    fireEvent.keyDown(disabledRemoveButton, { key: 'Enter' });
+    fireEvent.keyDown(disabledRemoveButton, { key: ' ' });
+
+    expect(onEnabledSelectionChange).toHaveBeenCalledTimes(3);
+    expect(onEnabledSelectionChange).toHaveBeenNthCalledWith(1, []);
+    expect(onEnabledSelectionChange).toHaveBeenNthCalledWith(2, []);
+    expect(onEnabledSelectionChange).toHaveBeenNthCalledWith(3, []);
+    expect(onDisabledSelectionChange).not.toHaveBeenCalled();
   });
 });

@@ -193,9 +193,10 @@ export function SearchableCheckboxDropdown({
 
   const removeChip = useCallback(
     (id: string) => {
+      if (disabled) return;
       onSelectionChange(selectedIds.filter((sid) => sid !== id));
     },
-    [selectedIds, onSelectionChange]
+    [disabled, selectedIds, onSelectionChange]
   );
 
   const handleTriggerClick = () => {
@@ -291,7 +292,8 @@ export function SearchableCheckboxDropdown({
               </Text>
               <Box
                 role="button"
-                tabIndex={0}
+                aria-disabled={disabled}
+                tabIndex={disabled ? -1 : 0}
                 aria-label={t('workspace.selector.removeOption', {
                   option: opt.isUnknownUser ? t('workspace.common.unknownUser') : opt.label,
                 })}
@@ -309,7 +311,7 @@ export function SearchableCheckboxDropdown({
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  cursor: 'pointer',
+                  cursor: disabled ? 'not-allowed' : 'pointer',
                   flexShrink: 0,
                 }}
               >
