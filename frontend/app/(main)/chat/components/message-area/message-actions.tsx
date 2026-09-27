@@ -22,6 +22,7 @@ import { useChatStore } from '../../store';
 // ========================================
 
 type FeedbackValue = 'like' | 'dislike';
+type CopiedMessageKey = 'chat.copiedAsMarkdown' | 'chat.copiedAsText';
 
 interface FeedbackCategory {
   value: string;
@@ -121,7 +122,7 @@ export function MessageActions({
   const [feedbackGiven, setFeedbackGiven] = useState<FeedbackValue | null>(feedbackInfo?.value ?? null);
   const [copyPopoverOpen, setCopyPopoverOpen] = useState(false);
   const [copiedTooltipOpen, setCopiedTooltipOpen] = useState(false);
-  const [copiedMessage, setCopiedMessage] = useState('');
+  const [copiedMessageKey, setCopiedMessageKey] = useState<CopiedMessageKey>('chat.copiedAsText');
   const copiedTooltipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [readAloudHovered, setReadAloudHovered] = useState(false);
   const { t, i18n } = useTranslation();
@@ -144,9 +145,9 @@ export function MessageActions({
     lang: i18n.language,
     onError: (error) => {
       if (error === 'not-supported') {
-        toast.error(t('chat.ttsNotSupported'));
+        toast.error(i18n.t('chat.ttsNotSupported'));
       } else {
-        toast.error(t('chat.ttsFailed'));
+        toast.error(i18n.t('chat.ttsFailed'));
       }
     },
   });
@@ -182,11 +183,11 @@ export function MessageActions({
     setLikeOpen(false);
     try {
       await submitFeedbackToApi(messageId, { isHelpful: true, categories: [cat.value] });
-      toast.success(t('chat.thankYouForFeedback'), { description: t('chat.feedbackHelpsImprove') });
+      toast.success(i18n.t('chat.thankYouForFeedback'), { description: i18n.t('chat.feedbackHelpsImprove') });
     } catch {
-      toast.error(t('chat.feedbackError', 'Failed to submit feedback'));
+      toast.error(i18n.t('chat.feedbackError', 'Failed to submit feedback'));
     }
-  }, [messageId, t]);
+  }, [messageId, i18n]);
 
   const handleLikeOtherSubmit = useCallback(async () => {
     if (!messageId) return;
@@ -199,13 +200,13 @@ export function MessageActions({
       });
       setFeedbackGiven('like');
       setLikeOpen(false);
-      toast.success(t('chat.thankYouForFeedback'), { description: t('chat.feedbackHelpsImprove') });
+      toast.success(i18n.t('chat.thankYouForFeedback'), { description: i18n.t('chat.feedbackHelpsImprove') });
     } catch {
-      toast.error(t('chat.feedbackError', 'Failed to submit feedback'));
+      toast.error(i18n.t('chat.feedbackError', 'Failed to submit feedback'));
     } finally {
       setLikeSubmitting(false);
     }
-  }, [messageId, likeComment, t]);
+  }, [messageId, likeComment, i18n]);
 
   const handleLikePopoverClose = useCallback(() => {
     if (switchingRef.current) {
@@ -239,11 +240,11 @@ export function MessageActions({
     setDislikeOpen(false);
     try {
       await submitFeedbackToApi(messageId, { isHelpful: false, categories: [cat.value] });
-      toast.success(t('chat.thankYouForFeedback'), { description: t('chat.feedbackHelpsImprove') });
+      toast.success(i18n.t('chat.thankYouForFeedback'), { description: i18n.t('chat.feedbackHelpsImprove') });
     } catch {
-      toast.error(t('chat.feedbackError', 'Failed to submit feedback'));
+      toast.error(i18n.t('chat.feedbackError', 'Failed to submit feedback'));
     }
-  }, [messageId, t]);
+  }, [messageId, i18n]);
 
   const handleDislikeOtherSubmit = useCallback(async () => {
     if (!messageId) return;
@@ -256,13 +257,13 @@ export function MessageActions({
       });
       setFeedbackGiven('dislike');
       setDislikeOpen(false);
-      toast.success(t('chat.thankYouForFeedback'), { description: t('chat.feedbackHelpsImprove') });
+      toast.success(i18n.t('chat.thankYouForFeedback'), { description: i18n.t('chat.feedbackHelpsImprove') });
     } catch {
-      toast.error(t('chat.feedbackError', 'Failed to submit feedback'));
+      toast.error(i18n.t('chat.feedbackError', 'Failed to submit feedback'));
     } finally {
       setDislikeSubmitting(false);
     }
-  }, [messageId, dislikeComment, t]);
+  }, [messageId, dislikeComment, i18n]);
 
   const handleDislikePopoverClose = useCallback(() => {
     if (switchingRef.current) {
@@ -280,11 +281,11 @@ export function MessageActions({
   }, [messageId, question, appliedFilters]);
 
   const copyToClipboard = useCallback(
-    async (text: string, message: string) => {
+    async (text: string, messageKey: CopiedMessageKey) => {
       try {
         await navigator.clipboard.writeText(text);
         setCopyPopoverOpen(false);
-        setCopiedMessage(message);
+        setCopiedMessageKey(messageKey);
         setCopiedTooltipOpen(true);
 
         if (copiedTooltipTimerRef.current) clearTimeout(copiedTooltipTimerRef.current);
@@ -300,17 +301,17 @@ export function MessageActions({
 
   const handleCopyMarkdown = useCallback(() => {
     const resolved = resolveMarkdownCitations(content, citationMaps);
-    copyToClipboard(resolved, t('chat.copiedAsMarkdown'));
-  }, [content, citationMaps, copyToClipboard, t]);
+    copyToClipboard(resolved, 'chat.copiedAsMarkdown');
+  }, [content, citationMaps, copyToClipboard]);
 
   const handleCopyText = useCallback(() => {
     const plainText = stripMarkdownAndCitations(content);
-    copyToClipboard(plainText, t('chat.copiedAsText'));
-  }, [content, copyToClipboard, t]);
+    copyToClipboard(plainText, 'chat.copiedAsText');
+  }, [content, copyToClipboard]);
 
   if (isStreaming) return null;
 
-  const chatModeLabel = formatChatMode(modelInfo?.chatMode);
+  const chatModeLabel = formatChatMode(modelInfo?.chatMode, t);
   const modelName = modelInfo?.modelFriendlyName || modelInfo?.modelName || '';
 
   return (
@@ -610,7 +611,7 @@ export function MessageActions({
 
         {/* Copy with popover & copied tooltip */}
         <Tooltip
-          content={copiedTooltipOpen ? copiedMessage : t('chat.copy')}
+          content={copiedTooltipOpen ? t(copiedMessageKey) : t('chat.copy')}
           open={copiedTooltipOpen ? true : undefined}
           side="top"
           align="center"

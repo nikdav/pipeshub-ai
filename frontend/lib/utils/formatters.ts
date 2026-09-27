@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 /**
  * Format file size in bytes to human readable format
  */
@@ -93,18 +95,44 @@ export function formatSnakeCaseTitle(value: string): string {
  * Format chatMode for display label (capitalize first letter).
  * Handles API form `agent:<strategy>` from agent streams.
  */
-export function formatChatMode(chatMode?: string): string {
+export function formatChatMode(chatMode?: string, t?: TFunction): string {
   if (!chatMode) return '';
   if (chatMode.startsWith('agent:')) {
     const strategy = chatMode.slice('agent:'.length);
     // API uses `planExecute` (legacy alias: `verification`); UI label reads as "Plan & Execute"
-    const label =
+    let label =
       strategy === 'planExecute' || strategy === 'verification'
         ? 'Plan & Execute'
         : strategy.length > 0
           ? strategy.charAt(0).toUpperCase() + strategy.slice(1)
           : strategy;
-    return `Agent (${label})`;
+    if (t) {
+      switch (strategy) {
+        case 'planExecute':
+        case 'verification':
+        case 'plan-execute': label = t('chat.agentStrategy.modes.plan-execute.label'); break;
+        case 'auto': label = t('chat.agentStrategy.modes.auto.label'); break;
+        case 'quick': label = t('chat.agentStrategy.modes.quick.label'); break;
+        case 'deep': label = t('chat.agentStrategy.modes.deep.label'); break;
+      }
+    }
+    return `${t ? t('chat.queryModes.agent.label') : 'Agent'} (${label})`;
+  }
+  if (t) {
+    switch (chatMode) {
+      case 'chat':
+      case 'internal_search': return t('chat.queryModes.chat.label');
+      case 'web-search':
+      case 'web_search': return t('chat.queryModes.web-search.label');
+      case 'image': return t('chat.queryModes.image.label');
+      case 'agent': return t('chat.queryModes.agent.label');
+      case 'auto': return t('chat.agentStrategy.modes.auto.label');
+      case 'quick': return t('chat.agentStrategy.modes.quick.label');
+      case 'deep': return t('chat.agentStrategy.modes.deep.label');
+      case 'planExecute':
+      case 'verification':
+      case 'plan-execute': return t('chat.agentStrategy.modes.plan-execute.label');
+    }
   }
   return formatSnakeCaseTitle(chatMode);
 }
