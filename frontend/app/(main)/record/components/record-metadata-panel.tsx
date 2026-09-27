@@ -4,6 +4,7 @@ import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties } fr
 import { Box, Flex, Tabs, Text, Tooltip } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '@/lib/utils/formatters';
+import { getIndexingStatusLabel } from '@/lib/utils/indexing-status-label';
 import { formatFileSize } from '@/app/components/file-preview/utils';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ConnectorIcon, resolveConnectorType } from '@/app/components/ui/ConnectorIcon';
@@ -83,9 +84,9 @@ function permissionLabel(
   }
 }
 
-function formatTimestamp(ts: number | undefined | null): string | undefined {
+function formatTimestamp(ts: number | undefined | null, locale: string): string | undefined {
   if (ts === undefined || ts === null || Number.isNaN(ts)) return undefined;
-  return formatDate(ts);
+  return formatDate(ts, locale);
 }
 
 function readString(obj: Record<string, unknown> | null | undefined, key: string): string | undefined {
@@ -142,7 +143,8 @@ function indexingStatusColors(status: string | undefined): IndexingStatusColors 
 }
 
 function IndexingStatusChip({ status }: { status: string | undefined }) {
-  const label = humanizeIndexingStatus(status);
+  const { t } = useTranslation();
+  const label = getIndexingStatusLabel(status, t) ?? humanizeIndexingStatus(status);
   const { bg, text, border } = indexingStatusColors(status);
   return (
     <Box
@@ -363,14 +365,17 @@ const RECORD_METADATA_TAB_CONTENT_STYLE: CSSProperties = {
 };
 
 export function RecordMetadataPanel({ recordDetails }: RecordMetadataPanelProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
   const { record, knowledgeBase, folder, permissions, metadata } = recordDetails;
 
   const createdDate = formatTimestamp(
     record.sourceCreatedAtTimestamp ?? record.createdAtTimestamp,
+    locale,
   );
   const updatedDate = formatTimestamp(
     record.sourceLastModifiedTimestamp ?? record.updatedAtTimestamp,
+    locale,
   );
 
   const showReasonHint = shouldShowIndexingReasonTooltip(record.indexingStatus, record.reason);
