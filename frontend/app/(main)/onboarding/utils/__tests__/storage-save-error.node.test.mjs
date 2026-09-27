@@ -35,10 +35,16 @@ function extractStorageSaveErrorMessage(data) {
     .join('; ');
 
   if (baseMessage) {
-    return `${baseMessage} (${details})`;
+    return {
+      key: 'onboarding.stepStorage.s3HealthCheckFailedWithBase',
+      values: { message: baseMessage, details },
+    };
   }
 
-  return `S3 health check failed (${details})`;
+  return {
+    key: 'onboarding.stepStorage.s3HealthCheckFailed',
+    values: { details },
+  };
 }
 
 test('extractStorageSaveErrorMessage returns nested error message', () => {
@@ -58,7 +64,10 @@ test('extractStorageSaveErrorMessage appends failed capability details from meta
       ],
     },
   });
-  assert.match(message ?? '', /upload: AccessDenied/);
+  assert.deepEqual(message, {
+    key: 'onboarding.stepStorage.s3HealthCheckFailedWithBase',
+    values: { message: 'S3 health check failed.', details: 'upload: AccessDenied' },
+  });
 });
 
 test('extractStorageSaveErrorMessage returns capability summary when message is missing', () => {
@@ -69,5 +78,8 @@ test('extractStorageSaveErrorMessage returns capability summary when message is 
       ],
     },
   });
-  assert.equal(message, 'S3 health check failed (signedUrlPut: AccessDenied)');
+  assert.deepEqual(message, {
+    key: 'onboarding.stepStorage.s3HealthCheckFailed',
+    values: { details: 'signedUrlPut: AccessDenied' },
+  });
 });

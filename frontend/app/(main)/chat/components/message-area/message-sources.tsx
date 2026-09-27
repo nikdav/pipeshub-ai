@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Flex, Card, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import type { ChatSource } from '../../types';
 
 interface MessageSourcesProps {
@@ -23,12 +24,16 @@ const getSourceIcon = (type: string): string => {
 };
 
 export function MessageSources({ sources }: MessageSourcesProps) {
+  const { t } = useTranslation();
   if (!sources || sources.length === 0) return null;
 
   return (
     <Flex direction="column" gap="2" style={{ marginTop: 'var(--space-3)' }}>
       <Text size="1" weight="medium" style={{ color: 'var(--slate-11)' }}>
-        Sources ({sources.length}):
+        {t('chat.sourcesHeading', {
+          count: sources.length,
+          defaultValue: `Sources (${sources.length})`,
+        })}
       </Text>
       <Flex direction="column" gap="2">
         {sources.map((source) => (
@@ -93,7 +98,7 @@ export function MessageSources({ sources }: MessageSourcesProps) {
                   style={{ textDecoration: 'none', marginTop: 'var(--space-1)' }}
                 >
                   <Text size="1" style={{ color: 'var(--accent-11)' }}>
-                    View source →
+                    {t('chat.recordActions.viewSource', { defaultValue: 'View source' })} →
                   </Text>
                 </a>
               )}

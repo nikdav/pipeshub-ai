@@ -23,7 +23,7 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
   {
     value,
     onChange,
-    label = 'OTP',
+    label,
     placeholder = '******',
     error,
     autoFocus = false,
@@ -54,7 +54,7 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
           lineHeight: '20px',
         }}
       >
-        {label}
+        {label ?? t('auth.common.otpLabel')}
       </Text>
       <TextField.Root
         ref={ref}

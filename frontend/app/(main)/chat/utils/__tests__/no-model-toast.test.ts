@@ -10,6 +10,7 @@ vi.mock('@/lib/store/user-store', () => ({
 }));
 
 const { showNoModelToast } = await import('../no-model-toast');
+const { localizedText } = await import('@/lib/i18n/localized-text');
 
 beforeEach(() => warning.mockReset());
 
@@ -18,15 +19,20 @@ describe('no AI model warning', () => {
     isAdmin = true;
     showNoModelToast();
     const [title, options] = warning.mock.calls[0];
-    expect(title).toBe('No AI model configured');
-    expect(options.action).toEqual({ label: 'Open AI Models', href: '/workspace/ai-models' });
+    expect(title).toEqual(localizedText('chat.noModelConfigured.title'));
+    expect(options.description).toEqual(localizedText('chat.noModelConfigured.adminDescription'));
+    expect(options.action).toEqual({
+      label: 'Open AI Models',
+      labelText: localizedText('chat.noModelConfigured.action'),
+      href: '/workspace/ai-models',
+    });
   });
 
   it.each([false, null])('tells members who can fix it and offers no button (isAdmin=%s)', (value) => {
     isAdmin = value;
     showNoModelToast();
     const [, options] = warning.mock.calls[0];
-    expect(options.description).toMatch(/Ask a workspace admin/);
+    expect(options.description).toEqual(localizedText('chat.noModelConfigured.memberDescription'));
     expect(options.action).toBeUndefined();
   });
 });

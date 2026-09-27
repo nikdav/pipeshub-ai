@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@radix-ui/themes';
 import type { BadgeProps } from '@radix-ui/themes';
 
@@ -36,9 +37,13 @@ export interface StatusBadgeProps {
  * StatusBadge — color-coded status badge for the Users table.
  */
 export function StatusBadge({ status }: StatusBadgeProps) {
+  const { t } = useTranslation();
+  const statusLabel = t(`workspace.users.statuses.${status.toLowerCase()}`, {
+    defaultValue: status,
+  });
   return (
     <Badge variant="soft" color={STATUS_COLOR_MAP[status] ?? 'gray'} size="1">
-      {status}
+      {statusLabel}
     </Badge>
   );
 }

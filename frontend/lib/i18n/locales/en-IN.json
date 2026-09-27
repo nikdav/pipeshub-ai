@@ -13,6 +13,10 @@
       "newPasswordPlaceholder": "Enter your new password",
       "confirmPasswordLabel": "Confirm Password*",
       "confirmPasswordPlaceholder": "Confirm your password"
+    },
+    "success": {
+      "title": "Your password has been changed!",
+      "description": "Your password has been successfully updated. You can now sign in to your Pipeshub workspace with your new password."
     }
   },
   "agents": {
@@ -52,7 +56,14 @@
     "refiningResponse": "Refining response…",
     "errorFallback": "An error occurred. Please try again.",
     "copyCode": "Copy",
-    "copiedCode": "Copied"
+    "copiedCode": "Copied",
+    "status": {
+      "delegatingTo": "Delegating to {{roleName}}...",
+      "toolActivity": "{{label}}...",
+      "starting": "Starting...",
+      "executingTool": "Executing tool..."
+    },
+    "connectedWorking": "Connected - working on your request"
   },
   "uploadProgress": {
     "uploadFailedDefault": "Upload failed",
@@ -108,7 +119,13 @@
       "unsupportedType": "Unsupported file type",
       "duplicateName": "A file with this name already exists",
       "rejected": "File rejected"
-    }
+    },
+    "errors": {
+      "httpFallback": "The upload didn't go through. Please try again, and if it keeps failing, contact your admin.",
+      "stalled": "PipesHub stopped responding before this upload finished. Please upload these files again.",
+      "incomplete": "Upload did not complete"
+    },
+    "fileExceedsSizeLimit": "This file is larger than the {{maxFileSizeMB}} MB limit. Make it smaller or split it, then upload it again."
   },
   "onboarding": {
     "skipEmbeddingDefault": "Skip",
@@ -177,7 +194,9 @@
       "baseUrlLabel": "Base URL (optional)",
       "baseUrlPlaceholder": "eg: http://localhost:3000/files",
       "saveSuccessFallback": "Storage configuration saved.",
-      "saveErrorFallback": "Could not save storage configuration."
+      "saveErrorFallback": "Could not save storage configuration.",
+      "s3HealthCheckFailedWithBase": "{{message}} ({{details}})",
+      "s3HealthCheckFailed": "S3 health check failed ({{details}})"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -214,7 +233,37 @@
     },
     "tour": {
       "dismiss": "Dismiss tour",
-      "completedDescription": "You're all set now. If you want to know more check out <docs>documentation</docs>."
+      "completedDescription": "You're all set now. If you want to know more check out <docs>documentation</docs>.",
+      "stubs": {
+        "almostThereTitle": "You're Almost There!",
+        "almostThereSubtitle": "Finish the following actions to know what Pipeshub can do",
+        "connectFirstApp": "Connect your first app",
+        "createCollection": "Create a collection",
+        "inviteTeamMembers": "Invite Team Members",
+        "keepGoingTitle": "Keep going!",
+        "keepGoingSubtitle": "How about sharing the word with your team members?",
+        "completedTitle": "Let's go!"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "What kind of work do you do?",
+      "subtitle": "This will help us personalise your Pipeshub experience",
+      "roles": {
+        "softwareDeveloper": "Software Developer",
+        "productManager": "Product Manager",
+        "marketer": "Marketer",
+        "designer": "Designer",
+        "projectManager": "Project Manager",
+        "operations": "Operations",
+        "itSupport": "IT Support Specialist",
+        "humanResources": "Human Resources",
+        "financeOfficer": "Finance Officer",
+        "legal": "Legal",
+        "complianceOfficer": "Compliance Officer",
+        "salesRepresentative": "Sales Representative",
+        "dataScientist": "Data Scientist",
+        "customerService": "Customer Service"
+      }
     }
   },
   "nav": {
@@ -253,7 +302,9 @@
     "filterTooltip": "Filter: {{filter}}",
     "loadFailed": "Failed to load notifications",
     "updateFailed": "Could not update notification",
-    "removeFailed": "Could not remove notification"
+    "removeFailed": "Could not remove notification",
+    "hiddenCount_one": "+{{count}} more",
+    "hiddenCount_other": "+{{count}} more"
   },
   "action": {
     "find": "Find",
@@ -350,7 +401,14 @@
     "willBeDeleted": "will be deleted",
     "willBeReindexed": "will be reindexed",
     "reindexConfirm": "Reindex this {{type}}?",
-    "reindexDescription": "This will update the search index for this {{type}} and its contents."
+    "reindexDescription": "This will update the search index for this {{type}} and its contents.",
+    "bulkDeleteQuestion_one": "Delete {{itemCount}} item?",
+    "bulkDeleteQuestion_other": "Delete {{itemCount}} items?",
+    "bulkDeleteAction_one": "Delete {{itemCount}} Item",
+    "bulkDeleteAction_other": "Delete {{itemCount}} Items",
+    "bulkDeleteWarning": "This action cannot be undone. All selected items will be permanently deleted.",
+    "deleteItemDescription": "{{itemType}} will be deleted",
+    "deleteItemFromCollectionDescription": "{{itemType}} will be deleted from the collection"
   },
   "table": {
     "fileName": "File Name",
@@ -364,7 +422,8 @@
     "loading": "Loading data...",
     "selectAll": "Select all",
     "selected": "{{count}} selected",
-    "emptyState": "No items to display"
+    "emptyState": "No items to display",
+    "selectRow": "Select {{item}}"
   },
   "status": {
     "indexed": "Indexed",
@@ -442,7 +501,59 @@
     "openProfile": "Open profile",
     "loading": "Loading...",
     "moreOptions": "More options",
-    "docs": "Docs"
+    "docs": "Docs",
+    "errors": {
+      "api": {
+        "cancelled": "Request was cancelled.",
+        "timeout": "Request timed out. Please try again.",
+        "network": "Network error. Please check your connection.",
+        "sessionExpired": "Session expired. Please sign in again.",
+        "forbidden": "You do not have permission to perform this action.",
+        "notFound": "The requested resource was not found.",
+        "validation": "Invalid request. Please check your input.",
+        "conflict": "A conflict occurred. Please try again.",
+        "busy": "PipesHub is busy right now. Please try again in a few seconds.",
+        "busyRetry_one": "PipesHub is busy right now. Please try again in {{count}} second.",
+        "busyRetry_other": "PipesHub is busy right now. Please try again in {{count}} seconds.",
+        "server": "Server error. Please try again later.",
+        "unknown": "An unexpected error occurred."
+      },
+      "toast": {
+        "authorizationTitle": "Access Denied",
+        "authorizationDescription": "You don't have permission to perform this action.",
+        "validationTitle": "Invalid Request",
+        "validationDescription": "Please check your input and try again.",
+        "notFoundTitle": "Not Found",
+        "notFoundDescription": "The requested resource was not found.",
+        "conflictTitle": "Action Required",
+        "conflictDescription": "A conflict occurred. Please check the details and try again.",
+        "networkTitle": "Connection Error",
+        "networkDescription": "Please check your internet connection and try again.",
+        "serverTitle": "Server Error",
+        "serverDescription": "Something went wrong on our end. Please try again in a moment; if it keeps happening, contact your workspace admin.",
+        "timeoutTitle": "Request Timed Out",
+        "timeoutDescription": "The server took too long to respond. Please try again.",
+        "unknownTitle": "Something Went Wrong",
+        "unknownDescription": "That didn't work. Please try again; if it keeps happening, contact your workspace admin.",
+        "busyTitle": "Please try again shortly",
+        "withReference": "{{message}} Reference: {{requestId}}"
+      },
+      "stream": {
+        "sessionExpired": "Your session has expired. Sign in again to continue.",
+        "forbidden": "You don't have access to this. Ask a workspace admin if you need it.",
+        "offline": "Couldn't reach PipesHub. Check your internet connection, then try again.",
+        "interrupted": "The connection to PipesHub dropped before this finished. Please try again.",
+        "unavailable": "PipesHub is having trouble right now. Please try again in a minute.",
+        "chatInterrupted": "The answer was interrupted before it finished. Click Regenerate or send your message again.",
+        "chatUnavailable": "PipesHub couldn't answer right now. Please try again in a minute.",
+        "busy": "PipesHub is busy right now. Please try again in a few seconds.",
+        "busyRetry_one": "PipesHub is busy right now. Please try again in {{count}} second.",
+        "busyRetry_other": "PipesHub is busy right now. Please try again in {{count}} seconds."
+      }
+    },
+    "unknown": "Unknown",
+    "connectorIconAlt": "{{type}} icon",
+    "submit": "Submit"
   },
   "units": {
     "bytes": "Bytes",
@@ -524,7 +635,11 @@
     "searchEmptyHint": "Couldn't find what you are searching for. Try searching for something else.",
     "adjustFiltersHint": "Select a different source or adjust your filters",
     "addFromCollectionsHint": "You can add your company files or folders from the Collections",
-    "addFilesHint": "Add your files or folders"
+    "addFilesHint": "Add your files or folders",
+    "pagination": {
+      "showing": "Showing {{start}}-{{end}} of {{total}} items",
+      "perPage": "{{limit}} per page"
+    }
   },
   "connectorTypes": {
     "slack": "Slack",
@@ -550,7 +665,8 @@
       "open": "Open {{source}}",
       "openIn": "Open in {{source}}",
       "openInCollections": "Open in Collections",
-      "relevance": "Relevance: {{percent}}%"
+      "relevance": "Relevance: {{percent}}%",
+      "viewSource": "View source"
     },
     "results": "Results",
     "greeting": "What do you want to explore today?",
@@ -593,7 +709,8 @@
       "browseWorkspaceMcp": "Browse MCP servers",
       "browseWorkspaceMcpAria": "Open MCP servers to add or manage connections",
       "noActionMatches": "No actions match your search.",
-      "noMcpMatches": "No MCP servers match your search."
+      "noMcpMatches": "No MCP servers match your search.",
+      "filtersAriaLabel": "Resource filters"
     },
     "projectResources": {
       "noConnectors": "No connectors enabled for this project.",
@@ -997,7 +1114,8 @@
         "suggestPlanWork": "Plan a piece of work",
         "suggestWriteInstructions": "Write the project instructions",
         "suggestSummariseDocumentPrompt": "Summarize the most important document in this project's files.",
-        "suggestPlanWorkPrompt": "Help me plan a piece of work for this project. Break it down into concrete next steps."
+        "suggestPlanWorkPrompt": "Help me plan a piece of work for this project. Break it down into concrete next steps.",
+        "projectActions": "Project actions"
       },
       "moveDialog": {
         "title": "Move to project",
@@ -1044,7 +1162,15 @@
       "closePreview": "Close",
       "loadingPreview": "Loading…",
       "pasteMeta_one": "{{chars}} chars · {{count}} line",
-      "pasteMeta_other": "{{chars}} chars · {{count}} lines"
+      "pasteMeta_other": "{{chars}} chars · {{count}} lines",
+      "failedToAttach": "Couldn't attach {{fileName}}. {{reason}}",
+      "failedToAttachFallback": "Couldn't attach {{fileName}}. Please try again.",
+      "fileActionAria": {
+        "uploading": "Uploading {{name}}",
+        "retry": "Retry uploading {{name}}",
+        "remove": "Remove {{name}}"
+      },
+      "uploadMissingReference": "The upload did not return an attachment reference."
     },
     "voiceSttNotConfigured": "Configure a Speech-to-Text (STT) model in AI Models settings to enable voice input.",
     "voiceSttLoading": "Checking speech capabilities…",
@@ -1085,7 +1211,8 @@
       "loadingMcp": "Loading MCP servers…",
       "noMcpServers": "No authenticated MCP servers found. Connect one in Workspace → MCP Servers.",
       "toolCount_one": "{{count}} tool",
-      "toolCount_other": "{{count}} tools"
+      "toolCount_other": "{{count}} tools",
+      "filtersAriaLabel": "Resource filters"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "Not configured on this agent",
@@ -1093,7 +1220,121 @@
       "webSearch": "Web Search"
     },
     "resizePanels": "Resize chat and preview panels",
-    "mobileProfileComingSoon": "Profile page on mobile is coming soon."
+    "mobileProfileComingSoon": "Profile page on mobile is coming soon.",
+    "noModelConfigured": {
+      "title": "No AI model configured",
+      "memberDescription": "This workspace has no AI model set up yet, so chat can't answer. Ask a workspace admin to add one in Workspace → AI Models.",
+      "adminDescription": "This workspace has no AI model set up yet, so chat can't answer. Add one in AI Models, then send your message again.",
+      "action": "Open AI Models"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "Listing skills",
+          "past": "Listed skills"
+        },
+        "search": {
+          "present": "Searching skills",
+          "past": "Searched skills"
+        },
+        "load": {
+          "present": "Loading skill",
+          "past": "Loaded skill"
+        },
+        "loadResource": {
+          "present": "Loading skill file",
+          "past": "Loaded skill file"
+        },
+        "manage": {
+          "present": "Managing skill",
+          "past": "Managed skill"
+        }
+      },
+      "usedTool": "Used a tool",
+      "usingTool": "Using {{toolName}}"
+    },
+    "unnamedArtifact": "artifact",
+    "searchFailed": "Search failed",
+    "collectionRow": {
+      "folders_one": "{{count}} folder",
+      "folders_other": "{{count}} folders",
+      "files_one": "{{count}} file",
+      "files_other": "{{count}} files"
+    },
+    "modelSelector": {
+      "providerByline": "by {{provider}}",
+      "multimodalBadge": "Multimodal"
+    },
+    "agentActivity": {
+      "thinking": "Thinking",
+      "arguments": "Arguments",
+      "resultError": "Error",
+      "resultBlocked": "Blocked",
+      "result": "Result",
+      "subAgent": "Sub-agent",
+      "groupSkills_one": "Used {{count}} skills",
+      "groupSkills_other": "Used {{count}} skills",
+      "groupSearches_one": "Explored {{count}} searches",
+      "groupSearches_other": "Explored {{count}} searches",
+      "groupTools_one": "Ran {{count}} tools",
+      "groupTools_other": "Ran {{count}} tools",
+      "summaryThought_one": "Thought about this",
+      "summaryThought_other": "Thought {{count}} times",
+      "summaryTools_one": "Used {{count}} tool",
+      "summaryTools_other": "Used {{count}} tools",
+      "summaryDelegatedAgents_one": "Delegated to {{count}} sub-agent",
+      "summaryDelegatedAgents_other": "Delegated to {{count}} sub-agents",
+      "summaryWorked": "Worked on this"
+    },
+    "callouts": {
+      "note": "Note",
+      "tip": "Tip",
+      "important": "Important",
+      "warning": "Warning",
+      "caution": "Caution",
+      "info": "Info",
+      "success": "Success",
+      "danger": "Danger",
+      "error": "Error",
+      "question": "Question",
+      "bug": "Bug",
+      "example": "Example",
+      "abstract": "Abstract",
+      "summary": "Summary",
+      "quote": "Quote"
+    },
+    "linkToSection": "Link to section",
+    "artifacts": {
+      "generated_one": "{{count}} artifact generated",
+      "generated_other": "{{count}} artifacts generated",
+      "newerVersionAvailable": "Newer version available (v{{version}})",
+      "viewSource": "View source code",
+      "viewSourceTitle": "View the code that generated this artifact",
+      "loadingSource": "Loading source code…"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "Question {{number}}: {{question}}",
+      "readAloudOption": "Option: {{option}}"
+    },
+    "confidenceTooltip": "Confidence level of assistant's response",
+    "downloadTasks": {
+      "completeResults": "You can download the complete query results:"
+    },
+    "sourcesHeading_one": "Source ({{count}}):",
+    "sourcesHeading_other": "Sources ({{count}}):",
+    "citationCount_one": "{{count}} Citation",
+    "citationCount_other": "{{count}} Citations",
+    "noCitationsAvailable": "No citations available.",
+    "noSourcesAvailable": "No sources available.",
+    "recordDetailsUnavailable": "Record details unavailable",
+    "syncedJustNow": "Synced just now",
+    "syncedRelativeTime": "Synced {{relativeTime}}",
+    "processingStatus": "Processing...",
+    "noResultsForQuery": "No results found for {{query}}",
+    "couldNotLoadConversations": "Could not load conversations",
+    "archiveConfirmation": "Archive Confirmation",
+    "questionFallback": "Question",
+    "unnamedDownload": "Download"
   },
   "workspaceMenu": {
     "appearance": "Appearance",
@@ -1193,7 +1434,8 @@
         "pending": "Pending",
         "expired": "Expired",
         "deactivated": "Deactivated",
-        "blocked": "Blocked"
+        "blocked": "Blocked",
+        "inactive": "Inactive"
       },
       "invite": {
         "title": "Invite Users",
@@ -1416,6 +1658,20 @@
         "saveSuccess": "Team updated!",
         "saveSuccessDescription": "Changes to '{{name}}' saved successfully",
         "undo": "Undo"
+      },
+      "roles": {
+        "owner": {
+          "label": "Owner",
+          "description": "Full control over the team and its resources"
+        },
+        "writer": {
+          "label": "Writer",
+          "description": "Can view and edit team resources"
+        },
+        "reader": {
+          "label": "Reader",
+          "description": "Can view team resources"
+        }
       }
     },
     "oauth2": {
@@ -1688,7 +1944,9 @@
           "label": "Video",
           "badge": "Multimodal"
         }
-      }
+      },
+      "requiredFileUploadError": "Required file upload missing: {{fieldNames}}. Please upload the file and try again.",
+      "defaultModelName": "Model"
     },
     "filters": {
       "role": "Role",
@@ -1702,7 +1960,8 @@
     "pagination": {
       "showing": "Showing {{from}}-{{to}} of {{total}} Item",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "perPage": "{{value}} per page"
     },
     "sidebar": {
       "backToApp": "Back to app",
@@ -1754,7 +2013,9 @@
         "configured": "Configured",
         "notConfigured": "Not configured",
         "authenticated": "Authenticated",
-        "notAuthenticated": "Not authenticated"
+        "notAuthenticated": "Not authenticated",
+        "labelWithCount_one": "{{label}} ({{formattedCount}})",
+        "labelWithCount_other": "{{label}} ({{formattedCount}})"
       },
       "personalSegment": {
         "my": "My actions",
@@ -1816,7 +2077,12 @@
         "authenticatedOne": "1 authenticated",
         "authenticatedMany": "{{count}} authenticated",
         "needsAuthOne": "1 needs sign-in",
-        "needsAuthMany": "{{count}} need sign-in"
+        "needsAuthMany": "{{count}} need sign-in",
+        "active_one": "{{count}} active instance",
+        "active_other": "{{count}} active instances",
+        "inactive_one": "{{count}} inactive instance",
+        "inactive_other": "{{count}} inactive instances",
+        "addInstance": "Add instance"
       },
       "typeDetail": {
         "scopeTeam": "Actions",
@@ -1890,7 +2156,8 @@
         "urlProtocol": "{{field}} must use http or https"
       },
       "adminRequiredToast": "Only admins can add new actions. Ask your admin to configure this action first.",
-      "personalNonAdminHint": "Actions marked \"Not configured\" need to be set up by an admin before you can use them."
+      "personalNonAdminHint": "Actions marked \"Not configured\" need to be set up by an admin before you can use them.",
+      "searchPlaceholder": "Search..."
     },
     "archivedChats": {
       "title": "Archived Chats",
@@ -1907,7 +2174,9 @@
       "assistantChat": "Assistant Chat",
       "agents": "Agents",
       "showMore": "Show More",
-      "moreAgents": "More Agents"
+      "moreAgents": "More Agents",
+      "searchError": "Could not search archived chats. Please try again.",
+      "conversationLoadError": "Could not load this conversation. Please try again."
     },
     "general": {
       "subtitle": "Your company general information",
@@ -2053,7 +2322,8 @@
       },
       "xmlUpload": {
         "parseError": "Could not parse SAML metadata from this file. Check that it is a valid IdP metadata XML.",
-        "readError": "Failed to read the file."
+        "readError": "Failed to read the file.",
+        "chooseFile": "Choose XML File"
       },
       "riskDialog": {
         "title": "Confirm authentication changes",
@@ -2066,6 +2336,129 @@
       "userMethods": {
         "heading": "User Sign-In Methods",
         "subtitle": "Controls which sign-in methods are available to every user, across every organisation."
+      },
+      "methods": {
+        "password": {
+          "label": "Password",
+          "description": "Traditional email and password authentication"
+        },
+        "otp": {
+          "label": "One-Time Password",
+          "description": "Send a verification code via email"
+        },
+        "google": {
+          "description": "Allow users to sign in with Google accounts"
+        },
+        "microsoft": {
+          "description": "Allow users to sign in with Microsoft accounts"
+        },
+        "samlSso": {
+          "description": "Single Sign-On with SAML protocol"
+        },
+        "oauth": {
+          "description": "Generic OAuth 2.0 provider authentication"
+        }
+      },
+      "password": {
+        "show": "Show password",
+        "hide": "Hide password"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "Redirect URI",
+            "labelSuffix": "(add to your Google OAuth settings)"
+          },
+          "authorizedOrigin": {
+            "label": "Authorized Origin",
+            "labelSuffix": "(add to your Google OAuth settings)",
+            "warning": "The current origin differs from the configured frontend URL. Use the value above in Google OAuth settings."
+          },
+          "clientId": {
+            "label": "Client ID",
+            "placeholder": "Enter your Google OAuth Client ID",
+            "hint": "The client ID from your Google OAuth credentials"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "Redirect URI",
+            "labelSuffix": "(add to your Microsoft OAuth settings)"
+          },
+          "clientId": {
+            "label": "Client ID",
+            "placeholder": "Enter your Microsoft Application (client) ID",
+            "hint": "The Application (client) ID from your Azure portal app registration"
+          },
+          "tenantId": {
+            "label": "Tenant ID",
+            "placeholder": "Enter your Microsoft Directory (tenant) ID",
+            "hint": "The Directory (tenant) ID from your Azure portal app registration"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS (Assertion Consumer Service) URL",
+            "labelSuffix": "(add this to your Identity Provider)",
+            "warning": "The current origin differs from the configured frontend URL. Add the value above to your Identity Provider."
+          },
+          "spEntityId": {
+            "label": "SP Entity ID (Issuer)",
+            "labelSuffix": "(add this to your Identity Provider)",
+            "hint": "The Service Provider entity ID sent in SAML requests. Override with the SAML_SP_ENTITY_ID environment variable."
+          },
+          "_xmlFile": {
+            "label": "IdP Metadata XML",
+            "hint": "Upload your Identity Provider's metadata XML"
+          },
+          "entryPoint": {
+            "label": "SSO Entry Point (IdP URL)",
+            "hint": "The Single Sign-On URL provided by your Identity Provider"
+          },
+          "certificate": {
+            "label": "X.509 Certificate",
+            "hint": "The public certificate from your Identity Provider (PEM format)"
+          },
+          "emailKey": {
+            "label": "Email Attribute Key",
+            "hint": "The SAML attribute name that contains the user's email address"
+          },
+          "samlPlatform": {
+            "label": "Provider Name",
+            "labelSuffix": "(optional)"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "Provider Name"
+          },
+          "redirectUri": {
+            "label": "Redirect URI",
+            "labelSuffix": "(register in your OAuth provider)"
+          },
+          "clientId": {
+            "label": "Client ID",
+            "placeholder": "Enter your OAuth Client ID"
+          },
+          "clientSecret": {
+            "label": "Client Secret",
+            "placeholder": "Enter your OAuth Client Secret"
+          },
+          "authorizationUrl": {
+            "label": "Authorization URL"
+          },
+          "tokenEndpoint": {
+            "label": "Token Endpoint"
+          },
+          "userInfoEndpoint": {
+            "label": "UserInfo Endpoint"
+          },
+          "scope": {
+            "label": "Scope",
+            "labelSuffix": "(optional)",
+            "hint": "Space-separated OAuth scopes. Defaults to openid email profile"
+          }
+        }
       }
     },
     "connectors": {
@@ -2102,7 +2495,10 @@
         "configSaveError": "Failed to save configuration",
         "oauthAppUnavailableTitle": "No OAuth apps are available for this connector",
         "oauthAppUnavailableDescription": "Ask your workspace administrator to create an OAuth app for {{name}} first, then try again.",
-        "thisConnectorFallback": "this connector"
+        "thisConnectorFallback": "this connector",
+        "syncToggleDisabled": "Connector sync disabled",
+        "syncToggleEnabled": "Connector sync enabled",
+        "syncToggleError": "Could not update connector"
       },
       "tabs": {
         "authenticate": "Authenticate Instance",
@@ -2203,7 +2599,36 @@
         "oauthAppNamePlaceholder": "e.g., {{name}} OAuth",
         "oauthAppNameHelper": "This name is stored with the OAuth registration and appears when users pick a saved app for other instances.",
         "oauthAppNameRequired": "Enter a name for the new OAuth app.",
-        "oauthAppChangeReauthWarning": "Changing the OAuth app or its credentials will require you to authenticate your connector again."
+        "oauthAppChangeReauthWarning": "Changing the OAuth app or its credentials will require you to authenticate your connector again.",
+        "authTypes": {
+          "oauth": "OAuth 2.0",
+          "oauthAdminConsent": "OAuth (Admin Consent)",
+          "oauthCertificate": "OAuth (Certificate)",
+          "apiToken": "API Token",
+          "usernamePassword": "Username & Password",
+          "basicAuth": "Basic authentication",
+          "bearerToken": "Bearer Token",
+          "custom": "Custom",
+          "none": "None"
+        },
+        "redirectCallbackUrlCopyErrorTitle": "Could not copy",
+        "redirectCallbackUrlCopyErrorDescription": "Copy the URL manually or allow clipboard access for this site.",
+        "methodDescription": "Choose how this connector instance will authenticate to {{name}}.",
+        "oauthAppUnnamed": "Unnamed OAuth app",
+        "oauthAppsLoadFailed": "Could not load OAuth apps for this connector.",
+        "oauthAppLinkedNamed": "{{name}} (linked)",
+        "oauthAppLinkedRegistration": "Linked OAuth registration",
+        "oauthAppsEmptyLinkedAdminExisting": "This instance is linked to an OAuth registration that does not appear in the list. Choose another saved app below or keep the current link.",
+        "oauthAppsEmptyLinkedAdminNew": "This instance is linked to an OAuth registration that does not appear in the list. Choose another app below, use Create new, or keep the current link.",
+        "oauthAppsEmptyLinkedUser": "This instance is linked to an OAuth registration that does not appear in the list. You can switch once your administrator adds more saved apps.",
+        "oauthAppsEmptyRegisteredNone": "No OAuth apps are registered yet. Ask an administrator to add one in workspace connector settings.",
+        "oauthAppsEmptyCredentials": "Enter OAuth client credentials below, or pick a saved app once one is available.",
+        "oauthAppLabel": "OAuth app",
+        "oauthAppsLoading": "Loading OAuth configurations…",
+        "oauthAppPlaceholderAdmin": "Select OAuth app or create new…",
+        "oauthAppPlaceholder": "Select an OAuth app (required)…",
+        "oauthAppNew": "Create new OAuth app",
+        "oauthAppSelectionRequired": "Please select an OAuth app."
       },
       "docSection": {
         "title": "Setup Documentation",
@@ -2234,7 +2659,8 @@
       "instancePanel": {
         "overview": "Overview",
         "settings": "Settings",
-        "manageConfig": "Manage Configuration"
+        "manageConfig": "Manage Configuration",
+        "syncedAt": "Synced {{lastSynced}}"
       },
       "overview": {
         "progressPercent": "{{n}}% Complete",
@@ -2262,7 +2688,16 @@
         "recordsByType": "Records by Type",
         "noRecordTypes": "No record types available",
         "localWatcherLabel": "LOCAL WATCHER",
-        "localWatcherStatus": "{{state}} · {{pending}} pending · {{failed}} failed"
+        "localWatcherStatus": "{{state}} · {{pending}} pending · {{failed}} failed",
+        "actions": {
+          "syncStarted": "Sync started",
+          "syncStartFailed": "Failed to start sync",
+          "unexpectedError": "An unexpected error occurred.",
+          "reindexFailedStarted": "Reindexing failed records…",
+          "reindexFailedError": "Failed to reindex failed records",
+          "manualIndexStarted": "Indexing manual-indexing records…",
+          "manualIndexError": "Failed to start manual indexing"
+        }
       },
       "settingsTab": {
         "instanceName": "Instance Name",
@@ -2294,7 +2729,23 @@
         "removing": "This connector is being removed.",
         "configureFirst": "Finish configuration before you can enable sync.",
         "authenticateFirst": "Authenticate this connector before you can enable sync.",
-        "selected": "{{field}} selected"
+        "selected": "{{field}} selected",
+        "syncAction": {
+          "label": "Sync",
+          "syncing": "Syncing...",
+          "retry": "Sync Failed, Try Again",
+          "started": "Sync started",
+          "failed": "Sync failed",
+          "unexpectedError": "An unexpected error occurred."
+        },
+        "fullSyncAction": {
+          "label": "Full sync",
+          "syncing": "Full syncing…",
+          "retry": "Full sync failed, retry",
+          "started": "Full sync started",
+          "failed": "Full sync failed"
+        },
+        "connect": "Connect"
       },
       "instanceStatus": {
         "setup": {
@@ -2325,14 +2776,40 @@
         "unclaimedToast": "This connector has not been set up on a desktop yet. Open the PipesHub desktop app on the machine that owns this folder and enable sync there once.",
         "ownedByOtherDeviceToast": "This connector belongs to {{deviceName}}. Enable sync from the PipesHub desktop app on that device.",
         "ownedByOtherDeviceUnknownToast": "This connector belongs to another device. Enable sync from the PipesHub desktop app on that device.",
-        "deviceIdentityError": "Could not identify this device: {{error}}"
+        "deviceIdentityError": "Could not identify this device: {{error}}",
+        "anotherConnector": "another connector",
+        "rootPathConflict": "Local sync root is already synced by connector \"{{owner}}\": {{rootPath}}"
       },
       "schemaForm": {
         "tagsPlaceholder": "Type and press Enter to add tags",
         "removeTagAriaLabel": "Remove {{tag}}",
         "chooseFolder": "Choose folder",
         "folderPickerUnavailableTitle": "Folder picker unavailable",
-        "folderPickerUnavailableDescription": "Restart the desktop app or update to the latest build."
+        "folderPickerUnavailableDescription": "Restart the desktop app or update to the latest build.",
+        "examples": {
+          "copyFailed": "Failed to copy",
+          "heading": "Example",
+          "headingPlural": "Examples",
+          "copied": "Copied",
+          "copyToClipboard": "Copy to clipboard",
+          "copyExample": "Copy example {{label}}"
+        },
+        "selectPlaceholder": "Select...",
+        "fileUpload": {
+          "invalidJson": "File must be valid JSON.",
+          "missingRequiredFields": "Missing required fields: {{missing}}",
+          "fieldMustEqual": "Field \"{{field}}\" must equal \"{{value}}\".",
+          "contentMustContain": "Content must contain: {{pattern}}",
+          "contentMustNotContain": "Content must not contain: {{pattern}}",
+          "tooLarge": "File is too large ({{size}} KB). Maximum size is {{max}} KB for key, certificate, or JSON uploads.",
+          "invalidFile": "Invalid file.",
+          "readFailed": "Failed to read file.",
+          "optional": "(optional)",
+          "alreadyConfigured": "Already configured",
+          "replace": "Replace",
+          "clickToUpload": "Click to upload file",
+          "maxSize": "Max {{max}} KB"
+        }
       },
       "personal": {
         "desktopRequiredTitle": "Desktop app required",
@@ -2348,7 +2825,10 @@
       "errors": {
         "missingCreatedId": "Create succeeded but no connector id was returned",
         "createdConfigUnavailable": "Connector was created but configuration could not be loaded. Try reopening the panel.",
-        "authenticateFirst": "No connector ID found. Please complete authentication first."
+        "authenticateFirst": "No connector ID found. Please complete authentication first.",
+        "connectorInstanceUnavailable": "This connector instance is unavailable. Refresh the page and try again.",
+        "connectorTypeRequired": "Could not start sync because the connector type is missing.",
+        "settingsLoadFallback": "We couldn't load this connector's settings. Please try again in a moment."
       },
       "syncIntervals": {
         "5": "Every 5 Minutes",
@@ -2435,7 +2915,9 @@
           "title": "Delete all embeddings?",
           "body": "This drops the shared vector collection and recreates it empty.",
           "warning": "Search will stop returning results for everyone and stays broken until a reindex has finished. Reindexing large deployments can take hours. Your records are not deleted — only their embeddings.",
-          "confirm": "Delete embeddings"
+          "confirm": "Delete embeddings",
+          "started": "Cleanup started",
+          "startedDetail": "The collection is being recreated. Search stays empty until a reindex completes."
         },
         "reindex": {
           "label": "Reindex embeddings",
@@ -2444,9 +2926,28 @@
           "title": "Reindex all records?",
           "body": "This re-embeds every record from its stored content. Sources are not downloaded or parsed again.",
           "warning": "This can take a long time on large deployments and runs in the background.",
-          "confirm": "Start reindex"
+          "confirm": "Start reindex",
+          "started": "Reindex started",
+          "startedDetail": "Records are being re-embedded in the background. This can take a while."
         },
         "typePrompt": "Type {{token}} to confirm."
+      },
+      "authorizeTab": {
+        "signInHeading": "Sign in with your provider",
+        "signInDescription": "Open your identity provider's sign-in window and approve access. When sign-in succeeds, choose Continue to configuration in the footer to set up sync, filters, and records.",
+        "authorizationStatus": "Authorization status",
+        "authorizationStatusDescription": "This instance can access your data at the provider. Continue to configure sync and indexing, or sign in again if you revoked access or rotated credentials.",
+        "connected": "Connected — you can continue to Configure records",
+        "signInFailed": "Sign-in did not complete. Try again, or check your identity provider settings.",
+        "refreshAccess": "Refresh access",
+        "refreshAccessDescription": "Same as the legacy Reauthenticate action when tokens need to be renewed.",
+        "authenticating": "Authenticating…",
+        "reauthenticate": "Re-authenticate with provider"
+      },
+      "validation": {
+        "syncFilterRequired": "Select a {{field, lowercase}} before saving. Each connector instance syncs exactly one {{field, lowercase}}.",
+        "syncFilterSingleSelection": "{{field}} has {{count}} selections. Narrow it down to one to continue, as each connector instance syncs exactly one {{field, lowercase}}.",
+        "syncFilterUnsupportedOperator": "Re-select the {{field, lowercase}} to continue. The saved configuration uses an unsupported '{{operator}}' rule."
       }
     },
     "mcpServers": {
@@ -2594,7 +3095,13 @@
         "noState": "No state parameter was returned.",
         "backendRejected": "The server rejected the authorization request."
       },
-      "deleteDisabledTooltip": "This server cannot be deleted"
+      "deleteDisabledTooltip": "This server cannot be deleted",
+      "authModes": {
+        "none": "No authentication",
+        "apiToken": "API token",
+        "oauth": "OAuth 2.0",
+        "headers": "Custom header"
+      }
     },
     "bots": {
       "subtitle": "Configure bot credentials and optionally map each bot to an agent",
@@ -2680,7 +3187,11 @@
         "loadConfigs": "Failed to load bot configurations",
         "loadData": "Failed to load data"
       },
-      "refreshed": "Refreshed"
+      "refreshed": "Refreshed",
+      "secretVisibility": {
+        "show": "Show {{secret}}",
+        "hide": "Hide {{secret}}"
+      }
     },
     "mail": {
       "subtitle": "Email server configuration for OTP and notifications",
@@ -2740,6 +3251,11 @@
         "usernamePlaceholder": "Enter SMTP username",
         "password": "Password (Optional)",
         "passwordHint": "Password for SMTP authentication (if required)"
+      },
+      "configure": "Configure SMTP",
+      "password": {
+        "show": "Show password",
+        "hide": "Hide password"
       }
     },
     "prompts": {
@@ -2813,7 +3329,8 @@
         "default": "Default",
         "configured": "Configured",
         "notConfigured": "Not Configured",
-        "active": "Configured"
+        "active": "Configured",
+        "builtIn": "Built-in"
       },
       "heading": "Web Search Configuration",
       "methodsSection": "Different Web Search Methods",
@@ -2822,7 +3339,102 @@
       "verifying": "Verifying connection...",
       "disabledReasonConfigure": "Configure this provider first before enabling it.",
       "disabledReasonActive": "Disable the currently active provider before enabling this one.",
-      "configureTip": "Configure"
+      "configureTip": "Configure",
+      "errors": {
+        "updateSettings": "Failed to update web search settings",
+        "addProvider": "Failed to add provider",
+        "updateProvider": "Failed to update provider",
+        "deleteProvider": "Failed to delete provider",
+        "setDefaultProvider": "Failed to set default provider"
+      },
+      "actions": {
+        "configureBeforeDefault": "Configure this provider first before setting it as default.",
+        "setAsDefault": "Set as default",
+        "setting": "Setting...",
+        "editConfiguration": "Edit configuration",
+        "deleteConfiguration": "Delete configuration"
+      },
+      "providers": {
+        "builtInDescription": "Built-in, no configuration required"
+      },
+      "configure": {
+        "update": "Update",
+        "defaultKeyNotice": "This provider is currently set as default. Updating the API key will keep it as default.",
+        "editNotice": "Editing an existing configuration. Changes take effect immediately after saving.",
+        "apiKeyLabel": "API Key",
+        "apiKeyPlaceholder": "Enter your {{provider}} API key",
+        "apiKeyHelp": "Get your API key from {{url}}",
+        "secret": {
+          "show": "Show API key",
+          "hide": "Hide API key"
+        },
+        "errors": {
+          "save": "Failed to save provider",
+          "delete": "Failed to delete provider"
+        },
+        "dangerZone": "Danger zone",
+        "removeDescription": "Remove this provider's configuration. If it is the default, DuckDuckGo will be used instead.",
+        "deleteProvider": "Delete provider",
+        "delete": {
+          "cannotDelete": "Cannot delete {{provider}}",
+          "title": "Delete {{provider}} configuration?",
+          "checkingUsage": "Checking agent usage…",
+          "usage_one": "This provider is currently used by {{count}} agent:",
+          "usage_other": "This provider is currently used by {{count}} agents:",
+          "createdBy": "(created by {{creator}})",
+          "removeFromAgents": "Please remove the web search configuration from these agents before deleting this provider.",
+          "defaultDescription": "This will permanently remove your {{provider}} API key. DuckDuckGo will become the default web search provider.",
+          "description": "This will permanently remove your {{provider}} API key. You can reconfigure it later."
+        }
+      },
+      "images": {
+        "maxImages": "Maximum input images per LLM call",
+        "invalidMaxImages": "Enter a whole number between 1 and 500",
+        "maxImagesHelp": "Enter a whole number between 1 and 500",
+        "costWarning": "Including images may increase cost and add latency to web search queries."
+      },
+      "page": {
+        "toasts": {
+          "loadFailed": "Failed to load web search settings",
+          "providerUpdated": "{{provider}} updated",
+          "providerAdded": "{{provider}} added",
+          "configurationSaved": "Configuration saved successfully.",
+          "providerConfigured": "{{provider}} is now configured. Click \"Set as default\" to start using it.",
+          "providerRemoved": "{{provider}} removed",
+          "duckDuckGoDefault": "DuckDuckGo is now the default web search provider.",
+          "configurationDeleted": "Configuration deleted successfully.",
+          "resetDefaultFailed": "Failed to reset default provider",
+          "configureProviderFirst": "Configure {{provider}} first",
+          "providerDefault": "{{provider}} is now the default",
+          "setDefaultFailed": "Failed to set default provider",
+          "deleteFailed": "Failed to delete provider",
+          "imageSettingsFailed": "Failed to update image settings",
+          "imagesEnabled": "Images will be sent to LLM",
+          "imagesDisabled": "Images will not be sent to LLM",
+          "maxImagesUpdated_one": "Maximum image count set to {{count}}.",
+          "maxImagesUpdated_other": "Maximum image count set to {{count}}."
+        },
+        "providers": {
+          "heading": "Web Search Providers",
+          "description": "Configure any providers you want, then pick one as the default"
+        },
+        "images": {
+          "heading": "Image Settings",
+          "description": "Control whether images are sent to the LLM during web search"
+        },
+        "delete": {
+          "cannotDelete": "Cannot delete {{provider}}",
+          "title": "Delete {{provider}} configuration?",
+          "providerTitle": "Delete provider?",
+          "checkingUsage": "Checking agent usage…",
+          "usage_one": "This provider is currently used by {{count}} agent:",
+          "usage_other": "This provider is currently used by {{count}} agents:",
+          "createdBy": "(created by {{creator}})",
+          "removeFromAgents": "Please remove the web search configuration from these agents before deleting this provider.",
+          "defaultDescription": "This provider is currently the default. Deleting it will reset the default to DuckDuckGo.",
+          "description": "This will permanently remove the provider configuration. You can reconfigure it later."
+        }
+      }
     },
     "profile": {
       "subtitle": "Manage all your personal profile details here",
@@ -3017,7 +3629,8 @@
           "label": "Extraction Service",
           "description": "LLM-based document classification and metadata extraction"
         }
-      }
+      },
+      "logoAlt": "{{service}} logo"
     },
     "tenants": {
       "title": "Tenants",
@@ -3262,7 +3875,8 @@
     "common": {
       "loadingUsers": "Loading users...",
       "noUsersAvailable": "No users available",
-      "selected": "{{count}} Selected"
+      "selected": "{{count}} Selected",
+      "unknownUser": "Unknown user"
     },
     "rightPanel": {
       "primaryDisabledHint": "Scroll up and complete the required fields (marked with *) to continue.",
@@ -3375,7 +3989,8 @@
         "empty": "No bundled resources yet.",
         "addNew": "Add resource",
         "path": "Path",
-        "content": "Content"
+        "content": "Content",
+        "remove": "Remove {{path}}"
       },
       "versions": {
         "empty": "No version history yet.",
@@ -3416,7 +4031,21 @@
         "reject": "Reject",
         "view": "View",
         "hide": "Hide",
-        "editAndApprove": "Edit & Approve"
+        "editAndApprove": "Edit & Approve",
+        "sourceSummaryHeading": "How it was learned:"
+      },
+      "editorToolbar": {
+        "bold": "Bold ({{modifier}}+B)",
+        "italic": "Italic ({{modifier}}+I)",
+        "inlineCode": "Inline code",
+        "heading2": "Heading 2",
+        "bulletList": "Bullet list",
+        "numberedList": "Numbered list",
+        "codeBlock": "Code block",
+        "blockquote": "Blockquote",
+        "horizontalRule": "Horizontal rule",
+        "undo": "Undo",
+        "redo": "Redo"
       }
     },
     "serviceAccounts": {
@@ -3495,6 +4124,32 @@
       "disableTitle": "Disable this service account?",
       "disableDescription": "{{name}} stops working immediately — including every token it already holds, not just at the next sign-in. Anything using one of those tokens will start failing until you enable it again.",
       "disableConfirm": "Disable"
+    },
+    "avatar": {
+      "upload": "Upload",
+      "remove": "Remove"
+    },
+    "entities": {
+      "selectedSummary_one": "Selected {{count}} {{itemLabel}}",
+      "selectedSummary_other": "Selected {{count}} {{itemLabel}}"
+    },
+    "form": {
+      "optional": "optional"
+    },
+    "members": {
+      "noItemsFound": "No items found"
+    },
+    "selector": {
+      "searchOrSelect": "Search or select",
+      "noOptionsAvailable": "No options available",
+      "selectOption": "Select an option",
+      "removeOption": "Remove {{option}}"
+    },
+    "settings": {
+      "discardChanges": "Discard changes"
+    },
+    "tagInput": {
+      "placeholder": "Enter a value"
     }
   },
   "filePreview": {
@@ -3516,7 +4171,83 @@
     "resizeCitations": "Resize citations panel",
     "resizePreview": "Resize file preview panel",
     "viewCitations": "View Citations",
-    "openNamedInSource": "Open {{name}} in source"
+    "openNamedInSource": "Open {{name}} in source",
+    "openFailedFallback": "We couldn't open a preview of this file. Try downloading it instead, or try again in a moment.",
+    "dialogDescription": "Preview pane for {{name}}. Document content, file details and related citations are shown here.",
+    "documentLoadFailed": {
+      "loading": "Loading document...",
+      "fileUnavailable": "File data not available",
+      "fetchFailed": "Failed to fetch document",
+      "emptyServerFile": "Received an empty file from the server.",
+      "emptyDocument": "Document is empty.",
+      "renderFailed": "Unable to render this document.",
+      "loadFailed": "Failed to load document"
+    },
+    "htmlLoadFailed": {
+      "loading": "Loading HTML...",
+      "noUrl": "File URL not available",
+      "fetchFailed": "Failed to fetch file content",
+      "loadFailed": "Failed to load file"
+    },
+    "imageLoadFailed": {
+      "noUrl": "Image file URL not available",
+      "failed": "Failed to load image",
+      "couldNotDisplay": "The image file could not be displayed",
+      "loading": "Loading image...",
+      "goToCitation": "Go to citation {{id}}"
+    },
+    "mediaUnavailable": {
+      "videoSourceUnavailable": "Video file URL not available",
+      "audioSourceUnavailable": "Audio file URL not available",
+      "videoUnsupported": "Your browser does not support video playback.",
+      "audioUnsupported": "Your browser does not support audio playback."
+    },
+    "pdfLoadFailed": {
+      "noUrl": "PDF file URL not available",
+      "unableToLoadPreview": "Unable to load preview for {{fileName}}",
+      "loading": "Loading PDF...",
+      "loadFailed": "Failed to load PDF file"
+    },
+    "unsupportedDocument": {
+      "legacyDoc": "This file is in legacy Word (.doc) format. In-browser preview is not supported here; download it to open in Word, or save a copy as .docx to preview in Pipeshub.",
+      "documentType": "Preview not available for this document type. Please download to view.",
+      "fileType": "Preview not available for this file type",
+      "openInBrowser": "Open in Browser"
+    },
+    "markdownLoadFailed": {
+      "loading": "Loading markdown...",
+      "noUrl": "File URL not available",
+      "fetchFailed": "Failed to fetch markdown content",
+      "loadFailed": "Failed to load file"
+    },
+    "spreadsheet": {
+      "column": "Column {{number}}",
+      "emptyCell": "(Empty)",
+      "loading": "Loading spreadsheet...",
+      "noUrl": "File URL not available",
+      "fetchFailed": "Failed to fetch spreadsheet",
+      "loadFailed": "Failed to load spreadsheet",
+      "emptySheet": "This sheet is empty",
+      "showingRows_one": "Showing first {{shown}} of {{total}} row. Download to view all data.",
+      "showingRows_other": "Showing first {{shown}} of {{total}} rows. Download to view all data."
+    },
+    "switchVersion": {
+      "switchLabel": "Version {{version}}, switch version",
+      "versionLabel": "Version {{version}}",
+      "switchTitle": "Switch version",
+      "optionLabel": "Version {{version}}",
+      "latest": "latest"
+    },
+    "tabs": {
+      "preview": "Preview",
+      "fileDetails": "File Details"
+    },
+    "textLoadFailed": {
+      "loading": "Loading file...",
+      "noUrl": "File URL not available",
+      "fetchFailed": "Failed to fetch file content",
+      "loadFailed": "Failed to load file"
+    }
   },
   "agentBuilder": {
     "goBack": "Go back",
@@ -3837,7 +4568,8 @@
     "mcpServerWithToolCount_one": "MCP server with {{count}} tool",
     "mcpServerWithToolCount_other": "MCP server with {{count}} tools",
     "deprecatedToolsBanner_one": "{{count}} tool on this agent is deprecated. Remove it: {{tools}}",
-    "deprecatedToolsBanner_other": "{{count}} tools on this agent are deprecated. Remove them: {{tools}}"
+    "deprecatedToolsBanner_other": "{{count}} tools on this agent are deprecated. Remove them: {{tools}}",
+    "loadResourcesFailed": "Failed to load builder resources"
   },
   "recordView": {
     "sections": {
@@ -3949,7 +4681,8 @@
       }
     },
     "previewConversionFailed": "Preview conversion failed. You can still download the file.",
-    "missingRecordId": "Missing record id"
+    "missingRecordId": "Missing record id",
+    "chatAttachment": "Chat Attachment"
   },
   "oauthConsent": {
     "loading": "Loading authorization request…",
@@ -4063,7 +4796,13 @@
       "orgEmailVerifiedTitle": "Organisation verified",
       "orgEmailVerifiedDescription": "Your organisation is now active. Sign in to continue.",
       "orgEmailVerifyFailedTitle": "Verification failed",
-      "orgEmailVerifyFailedDescription": "The link may be invalid or expired. Please sign up again."
+      "orgEmailVerifyFailedDescription": "The link may be invalid or expired. Please sign up again.",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "JIT provisioning is disabled for your organisation",
+        "samlSsoDisabled": "SAML SSO is not enabled for your organisation",
+        "samlAuthenticationFailed": "SAML authentication failed. Please try again",
+        "unexpectedSamlFailure": "An unexpected error occurred during sign-in. Please try again"
+      }
     },
     "common": {
       "signIn": "Sign In",
@@ -4096,13 +4835,118 @@
       "showPassword": "Show password",
       "hidePassword": "Hide password",
       "accountDisabled": "Your account has been disabled.",
-      "tooManyIncorrectCredentials": "You have entered incorrect credentials too many times"
+      "tooManyIncorrectCredentials": "You have entered incorrect credentials too many times",
+      "orContinueWithProviders": "or continue with",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "Email OTP",
+      "errorFallback": "Something went wrong. Please try again."
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "Authentication response validation failed. Please try again.",
+        "failed": "Google sign-in failed."
+      },
+      "microsoftCallback": {
+        "validationFailed": "Authentication response validation failed. Please try again.",
+        "failed": "Microsoft sign-in failed.",
+        "noCode": "No authorization code received from Microsoft."
+      },
+      "callback": {
+        "authenticationFailed": "Authentication failed ({{status}}).",
+        "noCode": "No authorization code received.",
+        "noState": "No state parameter received.",
+        "validationFailed": "Authentication response validation failed. Please try again.",
+        "invalidState": "Invalid state parameter.",
+        "missingProvider": "Invalid OAuth state: missing provider.",
+        "noToken": "Authentication succeeded but no access token was returned.",
+        "failed": "OAuth authentication failed.",
+        "signInFailed": "Sign-in failed",
+        "closeAndRetry": "You can close this window and try again."
+      },
+      "googlePopupError": {
+        "popupBlocked": "Google sign-in popup was blocked. Please allow popups for this site.",
+        "failed": "Google sign-in failed. Please try again."
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "Token exchange with Microsoft failed.",
+        "noIdToken": "No id token received from Microsoft.",
+        "failed": "Microsoft sign-in failed.",
+        "popupBlocked": "Popup was blocked. Please allow popups for this site and try again.",
+        "startFailed": "Failed to start Microsoft sign-in. Please try again."
+      },
+      "popupError": {
+        "popupBlocked": "Sign-in popup was blocked. Please allow popups for this site.",
+        "failed": "OAuth sign-in failed. Please try again."
+      }
+    },
+    "hero": {
+      "tagline": "Explainable Enterprise Search for modern enterprises.",
+      "description": "Search across all of your business apps"
+    },
+    "emailStep": {
+      "genericError": "Something went wrong. Please try again.",
+      "noAccount": "No account found with that email address.",
+      "checking": "Checking…"
+    },
+    "providers": {
+      "signInWithSso": "Sign in with SSO",
+      "continueWithGoogle": "Continue with Google",
+      "continueWithMicrosoft": "Continue with Microsoft",
+      "continueWithOAuth": "Continue with OAuth",
+      "continueWithGitHub": "Continue with GitHub",
+      "continueWithProvider": "Continue with {{provider}}",
+      "connecting": "Connecting…"
+    },
+    "actionFeedback": {
+      "blockedUntil": "Try again after {{date}}.",
+      "unexpectedResponse": "Unexpected response. Please try again.",
+      "passwordSignInFailed": "Sign in failed. Please try again.",
+      "noPasswordSetTitle": "No password set for this account.",
+      "noPasswordSetDescription": "Use Forgot Password below to set up your password.",
+      "resetEmailSuccessDescription": "If an account exists for this email, a password reset link has been sent.",
+      "resetEmailErrorTitle": "Could not request password reset",
+      "tryAgainLater": "Please try again later.",
+      "googleSignInFailed": "Google sign-in failed. Please try again.",
+      "additionalVerificationTitle": "Additional verification required",
+      "additionalVerificationDescription": "Complete the next step to continue.",
+      "oauthSignInFailed": "OAuth sign-in failed. Please try again.",
+      "otpSendSuccessTitle": "Check your email",
+      "otpSendSuccessDescription": "If that email can sign in with a code, one is being sent. If nothing arrives in a few minutes, check your spam folder or try again later.",
+      "otpSendErrorTitle": "Could not send verification code",
+      "verificationFailed": "Verification failed. Please try again.",
+      "microsoftSignInFailed": "Microsoft sign-in failed. Please try again.",
+      "contactAdministrator": "Please contact your administrator."
+    },
+    "emailVerification": {
+      "missingToken": "Verification link is missing a token.",
+      "completing": "Completing email verification…",
+      "failed": "Email verification failed. Please try again."
     }
   },
   "healthGate": {
     "title": "Unable to Connect to Server",
     "description": "The server is currently unreachable. It may be starting up or undergoing maintenance. We're trying to reconnect.",
-    "contactAdmin": "If this persists, please contact your PipesHub administrator."
+    "contactAdmin": "If this persists, please contact your PipesHub administrator.",
+    "toast": {
+      "critical": {
+        "title": "Some services are unavailable",
+        "memberDescription": "Some features are temporarily unavailable. We'll reconnect automatically; if it lasts, contact your admin.",
+        "adminDescription": "Affected: {{services}}"
+      },
+      "viewStatus": "View status",
+      "nonCritical": {
+        "adminTitle_one": "{{services}} is currently unavailable",
+        "adminTitle_other": "{{services}} are currently unavailable",
+        "memberTitle": "Some features are temporarily unavailable"
+      }
+    },
+    "serviceGate": {
+      "title": "Service Unavailable",
+      "adminDescription_one": "This page requires {{services}}, which is currently unavailable. It will become available automatically once the service recovers.",
+      "adminDescription_other": "This page requires {{services}}, which are currently unavailable. It will become available automatically once the services recover.",
+      "memberDescription": "This page is temporarily unavailable. It will come back automatically; if it lasts, contact your admin.",
+      "viewStatus": "View Service Status"
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "Question :",
@@ -4176,6 +5020,13 @@
       "reindexFailedError": "Failed to reindex failed records",
       "manualIndexStart": "Indexing manual-indexing records…",
       "manualIndexError": "Failed to start manual indexing"
+    },
+    "toast": {
+      "renameFailed": "Failed to rename",
+      "folderRenamed": "Folder renamed successfully",
+      "collectionRenamed": "Collection renamed successfully",
+      "renameRefreshWarningTitle": "Couldn't update the list",
+      "renameRefreshWarningDescription": "The {{kind}} was renamed, but the list didn't refresh. Refresh the page to see the latest list."
     }
   },
   "reindexScope": {
@@ -4256,6 +5107,166 @@
     },
     "team": "Team",
     "teamsNoRoles": "Teams do not have roles",
-    "invite": "Invite to Pipeshub"
+    "invite": "Invite to Pipeshub",
+    "shareConversation": "Share Chat",
+    "memberNameUnknown": "Unknown",
+    "searchPlaceholder": "Emails, teams or names (separated by commas)"
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "Complete Your Profile",
+      "description": "Please set your full name to continue. This helps your teammates identify you across workspaces.",
+      "errors": {
+        "required": "Full name is required",
+        "minimumLength": "Full name must be at least 2 characters",
+        "userUnavailable": "Unable to identify user. Please refresh and try again.",
+        "saveFailed": "Failed to save your name. Please try again."
+      },
+      "saveAndContinue": "Save & continue"
+    }
+  },
+  "connectors": {
+    "oauthCallback": {
+      "errors": {
+        "serverConfirmation": "The server did not confirm OAuth completion.",
+        "authenticationFailed": "Authentication failed. Please try again or contact your administrator.",
+        "rejected": "The server rejected the OAuth authentication."
+      }
+    }
+  },
+  "knowledgeBase": {
+    "accessRevoked": "You no longer have access to this collection",
+    "bulkDeleteFailed": "Bulk delete failed",
+    "bulkDeleteFallback": "Failed to delete the selected items. Please try again.",
+    "bulkDeletePartial_one": "Deleted {{successCount}} item; {{failCount}} failed.",
+    "bulkDeletePartial_other": "Deleted {{successCount}} items; {{failCount}} failed.",
+    "bulkDeleteProgress_one": "Deleting {{count}} item…",
+    "bulkDeleteProgress_other": "Deleting {{count}} items…",
+    "bulkDeleteSuccess_one": "Successfully deleted {{count}} item",
+    "bulkDeleteSuccess_other": "Successfully deleted {{count}} items",
+    "bulkReindexFailed": "Bulk reindex failed",
+    "bulkReindexFallback": "Failed to reindex the selected items. Please try again.",
+    "bulkReindexPartial_one": "Reindexed {{successCount}} item; {{failCount}} failed.",
+    "bulkReindexPartial_other": "Reindexed {{successCount}} items; {{failCount}} failed.",
+    "bulkReindexProgress_one": "Reindexing {{count}} item…",
+    "bulkReindexProgress_other": "Reindexing {{count}} items…",
+    "bulkReindexSuccess_one": "Successfully reindexed {{count}} item",
+    "bulkReindexSuccess_other": "Successfully reindexed {{count}} items",
+    "collectionsLoadFailedTitle": "Failed to load Collections",
+    "createFolderFailed": "Failed to create folder",
+    "createFolderFallback": "We couldn't create it. Check the name and try again.",
+    "createFolderSuccess": "Folder created successfully",
+    "createFolderSuccessDescription": "\"{{name}}\" has been created",
+    "deleteFailed": "Failed to delete {{kind}}",
+    "deleteFailedTitle": "Delete failed",
+    "deleteFallback": "Failed to delete. Please try again.",
+    "deleteRefreshFailed": "Couldn't update the list",
+    "deleteRefreshFailedDescription": "The {{kind}} was deleted, but the list didn't refresh. Refresh the page to see the latest list.",
+    "deleteSuccess": "\"{{name}}\" deleted successfully",
+    "deleteSuccessDescription": "The {{kind}} has been deleted.",
+    "deleteSuccessTitle": "Deleted successfully",
+    "downloadFailed": "Failed to download",
+    "downloadFallback": "We couldn't download the file. Check your connection and try again.",
+    "errors": {
+      "folderCollectionIdRequired": "Knowledge base id is required to update this folder."
+    },
+    "folderDetails": {
+      "collection": "Collection",
+      "connector": "Connector",
+      "createdAt": "Created At",
+      "empty": "No folder details available",
+      "folder": "Folder",
+      "indexingStatus": "Indexing Status",
+      "metadata": "Metadata",
+      "origin": "Origin",
+      "permissions": "Permissions",
+      "recordGroup": "Record Group",
+      "recordType": "Record Type",
+      "title": "Folder Details",
+      "totalItems": "Total items",
+      "updatedAt": "Updated At",
+      "version": "Version"
+    },
+    "loadCollectionsFallback": "We couldn't load your collections. Check your connection, then select Retry.",
+    "loadItemsFailed": "Failed to load items. Please try again.",
+    "loadMoreConnectorsFailed": "Could not load more connectors",
+    "loadMoreFailedDescription": "Please try again or refresh the page.",
+    "loadMoreItemsFailed": "Could not load more items",
+    "loadRecordsFailed": "Failed to load records",
+    "moveFailed": "Failed to move item",
+    "moveFallback": "We couldn't move it. Please try again in a moment.",
+    "moveSuccess": "Item moved successfully",
+    "moveSuccessDescription": "\"{{name}}\" has been moved",
+    "reindex": {
+      "toast": {
+        "indexing": "Indexing…",
+        "reindexing": "Re-indexing…",
+        "queuedIndexing": "Successfully queued for indexing",
+        "queuedReindexing": "Successfully queued for reindexing"
+      }
+    },
+    "reindexFallback": "Failed to start reindexing. Please try again in a moment.",
+    "renameFailed": "Failed to rename",
+    "renameFallback": "We couldn't rename it. Please try again in a moment.",
+    "renameSuccess": "Renamed successfully",
+    "renameSuccessDescription": "Renamed to \"{{name}}\"",
+    "replaceFailed": "Failed to replace file",
+    "replaceFallback": "We couldn't replace the file. Please try again in a moment.",
+    "replaceFile": {
+      "allowedFileType": "You can only upload {{fileType}} files ({{extension}}) to replace this file",
+      "currentFile": "Current file",
+      "maxSize": "You can upload files up to the limit of {{maxFileSizeMB}} MB",
+      "name": "Name",
+      "supports": "Supports: Only {{fileType}}",
+      "title": "Replace File",
+      "upload": "Upload"
+    },
+    "replaceSuccess": "File replaced successfully",
+    "replaceSuccessDescription": "\"{{oldName}}\" has been replaced with \"{{newName}}\"",
+    "sidebarLoadFailedAppSectionsDescription": "Could not load app sections. Please refresh the page.",
+    "sidebarLoadFailedCollectionsDescription": "Could not load collections. Please refresh the page.",
+    "sidebarLoadFailedTitle": "Failed to load sidebar",
+    "upload": {
+      "addFiles": "Add files",
+      "addFolder": "Add a folder",
+      "collapseFolder": "Collapse folder",
+      "documentation": "Documentation",
+      "expandFolder": "Expand folder",
+      "fileCount_one": "{{count}} file",
+      "fileCount_other": "{{count}} files",
+      "fileLimitDescription": "Up to {{maxFileSizeMB}} MB per file; type and size are validated on upload",
+      "folderCount_one": "{{count}} folder",
+      "folderCount_other": "{{count}} folders",
+      "folderLimitDescription": "Each file is validated on upload (max {{maxFileSizeMB}} MB per file)",
+      "moreBelow": "More below",
+      "or": "OR",
+      "removeNamedItem": "Remove {{name}}",
+      "title": "Upload Data",
+      "upload": "Upload",
+      "uploadFiles": "Upload files",
+      "uploadFolders": "Upload folders"
+    }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Ctrl"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "On",
+      "between": "Between",
+      "before": "Before",
+      "after": "After"
+    },
+    "startDateEndDate": "Start Date - End Date",
+    "pickDate": "Pick a date",
+    "endDate": "End Date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "time": "Time",
+    "apply": "Apply",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month"
   }
 }

@@ -73,7 +73,7 @@ describe.each(cases)('$method fallback localization', ({ method, invoke, args, c
     expect(mocks.error).toHaveBeenCalledWith(i18n.t('auth.common.accountDisabled'), {
       description: credentialsHint
         ? i18n.t('auth.common.tooManyIncorrectCredentials')
-        : 'Please contact your administrator.',
+        : { key: 'auth.actionFeedback.contactAdministrator' },
       duration: null, showCloseButton: true,
     });
     expect(mocks.api[method]).toHaveBeenCalledWith(...args);

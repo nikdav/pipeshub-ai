@@ -19,7 +19,7 @@ import {
 import type { CheckboxOption } from '@/app/(main)/workspace/components';
 import { usePaginatedUserOptions } from '@/app/(main)/workspace/hooks/use-paginated-user-options';
 import { TeamsApi } from '@/app/(main)/workspace/teams/api';
-import { TEAM_ROLE_LABELS } from '@/app/(main)/workspace/teams/constants';
+import { getTeamRoleLabels } from '@/app/(main)/workspace/teams/constants';
 import { RoleDropdownMenu } from '@/app/components/share';
 import type { Team, TeamMemberRole } from '@/app/(main)/workspace/teams/types';
 
@@ -54,6 +54,7 @@ interface CreateTeamFormProps {
 export const CreateTeamForm = forwardRef<CreateTeamFormHandle, CreateTeamFormProps>(
   function CreateTeamForm({ onCreated, enabled = true, onStateChange }, ref) {
     const { t } = useTranslation();
+    const teamRoleLabels = getTeamRoleLabels(t);
     const addToast = useToastStore((s) => s.addToast);
 
     const [teamName, setTeamName] = useState('');
@@ -331,7 +332,7 @@ export const CreateTeamForm = forwardRef<CreateTeamFormHandle, CreateTeamFormPro
               <RoleDropdownMenu
                 role={defaultRole}
                 onRoleChange={(r) => setDefaultRole(r as TeamMemberRole)}
-                labels={TEAM_ROLE_LABELS}
+                labels={teamRoleLabels}
               />
               <Button
                 variant="outline"
@@ -399,7 +400,7 @@ export const CreateTeamForm = forwardRef<CreateTeamFormHandle, CreateTeamFormPro
                           setUserRole(user.id, r as TeamMemberRole)
                         }
                         onRemove={() => removeUser(user.id)}
-                        labels={TEAM_ROLE_LABELS}
+                        labels={teamRoleLabels}
                       />
                     </Box>
                   </Flex>

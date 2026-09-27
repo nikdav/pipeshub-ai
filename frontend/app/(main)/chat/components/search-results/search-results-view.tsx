@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ICON_SIZES } from '@/lib/constants/icon-sizes';
 import { useChatStore } from '@/chat/store';
+import { resolveLocalizedText, type TranslateText } from '@/lib/i18n/localized-text';
 import { useCitationActions } from '../message-area/response-tabs/citations/use-citation-actions';
 import { SearchResultCard } from './search-result-card';
 import { searchResultToCitationData } from './search-result-to-citation';
@@ -110,6 +111,7 @@ export function SearchResultsView() {
   const searchQuery = useChatStore((s) => s.searchQuery);
   const isSearching = useChatStore((s) => s.isSearching);
   const searchError = useChatStore((s) => s.searchError);
+  const searchErrorText = useChatStore((s) => s.searchErrorText);
   const setMode = useChatStore((s) => s.setMode);
   const { onPreview } = useCitationActions();
 
@@ -267,7 +269,7 @@ export function SearchResultsView() {
               color: 'var(--red-11)',
             }}
           >
-            <Text size="2">{searchError}</Text>
+            <Text size="2">{resolveLocalizedText(searchErrorText, t as TranslateText, searchError)}</Text>
           </Flex>
         )}
 
@@ -281,7 +283,10 @@ export function SearchResultsView() {
             style={{ padding: 'var(--space-6)' }}
           >
             <Text size="2" style={{ color: 'var(--slate-11)' }}>
-              No results found for &ldquo;{searchQuery}&rdquo;
+              {t('chat.noResultsForQuery', {
+                query: searchQuery,
+                defaultValue: `No results found for ${searchQuery}`,
+              })}
             </Text>
           </Flex>
         )}

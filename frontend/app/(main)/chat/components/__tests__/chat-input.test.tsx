@@ -2,7 +2,8 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, cleanup, fireEvent, act, within } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
-import '@/lib/__tests__/test-i18n';
+import { I18nextProvider } from 'react-i18next';
+import testI18n from '@/lib/__tests__/test-i18n';
 
 const router = vi.hoisted(() => ({ push: vi.fn(), replace: vi.fn() }));
 const streaming = vi.hoisted(() => ({
@@ -123,6 +124,7 @@ import { useChatStore } from '@/chat/store';
 import { useCommandStore } from '@/lib/store/command-store';
 import { useToastStore } from '@/lib/store/toast-store';
 import type { AttachmentRef } from '@/chat/types';
+import { Toast as ToastComponent } from '@/app/components/feedback/toast';
 
 const initialChatState = useChatStore.getState();
 
@@ -133,6 +135,14 @@ class FakeResizeObserver {
 }
 
 beforeEach(() => {
+  testI18n.addResourceBundle('en-US', 'translation', {
+    chat: {
+      attachments: {
+        failedToAttach: "Couldn't attach {{fileName}}. {{reason}}",
+        uploadMissingReference: 'The upload did not return an attachment reference.',
+      },
+    },
+  }, true, true);
   useChatStore.setState(initialChatState, true);
   useChatStore.setState({ settings: { ...initialChatState.settings, queryMode: 'chat' } });
   useToastStore.setState({ toasts: [] });
@@ -153,9 +163,10 @@ beforeEach(() => {
   vi.stubGlobal('ResizeObserver', FakeResizeObserver);
 });
 
-afterEach(() => {
+afterEach(async () => {
   cleanup();
   vi.unstubAllGlobals();
+  await testI18n.changeLanguage('en-US');
 });
 
 type Props = React.ComponentProps<typeof ChatInput>;
@@ -427,6 +438,80 @@ describe('ChatInput — attachments', () => {
     expect(onUploadFile).toHaveBeenCalledTimes(2);
     expect(screen.queryByText(reason)).toBeNull();
     expect(screen.getByText('2 KB')).toBeTruthy();
+  });
+
+  it('retranslates the knowledge missing-reference reason without retrying the upload', async () => {
+    testI18n.addResourceBundle('en-US', 'translation', {
+      chat: {
+        attachments: {
+          failedToAttach: "Couldn't attach {{fileName}}. {{reason}}",
+          uploadMissingReference: 'The upload did not return an attachment reference.',
+        },
+      },
+    }, true, true);
+    testI18n.addResourceBundle('de', 'translation', {
+      chat: {
+        attachments: {
+          uploadFailedNamed: 'Upload von {{name}} fehlgeschlagen: {{error}}',
+          failedToAttach: '{{fileName}} konnte nicht angehängt werden. {{reason}}',
+          uploadMissingReference: 'Der Upload hat keine Anhangsreferenz zurückgegeben.',
+        },
+      },
+    }, true, true);
+
+    const missingReference = Object.assign(new Error('Upload returned no attachment ref'), {
+      messageText: { key: 'chat.attachments.uploadMissingReference' },
+    });
+    const onUploadFile = vi.fn(async () => Promise.reject(missingReference));
+    render(
+      <I18nextProvider i18n={testI18n}>
+        <Theme>
+          <ChatInput onSend={vi.fn()} onUploadFile={onUploadFile} />
+        </Theme>
+      </I18nextProvider>,
+    );
+
+    await act(async () => pick(pdf()));
+
+    expect(screen.getByText(
+      "Couldn't attach report.pdf. The upload did not return an attachment reference.",
+    )).toBeTruthy();
+    const toast = useToastStore.getState().toasts[0];
+    expect(toast.titleText).toEqual({
+      key: 'chat.attachments.uploadFailedNamed',
+      values: {
+        name: 'report.pdf',
+        error: {
+          key: 'chat.attachments.failedToAttach',
+          values: {
+            fileName: 'report.pdf',
+            reason: { key: 'chat.attachments.uploadMissingReference' },
+          },
+        },
+      },
+    });
+    render(
+      <I18nextProvider i18n={testI18n}>
+        <Theme>
+          <ToastComponent toast={toast} onDismiss={() => undefined} />
+        </Theme>
+      </I18nextProvider>,
+    );
+    expect(screen.getByText(
+      "Failed to upload report.pdf: Couldn't attach report.pdf. The upload did not return an attachment reference.",
+    )).toBeTruthy();
+
+    await act(async () => {
+      await testI18n.changeLanguage('de');
+    });
+
+    expect(screen.getByText(
+      'report.pdf konnte nicht angehängt werden. Der Upload hat keine Anhangsreferenz zurückgegeben.',
+    )).toBeTruthy();
+    expect(screen.getByText(
+      'Upload von report.pdf fehlgeschlagen: report.pdf konnte nicht angehängt werden. Der Upload hat keine Anhangsreferenz zurückgegeben.',
+    )).toBeTruthy();
+    expect(onUploadFile).toHaveBeenCalledTimes(1);
   });
 
   it('sends the text with only the attachments that uploaded when one failed', async () => {

@@ -506,18 +506,18 @@ function GridCard({
                 <DropdownMenu.Content onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu.Item onClick={(e) => { e.stopPropagation(); onOpen(); }}>
                     <MaterialIcon name="folder_open" size={16} />
-                    Open
+                    {t('recordView.openExternal')}
                   </DropdownMenu.Item>
                   {!isFolder && onDownload && shouldShowDownloadForTableItem(item) && (
                     <DropdownMenu.Item onClick={(e) => { e.stopPropagation(); onDownload(item); }}>
                       <MaterialIcon name="file_download" size={16} />
-                      Download
+                      {t('action.download')}
                     </DropdownMenu.Item>
                   )}
                   {onRename && canEditItem && (
                     <DropdownMenu.Item onClick={() => startEditing()}>
                       <MaterialIcon name="edit" size={16} />
-                      Rename
+                      {t('menu.rename')}
                     </DropdownMenu.Item>
                   )}
                   {showReindexMenu &&
@@ -536,20 +536,20 @@ function GridCard({
                   {!isFolder && onReplace && canEditItem && (
                     <DropdownMenu.Item onClick={() => onReplace(item)}>
                       <MaterialIcon name="swap_horiz" size={16} />
-                      Replace
+                      {t('action.replace')}
                     </DropdownMenu.Item>
                   )}
                   {onMove && canEditItem && !isCollectionNode && (
                     <DropdownMenu.Item onClick={() => onMove(item)}>
                       <MaterialIcon name="drive_file_move" size={16} />
-                      Move
+                      {t('action.move')}
                     </DropdownMenu.Item>
                   )}
                   {/* Collections can only be deleted by OWNER */}
                   {onDelete && canDeleteItem && !(isCollectionNode && item.permission?.role !== 'OWNER') && (
                       <DropdownMenu.Item onClick={() => onDelete(item)} color="red">
                         <MaterialIcon name="delete" size={16} />
-                        Delete
+                        {t('action.delete')}
                       </DropdownMenu.Item>
                   )}
                 </DropdownMenu.Content>
@@ -642,7 +642,7 @@ function GridCard({
                 maxWidth: 'fit-content',
                 }}
               >
-                Empty
+                {t('workspace.connectors.overview.statEmpty')}
               </Text>
             )}
             <Text
@@ -735,6 +735,7 @@ export function KbGridView({
   onDelete,
   onDownload,
 }: KbGridViewProps) {
+  const { t } = useTranslation();
   // Once per page, so each row's Demo badge is a cheap lookup.
   useDemoDataActive();
   return (
@@ -792,7 +793,11 @@ export function KbGridView({
           }}
         >
           <Text size="2" style={{ color: 'var(--slate-9)' }}>
-            Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems} Items
+            {t('kb.pagination.showing', {
+              start: ((pagination.page - 1) * pagination.limit) + 1,
+              end: Math.min(pagination.page * pagination.limit, pagination.totalItems),
+              total: pagination.totalItems,
+            })}
           </Text>
           <Flex gap="3" align="center">
             {/* Previous Button */}
@@ -807,7 +812,7 @@ export function KbGridView({
               onClick={() => pagination.hasPrev && onPageChange?.(pagination.page - 1)}
             >
               <MaterialIcon name="chevron_left" size={16} />
-              <Text size="2">Previous</Text>
+              <Text size="2">{t('common.previous')}</Text>
             </Flex>
 
             {/* Page Number Box */}
@@ -836,7 +841,7 @@ export function KbGridView({
               }}
               onClick={() => pagination.hasNext && onPageChange?.(pagination.page + 1)}
             >
-              <Text size="2">Next</Text>
+              <Text size="2">{t('common.next')}</Text>
               <MaterialIcon name="chevron_right" size={16} />
             </Flex>
 
@@ -868,7 +873,7 @@ export function KbGridView({
                     key={limit}
                     onClick={() => onLimitChange?.(limit)}
                   >
-                    {limit} per page
+                    {t('kb.pagination.perPage', { limit })}
                   </DropdownMenu.Item>
                 ))}
               </DropdownMenu.Content>

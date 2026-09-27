@@ -10,6 +10,13 @@
       "reindexFailedError": "重新索引失败的记录时出错",
       "manualIndexStart": "正在索引手动索引记录…",
       "manualIndexError": "启动手动索引失败"
+    },
+    "toast": {
+      "renameFailed": "重命名失败",
+      "folderRenamed": "文件夹已成功重命名",
+      "collectionRenamed": "集合已成功重命名",
+      "renameRefreshWarningTitle": "无法更新列表",
+      "renameRefreshWarningDescription": "{{kind}} 已重命名，但列表未能刷新。请刷新页面以查看最新列表。"
     }
   },
   "resetPassword": {
@@ -26,6 +33,10 @@
       "newPasswordPlaceholder": "请输入新密码",
       "confirmPasswordLabel": "确认密码*",
       "confirmPasswordPlaceholder": "请再次输入密码"
+    },
+    "success": {
+      "title": "密码已更改！",
+      "description": "密码已成功更新。现在可以使用新密码登录 Pipeshub 工作区。"
     }
   },
   "agents": {
@@ -65,7 +76,14 @@
     "refiningResponse": "正在优化回复…",
     "errorFallback": "发生错误。请重试。",
     "copyCode": "复制",
-    "copiedCode": "已复制"
+    "copiedCode": "已复制",
+    "status": {
+      "delegatingTo": "正在委派给 {{roleName}}…",
+      "toolActivity": "{{label}}…",
+      "starting": "正在启动…",
+      "executingTool": "正在执行工具…"
+    },
+    "connectedWorking": "已连接，正在处理你的请求"
   },
   "uploadProgress": {
     "uploadFailedDefault": "上传失败",
@@ -121,7 +139,13 @@
       "unsupportedType": "不支持的文件类型",
       "duplicateName": "已存在同名文件",
       "rejected": "文件被拒绝"
-    }
+    },
+    "errors": {
+      "httpFallback": "上传未成功。请重试；如果仍然失败，请联系管理员。",
+      "stalled": "PipesHub 在上传完成前停止响应。请重新上传这些文件。",
+      "incomplete": "上传未完成"
+    },
+    "fileExceedsSizeLimit": "此文件超过 {{maxFileSizeMB}} MB 的大小限制。请缩小文件或将其拆分，然后重新上传。"
   },
   "onboarding": {
     "skipEmbeddingDefault": "跳过",
@@ -190,7 +214,9 @@
       "baseUrlLabel": "基础 URL（可选）",
       "baseUrlPlaceholder": "例如：http://localhost:3000/files",
       "saveSuccessFallback": "存储配置已保存。",
-      "saveErrorFallback": "无法保存存储配置。"
+      "saveErrorFallback": "无法保存存储配置。",
+      "s3HealthCheckFailedWithBase": "{{message}}（{{details}}）",
+      "s3HealthCheckFailed": "S3 健康检查失败（{{details}}）"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -227,7 +253,37 @@
     },
     "tour": {
       "dismiss": "关闭导览",
-      "completedDescription": "一切就绪。如需了解更多，请查看<docs>文档</docs>。"
+      "completedDescription": "一切就绪。如需了解更多，请查看<docs>文档</docs>。",
+      "stubs": {
+        "almostThereTitle": "快要完成了！",
+        "almostThereSubtitle": "完成以下操作，了解 Pipeshub 能为你做什么",
+        "connectFirstApp": "连接你的第一个应用",
+        "createCollection": "创建集合",
+        "inviteTeamMembers": "邀请团队成员",
+        "keepGoingTitle": "继续加油！",
+        "keepGoingSubtitle": "要不要邀请团队成员一起来体验？",
+        "completedTitle": "开始吧！"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "你从事哪类工作？",
+      "subtitle": "这将帮助我们为你提供个性化的 Pipeshub 使用体验",
+      "roles": {
+        "softwareDeveloper": "软件开发人员",
+        "productManager": "产品经理",
+        "marketer": "市场营销人员",
+        "designer": "设计师",
+        "projectManager": "项目经理",
+        "operations": "运营人员",
+        "itSupport": "IT 支持专员",
+        "humanResources": "人力资源专员",
+        "financeOfficer": "财务专员",
+        "legal": "法律事务人员",
+        "complianceOfficer": "合规专员",
+        "salesRepresentative": "销售代表",
+        "dataScientist": "数据科学家",
+        "customerService": "客户服务人员"
+      }
     }
   },
   "nav": {
@@ -266,7 +322,8 @@
     "filterTooltip": "筛选：{{filter}}",
     "loadFailed": "加载通知失败",
     "updateFailed": "无法更新通知",
-    "removeFailed": "无法移除通知"
+    "removeFailed": "无法移除通知",
+    "hiddenCount_other": "另有 {{count}} 项"
   },
   "action": {
     "find": "查找",
@@ -363,7 +420,12 @@
     "willBeDeleted": "将被删除",
     "willBeReindexed": "将被重新索引",
     "reindexConfirm": "重新索引此{{type}}？",
-    "reindexDescription": "这将更新此{{type}}及其内容的搜索索引。"
+    "reindexDescription": "这将更新此{{type}}及其内容的搜索索引。",
+    "bulkDeleteQuestion_other": "确定要删除 {{itemCount}} 个项目吗？",
+    "bulkDeleteAction_other": "删除 {{itemCount}} 个项目",
+    "bulkDeleteWarning": "此操作无法撤销。所有选中的项目都将被永久删除。",
+    "deleteItemDescription": "将删除 {{itemType}}",
+    "deleteItemFromCollectionDescription": "将从集合中删除 {{itemType}}"
   },
   "table": {
     "fileName": "文件名",
@@ -377,7 +439,8 @@
     "loading": "正在加载数据...",
     "selectAll": "全选",
     "selected": "已选择 {{count}} 项",
-    "emptyState": "没有可显示的项目"
+    "emptyState": "没有可显示的项目",
+    "selectRow": "选择 {{item}}"
   },
   "status": {
     "indexed": "已索引",
@@ -455,7 +518,57 @@
     "openProfile": "打开个人资料",
     "loading": "加载中...",
     "moreOptions": "更多选项",
-    "docs": "文档"
+    "docs": "文档",
+    "errors": {
+      "api": {
+        "cancelled": "请求已取消。",
+        "timeout": "请求超时。请重试。",
+        "network": "网络错误。请检查网络连接。",
+        "sessionExpired": "会话已过期。请重新登录。",
+        "forbidden": "你没有权限执行此操作。",
+        "notFound": "找不到请求的资源。",
+        "validation": "请求无效。请检查输入内容。",
+        "conflict": "发生冲突。请重试。",
+        "busy": "PipesHub 当前繁忙。请稍后几秒再试。",
+        "busyRetry_other": "PipesHub 当前繁忙。请在 {{count}} 秒后重试。",
+        "server": "服务器错误。请稍后重试。",
+        "unknown": "发生意外错误。"
+      },
+      "toast": {
+        "authorizationTitle": "拒绝访问",
+        "authorizationDescription": "你没有权限执行此操作。",
+        "validationTitle": "请求无效",
+        "validationDescription": "请检查输入内容并重试。",
+        "notFoundTitle": "未找到",
+        "notFoundDescription": "找不到请求的资源。",
+        "conflictTitle": "需要处理",
+        "conflictDescription": "发生冲突。请检查详情并重试。",
+        "networkTitle": "连接错误",
+        "networkDescription": "请检查网络连接并重试。",
+        "serverTitle": "服务器错误",
+        "serverDescription": "我们的服务出现问题。请稍后重试；如果问题持续，请联系工作区管理员。",
+        "timeoutTitle": "请求超时",
+        "timeoutDescription": "服务器响应时间过长。请重试。",
+        "unknownTitle": "发生错误",
+        "unknownDescription": "操作未成功。请重试；如果问题持续，请联系工作区管理员。",
+        "busyTitle": "请稍后重试",
+        "withReference": "{{message}} 参考编号：{{requestId}}"
+      },
+      "stream": {
+        "sessionExpired": "会话已过期。请重新登录以继续。",
+        "forbidden": "你无权访问此内容。如需访问，请联系工作区管理员。",
+        "offline": "无法连接到 PipesHub。请检查网络连接后重试。",
+        "interrupted": "连接 PipesHub 时中断，操作尚未完成。请重试。",
+        "unavailable": "PipesHub 当前遇到问题。请一分钟后重试。",
+        "chatInterrupted": "回答尚未完成就已中断。点击“重新生成”或重新发送消息。",
+        "chatUnavailable": "PipesHub 当前无法回答。请一分钟后重试。",
+        "busy": "PipesHub 当前繁忙。请稍后几秒再试。",
+        "busyRetry_other": "PipesHub 当前繁忙。请在 {{count}} 秒后重试。"
+      }
+    },
+    "unknown": "未知",
+    "connectorIconAlt": "{{type}} 图标",
+    "submit": "提交"
   },
   "units": {
     "bytes": "字节",
@@ -542,7 +655,11 @@
     "searchEmptyHint": "未找到您要查找的内容。请尝试搜索其他内容。",
     "adjustFiltersHint": "请选择其他来源或调整筛选条件",
     "addFromCollectionsHint": "您可以从合集中添加公司的文件或文件夹",
-    "addFilesHint": "添加您的文件或文件夹"
+    "addFilesHint": "添加您的文件或文件夹",
+    "pagination": {
+      "showing": "正在显示 {{total}} 个项目中的 {{start}}–{{end}} 项",
+      "perPage": "每页 {{limit}} 项"
+    }
   },
   "connectorTypes": {
     "slack": "Slack",
@@ -568,7 +685,8 @@
       "open": "打开 {{source}}",
       "openIn": "在 {{source}} 中打开",
       "openInCollections": "在集合中打开",
-      "relevance": "相关度：{{percent}}%"
+      "relevance": "相关度：{{percent}}%",
+      "viewSource": "查看来源"
     },
     "results": "结果",
     "greeting": "今天想探索什么？",
@@ -611,7 +729,8 @@
       "browseWorkspaceMcp": "浏览 MCP 服务器",
       "browseWorkspaceMcpAria": "打开 MCP 服务器以添加或管理连接",
       "noActionMatches": "没有与您的搜索匹配的操作。",
-      "noMcpMatches": "没有与您的搜索匹配的 MCP 服务器。"
+      "noMcpMatches": "没有与您的搜索匹配的 MCP 服务器。",
+      "filtersAriaLabel": "资源筛选条件"
     },
     "projectResources": {
       "noConnectors": "此项目未启用任何连接器。",
@@ -976,7 +1095,8 @@
         "suggestPlanWork": "规划一项工作",
         "suggestWriteInstructions": "编写项目指令",
         "suggestSummariseDocumentPrompt": "请总结此项目文件中最重要的文档。",
-        "suggestPlanWorkPrompt": "请帮我为此项目规划一项工作，并将其拆分为具体的后续步骤。"
+        "suggestPlanWorkPrompt": "请帮我为此项目规划一项工作，并将其拆分为具体的后续步骤。",
+        "projectActions": "项目操作"
       },
       "moveDialog": {
         "title": "移至项目",
@@ -1061,7 +1181,15 @@
       "copyText": "复制",
       "closePreview": "关闭",
       "loadingPreview": "加载中…",
-      "pasteMeta_other": "{{chars}} 个字符 · {{count}} 行"
+      "pasteMeta_other": "{{chars}} 个字符 · {{count}} 行",
+      "uploadMissingReference": "上传结果中没有附件引用信息。",
+      "failedToAttach": "无法附加 {{fileName}}。{{reason}}",
+      "failedToAttachFallback": "无法附加 {{fileName}}。请重试。",
+      "fileActionAria": {
+        "uploading": "正在上传 {{name}}",
+        "retry": "重试上传 {{name}}",
+        "remove": "移除 {{name}}"
+      }
     },
     "voiceSttNotConfigured": "请在 AI 模型设置中配置语音转文字（STT）模型，以启用语音输入。",
     "voiceSttLoading": "正在检查语音功能…",
@@ -1101,7 +1229,8 @@
       "noActions": "未找到已认证的操作。请在工作区 → 操作中连接集成。",
       "loadingMcp": "正在加载 MCP 服务器…",
       "noMcpServers": "未找到已认证的 MCP 服务器。请在工作区 → MCP 服务器中连接一个。",
-      "toolCount_other": "{{count}} 个工具"
+      "toolCount_other": "{{count}} 个工具",
+      "filtersAriaLabel": "资源筛选条件"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "此智能体未配置",
@@ -1109,7 +1238,110 @@
       "webSearch": "网络搜索"
     },
     "resizePanels": "调整聊天和预览面板大小",
-    "mobileProfileComingSoon": "移动端个人资料页面即将推出。"
+    "mobileProfileComingSoon": "移动端个人资料页面即将推出。",
+    "noModelConfigured": {
+      "title": "尚未配置 AI 模型",
+      "memberDescription": "此工作区尚未设置 AI 模型，因此聊天无法回答问题。请联系工作区管理员，让其在“工作区 → AI 模型”中添加模型。",
+      "adminDescription": "此工作区尚未设置 AI 模型，因此聊天无法回答问题。请在“AI 模型”中添加模型，然后重新发送消息。",
+      "action": "打开 AI 模型"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "正在列出技能",
+          "past": "已列出技能"
+        },
+        "search": {
+          "present": "正在搜索技能",
+          "past": "已搜索技能"
+        },
+        "load": {
+          "present": "正在加载技能",
+          "past": "已加载技能"
+        },
+        "loadResource": {
+          "present": "正在加载技能文件",
+          "past": "已加载技能文件"
+        },
+        "manage": {
+          "present": "正在管理技能",
+          "past": "已管理技能"
+        }
+      },
+      "usedTool": "已使用工具",
+      "usingTool": "正在使用 {{toolName}}"
+    },
+    "unnamedArtifact": "未命名内容",
+    "unnamedDownload": "下载文件",
+    "searchFailed": "搜索失败",
+    "collectionRow": {
+      "folders_other": "{{count}} 个文件夹",
+      "files_other": "{{count}} 个文件"
+    },
+    "modelSelector": {
+      "providerByline": "由 {{provider}} 提供",
+      "multimodalBadge": "多模态"
+    },
+    "agentActivity": {
+      "thinking": "正在思考",
+      "arguments": "参数",
+      "resultError": "错误",
+      "resultBlocked": "已阻止",
+      "result": "结果",
+      "subAgent": "子智能体",
+      "groupSkills_other": "已使用 {{count}} 项技能",
+      "groupSearches_other": "已探索 {{count}} 次搜索",
+      "groupTools_other": "已运行 {{count}} 个工具",
+      "summaryThought_other": "思考了 {{count}} 次",
+      "summaryTools_other": "已使用 {{count}} 个工具",
+      "summaryDelegatedAgents_other": "已委派给 {{count}} 个子智能体",
+      "summaryWorked": "已处理"
+    },
+    "callouts": {
+      "note": "备注",
+      "tip": "提示",
+      "important": "重要",
+      "warning": "警告",
+      "caution": "注意",
+      "info": "信息",
+      "success": "成功",
+      "danger": "危险",
+      "error": "错误",
+      "question": "问题",
+      "bug": "缺陷",
+      "example": "示例",
+      "abstract": "摘要",
+      "summary": "总结",
+      "quote": "引用"
+    },
+    "linkToSection": "链接到此部分",
+    "artifacts": {
+      "generated_other": "已生成 {{count}} 个项目",
+      "newerVersionAvailable": "有较新版本可用（v{{version}}）",
+      "viewSource": "查看源代码",
+      "viewSourceTitle": "查看生成此项目的代码",
+      "loadingSource": "正在加载源代码…"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "问题 {{number}}：{{question}}",
+      "readAloudOption": "选项：{{option}}"
+    },
+    "confidenceTooltip": "助手回答的置信度",
+    "downloadTasks": {
+      "completeResults": "你可以下载完整的查询结果："
+    },
+    "sourcesHeading_other": "来源（{{count}}）：",
+    "citationCount_other": "{{count}} 条引用",
+    "noCitationsAvailable": "没有可用的引用。",
+    "noSourcesAvailable": "没有可用的来源。",
+    "recordDetailsUnavailable": "记录详情不可用",
+    "syncedJustNow": "刚刚同步",
+    "syncedRelativeTime": "已于 {{relativeTime}} 同步",
+    "processingStatus": "正在处理…",
+    "noResultsForQuery": "没有找到与 {{query}} 相关的结果",
+    "couldNotLoadConversations": "无法加载对话",
+    "archiveConfirmation": "归档确认",
+    "questionFallback": "问题"
   },
   "workspaceMenu": {
     "appearance": "外观",
@@ -1209,7 +1441,8 @@
         "pending": "待处理",
         "expired": "已过期",
         "deactivated": "已停用",
-        "blocked": "已封锁"
+        "blocked": "已封锁",
+        "inactive": "未激活"
       },
       "invite": {
         "title": "邀请用户",
@@ -1426,6 +1659,20 @@
         "saveErrorDescription": "更新团队失败。请重试。",
         "applyToAll": "应用于全部",
         "newMemberRoles": "新成员角色"
+      },
+      "roles": {
+        "owner": {
+          "label": "所有者",
+          "description": "完全控制团队及其资源"
+        },
+        "writer": {
+          "label": "编辑者",
+          "description": "可以查看和编辑团队资源"
+        },
+        "reader": {
+          "label": "查看者",
+          "description": "可以查看团队资源"
+        }
       }
     },
     "oauth2": {
@@ -1758,12 +2005,15 @@
           "label": "视频",
           "badge": "多模态"
         }
-      }
+      },
+      "requiredFileUploadError": "缺少必需的文件上传：{{fieldNames}}。请上传文件并重试。",
+      "defaultModelName": "模型"
     },
     "common": {
       "loadingUsers": "正在加载用户...",
       "noUsersAvailable": "没有可用的用户",
-      "selected": "已选择 {{count}} 项"
+      "selected": "已选择 {{count}} 项",
+      "unknownUser": "未知用户"
     },
     "filters": {
       "role": "角色",
@@ -1777,7 +2027,8 @@
     "pagination": {
       "showing": "显示第 {{from}}-{{to}} 项，共 {{total}} 项",
       "previous": "上一页",
-      "next": "下一页"
+      "next": "下一页",
+      "perPage": "每页 {{value}} 项"
     },
     "sidebar": {
       "backToApp": "返回应用",
@@ -1829,7 +2080,8 @@
         "configured": "已配置",
         "notConfigured": "未配置",
         "authenticated": "已验证",
-        "notAuthenticated": "未验证"
+        "notAuthenticated": "未验证",
+        "labelWithCount_other": "{{label}}（{{formattedCount}}）"
       },
       "personalSegment": {
         "my": "我的操作",
@@ -1891,7 +2143,10 @@
         "authenticatedOne": "1 个已验证",
         "authenticatedMany": "{{count}} 个已验证",
         "needsAuthOne": "1 个需要登录",
-        "needsAuthMany": "{{count}} 个需要登录"
+        "needsAuthMany": "{{count}} 个需要登录",
+        "addInstance": "添加实例",
+        "active_other": "{{count}} 个活跃实例",
+        "inactive_other": "{{count}} 个非活跃实例"
       },
       "typeDetail": {
         "scopeTeam": "操作",
@@ -1965,7 +2220,8 @@
         "urlProtocol": "{{field}}必须使用 http 或 https"
       },
       "adminRequiredToast": "只有管理员可以添加新操作。请让管理员先配置此操作。",
-      "personalNonAdminHint": "标记为「未配置」的操作需要管理员先完成设置，您才能使用。"
+      "personalNonAdminHint": "标记为「未配置」的操作需要管理员先完成设置，您才能使用。",
+      "searchPlaceholder": "搜索…"
     },
     "rightPanel": {
       "primaryDisabledHint": "请向上滚动并填写必填字段（标有 * 号）以继续。",
@@ -1986,7 +2242,9 @@
       "assistantChat": "助手聊天",
       "agents": "智能体",
       "showMore": "显示更多",
-      "moreAgents": "更多智能体"
+      "moreAgents": "更多智能体",
+      "searchError": "搜索已归档对话失败。请重试。",
+      "conversationLoadError": "无法加载此对话。请重试。"
     },
     "general": {
       "subtitle": "您公司的基本信息",
@@ -2132,7 +2390,8 @@
       },
       "xmlUpload": {
         "parseError": "无法从此文件解析 SAML 元数据。请检查它是否为有效的 IdP 元数据 XML。",
-        "readError": "读取文件失败。"
+        "readError": "读取文件失败。",
+        "chooseFile": "选择 XML 文件"
       },
       "riskDialog": {
         "title": "确认身份验证更改",
@@ -2145,6 +2404,129 @@
       "userMethods": {
         "heading": "用户登录方式",
         "subtitle": "控制所有组织中所有用户可使用的登录方式。"
+      },
+      "methods": {
+        "password": {
+          "label": "密码",
+          "description": "使用传统的电子邮件和密码进行身份验证"
+        },
+        "otp": {
+          "label": "一次性密码",
+          "description": "通过电子邮件发送验证码"
+        },
+        "google": {
+          "description": "允许用户使用 Google 账号登录"
+        },
+        "microsoft": {
+          "description": "允许用户使用 Microsoft 账号登录"
+        },
+        "samlSso": {
+          "description": "使用 SAML 协议进行单点登录"
+        },
+        "oauth": {
+          "description": "使用通用 OAuth 2.0 提供方进行身份验证"
+        }
+      },
+      "password": {
+        "show": "显示密码",
+        "hide": "隐藏密码"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "重定向 URI",
+            "labelSuffix": "（添加到 Google OAuth 设置）"
+          },
+          "authorizedOrigin": {
+            "label": "授权来源",
+            "labelSuffix": "（添加到 Google OAuth 设置）",
+            "warning": "当前来源与已配置的前端 URL 不同。请在 Google OAuth 设置中使用上方的值。"
+          },
+          "clientId": {
+            "label": "客户端 ID",
+            "placeholder": "输入 Google OAuth 客户端 ID",
+            "hint": "Google OAuth 凭据中的客户端 ID"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "重定向 URI",
+            "labelSuffix": "（添加到 Microsoft OAuth 设置）"
+          },
+          "clientId": {
+            "label": "客户端 ID",
+            "placeholder": "输入 Microsoft 应用程序（客户端）ID",
+            "hint": "Azure 门户应用注册中的应用程序（客户端）ID"
+          },
+          "tenantId": {
+            "label": "租户 ID",
+            "placeholder": "输入 Microsoft 目录（租户）ID",
+            "hint": "Azure 门户应用注册中的目录（租户）ID"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS（断言消费者服务）URL",
+            "labelSuffix": "（添加到你的身份提供方）",
+            "warning": "当前来源与已配置的前端 URL 不同。请将上方的值添加到你的身份提供方。"
+          },
+          "spEntityId": {
+            "label": "SP 实体 ID（颁发者）",
+            "labelSuffix": "（添加到你的身份提供方）",
+            "hint": "SAML 请求中发送的服务提供方实体 ID。使用 SAML_SP_ENTITY_ID 环境变量覆盖此值。"
+          },
+          "_xmlFile": {
+            "label": "IdP 元数据 XML",
+            "hint": "上传身份提供方的元数据 XML"
+          },
+          "entryPoint": {
+            "label": "SSO 入口点（IdP URL）",
+            "hint": "身份提供方提供的单点登录 URL"
+          },
+          "certificate": {
+            "label": "X.509 证书",
+            "hint": "身份提供方的公开证书（PEM 格式）"
+          },
+          "emailKey": {
+            "label": "电子邮件属性键",
+            "hint": "包含用户电子邮件地址的 SAML 属性名称"
+          },
+          "samlPlatform": {
+            "label": "提供方名称",
+            "labelSuffix": "（可选）"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "提供方名称"
+          },
+          "redirectUri": {
+            "label": "重定向 URI",
+            "labelSuffix": "（在 OAuth 提供方中注册）"
+          },
+          "clientId": {
+            "label": "客户端 ID",
+            "placeholder": "输入 OAuth 客户端 ID"
+          },
+          "clientSecret": {
+            "label": "客户端密钥",
+            "placeholder": "输入 OAuth 客户端密钥"
+          },
+          "authorizationUrl": {
+            "label": "授权 URL"
+          },
+          "tokenEndpoint": {
+            "label": "令牌端点"
+          },
+          "userInfoEndpoint": {
+            "label": "UserInfo 端点"
+          },
+          "scope": {
+            "label": "范围",
+            "labelSuffix": "（可选）",
+            "hint": "以空格分隔的 OAuth 范围。默认值为 openid email profile"
+          }
+        }
       }
     },
     "connectors": {
@@ -2181,7 +2563,10 @@
         "configSaveError": "保存配置失败",
         "oauthAppUnavailableTitle": "此连接器暂无可用的 OAuth 应用",
         "oauthAppUnavailableDescription": "请先让您的工作区管理员为 {{name}} 创建一个 OAuth 应用，然后重试。",
-        "thisConnectorFallback": "此连接器"
+        "thisConnectorFallback": "此连接器",
+        "syncToggleDisabled": "连接器同步已停用",
+        "syncToggleEnabled": "连接器同步已启用",
+        "syncToggleError": "无法更新连接器"
       },
       "tabs": {
         "authenticate": "认证实例",
@@ -2282,7 +2667,36 @@
         "oauthAppNamePlaceholder": "例如：{{name}} OAuth",
         "oauthAppNameHelper": "此名称会随 OAuth 注册一起保存，当用户为其他实例选择已保存的应用时会显示。",
         "oauthAppNameRequired": "请为新的 OAuth 应用输入名称。",
-        "oauthAppChangeReauthWarning": "更改 OAuth 应用或其凭证后，您需要重新认证连接器。"
+        "oauthAppChangeReauthWarning": "更改 OAuth 应用或其凭证后，您需要重新认证连接器。",
+        "authTypes": {
+          "oauth": "OAuth 2.0",
+          "oauthAdminConsent": "OAuth（管理员许可）",
+          "oauthCertificate": "OAuth（证书）",
+          "apiToken": "API 令牌",
+          "usernamePassword": "用户名和密码",
+          "basicAuth": "基本身份验证",
+          "bearerToken": "Bearer 令牌",
+          "custom": "自定义",
+          "none": "无"
+        },
+        "redirectCallbackUrlCopyErrorTitle": "无法复制",
+        "redirectCallbackUrlCopyErrorDescription": "请手动复制 URL，或允许此网站访问剪贴板。",
+        "methodDescription": "选择此连接器实例用于向 {{name}} 进行身份验证的方式。",
+        "oauthAppUnnamed": "未命名 OAuth 应用",
+        "oauthAppsLoadFailed": "无法加载此连接器的 OAuth 应用。",
+        "oauthAppLinkedNamed": "{{name}}（已关联）",
+        "oauthAppLinkedRegistration": "已关联的 OAuth 注册",
+        "oauthAppsEmptyLinkedAdminExisting": "此实例已关联到一个未显示在列表中的 OAuth 注册。请在下方选择其他已保存的应用，或保留当前关联。",
+        "oauthAppsEmptyLinkedAdminNew": "此实例已关联到一个未显示在列表中的 OAuth 注册。请在下方选择其他应用、使用“新建”，或保留当前关联。",
+        "oauthAppsEmptyLinkedUser": "此实例已关联到一个未显示在列表中的 OAuth 注册。管理员添加更多已保存的应用后，你可以切换应用。",
+        "oauthAppsEmptyRegisteredNone": "尚未注册 OAuth 应用。请联系管理员，让其在工作区连接器设置中添加应用。",
+        "oauthAppsEmptyCredentials": "请在下方输入 OAuth 客户端凭据，或在有可用的已保存应用后选择该应用。",
+        "oauthAppLabel": "OAuth 应用",
+        "oauthAppsLoading": "正在加载 OAuth 配置…",
+        "oauthAppPlaceholderAdmin": "选择 OAuth 应用或新建…",
+        "oauthAppPlaceholder": "选择一个 OAuth 应用（必填）…",
+        "oauthAppNew": "新建 OAuth 应用",
+        "oauthAppSelectionRequired": "请选择 OAuth 应用。"
       },
       "docSection": {
         "title": "设置文档",
@@ -2313,7 +2727,8 @@
       "instancePanel": {
         "overview": "概览",
         "settings": "设置",
-        "manageConfig": "管理配置"
+        "manageConfig": "管理配置",
+        "syncedAt": "同步时间：{{lastSynced}}"
       },
       "overview": {
         "progressPercent": "已完成 {{n}}%",
@@ -2341,7 +2756,16 @@
         "recordsByType": "按类型划分的记录",
         "noRecordTypes": "没有可用的记录类型",
         "localWatcherLabel": "本地监视器",
-        "localWatcherStatus": "{{state}} · {{pending}} 个待处理 · {{failed}} 个失败"
+        "localWatcherStatus": "{{state}} · {{pending}} 个待处理 · {{failed}} 个失败",
+        "actions": {
+          "syncStarted": "已开始同步",
+          "syncStartFailed": "启动同步失败",
+          "unexpectedError": "发生意外错误。",
+          "reindexFailedStarted": "正在为失败的记录重新建立索引…",
+          "reindexFailedError": "为失败的记录重新建立索引失败",
+          "manualIndexStarted": "正在为手动索引的记录建立索引…",
+          "manualIndexError": "启动手动索引失败"
+        }
       },
       "settingsTab": {
         "instanceName": "实例名称",
@@ -2373,7 +2797,23 @@
         "removing": "正在移除此连接器。",
         "configureFirst": "请先完成配置，然后才能启用同步。",
         "authenticateFirst": "请先认证此连接器，然后才能启用同步。",
-        "selected": "已选择 {{field}}"
+        "selected": "已选择 {{field}}",
+        "syncAction": {
+          "label": "同步",
+          "syncing": "正在同步…",
+          "retry": "同步失败，请重试",
+          "started": "已开始同步",
+          "failed": "同步失败",
+          "unexpectedError": "发生意外错误。"
+        },
+        "fullSyncAction": {
+          "label": "完整同步",
+          "syncing": "正在进行完整同步…",
+          "retry": "完整同步失败，请重试",
+          "started": "已开始完整同步",
+          "failed": "完整同步失败"
+        },
+        "connect": "连接"
       },
       "instanceStatus": {
         "setup": {
@@ -2404,14 +2844,40 @@
         "unclaimedToast": "此连接器尚未在桌面端设置。请在拥有此文件夹的电脑上打开 PipesHub 桌面应用，并在其中启用一次同步。",
         "ownedByOtherDeviceToast": "此连接器属于 {{deviceName}}。请在该设备上的 PipesHub 桌面应用中启用同步。",
         "ownedByOtherDeviceUnknownToast": "此连接器属于另一台设备。请在该设备上的 PipesHub 桌面应用中启用同步。",
-        "deviceIdentityError": "无法识别此设备：{{error}}"
+        "deviceIdentityError": "无法识别此设备：{{error}}",
+        "anotherConnector": "另一个连接器",
+        "rootPathConflict": "本地同步根目录已由连接器“{{owner}}”同步：{{rootPath}}"
       },
       "schemaForm": {
         "tagsPlaceholder": "输入内容并按 Enter 添加标签",
         "removeTagAriaLabel": "移除 {{tag}}",
         "chooseFolder": "选择文件夹",
         "folderPickerUnavailableTitle": "文件夹选择器不可用",
-        "folderPickerUnavailableDescription": "请重启桌面应用或更新到最新版本。"
+        "folderPickerUnavailableDescription": "请重启桌面应用或更新到最新版本。",
+        "examples": {
+          "copyFailed": "复制失败",
+          "heading": "示例",
+          "headingPlural": "示例",
+          "copied": "已复制",
+          "copyToClipboard": "复制到剪贴板",
+          "copyExample": "复制示例 {{label}}"
+        },
+        "selectPlaceholder": "选择…",
+        "fileUpload": {
+          "invalidJson": "文件必须是有效的 JSON。",
+          "missingRequiredFields": "缺少必填字段：{{missing}}",
+          "fieldMustEqual": "字段“{{field}}”必须等于“{{value}}”。",
+          "contentMustContain": "内容必须包含：{{pattern}}",
+          "contentMustNotContain": "内容不得包含：{{pattern}}",
+          "tooLarge": "文件过大（{{size}} KB）。密钥、证书或 JSON 上传的最大大小为 {{max}} KB。",
+          "invalidFile": "文件无效。",
+          "readFailed": "读取文件失败。",
+          "optional": "（可选）",
+          "alreadyConfigured": "已配置",
+          "replace": "替换",
+          "clickToUpload": "点击上传文件",
+          "maxSize": "最大 {{max}} KB"
+        }
       },
       "personal": {
         "desktopRequiredTitle": "需要桌面应用",
@@ -2427,7 +2893,10 @@
       "errors": {
         "missingCreatedId": "创建成功，但未返回连接器 ID",
         "createdConfigUnavailable": "连接器已创建，但无法加载其配置。请尝试重新打开面板。",
-        "authenticateFirst": "未找到连接器 ID。请先完成认证。"
+        "authenticateFirst": "未找到连接器 ID。请先完成认证。",
+        "connectorInstanceUnavailable": "此连接器实例不可用。请刷新页面后重试。",
+        "connectorTypeRequired": "缺少连接器类型，无法启动同步。",
+        "settingsLoadFallback": "无法加载此连接器的设置。请稍后重试。"
       },
       "syncIntervals": {
         "5": "每 5 分钟",
@@ -2514,7 +2983,9 @@
           "title": "删除所有嵌入？",
           "body": "此操作会删除共享的向量集合并重新创建一个空集合。",
           "warning": "所有人的搜索都将无法返回结果，并会一直如此，直到重新索引完成。在大规模部署中，重新索引可能需要数小时。您的记录不会被删除——只删除它们的嵌入。",
-          "confirm": "删除嵌入"
+          "confirm": "删除嵌入",
+          "started": "已开始清理",
+          "startedDetail": "正在重新创建集合。重新索引完成前，搜索结果将为空。"
         },
         "reindex": {
           "label": "重新索引嵌入",
@@ -2523,9 +2994,28 @@
           "title": "重新索引所有记录？",
           "body": "此操作会根据每条记录已存储的内容重新生成其嵌入。不会重新下载或解析来源。",
           "warning": "在大规模部署中这可能需要很长时间，该操作在后台运行。",
-          "confirm": "开始重新索引"
+          "confirm": "开始重新索引",
+          "started": "已开始重新索引",
+          "startedDetail": "正在后台重新嵌入记录。这可能需要一些时间。"
         },
         "typePrompt": "请输入 {{token}} 以确认。"
+      },
+      "authorizeTab": {
+        "signInHeading": "使用你的提供方登录",
+        "signInDescription": "打开身份提供方的登录窗口并批准访问权限。登录成功后，选择页脚中的“继续配置”，以设置同步、筛选条件和记录。",
+        "authorizationStatus": "授权状态",
+        "authorizationStatusDescription": "此实例可以访问你在提供方中的数据。继续配置同步和索引；如果你已撤销访问权限或轮换凭据，请重新登录。",
+        "connected": "已连接 — 你可以继续配置记录",
+        "signInFailed": "登录未完成。请重试，或检查身份提供方设置。",
+        "refreshAccess": "刷新访问权限",
+        "refreshAccessDescription": "当令牌需要续期时，此操作与旧版“重新验证”操作相同。",
+        "authenticating": "正在验证身份…",
+        "reauthenticate": "使用提供方重新验证身份"
+      },
+      "validation": {
+        "syncFilterRequired": "保存前请选择 {{field, lowercase}}。每个连接器实例只能同步一个 {{field, lowercase}}。",
+        "syncFilterSingleSelection": "{{field}} 已选择 {{count}} 项。请缩小范围并仅保留一项，以便继续；每个连接器实例只能同步一个 {{field, lowercase}}。",
+        "syncFilterUnsupportedOperator": "请重新选择 {{field, lowercase}} 以继续。已保存的配置使用了不受支持的“{{operator}}”规则。"
       }
     },
     "mcpServers": {
@@ -2673,7 +3163,13 @@
         "noState": "未返回 state 参数。",
         "backendRejected": "服务器拒绝了授权请求。"
       },
-      "deleteDisabledTooltip": "此服务器无法删除"
+      "deleteDisabledTooltip": "此服务器无法删除",
+      "authModes": {
+        "none": "无需身份验证",
+        "apiToken": "API 令牌",
+        "oauth": "OAuth 2.0",
+        "headers": "自定义标头"
+      }
     },
     "bots": {
       "subtitle": "配置机器人凭据，并可选择将每个机器人映射到一个智能体",
@@ -2759,7 +3255,11 @@
         "loadConfigs": "加载机器人配置失败",
         "loadData": "加载数据失败"
       },
-      "refreshed": "已刷新"
+      "refreshed": "已刷新",
+      "secretVisibility": {
+        "show": "显示 {{secret}}",
+        "hide": "隐藏 {{secret}}"
+      }
     },
     "skills": {
       "title": "技能",
@@ -2863,7 +3363,8 @@
         "empty": "暂无捆绑资源。",
         "addNew": "添加资源",
         "path": "路径",
-        "content": "内容"
+        "content": "内容",
+        "remove": "移除 {{path}}"
       },
       "versions": {
         "empty": "暂无版本历史。",
@@ -2902,12 +3403,26 @@
         "reject": "拒绝",
         "view": "查看",
         "hide": "隐藏",
-        "editAndApprove": "编辑并批准"
+        "editAndApprove": "编辑并批准",
+        "sourceSummaryHeading": "学习来源："
       },
       "availability": {
         "label": "可供智能体使用",
         "description": "关闭后，此技能仍保留在您的库中，但智能体无法发现或加载它。",
         "descriptionBuiltin": "关闭后，此内置技能仍保留在库中，但整个组织的智能体都无法发现或加载它。"
+      },
+      "editorToolbar": {
+        "bold": "粗体（{{modifier}}+B）",
+        "italic": "斜体（{{modifier}}+I）",
+        "inlineCode": "行内代码",
+        "heading2": "标题 2",
+        "bulletList": "项目符号列表",
+        "numberedList": "编号列表",
+        "codeBlock": "代码块",
+        "blockquote": "引用块",
+        "horizontalRule": "水平分隔线",
+        "undo": "撤销",
+        "redo": "重做"
       }
     },
     "mail": {
@@ -2968,6 +3483,11 @@
         "usernamePlaceholder": "输入 SMTP 用户名",
         "password": "密码（可选）",
         "passwordHint": "用于 SMTP 身份验证的密码（如需要）"
+      },
+      "configure": "配置 SMTP",
+      "password": {
+        "show": "显示密码",
+        "hide": "隐藏密码"
       }
     },
     "prompts": {
@@ -3041,7 +3561,8 @@
         "default": "默认",
         "configured": "已配置",
         "notConfigured": "未配置",
-        "active": "已配置"
+        "active": "已配置",
+        "builtIn": "内置"
       },
       "heading": "网络搜索配置",
       "methodsSection": "不同的网络搜索方式",
@@ -3050,7 +3571,99 @@
       "verifying": "正在验证连接...",
       "disabledReasonConfigure": "请先配置此提供商，然后再启用。",
       "disabledReasonActive": "请先停用当前启用的提供商，然后再启用此提供商。",
-      "configureTip": "配置"
+      "configureTip": "配置",
+      "errors": {
+        "updateSettings": "更新网页搜索设置失败",
+        "addProvider": "添加提供方失败",
+        "updateProvider": "更新提供方失败",
+        "deleteProvider": "删除提供方失败",
+        "setDefaultProvider": "设置默认提供方失败"
+      },
+      "actions": {
+        "configureBeforeDefault": "请先配置此提供方，再将其设为默认项。",
+        "setAsDefault": "设为默认项",
+        "setting": "正在设置…",
+        "editConfiguration": "编辑配置",
+        "deleteConfiguration": "删除配置"
+      },
+      "providers": {
+        "builtInDescription": "内置，无需配置"
+      },
+      "configure": {
+        "update": "更新",
+        "defaultKeyNotice": "此提供方当前已设为默认项。更新 API 密钥后仍会保留为默认项。",
+        "editNotice": "正在编辑现有配置。更改保存后立即生效。",
+        "apiKeyLabel": "API 密钥",
+        "apiKeyPlaceholder": "输入 {{provider}} API 密钥",
+        "apiKeyHelp": "从 {{url}} 获取 API 密钥",
+        "secret": {
+          "show": "显示 API 密钥",
+          "hide": "隐藏 API 密钥"
+        },
+        "errors": {
+          "save": "保存提供方失败",
+          "delete": "删除提供方失败"
+        },
+        "dangerZone": "危险区域",
+        "removeDescription": "移除此提供方的配置。如果它是默认项，将改用 DuckDuckGo。",
+        "deleteProvider": "删除提供方",
+        "delete": {
+          "cannotDelete": "无法删除 {{provider}}",
+          "title": "删除 {{provider}} 配置？",
+          "checkingUsage": "正在检查智能体使用情况…",
+          "usage_other": "当前有 {{count}} 个智能体正在使用此提供方：",
+          "createdBy": "（由 {{creator}} 创建）",
+          "removeFromAgents": "删除此提供方前，请先从这些智能体中移除网页搜索配置。",
+          "defaultDescription": "这将永久移除你的 {{provider}} API 密钥，并将 DuckDuckGo 设为默认网页搜索提供方。",
+          "description": "这将永久移除你的 {{provider}} API 密钥。你可以稍后重新配置。"
+        }
+      },
+      "images": {
+        "maxImages": "每次 LLM 调用的最大输入图片数",
+        "invalidMaxImages": "请输入 1 到 500 之间的整数",
+        "maxImagesHelp": "请输入 1 到 500 之间的整数",
+        "costWarning": "加入图片可能会增加费用并延长网页搜索查询的响应时间。"
+      },
+      "page": {
+        "toasts": {
+          "loadFailed": "加载网页搜索设置失败",
+          "providerUpdated": "已更新 {{provider}}",
+          "providerAdded": "已添加 {{provider}}",
+          "configurationSaved": "配置已成功保存。",
+          "providerConfigured": "{{provider}} 已配置。点击“设为默认项”即可开始使用。",
+          "providerRemoved": "已移除 {{provider}}",
+          "duckDuckGoDefault": "DuckDuckGo 现在是默认网页搜索提供方。",
+          "configurationDeleted": "配置已成功删除。",
+          "resetDefaultFailed": "重置默认提供方失败",
+          "configureProviderFirst": "请先配置 {{provider}}",
+          "providerDefault": "{{provider}} 现在是默认项",
+          "setDefaultFailed": "设置默认项失败",
+          "deleteFailed": "删除提供方失败",
+          "imageSettingsFailed": "更新图片设置失败",
+          "imagesEnabled": "图片将发送给 LLM",
+          "imagesDisabled": "图片不会发送给 LLM",
+          "maxImagesUpdated_other": "最大图片数已设为 {{count}}。"
+        },
+        "providers": {
+          "heading": "网页搜索提供方",
+          "description": "配置所需的提供方，然后选择一个作为默认项"
+        },
+        "images": {
+          "heading": "图片设置",
+          "description": "控制网页搜索期间是否向 LLM 发送图片"
+        },
+        "delete": {
+          "cannotDelete": "无法删除 {{provider}}",
+          "title": "删除 {{provider}} 配置？",
+          "providerTitle": "删除提供方？",
+          "checkingUsage": "正在检查智能体使用情况…",
+          "usage_other": "当前有 {{count}} 个智能体正在使用此提供方：",
+          "createdBy": "（由 {{creator}} 创建）",
+          "removeFromAgents": "删除此提供方前，请先从这些智能体中移除网页搜索配置。",
+          "defaultDescription": "此提供方当前是默认项。删除后，默认项将重置为 DuckDuckGo。",
+          "description": "这将永久移除此提供方的配置。你可以稍后重新配置。"
+        }
+      }
     },
     "profile": {
       "subtitle": "在此管理您的所有个人资料信息",
@@ -3245,7 +3858,8 @@
           "label": "提取服务",
           "description": "基于 LLM 的文档分类和元数据提取"
         }
-      }
+      },
+      "logoAlt": "{{service}} 徽标"
     },
     "tenants": {
       "title": "租户",
@@ -3502,6 +4116,31 @@
       "disableTitle": "停用此服务账号？",
       "disableDescription": "{{name}} 会立即停止工作——包括它已持有的所有令牌，而不只是等到下次登录。在您重新启用之前，使用这些令牌的一切都会持续失败。",
       "disableConfirm": "停用"
+    },
+    "avatar": {
+      "upload": "上传",
+      "remove": "移除"
+    },
+    "entities": {
+      "selectedSummary_other": "已选择 {{count}} 个 {{itemLabel}}"
+    },
+    "form": {
+      "optional": "可选"
+    },
+    "members": {
+      "noItemsFound": "没有找到项目"
+    },
+    "selector": {
+      "searchOrSelect": "搜索或选择",
+      "noOptionsAvailable": "没有可用选项",
+      "selectOption": "选择一个选项",
+      "removeOption": "移除 {{option}}"
+    },
+    "settings": {
+      "discardChanges": "放弃更改"
+    },
+    "tagInput": {
+      "placeholder": "输入值"
     }
   },
   "filePreview": {
@@ -3523,7 +4162,82 @@
     "resizeCitations": "调整引用面板大小",
     "resizePreview": "调整文件预览面板大小",
     "viewCitations": "查看引用",
-    "openNamedInSource": "在来源中打开 {{name}}"
+    "openNamedInSource": "在来源中打开 {{name}}",
+    "openFailedFallback": "无法打开此文件的预览。请尝试下载，或稍后重试。",
+    "dialogDescription": "{{name}} 的预览面板。此处会显示文档内容、文件详情和相关引用。",
+    "documentLoadFailed": {
+      "loading": "正在加载文档…",
+      "fileUnavailable": "文件数据不可用",
+      "fetchFailed": "获取文档失败",
+      "emptyServerFile": "从服务器收到的文件为空。",
+      "emptyDocument": "文档为空。",
+      "renderFailed": "无法呈现此文档。",
+      "loadFailed": "加载文档失败"
+    },
+    "htmlLoadFailed": {
+      "loading": "正在加载 HTML…",
+      "noUrl": "文件 URL 不可用",
+      "fetchFailed": "获取文件内容失败",
+      "loadFailed": "加载文件失败"
+    },
+    "imageLoadFailed": {
+      "noUrl": "图片文件 URL 不可用",
+      "failed": "加载图片失败",
+      "couldNotDisplay": "无法显示图片文件",
+      "loading": "正在加载图片…",
+      "goToCitation": "转到引用 {{id}}"
+    },
+    "mediaUnavailable": {
+      "videoSourceUnavailable": "视频文件 URL 不可用",
+      "audioSourceUnavailable": "音频文件 URL 不可用",
+      "videoUnsupported": "你的浏览器不支持播放视频。",
+      "audioUnsupported": "你的浏览器不支持播放音频。"
+    },
+    "pdfLoadFailed": {
+      "noUrl": "PDF 文件 URL 不可用",
+      "unableToLoadPreview": "无法加载 {{fileName}} 的预览",
+      "loading": "正在加载 PDF…",
+      "loadFailed": "加载 PDF 文件失败"
+    },
+    "unsupportedDocument": {
+      "legacyDoc": "此文件采用旧版 Word（.doc）格式，无法在此处的浏览器中预览。请下载后用 Word 打开，或另存为 .docx 文件以在 Pipeshub 中预览。",
+      "documentType": "无法预览此文档类型。请下载后查看。",
+      "fileType": "无法预览此文件类型",
+      "openInBrowser": "在浏览器中打开"
+    },
+    "markdownLoadFailed": {
+      "loading": "正在加载 Markdown…",
+      "noUrl": "文件 URL 不可用",
+      "fetchFailed": "获取 Markdown 内容失败",
+      "loadFailed": "加载文件失败"
+    },
+    "spreadsheet": {
+      "column": "第 {{number}} 列",
+      "emptyCell": "（空）",
+      "loading": "正在加载电子表格…",
+      "noUrl": "文件 URL 不可用",
+      "fetchFailed": "获取电子表格失败",
+      "loadFailed": "加载电子表格失败",
+      "emptySheet": "此工作表为空",
+      "showingRows_other": "正在显示前 {{total}} 行中的 {{shown}} 行。下载即可查看所有数据。"
+    },
+    "switchVersion": {
+      "switchLabel": "版本 {{version}}，切换版本",
+      "versionLabel": "版本 {{version}}",
+      "switchTitle": "切换版本",
+      "optionLabel": "版本 {{version}}",
+      "latest": "最新版本"
+    },
+    "tabs": {
+      "preview": "预览",
+      "fileDetails": "文件详情"
+    },
+    "textLoadFailed": {
+      "loading": "正在加载文件…",
+      "noUrl": "文件 URL 不可用",
+      "fetchFailed": "获取文件内容失败",
+      "loadFailed": "加载文件失败"
+    }
   },
   "agentBuilder": {
     "goBack": "返回",
@@ -3842,7 +4556,8 @@
     "toolsetOAuthServerError": "认证失败。请重试或联系您的管理员。",
     "attached": "已附加",
     "mcpServerWithToolCount_other": "包含 {{count}} 个工具的 MCP 服务器",
-    "deprecatedToolsBanner_other": "此智能体上有 {{count}} 个工具已弃用。请移除它们：{{tools}}"
+    "deprecatedToolsBanner_other": "此智能体上有 {{count}} 个工具已弃用。请移除它们：{{tools}}",
+    "loadResourcesFailed": "加载构建器资源失败"
   },
   "recordView": {
     "sections": {
@@ -3954,7 +4669,8 @@
       }
     },
     "previewConversionFailed": "预览转换失败。您仍然可以下载该文件。",
-    "missingRecordId": "缺少记录 ID"
+    "missingRecordId": "缺少记录 ID",
+    "chatAttachment": "聊天附件"
   },
   "oauthConsent": {
     "loading": "正在加载授权请求…",
@@ -4068,7 +4784,13 @@
       "orgEmailVerifiedTitle": "组织已验证",
       "orgEmailVerifiedDescription": "您的组织现已激活。请登录以继续。",
       "orgEmailVerifyFailedTitle": "验证失败",
-      "orgEmailVerifyFailedDescription": "链接可能无效或已过期。请重新注册。"
+      "orgEmailVerifyFailedDescription": "链接可能无效或已过期。请重新注册。",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "你的组织已停用 JIT 预配",
+        "samlSsoDisabled": "你的组织尚未启用 SAML SSO",
+        "samlAuthenticationFailed": "SAML 身份验证失败。请重试。",
+        "unexpectedSamlFailure": "登录期间发生意外错误。请重试。"
+      }
     },
     "common": {
       "signIn": "登录",
@@ -4101,13 +4823,116 @@
       "showPassword": "显示密码",
       "hidePassword": "隐藏密码",
       "accountDisabled": "您的账号已被停用。",
-      "tooManyIncorrectCredentials": "您输入错误凭据的次数过多"
+      "tooManyIncorrectCredentials": "您输入错误凭据的次数过多",
+      "errorFallback": "发生错误。请重试。",
+      "orContinueWithProviders": "或使用以下提供方继续",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "电子邮件 OTP"
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "身份验证响应验证失败。请重试。",
+        "failed": "Google 登录失败。"
+      },
+      "microsoftCallback": {
+        "validationFailed": "身份验证响应验证失败。请重试。",
+        "failed": "Microsoft 登录失败。",
+        "noCode": "未收到 Microsoft 授权码。"
+      },
+      "callback": {
+        "authenticationFailed": "身份验证失败（{{status}}）。",
+        "noCode": "未收到授权码。",
+        "noState": "未收到 state 参数。",
+        "validationFailed": "身份验证响应验证失败。请重试。",
+        "invalidState": "state 参数无效。",
+        "missingProvider": "OAuth 状态无效：缺少提供方。",
+        "noToken": "身份验证成功，但未返回访问令牌。",
+        "failed": "OAuth 身份验证失败。",
+        "signInFailed": "登录失败",
+        "closeAndRetry": "你可以关闭此窗口后重试。"
+      },
+      "googlePopupError": {
+        "popupBlocked": "Google 登录弹出窗口已被拦截。请允许此网站打开弹出窗口。",
+        "failed": "Google 登录失败。请重试。"
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "与 Microsoft 交换令牌失败。",
+        "noIdToken": "未收到 Microsoft ID 令牌。",
+        "failed": "Microsoft 登录失败。",
+        "popupBlocked": "弹出窗口已被拦截。请允许此网站打开弹出窗口后重试。",
+        "startFailed": "启动 Microsoft 登录失败。请重试。"
+      },
+      "popupError": {
+        "popupBlocked": "登录弹出窗口已被拦截。请允许此网站打开弹出窗口。",
+        "failed": "OAuth 登录失败。请重试。"
+      }
+    },
+    "hero": {
+      "tagline": "为现代企业提供可解释的企业搜索。",
+      "description": "搜索所有业务应用中的内容"
+    },
+    "emailStep": {
+      "genericError": "发生错误。请重试。",
+      "noAccount": "找不到使用此电子邮件地址的账号。",
+      "checking": "正在检查…"
+    },
+    "providers": {
+      "signInWithSso": "使用 SSO 登录",
+      "continueWithGoogle": "使用 Google 继续",
+      "continueWithMicrosoft": "使用 Microsoft 继续",
+      "continueWithOAuth": "使用 OAuth 继续",
+      "continueWithGitHub": "使用 GitHub 继续",
+      "continueWithProvider": "使用 {{provider}} 继续",
+      "connecting": "正在连接…"
+    },
+    "actionFeedback": {
+      "blockedUntil": "请在 {{date}} 后重试。",
+      "unexpectedResponse": "响应异常。请重试。",
+      "passwordSignInFailed": "登录失败。请重试。",
+      "noPasswordSetTitle": "此账号尚未设置密码。",
+      "noPasswordSetDescription": "请使用下方的“忘记密码”来设置密码。",
+      "resetEmailSuccessDescription": "如果此电子邮件地址对应的账号存在，我们已发送密码重置链接。",
+      "resetEmailErrorTitle": "无法请求重置密码",
+      "tryAgainLater": "请稍后重试。",
+      "googleSignInFailed": "Google 登录失败。请重试。",
+      "additionalVerificationTitle": "需要额外验证",
+      "additionalVerificationDescription": "请完成下一步以继续。",
+      "oauthSignInFailed": "OAuth 登录失败。请重试。",
+      "otpSendSuccessTitle": "请检查电子邮件",
+      "otpSendSuccessDescription": "如果此电子邮件地址可以使用验证码登录，我们会发送验证码。如果几分钟后仍未收到，请检查垃圾邮件文件夹或稍后重试。",
+      "otpSendErrorTitle": "无法发送验证码",
+      "verificationFailed": "验证失败。请重试。",
+      "microsoftSignInFailed": "Microsoft 登录失败。请重试。",
+      "contactAdministrator": "请联系管理员。"
+    },
+    "emailVerification": {
+      "missingToken": "验证链接缺少令牌。",
+      "completing": "正在完成电子邮件验证…",
+      "failed": "电子邮件验证失败。请重试。"
     }
   },
   "healthGate": {
     "title": "无法连接到服务器",
     "description": "服务器当前无法访问。它可能正在启动或正在进行维护。我们正在尝试重新连接。",
-    "contactAdmin": "如果此问题持续存在，请联系您的 PipesHub 管理员。"
+    "contactAdmin": "如果此问题持续存在，请联系您的 PipesHub 管理员。",
+    "toast": {
+      "critical": {
+        "title": "部分服务暂不可用",
+        "memberDescription": "部分功能暂时不可用。我们会自动重新连接；如果问题持续，请联系管理员。",
+        "adminDescription": "受影响的服务：{{services}}"
+      },
+      "viewStatus": "查看状态",
+      "nonCritical": {
+        "adminTitle_other": "{{services}} 当前不可用",
+        "memberTitle": "部分功能暂时不可用"
+      }
+    },
+    "serviceGate": {
+      "title": "服务不可用",
+      "adminDescription_other": "此页面需要使用 {{services}}，但这些服务目前不可用。服务恢复后，页面会自动恢复使用。",
+      "memberDescription": "此页面暂时不可用。页面会自动恢复；如果问题持续，请联系管理员。",
+      "viewStatus": "查看服务状态"
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "问题：",
@@ -4202,7 +5027,10 @@
     },
     "team": "团队",
     "teamsNoRoles": "团队没有角色",
-    "invite": "邀请加入 Pipeshub"
+    "invite": "邀请加入 Pipeshub",
+    "searchPlaceholder": "电子邮件、团队或姓名（以逗号分隔）",
+    "shareConversation": "分享聊天",
+    "memberNameUnknown": "未知"
   },
   "demoData": {
     "badge": {
@@ -4242,6 +5070,155 @@
       "offDescription": "它已从所有人的回答、搜索和记录中移除，示例账号也无法登录。请在个人资料 → 演示数据中重新开启。",
       "onTitle": "已为所有人重新开启演示数据",
       "errorTitle": "无法为所有人更改演示数据"
+    }
+  },
+  "knowledgeBase": {
+    "accessRevoked": "你已无法访问此集合",
+    "bulkDeleteFailed": "批量删除失败",
+    "bulkDeleteFallback": "删除所选项目失败。请重试。",
+    "bulkDeletePartial_other": "已删除 {{successCount}} 个项目；{{failCount}} 个失败。",
+    "bulkDeleteProgress_other": "正在删除 {{count}} 个项目…",
+    "bulkDeleteSuccess_other": "已成功删除 {{count}} 个项目",
+    "bulkReindexFailed": "批量重新索引失败",
+    "bulkReindexFallback": "重新索引所选项目失败。请重试。",
+    "bulkReindexPartial_other": "已重新索引 {{successCount}} 个项目；{{failCount}} 个失败。",
+    "bulkReindexProgress_other": "正在重新索引 {{count}} 个项目…",
+    "bulkReindexSuccess_other": "已成功重新索引 {{count}} 个项目",
+    "collectionsLoadFailedTitle": "加载集合失败",
+    "createFolderFailed": "创建文件夹失败",
+    "createFolderFallback": "无法创建文件夹。请检查名称并重试。",
+    "createFolderSuccess": "文件夹已成功创建",
+    "createFolderSuccessDescription": "已创建“{{name}}”",
+    "deleteFailed": "删除 {{kind}} 失败",
+    "deleteFailedTitle": "删除失败",
+    "deleteFallback": "删除失败。请重试。",
+    "deleteRefreshFailed": "无法更新列表",
+    "deleteRefreshFailedDescription": "{{kind}} 已删除，但列表未能刷新。请刷新页面以查看最新列表。",
+    "deleteSuccess": "已成功删除“{{name}}”",
+    "deleteSuccessDescription": "已删除 {{kind}}。",
+    "deleteSuccessTitle": "已成功删除",
+    "downloadFailed": "下载失败",
+    "downloadFallback": "无法下载文件。请检查网络连接并重试。",
+    "errors": {
+      "folderCollectionIdRequired": "更新此文件夹需要集合 ID。"
+    },
+    "folderDetails": {
+      "collection": "集合",
+      "connector": "连接器",
+      "createdAt": "创建时间",
+      "empty": "没有可用的文件夹详情",
+      "folder": "文件夹",
+      "indexingStatus": "索引状态",
+      "metadata": "元数据",
+      "origin": "来源",
+      "permissions": "权限",
+      "recordGroup": "记录组",
+      "recordType": "记录类型",
+      "title": "文件夹详情",
+      "totalItems": "项目总数",
+      "updatedAt": "更新时间",
+      "version": "版本"
+    },
+    "loadCollectionsFallback": "无法加载你的集合。请检查网络连接，然后选择“重试”。",
+    "loadItemsFailed": "加载项目失败。请重试。",
+    "loadMoreConnectorsFailed": "无法加载更多连接器",
+    "loadMoreFailedDescription": "请重试或刷新页面。",
+    "loadMoreItemsFailed": "无法加载更多项目",
+    "loadRecordsFailed": "加载记录失败",
+    "moveFailed": "移动项目失败",
+    "moveFallback": "无法移动项目。请稍后重试。",
+    "moveSuccess": "项目已成功移动",
+    "moveSuccessDescription": "已移动“{{name}}”",
+    "reindex": {
+      "toast": {
+        "indexing": "正在建立索引…",
+        "reindexing": "正在重新建立索引…",
+        "queuedIndexing": "已成功加入索引队列",
+        "queuedReindexing": "已成功加入重新索引队列"
+      }
+    },
+    "reindexFallback": "启动重新索引失败。请稍后重试。",
+    "renameFailed": "重命名失败",
+    "renameFallback": "无法重命名。请稍后重试。",
+    "renameSuccess": "已成功重命名",
+    "renameSuccessDescription": "已重命名为“{{name}}”",
+    "replaceFailed": "替换文件失败",
+    "replaceFallback": "无法替换文件。请稍后重试。",
+    "replaceFile": {
+      "allowedFileType": "只能上传 {{fileType}} 文件（{{extension}}）来替换此文件",
+      "currentFile": "当前文件",
+      "maxSize": "你可以上传不超过 {{maxFileSizeMB}} MB 的文件",
+      "name": "名称",
+      "supports": "支持的格式：仅 {{fileType}}",
+      "title": "替换文件",
+      "upload": "上传"
+    },
+    "replaceSuccess": "文件已成功替换",
+    "replaceSuccessDescription": "已将“{{oldName}}”替换为“{{newName}}”",
+    "sidebarLoadFailedAppSectionsDescription": "无法加载应用分区。请刷新页面。",
+    "sidebarLoadFailedCollectionsDescription": "无法加载集合。请刷新页面。",
+    "sidebarLoadFailedTitle": "加载侧边栏失败",
+    "upload": {
+      "addFiles": "添加文件",
+      "addFolder": "添加文件夹",
+      "collapseFolder": "折叠文件夹",
+      "documentation": "文档",
+      "expandFolder": "展开文件夹",
+      "fileCount_other": "{{count}} 个文件",
+      "fileLimitDescription": "每个文件最大 {{maxFileSizeMB}} MB；上传时会验证文件类型和大小",
+      "folderCount_other": "{{count}} 个文件夹",
+      "folderLimitDescription": "上传时会验证每个文件（每个文件最大 {{maxFileSizeMB}} MB）",
+      "moreBelow": "下方还有更多内容",
+      "or": "或",
+      "removeNamedItem": "移除 {{name}}",
+      "title": "上传数据",
+      "upload": "上传",
+      "uploadFiles": "上传文件",
+      "uploadFolders": "上传文件夹"
+    }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Ctrl"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "日期为",
+      "between": "介于",
+      "before": "早于",
+      "after": "晚于"
+    },
+    "startDateEndDate": "开始日期 - 结束日期",
+    "pickDate": "选择日期",
+    "endDate": "结束日期",
+    "startTime": "开始时间",
+    "endTime": "结束时间",
+    "time": "时间",
+    "apply": "应用",
+    "previousMonth": "上个月",
+    "nextMonth": "下个月"
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "完善个人资料",
+      "description": "请设置你的姓名以继续。这有助于队友在不同工作区中识别你。",
+      "errors": {
+        "required": "姓名为必填项",
+        "minimumLength": "姓名至少需要 2 个字符",
+        "userUnavailable": "无法识别用户。请刷新后重试。",
+        "saveFailed": "保存姓名失败。请重试。"
+      },
+      "saveAndContinue": "保存并继续"
+    }
+  },
+  "connectors": {
+    "oauthCallback": {
+      "errors": {
+        "serverConfirmation": "服务器未确认 OAuth 流程已完成。",
+        "authenticationFailed": "身份验证失败。请重试或联系管理员。",
+        "rejected": "服务器拒绝了 OAuth 身份验证。"
+      }
     }
   }
 }

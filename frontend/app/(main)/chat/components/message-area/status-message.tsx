@@ -4,14 +4,19 @@ import React from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
 import type { StatusMessage } from '@/chat/types';
+import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText, type TranslateText } from '@/lib/i18n/localized-text';
 
 interface StatusMessageProps {
   status: StatusMessage;
 }
 
 export function StatusMessageComponent({ status }: StatusMessageProps) {
+  const { t } = useTranslation();
   // Use the actual message from the stream
-  const statusText = status.message || 'Processing...';
+  const statusText = status.messageText
+    ? resolveLocalizedText(status.messageText, t as TranslateText, status.message)
+    : status.message || t('chat.processingStatus', { defaultValue: 'Processing...' });
 
   return (
     <Flex

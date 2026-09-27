@@ -1,13 +1,12 @@
 'use client';
 
-import { useMemo } from 'react';
 import { Badge, Flex } from '@radix-ui/themes';
 import { ChatStarIcon } from '@/app/components/ui/chat-star-icon';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { KBD_BADGE_PADDING, ICON_SIZE_DEFAULT } from '@/app/components/sidebar';
 import { useCommandStore } from '@/lib/store/command-store';
 import { useTranslation } from 'react-i18next';
-import { getModifierSymbol } from '@/lib/utils/platform';
+import { getLocalizedModifierSymbol } from '@/lib/utils/platform';
 import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 import { useMobileSidebarStore } from '@/lib/store/mobile-sidebar-store';
 import { useNotificationStore } from '@/app/(main)/notifications/store';
@@ -63,7 +62,7 @@ const KbdBadge = ({ children }: { children: React.ReactNode }) => (
 export function StaticNavSection() {
   const dispatch = useCommandStore((s) => s.dispatch);
   const { t } = useTranslation();
-  const modKey = useMemo(() => getModifierSymbol(), []);
+  const modKey = getLocalizedModifierSymbol(t);
   const isMobile = useIsMobile();
   const closeMobileSidebar = useMobileSidebarStore((s) => s.close);
   const unreadCount = useNotificationStore((s) => s.unreadCount);

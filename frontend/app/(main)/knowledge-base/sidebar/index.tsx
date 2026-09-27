@@ -351,7 +351,7 @@ function KBSidebarContent({
                 ))
               ) : (
                 <Text size="1" style={{ color: 'var(--slate-9)', padding: 'var(--space-2) var(--space-6)' }}>
-                  No items
+                  {t('table.emptyState')}
                 </Text>
               )
             ) : appChildren.length > 0 ? (
@@ -380,7 +380,7 @@ function KBSidebarContent({
               ))
             ) : (
               <Text size="1" style={{ color: 'var(--slate-9)', padding: 'var(--space-2) var(--space-6)' }}>
-                No items
+                  {t('table.emptyState')}
               </Text>
             )}
             {appChildrenPagination.get(appId)?.hasNext ? (

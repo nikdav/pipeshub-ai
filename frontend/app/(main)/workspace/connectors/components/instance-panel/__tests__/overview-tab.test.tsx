@@ -14,6 +14,7 @@ vi.mock('../../../utils/fetch-instance-stats', () => ({
 const runConnectorResync = vi.fn();
 vi.mock('../../../utils/connector-sync-actions', () => ({
   runConnectorResync: (...args: unknown[]) => runConnectorResync(...args),
+  getConnectorActionErrorText: () => undefined,
 }));
 const routerPush = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: routerPush }) }));
@@ -109,8 +110,8 @@ describe('OverviewTab: record status', () => {
     renderInTheme(
       <OverviewTab instance={makeInstance({ isActive: false })} stats={stats({ FAILED: 3 })} />
     );
-    expect(screen.queryByRole('button', { name: /Sync now/ })).toBeNull();
-    expect(screen.queryByRole('button', { name: /Reindex failed/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Sync$/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /Reindex Failed/ })).toBeNull();
   });
 });
 
@@ -120,7 +121,7 @@ describe('OverviewTab: actions', () => {
       <OverviewTab instance={makeInstance({ isActive: true })} stats={stats({ COMPLETED: 5, FAILED: 3 })} />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /Reindex failed \(3\)/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Reindex Failed \(3\)/ }));
 
     await waitFor(() => expect(reindexConnector).toHaveBeenCalledWith('conn-1', ['FAILED']));
     await waitFor(() => expect(toastTitles()).toContain('Reindexing failed records…'));
@@ -133,7 +134,7 @@ describe('OverviewTab: actions', () => {
       <OverviewTab instance={makeInstance({ isActive: true })} stats={stats({ FAILED: 3 })} />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /Reindex failed \(3\)/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Reindex Failed \(3\)/ }));
 
     await waitFor(() => expect(toastTitles()).toContain('Failed to reindex failed records'));
   });
@@ -143,7 +144,7 @@ describe('OverviewTab: actions', () => {
       <OverviewTab instance={makeInstance({ isActive: true })} stats={stats({ AUTO_INDEX_OFF: 7 })} />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /Manual index \(7\)/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Start manual index \(7\)/ }));
 
     await waitFor(() => expect(reindexConnector).toHaveBeenCalledWith('conn-1', ['AUTO_INDEX_OFF']));
   });
@@ -151,7 +152,7 @@ describe('OverviewTab: actions', () => {
   it('starts a sync and confirms it', async () => {
     renderInTheme(<OverviewTab instance={makeInstance({ isActive: true })} stats={stats({ COMPLETED: 1 })} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /Sync now/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^Sync$/ }));
 
     await waitFor(() =>
       expect(runConnectorResync).toHaveBeenCalledWith({ connectorId: 'conn-1', connectorType: 'Jira' })
@@ -163,7 +164,7 @@ describe('OverviewTab: actions', () => {
     runConnectorResync.mockRejectedValue(new Error('A sync is already running for this connector.'));
     renderInTheme(<OverviewTab instance={makeInstance({ isActive: true })} stats={stats({ COMPLETED: 1 })} />);
 
-    fireEvent.click(screen.getByRole('button', { name: /Sync now/ }));
+    fireEvent.click(screen.getByRole('button', { name: /^Sync$/ }));
 
     await waitFor(() => expect(toastTitles()).toContain('Failed to start sync'));
     expect(toasts().find((t) => t.title === 'Failed to start sync')?.description).toBe(

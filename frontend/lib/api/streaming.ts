@@ -44,6 +44,7 @@ import { getApiBaseUrl } from '@/lib/utils/api-base-url';
 import { streamingFetch, isElectron } from '@/lib/electron';
 import { generateRequestId } from '@/lib/utils/request-id';
 import { busyMessage, parseRetryAfter } from './api-error';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 
 // Default to '' (same origin) rather than `undefined`, because template-string
 // concatenation like `${API_BASE_URL}${url}` would otherwise stringify
@@ -54,6 +55,7 @@ import { busyMessage, parseRetryAfter } from './api-error';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
 const SESSION_EXPIRED_MESSAGE = STREAM_ERROR_MESSAGES.sessionExpired;
+const SESSION_EXPIRED_TEXT = localizedText('common.errors.stream.sessionExpired');
 
 /**
  * Error thrown when an upload fails at the HTTP layer — i.e. the request is
@@ -67,18 +69,21 @@ export class UploadHttpError extends Error {
   readonly code?: string;
   /** Seconds to wait before retrying, when the server provided it. */
   readonly retryAfter?: number;
+  readonly messageText?: LocalizedText;
 
   constructor(opts: {
     status: number;
     message: string;
     code?: string;
     retryAfter?: number;
+    messageText?: LocalizedText;
   }) {
     super(opts.message);
     this.name = 'UploadHttpError';
     this.status = opts.status;
     this.code = opts.code;
     this.retryAfter = opts.retryAfter;
+    this.messageText = opts.messageText;
   }
 }
 
@@ -108,12 +113,20 @@ async function readUploadHttpError(response: Response): Promise<UploadHttpError>
     // Callers honour any wait the server asks for; only the message caps it.
     retryAfter = parseRetryAfter(response.headers.get('retry-after') ?? undefined, Date.now(), Infinity);
   }
+  let messageText: LocalizedText | undefined;
   if (!message) {
-    message = [429, 503, 504].includes(response.status)
-      ? busyMessage(parseRetryAfter(retryAfter))
-      : "The upload didn't go through. Please try again, and if it keeps failing, contact your admin.";
+    if ([429, 503, 504].includes(response.status)) {
+      const retryAfterSeconds = parseRetryAfter(retryAfter);
+      message = busyMessage(retryAfterSeconds);
+      messageText = retryAfterSeconds
+        ? localizedText('common.errors.api.busyRetry', { count: retryAfterSeconds })
+        : localizedText('common.errors.api.busy');
+    } else {
+      message = "The upload didn't go through. Please try again, and if it keeps failing, contact your admin.";
+      messageText = localizedText('uploadProgress.errors.httpFallback');
+    }
   }
-  return new UploadHttpError({ status: response.status, message, code, retryAfter });
+  return new UploadHttpError({ status: response.status, message, code, retryAfter, messageText });
 }
 
 /**
@@ -175,7 +188,7 @@ export async function streamRequest(
   try {
     const { token, sessionExpired } = await ensureFreshToken();
     if (sessionExpired) {
-      onError(new Error(SESSION_EXPIRED_MESSAGE));
+      onError(new StreamError(SESSION_EXPIRED_MESSAGE, 401, SESSION_EXPIRED_TEXT));
       return;
     }
 
@@ -350,7 +363,7 @@ export async function streamSSERequest<T = unknown>(
   try {
     const { token, sessionExpired } = await ensureFreshToken();
     if (sessionExpired) {
-      onError(new Error(SESSION_EXPIRED_MESSAGE));
+      onError(new StreamError(SESSION_EXPIRED_MESSAGE, 401, SESSION_EXPIRED_TEXT));
       return;
     }
 
@@ -440,6 +453,7 @@ const DEFAULT_UPLOAD_IDLE_TIMEOUT_MS = 60_000;
 /** Shown per file in the upload tracker when the server goes quiet mid-stream. */
 export const UPLOAD_STALLED_MESSAGE =
   'PipesHub stopped responding before this upload finished. Please upload these files again.';
+export const UPLOAD_STALLED_TEXT = localizedText('uploadProgress.errors.stalled');
 
 /**
  * POST a multipart upload and consume its Server-Sent Events response. The KB
@@ -496,7 +510,7 @@ export async function streamSSEUpload<T = unknown>(
   try {
     const { token, sessionExpired } = await ensureFreshToken();
     if (sessionExpired) {
-      onError(new Error(SESSION_EXPIRED_MESSAGE));
+      onError(new StreamError(SESSION_EXPIRED_MESSAGE, 401, SESSION_EXPIRED_TEXT));
       return;
     }
 
@@ -578,7 +592,7 @@ export async function streamSSEUpload<T = unknown>(
       return;
     }
     if (idleTimedOut) {
-      onError(new StreamError(UPLOAD_STALLED_MESSAGE));
+      onError(new StreamError(UPLOAD_STALLED_MESSAGE, undefined, UPLOAD_STALLED_TEXT));
       return;
     }
     // External (caller) abort — silent, like the other streamers.
@@ -612,7 +626,7 @@ export async function streamSSEGet<T = unknown>(
   try {
     const { token, sessionExpired } = await ensureFreshToken();
     if (sessionExpired) {
-      onError(new Error(SESSION_EXPIRED_MESSAGE));
+      onError(new StreamError(SESSION_EXPIRED_MESSAGE, 401, SESSION_EXPIRED_TEXT));
       return;
     }
 

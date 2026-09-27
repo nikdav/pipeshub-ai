@@ -12,6 +12,7 @@
 
 import type { ExternalStoreAdapter } from '@assistant-ui/react';
 import type { ThreadMessageLike } from '@assistant-ui/react';
+import { localizedText } from '@/lib/i18n/localized-text';
 import { useChatStore, ctxKeyFromAgent, getEffectiveModel, isModelReasoningCapable, getAgentDefaultReasoningEffort } from './store';
 import { streamMessageForSlot, cancelStreamForSlot } from './streaming';
 import { showNoModelToast } from './utils/no-model-toast';
@@ -365,6 +366,7 @@ export function loadHistoricalMessages(
 
     if (msg.messageType === 'error') {
       toolPayload = null;
+      const isEmptyErrorFallback = !msg.content;
       result.push({
         id: msg._id,
         role: 'assistant' as const,
@@ -372,6 +374,9 @@ export function loadHistoricalMessages(
         metadata: {
           custom: {
             citationMaps: buildCitationMapsFromApi([]),
+            ...(isEmptyErrorFallback
+              ? { messageText: localizedText('chatStream.errorFallback') }
+              : {}),
           },
         },
       });

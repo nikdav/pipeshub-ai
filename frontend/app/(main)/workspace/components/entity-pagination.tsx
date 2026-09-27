@@ -137,7 +137,7 @@ export function EntityPagination({
                   key={value}
                   onClick={() => onLimitChange(value)}
                 >
-                  {value} per page
+                  {t('workspace.pagination.perPage', { value })}
                 </DropdownMenu.Item>
               ))}
             </DropdownMenu.Content>

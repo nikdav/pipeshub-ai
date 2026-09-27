@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText } from '@/lib/i18n/localized-text';
 import { isValidEmail } from '@/lib/utils/validators';
 import { LoadingButton } from '@/app/components/ui/loading-button';
 import { Spinner } from '@/app/components/ui/spinner';
@@ -83,8 +84,9 @@ export default function OtpSignInFlow({
     await signInWithOtp(otp);
   };
 
-  const otpInlineError =
-    error?.type === 'generic' && error.message ? error.message : undefined;
+  const otpInlineError = error?.type === 'generic' && error.message
+    ? error.messageText ? resolveLocalizedText(error.messageText, t) : error.message
+    : undefined;
   const otpFieldError = otpInlineError ?? (otpValidationErrorKey ? t(otpValidationErrorKey) : '');
 
   const emailLooksValid = !!trimmedEmail && isValidEmail(trimmedEmail);

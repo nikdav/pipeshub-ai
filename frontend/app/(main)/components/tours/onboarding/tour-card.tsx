@@ -182,7 +182,7 @@ export function OnboardingTour() {
             marginBottom: '6px',
           }}
         >
-          {tourState.title}
+          {tourState.titleKey ? t(tourState.titleKey) : tourState.title}
         </Heading>
 
         {/* ── Description ──────────────────────────────────── */}
@@ -218,7 +218,7 @@ export function OnboardingTour() {
               marginBottom: '14px',
             }}
           >
-            {tourState.subtitle}
+            {tourState.subtitleKey ? t(tourState.subtitleKey) : tourState.subtitle}
           </Text>
         )}
 
@@ -236,7 +236,7 @@ export function OnboardingTour() {
               return (
                 <TourStepRow
                   key={stepId}
-                  label={detail.title}
+                  label={detail.titleKey ? t(detail.titleKey) : detail.title}
                   onClick={() => handleStepClick(stepId, detail.relativeLink)}
                   isHovered={hoveredStep === stepId}
                   onMouseEnter={() => setHoveredStep(stepId)}

@@ -10,6 +10,7 @@ import { getConnectorConfig } from './utils';
 import { FileIcon } from '@/app/components/ui/file-icon';
 import { renderInlineMarkdown } from '@/app/components/ui/inline-markdown';
 import type { CitationData } from './types';
+import { useTranslation } from 'react-i18next';
 
 interface CitationPopoverContentProps {
   citation: CitationData;
@@ -25,12 +26,15 @@ function CitationPopoverContentInner({
   onPreview,
   onOpenInCollection,
 }: CitationPopoverContentProps) {
+  const { t } = useTranslation();
   const config = getConnectorConfig(citation.connector);
 
   // Determine if this is a collection (UPLOAD) or external connector source
   const isCollectionSource = citation.origin === 'UPLOAD';
   const isLocalFsSource = isLocalFsConnectorType(citation.connector ?? '');
-  const openInLabel = isCollectionSource ? 'Open in Collections' : `Open in ${config.label}`;
+  const openInLabel = isCollectionSource
+    ? t('chat.recordActions.openInCollections')
+    : t('chat.recordActions.openIn', { source: config.label });
   const isAttachment = citation.connector?.toUpperCase() === 'ATTACHMENTS';
   const canOpenSource =
     !isAttachment &&
@@ -107,7 +111,7 @@ function CitationPopoverContentInner({
               onClick={handlePreview}
               style={{ cursor: 'pointer', backgroundColor: 'var(--emerald-9)' }}
             >
-              Preview
+              {t('chat.recordActions.preview')}
             </Button>
           )}
         </Flex>
@@ -168,7 +172,7 @@ function CitationPopoverContentInner({
               color="gray"
               style={{ fontWeight: 500 }}
             >
-              Page {p}
+              {t('filePreview.page', { number: p })}
             </Badge>
           ))}
           {citation.blockNum?.map((b) => (
@@ -179,7 +183,7 @@ function CitationPopoverContentInner({
               color="gray"
               style={{ fontWeight: 500 }}
             >
-              Paragraph {b}
+              {t('filePreview.paragraph', { number: b })}
             </Badge>
           ))}
         </Flex>

@@ -17,7 +17,9 @@ import {
   isRequestCancelledError,
   isSearchNoAccessibleDocumentsNotFound,
 } from '@/lib/api';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
 import { useServicesHealthStore } from '@/lib/store/services-health-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 // Module-level abort controller for cancelling in-flight searches
 let currentSearchAbort: AbortController | null = null;
@@ -103,7 +105,13 @@ export function ChatInputWrapper() {
         store.setSearchResults([], null, query);
         return;
       }
-      store.setSearchError((error as Error)?.message || 'Search failed');
+      if ((error as Error)?.message) {
+        const message = (error as Error).message;
+        const errorText = getUserFacingErrorText(error, localizedText('chat.searchFailed'));
+        store.setSearchError(message, typeof errorText === 'string' ? undefined : errorText);
+      } else {
+        store.setSearchError('Search failed', localizedText('chat.searchFailed'));
+      }
     } finally {
       if (currentSearchAbort === searchController) {
         currentSearchAbort = null;
@@ -130,7 +138,12 @@ export function ChatInputWrapper() {
         signal,
       });
       const ref = refs[0];
-      if (!ref) throw new Error("The upload didn't finish. Please attach the file again.");
+      if (!ref) {
+        throw Object.assign(
+          new Error('The upload did not return an attachment reference.'),
+          { messageText: localizedText('chat.attachments.uploadMissingReference') },
+        );
+      }
       return ref;
     },
     [effectiveAgentId],

@@ -16,6 +16,7 @@ import {
 } from '../sidebar-mcp-utils';
 import { applyAutoConnectToEdges } from '../connection-rules';
 import { resolvePremiumDropPosition } from '../drop-position';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 type SetNodes = React.Dispatch<React.SetStateAction<Node<FlowNodeData>[]>>;
 type SetEdges = React.Dispatch<React.SetStateAction<Edge[]>>;
@@ -59,7 +60,7 @@ function rejectIfDuplicateToolsetType(
   toolsetName: string,
   fallbackName: string,
   t: TFunction,
-  onError?: (message: string) => void
+  onError?: (message: LocalizedTextValue) => void
 ): boolean {
   const droppedToolsetTypeKey = normalizeToolsetTypeKey(toolsetName);
   if (droppedToolsetTypeKey && collectActiveToolsetTypeKeysFromNodes(nodes).has(droppedToolsetTypeKey)) {
@@ -87,7 +88,7 @@ export function handleFlowCanvasDrop(
     activeAgentConnectors: Connector[];
     readOnly: boolean;
     t: TFunction;
-    onError?: (message: string) => void;
+    onError?: (message: LocalizedTextValue) => void;
   }
 ): void {
   if (ctx.readOnly) return;
@@ -473,7 +474,7 @@ export function handleFlowCanvasDrop(
       data: {
         id: wsId,
         type: 'web-search',
-        label: wsProviderLabel || 'Web Search',
+        label: wsProviderLabel || t('agentBuilder.webSearch'),
         description: wsTemplate?.description ?? '',
         icon: 'public',
         category: 'tools',
@@ -497,14 +498,18 @@ export function handleFlowCanvasDrop(
   const isConnectorConfigured = event.dataTransfer.getData('isConfigured') === 'true';
   const isConnectorAgentActive = event.dataTransfer.getData('isAgentActive') === 'true';
 
-  const findConnector = (): { id: string; name: string } | null => {
+  const findConnector = (): { id: string; name: string; isGenericFallback: boolean } | null => {
     if (connectorId) {
       const connector =
         configuredConnectors.find((c) => c._key === connectorId) ||
         activeAgentConnectors.find((c) => c._key === connectorId);
+      const candidateNames = [connector?.name, connectorName, connectorType, toolAppName].filter(
+        (name): name is string => Boolean(name),
+      );
       return {
         id: connectorId,
-        name: connector?.name || connectorName || connectorType || toolAppName || 'Connector',
+        name: candidateNames[0] || 'Connector',
+        isGenericFallback: candidateNames.length === 0,
       };
     }
     const appName = (template.defaultConfig?.appName as string) || toolAppName || connectorType;
@@ -517,7 +522,7 @@ export function handleFlowCanvasDrop(
           (c) => c.name?.toUpperCase() === appName.toUpperCase() || c.type?.toUpperCase() === appName.toUpperCase()
         );
       if (connector?._key) {
-        return { id: connector._key, name: connector.name || appName };
+        return { id: connector._key, name: connector.name || appName, isGenericFallback: false };
       }
     }
     return null;
@@ -529,7 +534,11 @@ export function handleFlowCanvasDrop(
       const connector = findConnector();
       onError?.(
         connector
-          ? t('agentBuilder.dropConnectorMustEnableNamed', { name: connector.name })
+          ? connector.isGenericFallback
+            ? localizedText('agentBuilder.dropConnectorMustEnableNamed', {
+                name: localizedText('filter.connector'),
+              })
+            : t('agentBuilder.dropConnectorMustEnableNamed', { name: connector.name })
           : t('agentBuilder.dropConnectorMustEnableApp', { app: appName || '' })
       );
       return;

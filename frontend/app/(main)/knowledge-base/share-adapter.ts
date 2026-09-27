@@ -3,6 +3,7 @@ import type { ShareAdapter, SharedMember, ShareSubmission, ShareRole } from '@/a
 import { useAuthStore } from '@/config';
 import { useUserStore } from '@/lib/store/user-store';
 import { fetchShareUsersPaginated } from '@/app/components/share/utils';
+import i18n from '@/lib/i18n/config';
 
 const BASE = '/api/v1/knowledgeBase';
 
@@ -18,7 +19,9 @@ export function createKBShareAdapter(kbId: string): ShareAdapter {
   return {
     entityType: 'collection',
     entityId: kbId,
-    sidebarTitle: 'Share Collection',
+    get sidebarTitle() {
+      return i18n.t('dialog.shareCollection');
+    },
     supportsRoles: true,
     supportsTeams: true,
 
@@ -29,10 +32,12 @@ export function createKBShareAdapter(kbId: string): ShareAdapter {
         const isTeam = (p.type as string)?.toUpperCase() === 'TEAM';
         const mongoUserId = p.userId as string | undefined;
         const id = isTeam ? (p.id as string) : (mongoUserId ?? (p.id as string));
-        return {
+        const displayName =
+          typeof p.name === 'string' && p.name ? p.name : typeof p.email === 'string' && p.email ? p.email : undefined;
+        const member = {
           id,
           type: (isTeam ? 'team' : 'user') as 'user' | 'team',
-          name: (p.name as string) ?? (p.email as string) ?? 'Unknown',
+          name: displayName ?? '',
           email: p.email as string | undefined,
           avatarUrl: p.avatarUrl as string | undefined,
           memberCount: p.memberCount as number | undefined,
@@ -40,6 +45,12 @@ export function createKBShareAdapter(kbId: string): ShareAdapter {
           isOwner: ((p.role as string) ?? (p.relationship as string)) === 'OWNER',
           isCurrentUser: !isTeam && id === currentUserId,
         };
+        Object.defineProperty(member, 'name', {
+          configurable: true,
+          enumerable: true,
+          get: () => displayName ?? i18n.t('common.unknown'),
+        });
+        return member;
       });
     },
 

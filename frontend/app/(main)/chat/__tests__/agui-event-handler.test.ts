@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { createAGUIEventHandler, type AGUIStreamTracking } from '../agui-event-handler';
 import type { StreamMessageCallbacks } from '../api';
 import type { SSEEvent } from '@/lib/api';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 function frame(type: string, fields: Record<string, unknown> = {}): SSEEvent {
   return { event: type, data: { type, ...fields } };
@@ -302,6 +303,9 @@ describe('createAGUIEventHandler', () => {
     expect(spies.onStatus).toHaveBeenCalledWith({
       status: 'executing',
       message: 'Delegating to internal_exploration_agent...',
+      messageText: localizedText('chatStream.status.delegatingTo', {
+        roleName: 'internal_exploration_agent',
+      }),
     });
   });
 
@@ -320,7 +324,13 @@ describe('createAGUIEventHandler', () => {
 
     handle(frame('TOOL_CALL_START', { toolCallName: 'jira_search' }));
 
-    expect(spies.onStatus).toHaveBeenCalledWith({ status: 'executing', message: 'Using Jira Search...' });
+    expect(spies.onStatus).toHaveBeenCalledWith({
+      status: 'executing',
+      message: 'Using Jira Search...',
+      messageText: localizedText('chatStream.status.toolActivity', {
+        label: localizedText('chat.toolActivity.usingTool', { toolName: 'Jira Search' }),
+      }),
+    });
   });
 
   it('restores Thinking status on TEXT_MESSAGE_END so the UI is not idle between narration and the next tool', () => {
@@ -332,7 +342,11 @@ describe('createAGUIEventHandler', () => {
     spies.onStatus.mockClear();
     handle(frame('TEXT_MESSAGE_END', { runId: 'root', messageId: 'm1' }));
 
-    expect(spies.onStatus).toHaveBeenCalledWith({ status: 'calling_llm', message: 'Thinking...' });
+    expect(spies.onStatus).toHaveBeenCalledWith({
+      status: 'calling_llm',
+      message: 'Thinking...',
+      messageText: localizedText('chatStream.thinkingFallback'),
+    });
   });
 
   it('keeps TOOL_CALL_START status present-tense even when displayName is past-tense', () => {
@@ -345,7 +359,13 @@ describe('createAGUIEventHandler', () => {
       toolCallId: 'call-1',
     }));
 
-    expect(spies.onStatus).toHaveBeenCalledWith({ status: 'executing', message: 'Using Run Code...' });
+    expect(spies.onStatus).toHaveBeenCalledWith({
+      status: 'executing',
+      message: 'Using Run Code...',
+      messageText: localizedText('chatStream.status.toolActivity', {
+        label: localizedText('chat.toolActivity.usingTool', { toolName: 'Run Code' }),
+      }),
+    });
   });
 
   it('restores Thinking status after TOOL_CALL_RESULT while waiting for the next LLM turn', () => {
@@ -361,7 +381,11 @@ describe('createAGUIEventHandler', () => {
       status: 'completed',
     }));
 
-    expect(spies.onStatus).toHaveBeenCalledWith({ status: 'calling_llm', message: 'Thinking...' });
+    expect(spies.onStatus).toHaveBeenCalledWith({
+      status: 'calling_llm',
+      message: 'Thinking...',
+      messageText: localizedText('chatStream.thinkingFallback'),
+    });
   });
 
   it('routes CUSTOM conversation_created to onConnected', () => {
@@ -457,6 +481,8 @@ describe('createAGUIEventHandler', () => {
 
     const errorArg = spies.onError.mock.calls[0][0] as Error;
     expect(errorArg.message).toBe('Stream ended with an error');
+    expect((errorArg as Error & { messageText?: unknown }).messageText)
+      .toEqual(localizedText('chatStream.errorFallback'));
   });
 
   it('ignores a nested (sub-agent) RUN_ERROR carrying a parentRunId', () => {
@@ -506,7 +532,11 @@ describe('createAGUIEventHandler', () => {
 
     handle(frame('STATE_SNAPSHOT', { snapshot: { status: 'calling_llm' } }));
 
-    expect(spies.onStatus).toHaveBeenCalledWith({ status: 'calling_llm', message: 'Thinking...' });
+    expect(spies.onStatus).toHaveBeenCalledWith({
+      status: 'calling_llm',
+      message: 'Thinking...',
+      messageText: localizedText('chatStream.thinkingFallback'),
+    });
     expect(spies.onAnswerFinal).not.toHaveBeenCalled();
   });
 

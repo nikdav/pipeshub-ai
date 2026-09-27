@@ -4,6 +4,8 @@ import { render, screen, fireEvent, cleanup, waitFor, act } from '@testing-libra
 import { Theme } from '@radix-ui/themes';
 
 import '@/lib/__tests__/test-i18n';
+import { i18n } from '@/lib/i18n';
+import { localizedText } from '@/lib/i18n/localized-text';
 import type { ConversationMessage } from '../types';
 
 // ── Module-boundary mocks ──────────────────────────────────────────
@@ -94,13 +96,19 @@ vi.mock('@/chat/utils/fetch-models-for-context', () => ({
 }));
 
 vi.mock('@/app/components/file-preview', () => ({
-  FilePreviewInlinePanel: ({ file, onClose }: { file: { name: string }; onClose: () => void }) => (
+  FilePreviewInlinePanel: ({ file, error, onClose }: { file: { name: string }; error?: string; onClose: () => void }) => (
     <aside aria-label="Preview panel">
       {file.name}
+      {error && <span data-testid="preview-error">{error}</span>}
       <button type="button" onClick={onClose}>Close preview</button>
     </aside>
   ),
-  FilePreviewFullscreen: ({ file }: { file: { name: string } }) => <div aria-label="Fullscreen preview">{file.name}</div>,
+  FilePreviewFullscreen: ({ file, error }: { file: { name: string }; error?: string }) => (
+    <div aria-label="Fullscreen preview">
+      {file.name}
+      {error && <span data-testid="preview-error">{error}</span>}
+    </div>
+  ),
 }));
 
 const getSharedMembers = vi.fn();
@@ -351,6 +359,24 @@ describe('Chat page — opening a conversation', () => {
     expect(screen.getByRole('textbox', { name: 'Message composer' })).toBeTruthy();
   });
 
+  it('does not refetch conversation history when the active language changes', async () => {
+    const previousLanguage = i18n.language;
+    fetchConversation.mockResolvedValue(conversationDetail());
+
+    try {
+      await i18n.changeLanguage('en-US');
+      renderPage('conversationId=conv-1');
+      expect(await screen.findByText('You get 25 days a year.')).toBeTruthy();
+      expect(fetchConversation).toHaveBeenCalledTimes(1);
+
+      await act(async () => i18n.changeLanguage('de-DE'));
+      expect(screen.getByText('You get 25 days a year.')).toBeTruthy();
+      expect(fetchConversation).toHaveBeenCalledTimes(1);
+    } finally {
+      await i18n.changeLanguage(previousLanguage);
+    }
+  });
+
   it('restores the collections the last question was scoped to', async () => {
     fetchConversation.mockResolvedValue(
       conversationDetail({
@@ -420,7 +446,7 @@ describe('Chat page — opening a conversation', () => {
     await waitFor(() => expect(fetchConversation).toHaveBeenCalled());
     await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
     expect(toastError).toHaveBeenCalledTimes(1);
-    expect(toastError.mock.calls[0][0]).toBe('Server Error');
+    expect(toastError.mock.calls[0][0]).toEqual(localizedText('common.errors.toast.serverTitle'));
   });
 
   it('tells the user when the conversation cannot be read, instead of showing an empty chat', async () => {
@@ -631,5 +657,28 @@ describe('Chat page — projects and previews', () => {
       } as Partial<ReturnType<typeof useChatStore.getState>>),
     );
     expect(screen.getByLabelText('Fullscreen preview').textContent).toBe('handbook.pdf');
+  });
+
+  it('resolves stored preview error descriptors when the active language changes', async () => {
+    const previousLanguage = i18n.language;
+    i18n.addResource('en-US', 'translation', 'chat.preview.testError', 'Preview unavailable');
+    i18n.addResource('de-DE', 'translation', 'chat.preview.testError', 'Vorschau nicht verfügbar');
+    try {
+      await i18n.changeLanguage('en-US');
+      act(() => useChatStore.setState({
+        previewFile: {
+          id: 'f1', name: 'handbook.pdf', url: '', type: 'application/pdf', size: 1,
+          error: 'Preview unavailable', errorText: localizedText('chat.preview.testError'),
+        },
+        previewMode: 'sidebar',
+      } as Partial<ReturnType<typeof useChatStore.getState>>));
+      renderPage();
+      expect(screen.getByTestId('preview-error').textContent).toBe('Preview unavailable');
+
+      await act(async () => i18n.changeLanguage('de-DE'));
+      expect(screen.getByTestId('preview-error').textContent).toBe('Vorschau nicht verfügbar');
+    } finally {
+      await i18n.changeLanguage(previousLanguage);
+    }
   });
 });

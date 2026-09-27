@@ -7,6 +7,8 @@ import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { FileIcon } from '@/app/components/ui/file-icon';
 import type { KnowledgeHubNode } from '../../types';
 import { useUploadLimits } from '@/lib/hooks/use-upload-limits';
+import { useTranslation } from 'react-i18next';
+import { formatLocalizedBytes } from '@/lib/i18n/localized-text';
 
 // File type to MIME type mapping
 const FILE_TYPE_MIME_MAP: Record<string, string[]> = {
@@ -38,13 +40,6 @@ interface ReplaceFileDialogProps {
   isReplacing?: boolean;
 }
 
-function formatSize(bytes: number | undefined): string {
-  if (!bytes) return '0 B';
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 export function ReplaceFileDialog({
   open,
   onOpenChange,
@@ -52,11 +47,17 @@ export function ReplaceFileDialog({
   onReplace,
   isReplacing = false,
 }: ReplaceFileDialogProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
   const [replacementFile, setReplacementFile] = useState<File | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isCurrentFileHovered, setIsCurrentFileHovered] = useState(false);
   const [isReplacementFileHovered, setIsReplacementFileHovered] = useState(false);
   const { maxFileSizeBytes, maxFileSizeMB } = useUploadLimits();
+  const byteUnits = [t('units.bytes'), t('units.kb'), t('units.mb')];
+  const formatSize = (bytes: number | undefined) =>
+    formatLocalizedBytes(bytes ?? 0, locale, { units: byteUnits });
+  const formattedMaxFileSizeMB = new Intl.NumberFormat(locale).format(maxFileSizeMB);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Get accepted MIME types based on current file type
@@ -175,7 +176,7 @@ export function ReplaceFileDialog({
         }}
       >
         <VisuallyHidden>
-          <Dialog.Title>Replace File</Dialog.Title>
+          <Dialog.Title>{t('knowledgeBase.replaceFile.title')}</Dialog.Title>
         </VisuallyHidden>
 
         {/* Header */}
@@ -192,7 +193,7 @@ export function ReplaceFileDialog({
           <Flex align="center" gap="2">
             <MaterialIcon name="drive_folder_upload" size={24} color="var(--slate-12)" />
             <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-              Replace File
+              {t('knowledgeBase.replaceFile.title')}
             </Text>
           </Flex>
           <IconButton
@@ -221,7 +222,7 @@ export function ReplaceFileDialog({
             {/* Name Field */}
             <Flex direction="column" gap="2">
               <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-                Name
+                {t('knowledgeBase.replaceFile.name')}
               </Text>
               <Box
                 style={{
@@ -240,7 +241,7 @@ export function ReplaceFileDialog({
             {/* Current File Section */}
             <Flex direction="column" gap="3" style={{ padding: 'var(--space-4)', borderRadius: 'var(--radius-2)', border: '1px solid var(--olive-3)', background: 'var(--olive-2)' }}>
               <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-                Current File
+                {t('knowledgeBase.replaceFile.currentFile')}
               </Text>
               <Box style={{ height: '1px', background: 'var(--olive-3)' }} />
               <Flex
@@ -306,7 +307,7 @@ export function ReplaceFileDialog({
                 <MaterialIcon name="info" size={16} color="var(--accent-11)" />
                 </Flex>
                 <Text size="1" style={{ color: 'var(--slate-11)' }}>
-                  You can only upload {fileType} files (.{fileType.toLowerCase()}) to replace this file
+                  {t('knowledgeBase.replaceFile.allowedFileType', { fileType, extension: `.${fileType.toLowerCase()}` })}
                 </Text>
               </Flex>
             </Flex>
@@ -325,10 +326,10 @@ export function ReplaceFileDialog({
             >
               <Flex direction="column" gap="1">
                 <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-                  Replace File
+                  {t('knowledgeBase.replaceFile.title')}
                 </Text>
                 <Text size="1" style={{ color: 'var(--slate-9)' }}>
-                  You can upload files up to the limit of {maxFileSizeMB} MB
+                  {t('knowledgeBase.replaceFile.maxSize', { maxFileSizeMB: formattedMaxFileSizeMB })}
                 </Text>
               </Flex>
               <Box style={{ height: '1px', background: 'var(--olive-3)' }} />
@@ -439,10 +440,10 @@ export function ReplaceFileDialog({
                       color={isDragOver ? 'var(--accent-9)' : 'var(--slate-9)'}
                     />
                     <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-                      Upload
+                      {t('knowledgeBase.replaceFile.upload')}
                     </Text>
                     <Text size="1" weight="light" style={{ color: 'var(--slate-12)' }}>
-                      Supports: Only {fileType}
+                      {t('knowledgeBase.replaceFile.supports', { fileType })}
                     </Text>
                   </Flex>
                 </Box>

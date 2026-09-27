@@ -8,8 +8,9 @@ import { toast } from '@/lib/store/toast-store';
 import { fetchAndSetCurrentUser } from '@/lib/auth/hydrate-user';
 import { AuthApi } from '../api';
 import { getApiBaseUrl } from '@/lib/utils/api-base-url';
+import { localizedText, resolveLocalizedText, type LocalizedText, type LocalizedTextValue, type TranslateText } from '@/lib/i18n/localized-text';
 import {
-  getUserAccountApiErrorMessage,
+  getUserAccountApiErrorText,
   getUserAccountApiResponseMessage,
   getUserAccountBlockedUntil,
 } from '@/lib/api/user-account-api-error';
@@ -45,7 +46,7 @@ function extractErrorMessage(error: unknown): string {
   ).toLowerCase();
 }
 
-function formatBlockedUntilLocal(blockedUntilIso?: string): string | undefined {
+function formatBlockedUntilLocal(blockedUntilIso: string | undefined, locale: string): string | undefined {
   if (!blockedUntilIso) {
     return undefined;
   }
@@ -55,20 +56,24 @@ function formatBlockedUntilLocal(blockedUntilIso?: string): string | undefined {
     return undefined;
   }
 
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(locale, {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(blockedUntilDate);
 }
 
-function getBlockedUntilDescription(error: unknown): string | undefined {
+function getBlockedUntilDescription(error: unknown, locale: string): LocalizedText | undefined {
   const blockedUntilIso = getUserAccountBlockedUntil(error);
-  const blockedUntilLocal = formatBlockedUntilLocal(blockedUntilIso);
+  const blockedUntilLocal = formatBlockedUntilLocal(blockedUntilIso, locale);
   if (!blockedUntilLocal) {
     return undefined;
   }
 
-  return `Try again after ${blockedUntilLocal}.`;
+  return localizedText('auth.actionFeedback.blockedUntil', { date: blockedUntilLocal });
+}
+
+function resolveAuthText(value: LocalizedTextValue, t: TranslateText): string {
+  return resolveLocalizedText(value, t);
 }
 
 function classifyAuthError(error: unknown): AuthErrorKind {
@@ -111,6 +116,7 @@ function classifyAuthError(error: unknown): AuthErrorKind {
 export interface AuthError {
   type: 'wrongPassword' | 'accessRevoked' | 'noPasswordSet' | 'generic';
   message?: string;
+  messageText?: LocalizedText;
 }
 
 export interface UseAuthActionsOptions {
@@ -181,21 +187,24 @@ export function useAuthActions({
           }
           router.push(postAuthRedirectTo);
         } else {
+          const messageText = response.message ?? localizedText('auth.actionFeedback.unexpectedResponse');
           setError({
             type: 'generic',
-            message: response.message ?? 'Unexpected response. Please try again.',
+            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            ...(typeof messageText !== 'string' && { messageText }),
           });
         }
       } catch (err: unknown) {
         const kind = classifyAuthError(err);
         const bodyMsg = getUserAccountApiResponseMessage(err);
-        const apiMsg = getUserAccountApiErrorMessage(
+        const apiMsgText = getUserAccountApiErrorText(
           err,
-          'Sign in failed. Please try again.',
+          localizedText('auth.actionFeedback.passwordSignInFailed'),
         );
+        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
 
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err);
+          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -212,17 +221,19 @@ export function useAuthActions({
             });
           }
         } else if (kind === 'noPasswordSet') {
-          toast.info('No password set for this account.', {
-            description: 'Use Forgot Password below to set up your password.',
+          toast.info(localizedText('auth.actionFeedback.noPasswordSetTitle'), {
+            description: localizedText('auth.actionFeedback.noPasswordSetDescription'),
           });
         } else {
-          toast.error(bodyMsg ?? apiMsg, { showCloseButton: true });
+          toast.error(bodyMsg ?? apiMsgText, { showCloseButton: true });
         }
 
         setError({
           type: kind,
           message:
             kind === 'generic' || kind === 'wrongPassword' ? apiMsg : undefined,
+          ...((kind === 'generic' || kind === 'wrongPassword') &&
+            typeof apiMsgText !== 'string' ? { messageText: apiMsgText } : {}),
         });
       } finally {
         setLoading(false);
@@ -238,14 +249,13 @@ export function useAuthActions({
     setForgotLoading(true);
     try {
       await AuthApi.forgotPassword(email);
-      toast.success('Check your inbox', {
-        description:
-          'If an account exists for this email, a password reset link has been sent.',
+      toast.success(localizedText('auth.signUp.verificationSentToast'), {
+        description: localizedText('auth.actionFeedback.resetEmailSuccessDescription'),
       });
     } catch (err: unknown) {
       const rawMsg = rawApiErrorMessage(err);
-      toast.error('Could not request password reset', {
-        description: rawMsg || 'Please try again later.',
+      toast.error(localizedText('auth.actionFeedback.resetEmailErrorTitle'), {
+        description: rawMsg || localizedText('auth.actionFeedback.tryAgainLater'),
       });
     } finally {
       setForgotLoading(false);
@@ -293,20 +303,23 @@ export function useAuthActions({
           }
           router.push(postAuthRedirectTo);
         } else {
+          const messageText = response.message ?? localizedText('auth.actionFeedback.googleSignInFailed');
           setError({
             type: 'generic',
-            message: response.message ?? 'Google sign-in failed. Please try again.',
+            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
         }
       } catch (err: unknown) {
         const kind = classifyAuthError(err);
         const bodyMsg = getUserAccountApiResponseMessage(err);
-        const apiMsg = getUserAccountApiErrorMessage(
+        const apiMsgText = getUserAccountApiErrorText(
           err,
-          'Google sign-in failed. Please try again.',
+          localizedText('auth.actionFeedback.googleSignInFailed'),
         );
+        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err);
+          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -315,15 +328,16 @@ export function useAuthActions({
             });
           } else {
             toast.error(i18n.t('auth.common.accountDisabled'), {
-              description: blockedUntilDescription ?? 'Please contact your administrator.',
+              description: blockedUntilDescription ?? localizedText('auth.actionFeedback.contactAdministrator'),
               duration: null,
               showCloseButton: true,
             });
           }
         } else {
-          toast.error(bodyMsg ?? apiMsg, { showCloseButton: true });
+          toast.error(bodyMsg ?? apiMsgText, { showCloseButton: true });
         }
-        setError({ type: kind, message: kind === 'generic' ? apiMsg : undefined });
+        setError({ type: kind, message: kind === 'generic' ? apiMsg : undefined,
+          ...(kind === 'generic' && typeof apiMsgText !== 'string' ? { messageText: apiMsgText } : {}) });
       } finally {
         setGoogleLoading(false);
       }
@@ -356,28 +370,33 @@ export function useAuthActions({
           response.allowedMethods &&
           response.allowedMethods.length > 0
         ) {
-          toast.info('Additional verification required', {
-            description: response.message ?? 'Complete the next step to continue.',
+          toast.info(localizedText('auth.actionFeedback.additionalVerificationTitle'), {
+            description: response.message ?? localizedText('auth.actionFeedback.additionalVerificationDescription'),
           });
+          const messageText = response.message ?? localizedText('auth.actionFeedback.additionalVerificationTitle');
           setError({
             type: 'generic',
-            message: response.message ?? 'Additional verification required.',
+            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
         } else {
+          const messageText = response.message ?? localizedText('auth.actionFeedback.oauthSignInFailed');
           setError({
             type: 'generic',
-            message: response.message ?? 'OAuth sign-in failed. Please try again.',
+            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
         }
       } catch (err: unknown) {
         const kind = classifyAuthError(err);
         const bodyMsg = getUserAccountApiResponseMessage(err);
-        const apiMsg = getUserAccountApiErrorMessage(
+        const apiMsgText = getUserAccountApiErrorText(
           err,
-          'OAuth sign-in failed. Please try again.',
+          localizedText('auth.actionFeedback.oauthSignInFailed'),
         );
+        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err);
+          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -386,15 +405,16 @@ export function useAuthActions({
             });
           } else {
             toast.error(i18n.t('auth.common.accountDisabled'), {
-              description: blockedUntilDescription ?? 'Please contact your administrator.',
+              description: blockedUntilDescription ?? localizedText('auth.actionFeedback.contactAdministrator'),
               duration: null,
               showCloseButton: true,
             });
           }
         } else {
-          toast.error(bodyMsg ?? apiMsg, { showCloseButton: true });
+          toast.error(bodyMsg ?? apiMsgText, { showCloseButton: true });
         }
-        setError({ type: kind, message: kind === 'generic' ? apiMsg : undefined });
+        setError({ type: kind, message: kind === 'generic' ? apiMsg : undefined,
+          ...(kind === 'generic' && typeof apiMsgText !== 'string' ? { messageText: apiMsgText } : {}) });
       } finally {
         setOauthLoading(false);
       }
@@ -408,15 +428,14 @@ export function useAuthActions({
     setError(null);
     try {
       await AuthApi.generateLoginOtp(email.trim());
-      toast.success('Check your email', {
-        description:
-          'If that email can sign in with a code, one is being sent. If nothing arrives in a few minutes, check your spam folder or try again later.',
+      toast.success(localizedText('auth.actionFeedback.otpSendSuccessTitle'), {
+        description: localizedText('auth.actionFeedback.otpSendSuccessDescription'),
       });
       return true;
     } catch (err: unknown) {
       const rawMsg = rawApiErrorMessage(err);
-      toast.error('Could not send verification code', {
-        description: rawMsg || 'Please try again later.',
+      toast.error(localizedText('auth.actionFeedback.otpSendErrorTitle'), {
+        description: rawMsg || localizedText('auth.actionFeedback.tryAgainLater'),
       });
       // setError({
       //   type: 'generic',
@@ -453,35 +472,38 @@ export function useAuthActions({
           response.allowedMethods &&
           response.allowedMethods.length > 0
         ) {
-          toast.info('Additional verification required', {
-            description: response.message ?? 'Complete the next step to continue.',
+          toast.info(localizedText('auth.actionFeedback.additionalVerificationTitle'), {
+            description: response.message ?? localizedText('auth.actionFeedback.additionalVerificationDescription'),
           });
+          const messageText = response.message ?? localizedText('auth.actionFeedback.additionalVerificationTitle');
           setError({
             type: 'generic',
-            message: response.message ?? 'Additional verification required.',
+            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
           return;
         }
 
-        const unexpectedMsg =
-          response.message ?? 'Unexpected response. Please try again.';
-        toast.error('Sign-in failed', {
+        const unexpectedMsg = response.message ?? localizedText('auth.actionFeedback.unexpectedResponse');
+        toast.error(localizedText('auth.login.samlSignInFailedTitle'), {
           description: unexpectedMsg,
         });
         setError({
           type: 'generic',
-          message: unexpectedMsg,
+          message: resolveAuthText(unexpectedMsg, i18n.t.bind(i18n)),
+          ...(typeof unexpectedMsg !== 'string' ? { messageText: unexpectedMsg } : {}),
         });
       } catch (err: unknown) {
         const kind = classifyAuthError(err);
         const bodyMsg = getUserAccountApiResponseMessage(err);
-        const apiMsg = getUserAccountApiErrorMessage(
+        const apiMsgText = getUserAccountApiErrorText(
           err,
-          'Verification failed. Please try again.',
+          localizedText('auth.actionFeedback.verificationFailed'),
         );
+        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
 
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err);
+          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -498,12 +520,13 @@ export function useAuthActions({
             });
           }
         } else {
-          toast.error(bodyMsg ?? apiMsg, { showCloseButton: true });
+          toast.error(bodyMsg ?? apiMsgText, { showCloseButton: true });
         }
 
         setError({
           type: 'generic',
           message: apiMsg,
+          ...(typeof apiMsgText !== 'string' ? { messageText: apiMsgText } : {}),
         });
       } finally {
         setOtpVerifyLoading(false);
@@ -531,20 +554,23 @@ export function useAuthActions({
           }
           router.push(postAuthRedirectTo);
         } else {
+          const messageText = response.message ?? localizedText('auth.actionFeedback.microsoftSignInFailed');
           setError({
             type: 'generic',
-            message: response.message ?? 'Microsoft sign-in failed. Please try again.',
+            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
         }
       } catch (err: unknown) {
         const kind = classifyAuthError(err);
         const bodyMsg = getUserAccountApiResponseMessage(err);
-        const apiMsg = getUserAccountApiErrorMessage(
+        const apiMsgText = getUserAccountApiErrorText(
           err,
-          'Microsoft sign-in failed. Please try again.',
+          localizedText('auth.actionFeedback.microsoftSignInFailed'),
         );
+        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err);
+          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -553,15 +579,16 @@ export function useAuthActions({
             });
           } else {
             toast.error(i18n.t('auth.common.accountDisabled'), {
-              description: blockedUntilDescription ?? 'Please contact your administrator.',
+              description: blockedUntilDescription ?? localizedText('auth.actionFeedback.contactAdministrator'),
               duration: null,
               showCloseButton: true,
             });
           }
         } else {
-          toast.error(bodyMsg ?? apiMsg, { showCloseButton: true });
+          toast.error(bodyMsg ?? apiMsgText, { showCloseButton: true });
         }
-        setError({ type: kind, message: kind === 'generic' ? apiMsg : undefined });
+        setError({ type: kind, message: kind === 'generic' ? apiMsg : undefined,
+          ...(kind === 'generic' && typeof apiMsgText !== 'string' ? { messageText: apiMsgText } : {}) });
       } finally {
         microsoftSignInInFlightRef.current = false;
         setMicrosoftLoading(false);

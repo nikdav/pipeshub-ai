@@ -525,7 +525,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
                   </Text>
                 </Flex>
                 {hasDownloadableFile && (
-                  <Button variant="solid" color="jade" size="3" onClick={handleDownload}>
+                  <Button variant="solid" color="jade" size="3" onClick={handleDownload} aria-label={t('recordView.download')}>
                     <MaterialIcon name="download" size={18} />
                     {t('recordView.download')}
                   </Button>
@@ -699,7 +699,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
               ) : null}
 
               <Tooltip content={t('recordView.download')}>
-                <Button variant="outline" color="gray" size="2" onClick={handleDownload}>
+                <Button variant="outline" color="gray" size="2" onClick={handleDownload} aria-label={t('recordView.download')}>
                   <MaterialIcon name="download" size={18} />
                 </Button>
               </Tooltip>

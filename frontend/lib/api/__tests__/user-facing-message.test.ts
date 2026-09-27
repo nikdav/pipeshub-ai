@@ -1,6 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { AxiosError, AxiosHeaders } from 'axios';
-import { ErrorType, getUserFacingErrorMessage, processError } from '../api-error';
+import {
+  ErrorType,
+  getUserFacingErrorMessage,
+  getUserFacingErrorText,
+  isSearchNoAccessibleDocumentsNotFound,
+  processError,
+  SEARCH_ACCESSIBLE_RECORDS_NOT_FOUND_STATUS,
+  SEARCH_NO_ACCESSIBLE_DOCUMENTS_FRAGMENT,
+} from '../api-error';
+import { localizedText } from '@/lib/i18n/localized-text';
+import { i18n } from '@/lib/i18n';
 
 const FALLBACK = 'We couldn\'t do that. Please try again in a moment.';
 
@@ -97,5 +107,58 @@ describe('getUserFacingErrorMessage', () => {
     expect(getUserFacingErrorMessage(processed, FALLBACK)).toBe(
       'Server error. Please try again later.',
     );
+  });
+});
+
+describe('getUserFacingErrorText', () => {
+  const fallback = localizedText('chatStream.errorFallback');
+
+  it('keeps readable Axios response wording verbatim', () => {
+    const error = httpError(403, { reason: 'You can only share collections you own.' });
+    expect(getUserFacingErrorText(error, fallback)).toBe('You can only share collections you own.');
+  });
+
+  it('uses the descriptor fallback for technical Axios response wording', () => {
+    const error = httpError(500, { message: 'Error publishing to Kafka topic records' });
+    expect(getUserFacingErrorText(error, fallback)).toEqual(fallback);
+  });
+
+  it('preserves a descriptor for a locally authored Axios fallback', () => {
+    const error = httpError(500, {});
+    expect(getUserFacingErrorText(error, fallback)).toEqual(localizedText('common.errors.api.server'));
+  });
+});
+
+describe('processError localized compatibility snapshots', () => {
+  it('localizes only app-authored fallback snapshots in the active language', async () => {
+    const previousLanguage = i18n.language;
+    await i18n.changeLanguage('de-DE');
+    const translate = vi.spyOn(i18n, 't').mockImplementation(((key: string, options?: Record<string, unknown>) => {
+      const english = options?.defaultValue;
+      return typeof english === 'string' ? `DE: ${english}` : key;
+    }) as never);
+    try {
+      const processed = processError(httpError(500, {}));
+      expect(processed.message).toBe('DE: Server error. Please try again later.');
+      expect(processed.messageText).toEqual(localizedText('common.errors.api.server'));
+      expect(translate).toHaveBeenCalledWith(
+        'common.errors.api.server',
+        expect.objectContaining({ defaultValue: 'Server error. Please try again later.' }),
+      );
+    } finally {
+      translate.mockRestore();
+      await i18n.changeLanguage(previousLanguage);
+    }
+  });
+
+  it('leaves server-authored search status and message sentinel unchanged', () => {
+    const processed = processError(httpError(404, {
+      status: SEARCH_ACCESSIBLE_RECORDS_NOT_FOUND_STATUS,
+      message: SEARCH_NO_ACCESSIBLE_DOCUMENTS_FRAGMENT,
+    }));
+    expect(processed.details?.apiStatus).toBe(SEARCH_ACCESSIBLE_RECORDS_NOT_FOUND_STATUS);
+    expect(processed.message).toBe(SEARCH_NO_ACCESSIBLE_DOCUMENTS_FRAGMENT);
+    expect(processed.messageText).toBeUndefined();
+    expect(isSearchNoAccessibleDocumentsNotFound(processed)).toBe(true);
   });
 });

@@ -163,7 +163,7 @@ export function StepAiModel({ systemStepIndex, totalSystemSteps, nextGateRef }: 
         toast.error(t('onboarding.stepAiModel.setDefaultError'));
       }
     },
-    [loadModels]
+    [loadModels, t]
   );
 
   const openDeleteDialog = useCallback((modelType: string, modelKey: string, modelName: string) => {

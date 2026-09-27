@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text, Avatar } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { Spinner } from '@/app/components/ui/spinner';
@@ -12,6 +13,8 @@ import { Spinner } from '@/app/components/ui/spinner';
 export interface CheckboxOption {
   id: string;
   label: string;
+  /** Marks a missing user name whose label must follow the active locale. */
+  isUnknownUser?: boolean;
   /** Optional subtitle (e.g. email) shown below the label */
   subtitle?: string;
   /** Data URI for profile picture */
@@ -60,8 +63,8 @@ export function SearchableCheckboxDropdown({
   options,
   selectedIds,
   onSelectionChange,
-  placeholder = 'Search or select',
-  emptyText = 'No options available',
+  placeholder,
+  emptyText,
   disabled = false,
   showAvatar = false,
   onSearch,
@@ -69,6 +72,7 @@ export function SearchableCheckboxDropdown({
   isLoadingMore = false,
   hasMore = false,
 }: SearchableCheckboxDropdownProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [openDirection, setOpenDirection] = useState<'down' | 'up'>('down');
@@ -283,12 +287,24 @@ export function SearchableCheckboxDropdown({
                 weight="medium"
                 style={{ color: 'var(--slate-12)' }}
               >
-                {opt.label}
+                {opt.isUnknownUser ? t('workspace.common.unknownUser') : opt.label}
               </Text>
               <Box
+                role="button"
+                tabIndex={0}
+                aria-label={t('workspace.selector.removeOption', {
+                  option: opt.isUnknownUser ? t('workspace.common.unknownUser') : opt.label,
+                })}
                 onClick={(e) => {
                   e.stopPropagation();
                   removeChip(opt.id);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    removeChip(opt.id);
+                  }
                 }}
                 style={{
                   display: 'flex',
@@ -313,7 +329,7 @@ export function SearchableCheckboxDropdown({
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
               onKeyDown={handleSearchKeyDown}
-              placeholder={selectedIds.length === 0 ? placeholder : ''}
+              placeholder={selectedIds.length === 0 ? placeholder ?? t('workspace.selector.searchOrSelect') : ''}
               style={{
                 border: 'none',
                 outline: 'none',
@@ -393,12 +409,12 @@ export function SearchableCheckboxDropdown({
                 <>
                   <Spinner size={14} />
                   <Text size="2" style={{ color: 'var(--slate-9)' }}>
-                    Loading...
+                    {t('common.loading')}
                   </Text>
                 </>
               ) : (
                 <Text size="2" style={{ color: 'var(--slate-9)' }}>
-                  {emptyText}
+                  {emptyText ?? t('workspace.selector.noOptionsAvailable')}
                 </Text>
               )}
             </Flex>
@@ -476,7 +492,9 @@ export function SearchableCheckboxDropdown({
                             textOverflow: 'ellipsis',
                           }}
                         >
-                          {option.label}
+                          {option.isUnknownUser
+                            ? t('workspace.common.unknownUser')
+                            : option.label}
                         </Text>
                         {option.subtitle && (
                           <Text
@@ -498,7 +516,9 @@ export function SearchableCheckboxDropdown({
                       size="2"
                       style={{ color: 'var(--slate-12)' }}
                     >
-                      {option.label}
+                      {option.isUnknownUser
+                        ? t('workspace.common.unknownUser')
+                        : option.label}
                     </Text>
                   )}
                 </Flex>
@@ -508,7 +528,7 @@ export function SearchableCheckboxDropdown({
           {isLoadingMore && (
             <Flex align="center" justify="center" gap="2" style={{ padding: '8px' }}>
               <Spinner size={12} />
-              <Text size="1" style={{ color: 'var(--slate-9)' }}>Loading...</Text>
+              <Text size="1" style={{ color: 'var(--slate-9)' }}>{t('common.loading')}</Text>
             </Flex>
           )}
         </Box>

@@ -10,6 +10,7 @@ import {
   WorkspaceRightPanelBodyPortalContext,
 } from '@/app/(main)/workspace/components/workspace-right-panel';
 import { useToastStore } from '@/lib/store/toast-store';
+import { localizedText, resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import { isElectron } from '@/lib/electron';
 import { ValidationRuleType } from '../types';
 import { normalizeUrlInputOnBlur } from '../utils/url-field';
@@ -306,6 +307,7 @@ function FieldExamples({
   examples: { label: string; value: string }[];
 }) {
   const addToast = useToastStore((s) => s.addToast);
+  const { t } = useTranslation();
   const [copiedValue, setCopiedValue] = useState<string | null>(null);
 
   const handleCopy = async (value: string) => {
@@ -316,9 +318,11 @@ function FieldExamples({
         setCopiedValue((v) => (v === value ? null : v));
       }, 1800);
     } catch {
+      const titleText = localizedText('workspace.connectors.schemaForm.examples.copyFailed');
       addToast({
         variant: 'error',
-        title: 'Failed to copy',
+        title: t(titleText.key),
+        titleText,
         duration: 3000,
       });
     }
@@ -337,7 +341,9 @@ function FieldExamples({
       <Flex align="center" gap="1" style={{ marginBottom: 6 }}>
         <MaterialIcon name="info" size={14} color="var(--gray-10)" />
         <Text size="1" weight="medium" style={{ color: 'var(--gray-11)' }}>
-          {examples.length > 1 ? 'Examples' : 'Example'}
+          {t(examples.length > 1
+            ? 'workspace.connectors.schemaForm.examples.headingPlural'
+            : 'workspace.connectors.schemaForm.examples.heading')}
         </Text>
       </Flex>
       <Flex direction="column" gap="2">
@@ -367,13 +373,17 @@ function FieldExamples({
                 >
                   {ex.value}
                 </Box>
-                <Tooltip content={justCopied ? 'Copied' : 'Copy to clipboard'}>
+                <Tooltip content={t(justCopied
+                  ? 'workspace.connectors.schemaForm.examples.copied'
+                  : 'workspace.connectors.schemaForm.examples.copyToClipboard')}>
                   <IconButton
                     type="button"
                     variant="soft"
                     color="gray"
                     size="1"
-                    aria-label={`Copy example ${ex.label}`}
+                    aria-label={t('workspace.connectors.schemaForm.examples.copyExample', {
+                      label: ex.label,
+                    })}
                     onClick={() => {
                       void handleCopy(ex.value);
                     }}
@@ -887,6 +897,7 @@ function SelectInput({
   hasError?: boolean;
 }) {
   const panelBodyPortal = useContext(WorkspaceRightPanelBodyPortalContext);
+  const { t } = useTranslation();
 
   const optionItems = useMemo(
     () =>
@@ -930,7 +941,11 @@ function SelectInput({
               height: 32,
               paddingLeft: 8 + leftGutter,
             }}
-            placeholder={'placeholder' in field ? (field.placeholder ?? 'Select...') : 'Select...'}
+            placeholder={
+              'placeholder' in field
+                ? (field.placeholder ?? t('workspace.connectors.schemaForm.selectPlaceholder'))
+                : t('workspace.connectors.schemaForm.selectPlaceholder')
+            }
           />
           <Select.Content
             position="popper"
@@ -1132,10 +1147,14 @@ function BooleanField({
 // Generic file content validation (rule-driven from backend schema)
 // ========================================
 
+type FileValidationResult =
+  | { valid: true }
+  | { valid: false; error?: string; errorText?: LocalizedText };
+
 function executeValidationRules(
   content: string,
   rules: ValidationRule[]
-): { valid: boolean; error?: string } {
+): FileValidationResult {
   let parsedJson: Record<string, unknown> | null = null;
 
   for (const rule of rules) {
@@ -1144,7 +1163,9 @@ function executeValidationRules(
         try {
           parsedJson = JSON.parse(content) as Record<string, unknown>;
         } catch {
-          return { valid: false, error: rule.errorMessage ?? 'File must be valid JSON.' };
+          return rule.errorMessage
+            ? { valid: false, error: rule.errorMessage }
+            : { valid: false, errorText: localizedText('workspace.connectors.schemaForm.fileUpload.invalidJson') };
         }
         break;
       }
@@ -1153,19 +1174,25 @@ function executeValidationRules(
           try {
             parsedJson = JSON.parse(content) as Record<string, unknown>;
           } catch {
-            return {
-              valid: false,
-              error: rule.errorMessage ?? 'File must be valid JSON.',
-            };
+            return rule.errorMessage
+              ? { valid: false, error: rule.errorMessage }
+              : { valid: false, errorText: localizedText('workspace.connectors.schemaForm.fileUpload.invalidJson') };
           }
         }
         const missing = (rule.requiredFields ?? []).filter((f) => !(f in parsedJson!));
         if (missing.length > 0) {
-          const msg = (rule.errorMessage ?? 'Missing required fields: {missing}').replace(
-            '{missing}',
-            missing.join(', ')
-          );
-          return { valid: false, error: msg };
+          return rule.errorMessage
+            ? {
+                valid: false,
+                error: rule.errorMessage.replace('{missing}', missing.join(', ')),
+              }
+            : {
+                valid: false,
+                errorText: localizedText(
+                  'workspace.connectors.schemaForm.fileUpload.missingRequiredFields',
+                  { missing: missing.join(', ') },
+                ),
+              };
         }
         break;
       }
@@ -1174,35 +1201,49 @@ function executeValidationRules(
           try {
             parsedJson = JSON.parse(content) as Record<string, unknown>;
           } catch {
-            return {
-              valid: false,
-              error: rule.errorMessage ?? 'File must be valid JSON.',
-            };
+            return rule.errorMessage
+              ? { valid: false, error: rule.errorMessage }
+              : { valid: false, errorText: localizedText('workspace.connectors.schemaForm.fileUpload.invalidJson') };
           }
         }
         if (rule.field !== undefined && parsedJson[rule.field] !== rule.value) {
-          return {
-            valid: false,
-            error: rule.errorMessage ?? `Field "${rule.field}" must equal "${rule.value}".`,
-          };
+          return rule.errorMessage
+            ? { valid: false, error: rule.errorMessage }
+            : {
+                valid: false,
+                errorText: localizedText(
+                  'workspace.connectors.schemaForm.fileUpload.fieldMustEqual',
+                  { field: rule.field, value: rule.value },
+                ),
+              };
         }
         break;
       }
       case ValidationRuleType.TEXT_CONTAINS: {
         if (rule.pattern && !content.includes(rule.pattern)) {
-          return {
-            valid: false,
-            error: rule.errorMessage ?? `Content must contain: ${rule.pattern}`,
-          };
+          return rule.errorMessage
+            ? { valid: false, error: rule.errorMessage }
+            : {
+                valid: false,
+                errorText: localizedText(
+                  'workspace.connectors.schemaForm.fileUpload.contentMustContain',
+                  { pattern: rule.pattern },
+                ),
+              };
         }
         break;
       }
       case ValidationRuleType.TEXT_NOT_CONTAINS: {
         if (rule.pattern && content.includes(rule.pattern)) {
-          return {
-            valid: false,
-            error: rule.errorMessage ?? `Content must not contain: ${rule.pattern}`,
-          };
+          return rule.errorMessage
+            ? { valid: false, error: rule.errorMessage }
+            : {
+                valid: false,
+                errorText: localizedText(
+                  'workspace.connectors.schemaForm.fileUpload.contentMustNotContain',
+                  { pattern: rule.pattern },
+                ),
+              };
         }
         break;
       }
@@ -1234,9 +1275,10 @@ function FileInput({
   error?: string;
   isOptional?: boolean;
 }) {
-  const [localError, setLocalError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | LocalizedText | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation();
 
   const validation = 'validation' in field ? field.validation : undefined;
   const acceptedTypes = validation?.acceptedFileTypes;
@@ -1258,7 +1300,7 @@ function FileInput({
 
   const isLoaded = fileName !== null || hasExistingValue;
 
-  const displayError = localError ?? error;
+  const displayError = localError ? resolveLocalizedText(localError, t) : error;
 
   const handleClick = () => {
     if (!disabled) fileInputRef.current?.click();
@@ -1270,7 +1312,10 @@ function FileInput({
 
     if (file.size > MAX_CONNECTOR_FILE_BYTES) {
       setLocalError(
-        `File is too large (${Math.ceil(file.size / 1024)} KB). Maximum size is ${MAX_CONNECTOR_FILE_BYTES / 1024} KB for key, certificate, or JSON uploads.`
+        localizedText('workspace.connectors.schemaForm.fileUpload.tooLarge', {
+          size: Math.ceil(file.size / 1024),
+          max: MAX_CONNECTOR_FILE_BYTES / 1024,
+        }),
       );
       e.target.value = '';
       return;
@@ -1278,11 +1323,13 @@ function FileInput({
 
     try {
       const content = await file.text();
-      const result = validationRules.length > 0
+      const result: FileValidationResult = validationRules.length > 0
         ? executeValidationRules(content, validationRules)
         : { valid: true };
-      if (!result.valid) {
-        setLocalError(result.error ?? 'Invalid file.');
+      if (result.valid === false) {
+        setLocalError(
+          result.errorText ?? result.error ?? localizedText('workspace.connectors.schemaForm.fileUpload.invalidFile'),
+        );
         // Reset the input so the same file can be re-selected after correction
         e.target.value = '';
         return;
@@ -1291,7 +1338,7 @@ function FileInput({
       setFileName(file.name);
       onChange(field.name, content);
     } catch {
-      setLocalError('Failed to read file.');
+      setLocalError(localizedText('workspace.connectors.schemaForm.fileUpload.readFailed'));
       e.target.value = '';
     }
   };
@@ -1314,7 +1361,7 @@ function FileInput({
         </Text>
         {isOptional && (
           <Text size="1" style={{ color: 'var(--gray-10)' }}>
-            (optional)
+            {t('workspace.connectors.schemaForm.fileUpload.optional')}
           </Text>
         )}
       </Flex>
@@ -1346,7 +1393,7 @@ function FileInput({
           <Flex align="center" gap="2">
             <MaterialIcon name="check_circle" size={16} color="var(--green-a11)" />
             <Text size="2" style={{ color: 'var(--green-a11)', fontWeight: 500 }}>
-              {fileName ?? 'Already configured'}
+              {fileName ?? t('workspace.connectors.schemaForm.fileUpload.alreadyConfigured')}
             </Text>
           </Flex>
           {!disabled && (
@@ -1355,7 +1402,7 @@ function FileInput({
               style={{ color: 'var(--green-a11)', textDecoration: 'underline', cursor: 'pointer' }}
               onClick={handleReplace}
             >
-              Replace
+              {t('workspace.connectors.schemaForm.fileUpload.replace')}
             </Text>
           )}
         </Flex>
@@ -1384,7 +1431,9 @@ function FileInput({
             color={displayError ? 'var(--red-a10)' : 'var(--gray-10)'}
           />
           <Text size="2" style={{ color: displayError ? 'var(--red-a10)' : 'var(--gray-11)' }}>
-            {'placeholder' in field && field.placeholder ? field.placeholder : 'Click to upload file'}
+            {'placeholder' in field && field.placeholder
+              ? field.placeholder
+              : t('workspace.connectors.schemaForm.fileUpload.clickToUpload')}
           </Text>
           {acceptedTypes && acceptedTypes.length > 0 && (
             <Text size="1" style={{ color: 'var(--gray-9)' }}>
@@ -1392,7 +1441,9 @@ function FileInput({
             </Text>
           )}
           <Text size="1" style={{ color: 'var(--gray-9)' }}>
-            Max {MAX_CONNECTOR_FILE_BYTES / 1024} KB
+            {t('workspace.connectors.schemaForm.fileUpload.maxSize', {
+              max: MAX_CONNECTOR_FILE_BYTES / 1024,
+            })}
           </Text>
         </Flex>
       )}

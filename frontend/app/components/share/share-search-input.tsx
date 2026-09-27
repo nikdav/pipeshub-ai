@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import type { ShareRole, ShareSelection } from './types';
@@ -38,6 +39,7 @@ export function ShareSearchInput({
   onRemoveLastSelection,
   onEmailSubmit,
 }: ShareSearchInputProps) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const roleAnchorRef = useRef<HTMLDivElement>(null);
   const hasUserSelection = selections.some((s) => s.type === 'user');
@@ -117,7 +119,7 @@ export function ShareSearchInput({
           }}
           placeholder={
             selections.length === 0
-              ? 'Emails, teams or names (separated by commas)'
+              ? t('shareSidebar.searchPlaceholder')
               : ''
           }
           style={{

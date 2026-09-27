@@ -2,8 +2,8 @@
  * Platform detection utilities.
  *
  * Provides OS-aware modifier key symbols for keyboard shortcut display.
- * - macOS / Linux → ⌘ (Command symbol)
- * - Windows       → ⊞ (Windows key character)
+ * - macOS    → ⌘ (Command symbol)
+ * - Other OS → Ctrl (compatibility label; use the localized helper for UI)
  */
 
 /** Detect whether the current platform is Windows */
@@ -32,6 +32,16 @@ export function isMac(): boolean {
  */
 export function getModifierSymbol(): string {
   return isMac() ? '⌘' : 'Ctrl';
+}
+
+/**
+ * Returns a modifier key label for UI, using the active language for Ctrl.
+ * Pass the current translation function from the rendering component so the
+ * result follows runtime language changes. The macOS Command glyph stays the
+ * same across languages.
+ */
+export function getLocalizedModifierSymbol(t: (key: string) => string): string {
+  return isMac() ? '⌘' : t('keyboard.modifier.ctrl');
 }
 
 /**

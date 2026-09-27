@@ -4,22 +4,26 @@ import React, { useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { Flex, Text } from '@radix-ui/themes';
 import { useAuthStore } from '@/config';
+import { useTranslation } from 'react-i18next';
 import { useAuthWideLayout } from '@/lib/hooks/use-breakpoint';
-import { getUserAccountApiErrorMessage } from '@/lib/api/user-account-api-error';
+import { getUserAccountApiErrorText } from '@/lib/api/user-account-api-error';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import AuthHero from '../components/auth-hero';
 import FormPanel from '../components/form-panel';
 import { AuthApi } from '../api';
 
-function buildLoginWithVerifyParams(kind: 'success' | 'error', message?: string): string {
+function buildLoginWithVerifyParams(kind: 'success' | 'error', message?: string, messageText?: LocalizedText): string {
   if (kind === 'success') return '/login?email_verify=success';
   const msg = message?.trim() ?? '';
   const q = new URLSearchParams({ email_verify: 'error' });
   if (msg) q.set('email_verify_msg', msg.slice(0, 500));
+  if (messageText) q.set('email_verify_key', messageText.key);
   return `/login?${q.toString()}`;
 }
 
 function ResetEmailContent() {
   const router = useRouter();
+  const { t } = useTranslation();
   const splitLayout = useAuthWideLayout();
   const isHydrated = useAuthStore((s) => s.isHydrated);
   const verifyStartedRef = useRef(false);
@@ -43,7 +47,7 @@ function ResetEmailContent() {
     verifyStartedRef.current = true;
 
     if (!token) {
-      router.replace(buildLoginWithVerifyParams('error', 'Verification link is missing a token.'));
+      router.replace(buildLoginWithVerifyParams('error', undefined, localizedText('auth.emailVerification.missingToken')));
       return;
     }
 
@@ -53,8 +57,12 @@ function ResetEmailContent() {
         router.replace(buildLoginWithVerifyParams('success'));
       })
       .catch((err: unknown) => {
-        const msg = getUserAccountApiErrorMessage(err);
-        router.replace(buildLoginWithVerifyParams('error', msg));
+        const messageText = getUserAccountApiErrorText(err, localizedText('auth.emailVerification.failed'));
+        if (typeof messageText === 'string') {
+          router.replace(buildLoginWithVerifyParams('error', messageText));
+        } else {
+          router.replace(buildLoginWithVerifyParams('error', undefined, messageText));
+        }
       });
   }, [isHydrated, urlReady, token, router]);
 
@@ -72,7 +80,7 @@ function ResetEmailContent() {
       <FormPanel splitLayout={splitLayout}>
         <Flex align="center" justify="center" style={{ flex: 1 }}>
           <Text size="4" weight="medium" color="gray" highContrast>
-            Completing email verification…
+            {t('auth.emailVerification.completing')}
           </Text>
         </Flex>
       </FormPanel>

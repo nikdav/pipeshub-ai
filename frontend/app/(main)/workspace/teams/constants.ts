@@ -16,14 +16,25 @@ export const ROLE_OPTIONS: SelectOption[] = [
  * Edit Team). Team-neutral wording — do not mention collections or specific
  * resources here.
  */
-export const TEAM_ROLE_LABELS: Record<
+export function getTeamRoleLabels(t: (key: string) => string): Record<
   TeamMemberRole,
   { label: string; description: string }
-> = {
-  OWNER: { label: 'Owner', description: 'Full control over the team and its resources' },
-  WRITER: { label: 'Writer', description: 'Can view and edit team resources' },
-  READER: { label: 'Reader', description: 'Can view team resources' },
-};
+> {
+  return {
+    OWNER: {
+      label: t('workspace.teams.roles.owner.label'),
+      description: t('workspace.teams.roles.owner.description'),
+    },
+    WRITER: {
+      label: t('workspace.teams.roles.writer.label'),
+      description: t('workspace.teams.roles.writer.description'),
+    },
+    READER: {
+      label: t('workspace.teams.roles.reader.label'),
+      description: t('workspace.teams.roles.reader.description'),
+    },
+  };
+}
 
 /** Coerce API/pending role values to a known team role (avoids RoleDropdownMenu crashes). */
 export function normalizeTeamMemberRole(

@@ -20,6 +20,8 @@ import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 import { useMobileSidebarStore } from '@/lib/store/mobile-sidebar-store';
 import type { NodeType, EnhancedFolderTreeNode } from '../../knowledge-base/types';
 import { useUserPermission, usePermissionDeniedDialog } from '@/config';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 function KnowledgeBaseSidebarSlotContent() {
   const router = useRouter();
@@ -219,11 +221,12 @@ function KnowledgeBaseSidebarSlotContent() {
         rootKbId: rootKbId ?? undefined,
       });
     } catch (error: unknown) {
-      const httpError = error as { response?: { data?: { message?: string } }; message?: string };
-      toast.error(httpError?.response?.data?.message || 'Failed to rename');
+      toast.error(getUserFacingErrorText(error, localizedText('collections.toast.renameFailed')));
       throw error;
     }
-    toast.success(kind === 'folder' ? 'Folder renamed successfully' : 'Collection renamed successfully');
+    toast.success(localizedText(
+      kind === 'folder' ? 'collections.toast.folderRenamed' : 'collections.toast.collectionRenamed',
+    ));
 
     // Reload in place rather than clearing the caches first: the reload walks
     // the cached tree to find every open folder that may show the old name.
@@ -235,8 +238,12 @@ function KnowledgeBaseSidebarSlotContent() {
       await reloadOpenFoldersUnder(roots, nodeId);
     } catch (error: unknown) {
       console.error('Failed to refresh after rename:', error);
-      toast.warning("Couldn't update the list", {
-        description: `The ${kind} was renamed, but the list didn't refresh. Refresh the page to see the latest list.`,
+      toast.warning(localizedText('collections.toast.renameRefreshWarningTitle'), {
+        description: localizedText('collections.toast.renameRefreshWarningDescription', {
+          kind: localizedText(kind === 'folder'
+            ? 'knowledgeBase.folderDetails.folder'
+            : 'knowledgeBase.folderDetails.collection'),
+        }),
       });
     }
   }, []);

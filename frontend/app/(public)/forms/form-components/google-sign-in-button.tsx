@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import ProviderButton from './provider-button';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -14,7 +15,7 @@ export interface GoogleSignInButtonProps {
    */
   onSuccess: (idToken: string) => void;
   /** Called when the Google SDK reports a sign-in failure. */
-  onError: (message: string) => void;
+  onError: (message: LocalizedTextValue) => void;
   /** Render as accent-filled primary button. */
   primary?: boolean;
   /** Show loading state on the button. */
@@ -93,7 +94,7 @@ export default function GoogleSignInButton({
     if (!popup) {
       localStorage.removeItem('google_oauth_nonce');
       localStorage.removeItem('google_oauth_state');
-      onError('Google sign-in popup was blocked. Please allow popups for this site.');
+      onError(localizedText('auth.oauth.googlePopupError.popupBlocked'));
       return;
     }
 
@@ -116,7 +117,7 @@ export default function GoogleSignInButton({
       } else if (event.data?.type === 'GOOGLE_AUTH_ERROR') {
         cleanup();
         setIsLoading(false);
-        onError(event.data.error || 'Google sign-in failed. Please try again.');
+        onError(event.data.error || localizedText('auth.oauth.googlePopupError.failed'));
       }
     };
 

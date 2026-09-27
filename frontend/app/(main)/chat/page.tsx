@@ -36,6 +36,7 @@ import { SidebarExpandButton } from '@/app/components/sidebar/sidebar-expand-but
 import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 import { Flex, Box, Text, Avatar, Tooltip } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText } from '@/lib/i18n/localized-text';
 import { FilePreviewInlinePanel, FilePreviewFullscreen } from '@/app/components/file-preview';
 import { ShareSidebar, ShareHeaderGroup } from '@/app/components/share';
 import type { SharedAvatarMember } from '@/app/components/share';
@@ -165,6 +166,8 @@ function ChatContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { t } = useTranslation();
+  const tRef = useRef(t);
+  tRef.current = t;
   const conversationId = searchParams.get('conversationId');
   const rawAgentParam = searchParams.get('agentId');
   const agentId = rawAgentParam?.trim() ? rawAgentParam : null;
@@ -181,6 +184,9 @@ function ChatContent() {
   // Actions are stable refs in Zustand — selecting them individually
   // prevents this component from re-rendering on background slot updates.
   const previewFile = useChatStore((s) => s.previewFile);
+  const previewError = previewFile?.errorText
+    ? resolveLocalizedText(previewFile.errorText, t, previewFile.error ?? '')
+    : previewFile?.error;
   const previewMode = useChatStore((s) => s.previewMode);
   const setConversations = useChatStore((s) => s.setConversations);
   const setSharedConversations = useChatStore((s) => s.setSharedConversations);
@@ -422,9 +428,9 @@ function ChatContent() {
           // server code since the agent was last saved (deprecated=true is
           // stamped by the GET /agent/:id handler at read time).
           if (deprecatedToolNames.length > 0) {
-            toast.error(t('chat.toasts.deprecatedTools'), {
+            toast.error(tRef.current('chat.toasts.deprecatedTools'), {
               action: {
-                label: t('chat.toasts.openAgentBuilder'),
+                label: tRef.current('chat.toasts.openAgentBuilder'),
                 onClick: () =>
                   router.push(`/agents/edit?agentKey=${encodeURIComponent(agentId!)}`),
               },
@@ -502,7 +508,7 @@ function ChatContent() {
     return () => {
       cancelled = true;
     };
-  }, [agentId, router, t]);
+  }, [agentId, router]);
 
   // Keep the store's `activeProjectId` (read by ProjectsSection /
   // ProjectConversationsSidebar to highlight the open project) in sync with the URL.
@@ -802,7 +808,7 @@ function ChatContent() {
           });
           // The API client already explains HTTP failures in its own toast.
           if (!isProcessedError(error) && useServicesHealthStore.getState().apiServerReachable) {
-            toast.error(t('chat.toasts.loadConversationFailed'));
+            toast.error(tRef.current('chat.toasts.loadConversationFailed'));
           }
         }
       }
@@ -813,7 +819,7 @@ function ChatContent() {
     return () => {
       cancelled = true;
     };
-  }, [activeSlotId, hasActiveSlot, activeSlotIsInitialized, activeSlotIsTemp, activeSlotConvId, historyAndShareAgentId, t]);
+  }, [activeSlotId, hasActiveSlot, activeSlotIsInitialized, activeSlotIsTemp, activeSlotConvId, historyAndShareAgentId]);
 
   // When sidebar/list rows arrive after the URL+slot are ready, backfill
   // `modelInfo` from GET /conversations (before history fetch completes)
@@ -900,10 +906,10 @@ function ChatContent() {
       if (!cancelled) setProjectDetail(p);
     }).catch(() => {
       if (!cancelled) setProjectDetail(null);
-      toast.error(t('chat.projects.workspace.failedToLoad'));
+      toast.error(tRef.current('chat.projects.workspace.failedToLoad'));
     });
     return () => { cancelled = true; };
-  }, [projectId, projectsVersion, t]);
+  }, [projectId, projectsVersion]);
   useProjectScopeHydration(projectDetail);
   const projectName = projectDetail?.name ?? null;
   const projectColor = projectDetail?.color ?? null;
@@ -1550,7 +1556,7 @@ function ChatContent() {
                     version: previewFile.version,
                   }}
                   isLoading={previewFile.isLoading}
-                  error={previewFile.error}
+                  error={previewError}
                   recordDetails={previewFile.recordDetails}
                   initialPage={previewFile.initialPage}
                   highlightBox={previewFile.highlightBox}
@@ -1591,7 +1597,7 @@ function ChatContent() {
             version: previewFile.version,
           }}
           isLoading={previewFile.isLoading}
-          error={previewFile.error}
+          error={previewError}
           recordDetails={previewFile.recordDetails}
           initialPage={previewFile.initialPage}
           highlightBox={previewFile.highlightBox}

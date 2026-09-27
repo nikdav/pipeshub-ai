@@ -14,6 +14,7 @@ import {
 import { loadNextChildrenPage, showFolderChildren } from './folder-children';
 import { kbSessionToken } from './kb-session';
 import { toast } from '@/lib/store/toast-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 import type { KnowledgeHubNode } from '../types';
 
 function mergeNodesById(existing: KnowledgeHubNode[], incoming: KnowledgeHubNode[]): KnowledgeHubNode[] {
@@ -64,8 +65,8 @@ export async function loadMoreRootAppList(): Promise<void> {
     }
   } catch (error) {
     console.error('loadMoreRootAppList failed:', error);
-    toast.error('Could not load more connectors', {
-      description: 'Please try again or refresh the page.',
+    toast.error(localizedText('knowledgeBase.loadMoreConnectorsFailed'), {
+      description: localizedText('knowledgeBase.loadMoreFailedDescription'),
     });
   } finally {
     setLoadingRootAppListMore(false);
@@ -125,8 +126,8 @@ export async function loadMoreAppChildPage(appId: string): Promise<void> {
   } catch (error) {
     if (!stillSignedIn()) return;
     console.error('loadMoreAppChildPage failed:', { appId, error });
-    toast.error('Could not load more items', {
-      description: 'Please try again or refresh the page.',
+    toast.error(localizedText('knowledgeBase.loadMoreItemsFailed'), {
+      description: localizedText('knowledgeBase.loadMoreFailedDescription'),
     });
   } finally {
     setAppLoading(appId, false);
@@ -152,8 +153,8 @@ export async function loadMoreNodeChildrenPage(parentId: string): Promise<void> 
     }
   } catch (error) {
     console.error('loadMoreNodeChildrenPage failed:', { parentId, error });
-    toast.error('Could not load more items', {
-      description: 'Please try again or refresh the page.',
+    toast.error(localizedText('knowledgeBase.loadMoreItemsFailed'), {
+      description: localizedText('knowledgeBase.loadMoreFailedDescription'),
     });
   } finally {
     setLoadingNodeChildrenMore(parentId, false);

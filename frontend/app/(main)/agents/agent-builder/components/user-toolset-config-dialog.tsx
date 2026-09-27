@@ -17,6 +17,7 @@ import {
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ConnectorIcon } from '@/app/components/ui';
 import { LoadingButton } from '@/app/components/ui/loading-button';
+import { resolveLocalizedText, type LocalizedTextValue, type TranslateText } from '@/lib/i18n/localized-text';
 import { SchemaFormField } from '@/app/(main)/workspace/connectors/components/schema-form-field';
 import type { AuthSchemaField } from '@/app/(main)/workspace/connectors/types';
 import {
@@ -85,7 +86,7 @@ export function UserToolsetConfigDialog({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(toolset.isAuthenticated ?? false);
 
   const nestedModalHost = useWorkspaceDrawerNestedModalHost(embedded);
@@ -366,7 +367,7 @@ export function UserToolsetConfigDialog({
                 </Badge>
               ) : null}
               <Badge size="1" color="gray" variant={embedded ? 'soft' : undefined}>
-                {formatAuthTypeName(authType)}
+                {formatAuthTypeName(authType, t)}
               </Badge>
             </Flex>
           </Box>
@@ -399,7 +400,9 @@ export function UserToolsetConfigDialog({
 
             {!schemaLoading && error ? (
               <Callout.Root color="red" variant="surface" size="1" mb="3">
-                <Callout.Text style={{ flex: 1, minWidth: 0 }}>{error}</Callout.Text>
+                <Callout.Text style={{ flex: 1, minWidth: 0 }}>
+                  {resolveLocalizedText(error, t as TranslateText)}
+                </Callout.Text>
               </Callout.Root>
             ) : null}
 

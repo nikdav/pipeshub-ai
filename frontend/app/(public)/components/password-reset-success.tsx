@@ -4,6 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Box, Flex, Text, Button } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 
 /**
  * PasswordResetSuccess — shown after the user successfully sets a new password.
@@ -11,6 +12,7 @@ import { Box, Flex, Text, Button } from '@radix-ui/themes';
  */
 export default function PasswordResetSuccess() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   return (
     <Box style={{ width: '100%', maxWidth: '440px' }}>
@@ -33,11 +35,10 @@ export default function PasswordResetSuccess() {
             lineHeight: '30px',
           }}
         >
-          Your password has been changed!
+          {t('resetPassword.success.title')}
         </Text>
         <Text style={{ color: 'var(--gray-11)', fontSize: '14px', lineHeight: '20px' }}>
-          Your password has been successfully updated. You can now sign in to your Pipeshub
-          workspace with your new password.
+          {t('resetPassword.success.description')}
         </Text>
       </Flex>
 
@@ -52,7 +53,7 @@ export default function PasswordResetSuccess() {
         }}
         onClick={() => router.push('/login')}
       >
-        Sign In
+        {t('auth.common.signIn')}
       </Button>
     </Box>
   );

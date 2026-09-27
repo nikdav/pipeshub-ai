@@ -1,3 +1,5 @@
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
+
 /** Raw Node proxy payload; normalize with {@link parseConnectorOAuthCallbackPayload}. */
 export type ConnectorOAuthCallbackRaw = {
   success?: boolean;
@@ -19,20 +21,21 @@ export type ParsedConnectorOAuthCallback = {
 
 export function parseConnectorOAuthCallbackPayload(data: unknown): ParsedConnectorOAuthCallback {
   if (data == null || typeof data !== 'object') {
-    throw new Error('The server did not confirm OAuth completion.');
+    throw new LocalizedConnectorOAuthError(localizedText('connectors.oauthCallback.errors.serverConfirmation'));
   }
   const o = data as Record<string, unknown>;
 
   if (o.success === false) {
     const friendlyMessage = o.errorMessage;
     const errorCode = o.error;
-    throw new Error(
-      (typeof friendlyMessage === 'string' && (friendlyMessage as string).trim())
-        ? (friendlyMessage as string)
-        : (typeof errorCode === 'string' && errorCode.trim())
-          ? 'Authentication failed. Please try again or contact your administrator.'
-          : 'The server rejected the OAuth authentication.'
-    );
+    if (typeof friendlyMessage === 'string' && friendlyMessage.trim()) {
+      throw new Error(friendlyMessage);
+    }
+    throw new LocalizedConnectorOAuthError(localizedText(
+      typeof errorCode === 'string' && errorCode.trim()
+        ? 'connectors.oauthCallback.errors.authenticationFailed'
+        : 'connectors.oauthCallback.errors.rejected',
+    ));
   }
 
   const fromCamel = o.redirectUrl;
@@ -48,11 +51,16 @@ export function parseConnectorOAuthCallbackPayload(data: unknown): ParsedConnect
   const successExplicit = s === true || s === 'true' || s === 1 || s === '1';
   const ok = successExplicit || Boolean(redirectUrl);
   if (!ok) {
-    throw new Error('The server did not confirm OAuth completion.');
+    throw new LocalizedConnectorOAuthError(localizedText('connectors.oauthCallback.errors.serverConfirmation'));
   }
 
   return {
     success: successExplicit || Boolean(redirectUrl),
     redirectUrl,
   };
+}
+export class LocalizedConnectorOAuthError extends Error {
+  constructor(readonly messageText: LocalizedText) {
+    super(messageText.key);
+  }
 }

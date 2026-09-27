@@ -5,6 +5,7 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 import type { AuthMethod } from '../api';
 import SingleProvider from './single-provider';
 import AuthTitleSection from '../components/auth-title-section';
+import { useTranslation } from 'react-i18next';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -22,6 +23,7 @@ export interface MultipleProvidersProps {
 interface TabConfig {
   method: AuthMethod;
   label: string;
+  labelKey?: string;
   icon: string;
   iconType: 'material' | 'image';
 }
@@ -34,12 +36,13 @@ function getTabConfig(
     case 'password':
       return {
         method,
-        label: 'Password',
+        label: '',
+        labelKey: 'auth.common.passwordLabel',
         icon: '/icons/auth-config/lock-closed.svg',
         iconType: 'image',
       };
     case 'otp':
-      return { method, label: 'Email OTP', icon: 'mail_lock', iconType: 'material' };
+      return { method, label: '', labelKey: 'auth.common.emailOtpLabel', icon: 'mail_lock', iconType: 'material' };
     case 'samlSso':
       const providerName = authProviders?.saml?.samlPlatform ?? 'SSO';
       return { method, label: 'SSO', icon: 'security', iconType: 'material' };
@@ -81,6 +84,7 @@ export default function MultipleProviders({
   authProviders,
   onBack,
 }: MultipleProvidersProps) {
+  const { t } = useTranslation();
   const [activeMethod, setActiveMethod] = useState<AuthMethod>(allowedMethods[0]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -205,7 +209,7 @@ export default function MultipleProviders({
                   weight={isActive ? 'medium' : 'regular'}
                   style={{ color: 'inherit' }}
                 >
-                  {tab.label}
+                  {tab.labelKey ? t(tab.labelKey) : tab.label}
                 </Text>
               </button>
             );

@@ -9,6 +9,7 @@ import { usePendingChatStore } from '@/lib/store/pending-chat-store';
 import type { PendingChatContext } from '@/lib/store/pending-chat-store';
 import { ChatApi } from '@/chat/api';
 import type { AttachmentRef } from '@/chat/types';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 interface ChatWidgetWrapperProps {
   /** Currently displayed title (collection name, folder name, etc.) */
@@ -63,7 +64,12 @@ export function ChatWidgetWrapper({
         signal,
       });
       const ref = refs[0];
-      if (!ref) throw new Error('Upload returned no attachment ref');
+      if (!ref) {
+        throw Object.assign(
+          new Error('Upload returned no attachment ref'),
+          { messageText: localizedText('chat.attachments.uploadMissingReference') },
+        );
+      }
       return ref;
     },
     [],

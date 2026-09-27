@@ -41,10 +41,10 @@ const SAMPLE_CELL_STYLE: React.CSSProperties = {
 // Helpers
 // ========================================
 
-function validateEmail(value: string): string | null {
+function validateEmail(value: string): 'invalidEmail' | null {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(value)) {
-    return 'Invalid email address';
+    return 'invalidEmail';
   }
   return null;
 }
@@ -599,7 +599,10 @@ export function InviteUsersSidebar({
                     'Enter one or more email addresses'
                   )
             }
-            validate={validateEmail}
+            validate={(value) => {
+              const errorCode = validateEmail(value);
+              return errorCode ? t('workspace.users.invite.invalidEmail') : null;
+            }}
             disabled={isEditMode}
           />
         </FormField>

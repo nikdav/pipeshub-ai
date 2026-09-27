@@ -6,6 +6,7 @@ import {
 } from '@/lib/constants/file-rejection-reason';
 import { selectIsAdmin, useUserStore } from '@/lib/store/user-store';
 import { toast } from '@/lib/store/toast-store';
+import { localizedText, resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import type { UploadItem } from '@/lib/store/upload-store';
 import { withCurrentOrgId } from '@/lib/navigation';
 
@@ -13,6 +14,7 @@ const LABS_PATH = '/workspace/labs/';
 
 type ToastAction = {
   label: string;
+  labelText?: LocalizedText;
   icon?: string;
   href?: string;
   openInNewTab?: boolean;
@@ -68,6 +70,7 @@ const PRESENTATIONS: Record<UploadFailureKind, FailureKindPresentation> = {
       ctx.isAdmin
         ? {
             label: i18n.t('uploadProgress.rejectionToast.openLabs'),
+            labelText: localizedText('uploadProgress.rejectionToast.openLabs'),
             icon: 'science',
             href: withCurrentOrgId(LABS_PATH),
             openInNewTab: true,
@@ -119,12 +122,12 @@ function countByKind(items: UploadItem[]): Record<UploadFailureKind, number> {
   return counts;
 }
 
-function pluralKey(
+function pluralText(
   base: string,
   count: number,
   options?: Record<string, unknown>,
-): string {
-  return i18n.t(`${base}_${count === 1 ? 'one' : 'other'}`, { count, ...options });
+): LocalizedText {
+  return localizedText(base, { count, ...options });
 }
 
 /**
@@ -152,15 +155,14 @@ export function notifyUploadFailures(
 
   // Count chips, in priority order.
   const summaryParts = present.map((p) =>
-    pluralKey(p.summaryKey, counts[p.kind], p.summaryParams?.(ctxFor(p))),
+    pluralText(p.summaryKey, counts[p.kind], p.summaryParams?.(ctxFor(p))),
   );
 
   // Title: a kind-specific title only when every failure is that single kind.
   const sole = present.length === 1 ? present[0] : undefined;
-  const title =
-    sole?.exclusiveTitleKey && counts[sole.kind] === total
-      ? pluralKey(sole.exclusiveTitleKey, counts[sole.kind])
-      : pluralKey('uploadProgress.rejectionToast.title', total);
+  const titleText = sole?.exclusiveTitleKey && counts[sole.kind] === total
+    ? pluralText(sole.exclusiveTitleKey, counts[sole.kind])
+    : pluralText('uploadProgress.rejectionToast.title', total);
 
   // Warning if any present kind is a warning, else info.
   const variant: 'warning' | 'info' = present.some((p) => p.severity === 'warning')
@@ -169,13 +171,18 @@ export function notifyUploadFailures(
 
   // Description: the dominant kind's sentence, then a multi-kind chip summary,
   // then the "see the panel" hint.
-  const segments: string[] = [];
-  const dominant = present.find((p) => p.description);
-  if (dominant?.description) segments.push(dominant.description(ctxFor(dominant)));
-  if (present.length > 1 && summaryParts.length > 0) {
-    segments.push(summaryParts.join(' · '));
-  }
-  segments.push(i18n.t('uploadProgress.rejectionToast.trackerHint'));
+  const renderDescription = (): string => {
+    const segments: string[] = [];
+    const dominant = present.find((p) => p.description);
+    if (dominant?.description) segments.push(dominant.description(ctxFor(dominant)));
+    if (present.length > 1 && summaryParts.length > 0) {
+      segments.push(summaryParts
+        .map((part) => resolveLocalizedText(part, i18n.t.bind(i18n)))
+        .join(' · '));
+    }
+    segments.push(i18n.t('uploadProgress.rejectionToast.trackerHint'));
+    return segments.join(' ');
+  };
 
   // Action: the first present kind that offers one.
   let action: ToastAction | undefined;
@@ -184,11 +191,12 @@ export function notifyUploadFailures(
     if (action) break;
   }
 
-  toast[variant](title, {
+  toast[variant](titleText, {
     placement: 'top',
     duration: null,
     showCloseButton: true,
-    description: segments.join(' '),
+    description: renderDescription(),
+    renderDescription,
     action,
   });
 }

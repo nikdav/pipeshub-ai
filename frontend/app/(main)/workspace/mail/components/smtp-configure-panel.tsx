@@ -350,16 +350,18 @@ export function SmtpConfigurePanel({
                   <MaterialIcon name="lock" size={16} color="var(--slate-9)" />
                 </TextField.Slot>
                 <TextField.Slot side="right">
-                  <Box
+                  <button
+                    type="button"
+                    aria-label={t(`workspace.mail.password.${showPassword ? 'hide' : 'show'}`)}
                     onClick={() => setShowPassword((v) => !v)}
-                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', border: 0, padding: 0, background: 'transparent' }}
                   >
                     <MaterialIcon
                       name={showPassword ? 'visibility_off' : 'visibility'}
                       size={16}
                       color="var(--slate-9)"
                     />
-                  </Box>
+                  </button>
                 </TextField.Slot>
               </TextField.Root>
             </Box>

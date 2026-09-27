@@ -18,6 +18,7 @@ import type {
 } from '../types';
 import { AlertSquareIcon, EmptyIcon, NotFoundIcon } from '@/app/components/ui';
 import { resolveRootKbIdFromContext } from '../utils/resolve-root-kb-id';
+import { resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 // Union type for items that can be displayed
 type TableItem = KnowledgeBaseItem | KnowledgeHubNode | AllRecordItem;
@@ -31,7 +32,7 @@ interface KbDataTableProps {
   items: TableItem[];
   isLoading?: boolean;
   isRefreshing?: boolean;
-  error?: string | null;
+  error?: LocalizedTextValue | null;
   pagination?: {
     page: number;
     limit: number;
@@ -223,7 +224,7 @@ export function KbDataTable({
     return (
       <Flex align="center" justify="center" direction="column" gap="3" style={{ flex: 1 }}>
         <AlertSquareIcon size={56} color="var(--red-11)" />
-        <Text size="2" color="red">{error}</Text>
+        <Text size="2" color="red">{resolveLocalizedText(error, t)}</Text>
         {onRefresh && (
           <Button onClick={onRefresh} variant="soft" size="2">
             <MaterialIcon name="refresh" size={16} />

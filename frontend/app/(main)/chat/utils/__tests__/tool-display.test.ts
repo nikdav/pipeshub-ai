@@ -10,7 +10,15 @@
  *  - NEW chats: a backend-provided `displayName` always wins outright.
  */
 import { describe, it, expect } from 'vitest';
-import { isSkillTool, toolActivityLabel, toolStatusLabel, humanizeToolName } from '../tool-display';
+import {
+  isSkillTool,
+  toolActivityLabel,
+  toolActivityText,
+  toolStatusLabel,
+  toolStatusText,
+  humanizeToolName,
+} from '../tool-display';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 describe('isSkillTool', () => {
   it('is true for exactly the five built-in skill tools', () => {
@@ -70,6 +78,21 @@ describe('toolStatusLabel — live streaming status (present tense)', () => {
 
   it('falls back to "Using <Humanized Name>" for a non-skill tool', () => {
     expect(toolStatusLabel('run_code')).toBe('Using Run Code');
+  });
+});
+
+describe('tool label descriptors', () => {
+  it('describes app-owned skill fallbacks while leaving backend display names as plain strings', () => {
+    expect(toolActivityText('load_skill')).toEqual(localizedText('chat.toolActivity.skills.load.past'));
+    expect(toolStatusText('skills_list')).toEqual(localizedText('chat.toolActivity.skills.list.present'));
+    expect(toolActivityText('load_skill', 'Loaded skill from backend')).toBe('Loaded skill from backend');
+  });
+
+  it('keeps the humanized tool name as an interpolation value', () => {
+    expect(toolStatusText('run_code')).toEqual(localizedText('chat.toolActivity.usingTool', {
+      toolName: 'Run Code',
+    }));
+    expect(toolActivityText(undefined)).toEqual(localizedText('chat.toolActivity.usedTool'));
   });
 });
 

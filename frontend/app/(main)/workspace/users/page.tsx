@@ -55,9 +55,9 @@ const ROLE_OPTIONS = [
 ];
 
 const STATUS_OPTIONS = [
-  { value: 'Active', label: 'Active', icon: 'check_circle', iconColor: 'var(--accent-11)' },
-  { value: 'Pending', label: 'Pending', icon: 'schedule', iconColor: 'var(--amber-11)' },
-  { value: 'Blocked', label: 'Blocked', icon: 'block', iconColor: 'var(--red-11)' },
+  { value: 'Active', key: 'active', icon: 'check_circle', iconColor: 'var(--accent-11)' },
+  { value: 'Pending', key: 'pending', icon: 'schedule', iconColor: 'var(--amber-11)' },
+  { value: 'Blocked', key: 'blocked', icon: 'block', iconColor: 'var(--red-11)' },
 ];
 
 // ========================================
@@ -108,7 +108,7 @@ function isInDateRange(
 // ========================================
 
 function UsersPageContent() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentUser = useAuthStore((s) => s.user);
   const addToast = useToastStore((s) => s.addToast);
   const router = useRouter();
@@ -344,7 +344,10 @@ function UsersPageContent() {
             <FilterDropdown
               label={filter.label}
               icon={filter.icon}
-              options={STATUS_OPTIONS}
+              options={STATUS_OPTIONS.map((option) => ({
+                ...option,
+                label: t(`workspace.users.statuses.${option.key}`),
+              }))}
               selectedValues={filters.statuses || []}
               onSelectionChange={(values) =>
                 setFilters({ statuses: values as ('Active' | 'Pending' | 'Blocked')[] })
@@ -658,7 +661,7 @@ function UsersPageContent() {
         width: '112px',
         render: (user) => (
           <Text size="2" style={{ color: 'var(--slate-12)' }}>
-            {user.role || 'Member'}
+            {user.role || t('workspace.users.roles.member')}
           </Text>
         ),
       },
@@ -680,7 +683,7 @@ function UsersPageContent() {
         width: '130px',
         render: (user) => (
           <Text size="2" style={{ color: 'var(--slate-11)' }}>
-            {user.updatedAtTimestamp ? formatDate(user.updatedAtTimestamp) : '-'}
+            {user.updatedAtTimestamp ? formatDate(user.updatedAtTimestamp, i18n.resolvedLanguage ?? i18n.language) : '-'}
           </Text>
         ),
       },
@@ -690,7 +693,7 @@ function UsersPageContent() {
         width: '130px',
         render: (user) => (
           <Text size="2" style={{ color: 'var(--slate-11)' }}>
-            {user.createdAtTimestamp ? formatDate(user.createdAtTimestamp) : '-'}
+            {user.createdAtTimestamp ? formatDate(user.createdAtTimestamp, i18n.resolvedLanguage ?? i18n.language) : '-'}
           </Text>
         ),
       },
@@ -1236,7 +1239,7 @@ function UsersPageContent() {
         title={t('workspace.users.actions.changeRoleConfirmTitle', 'Change role?')}
         message={t('workspace.users.actions.changeRoleConfirmMessage', {
           name: roleChangeTarget?.user.name || roleChangeTarget?.user.email || '',
-          currentRole: roleChangeTarget?.user.role || 'Member',
+          currentRole: roleChangeTarget?.user.role || t('workspace.users.roles.member'),
           newRole: roleChangeTarget?.newRole || '',
           defaultValue:
             'Are you sure you want to change {{name}} from {{currentRole}} to {{newRole}}?',

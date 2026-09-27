@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 
@@ -9,6 +10,7 @@ interface ShareButtonProps {
 }
 
 export function ShareButton({ onClick }: ShareButtonProps) {
+  const { t } = useTranslation();
   return (
     <Button
       size="1"
@@ -36,7 +38,7 @@ export function ShareButton({ onClick }: ShareButtonProps) {
         weight="regular"
         style={{ whiteSpace: 'nowrap', color: 'var(--slate-11)', letterSpacing: '0.04px' }}
       >
-        Share
+        {t('action.share')}
       </Text>
     </Button>
   );

@@ -124,6 +124,15 @@ describe('VectorStoreActions', () => {
         expect.objectContaining({ variant: 'success' })
       )
     );
+    expect(addToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        titleText: { key: 'workspace.connectors.vectorStore.reindex.started' },
+        descriptionText: {
+          key: 'workspace.connectors.vectorStore.reindex.startedDetail',
+        },
+      }),
+    );
+    expect(reindexVectorStore).toHaveBeenCalledTimes(1);
   });
 
   it('keeps the dialog open when the API rejects, so the operator can retry', async () => {

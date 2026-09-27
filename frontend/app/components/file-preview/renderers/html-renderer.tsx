@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import { Box, Flex, Text } from '@radix-ui/themes';
 import DOMPurify from 'dompurify';
 import { useThemeAppearance } from '@/app/components/theme-provider';
@@ -18,11 +20,12 @@ interface HtmlRendererProps {
 }
 
 export function HtmlRenderer({ fileUrl, fileName: _fileName, citations, activeCitationId, onHighlightClick }: HtmlRendererProps) {
+  const { t } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDark = appearance === 'dark';
   const [sanitizedHtml, setSanitizedHtml] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedText | null>(null);
   const [contentReady, setContentReady] = useState(false);
 
   /** Outer scrollable container ref */
@@ -39,7 +42,7 @@ export function HtmlRenderer({ fileUrl, fileName: _fileName, citations, activeCi
   // ── Step 1: Fetch & sanitize ──────────────────────────────────────
   useEffect(() => {
     if (!fileUrl || fileUrl.trim() === '') {
-      setError('File URL not available');
+      setError(localizedText('filePreview.htmlLoadFailed.noUrl'));
       setIsLoading(false);
       return;
     }
@@ -51,7 +54,7 @@ export function HtmlRenderer({ fileUrl, fileName: _fileName, citations, activeCi
         setIsLoading(true);
         setContentReady(false);
         const response = await fetch(fileUrl);
-        if (!response.ok) throw new Error('Failed to fetch file content');
+        if (!response.ok) throw new Error('FETCH_FAILED');
         const rawHtml = await response.text();
 
         if (cancelled) return;
@@ -68,7 +71,9 @@ export function HtmlRenderer({ fileUrl, fileName: _fileName, citations, activeCi
       } catch (err) {
         if (!cancelled) {
           console.error('Error loading HTML file:', err);
-          setError(err instanceof Error ? err.message : 'Failed to load file');
+          setError(localizedText(err instanceof Error && err.message === 'FETCH_FAILED'
+            ? 'filePreview.htmlLoadFailed.fetchFailed'
+            : 'filePreview.htmlLoadFailed.loadFailed'));
         }
       } finally {
         if (!cancelled) setIsLoading(false);
@@ -230,7 +235,7 @@ export function HtmlRenderer({ fileUrl, fileName: _fileName, citations, activeCi
   if (isLoading) {
     return (
       <Flex align="center" justify="center" style={{ height: '100%', padding: 'var(--space-6)' }}>
-        <Text size="2" color="gray">Loading HTML...</Text>
+        <Text size="2" color="gray">{t('filePreview.htmlLoadFailed.loading')}</Text>
       </Flex>
     );
   }
@@ -241,7 +246,7 @@ export function HtmlRenderer({ fileUrl, fileName: _fileName, citations, activeCi
         <span className="material-icons-outlined" style={{ fontSize: '48px', color: 'var(--red-9)' }}>
           error_outline
         </span>
-        <Text size="3" weight="medium" color="red">{error}</Text>
+        <Text size="3" weight="medium" color="red">{resolveLocalizedText(error, t)}</Text>
       </Flex>
     );
   }

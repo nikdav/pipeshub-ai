@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Text, TextField } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { Spinner } from '@/app/components/ui/spinner';
@@ -46,8 +47,8 @@ export const PaginatedMembersList = React.forwardRef(function PaginatedMembersLi
     fetcher,
     renderItem,
     keyExtractor,
-    searchPlaceholder = 'Search...',
-    emptyText = 'No items found',
+    searchPlaceholder,
+    emptyText,
     limit = DEFAULT_LIMIT,
     maxHeight = 300,
     listClassName,
@@ -55,6 +56,7 @@ export const PaginatedMembersList = React.forwardRef(function PaginatedMembersLi
   }: PaginatedMembersListProps<T>,
   ref: React.Ref<PaginatedMembersListHandle>
 ) {
+  const { t } = useTranslation();
   const listRef = useRef<HTMLDivElement>(null);
   const {
     items,
@@ -79,7 +81,7 @@ export const PaginatedMembersList = React.forwardRef(function PaginatedMembersLi
   return (
     <Flex direction="column" gap="3">
       <TextField.Root
-        placeholder={searchPlaceholder}
+        placeholder={searchPlaceholder ?? t('form.searchPlaceholder')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         size="2"
@@ -91,7 +93,7 @@ export const PaginatedMembersList = React.forwardRef(function PaginatedMembersLi
 
       {items.length === 0 && !isLoading ? (
         <Text size="2" style={{ color: 'var(--slate-11)' }}>
-          {emptyText}
+          {emptyText ?? t('workspace.members.noItemsFound')}
         </Text>
       ) : (
         <Flex
@@ -111,7 +113,7 @@ export const PaginatedMembersList = React.forwardRef(function PaginatedMembersLi
             <Flex align="center" justify="center" gap="2" style={{ padding: 4 }}>
               <Spinner size={12} />
               <Text size="1" style={{ color: 'var(--slate-9)' }}>
-                Loading...
+                {t('common.loading')}
               </Text>
             </Flex>
           )}

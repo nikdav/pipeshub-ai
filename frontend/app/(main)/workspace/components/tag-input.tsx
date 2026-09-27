@@ -41,7 +41,7 @@ interface TagInputProps {
 export function TagInput({
   tags,
   onTagsChange,
-  placeholder = 'Enter a value',
+  placeholder,
   validate,
   error,
   disabled = false,
@@ -249,7 +249,7 @@ export function TagInput({
                 addTag(inputValue);
               }
             }}
-            placeholder={tags.length === 0 ? placeholder : ''}
+            placeholder={tags.length === 0 ? placeholder ?? t('workspace.tagInput.placeholder') : ''}
             style={{
               border: 'none',
               outline: 'none',

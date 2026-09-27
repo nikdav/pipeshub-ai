@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Flex, Tabs, Box, Button, Text } from '@radix-ui/themes';
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { ConnectorIcon, MaterialIcon } from '@/app/components/ui';
-import { getUserFacingErrorMessage } from '@/lib/api/api-error';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText } from '@/lib/i18n/localized-text';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
 import {
   WorkspaceRightPanel,
@@ -51,7 +52,7 @@ function oauthAppSelectionError(
   oauthConfigId: unknown,
   isProfileInitialized: boolean,
   isAdmin: boolean
-): string | null {
+): 'oauthAppSelectionRequired' | null {
   if (selectedAuthType !== 'OAUTH' || !isProfileInitialized || isAdmin !== false) {
     return null;
   }
@@ -60,7 +61,7 @@ function oauthAppSelectionError(
     oauthConfigId === null ||
     (typeof oauthConfigId === 'string' && oauthConfigId.trim() === '')
   ) {
-    return 'Please select an OAuth app.';
+    return 'oauthAppSelectionRequired';
   }
   return null;
 }
@@ -232,8 +233,12 @@ export function ConnectorPanel() {
         if (s.panelConnector?.type !== connectorType || (s.panelConnectorId ?? '') !== instanceKey) {
           return;
         }
-        const message = getUserFacingErrorMessage(err, 'We couldn\'t load this connector\'s settings. Please try again in a moment.');
-        setSchemaError(message);
+        setSchemaError(
+          getUserFacingErrorText(
+            err,
+            localizedText('workspace.connectors.errors.settingsLoadFallback'),
+          ),
+        );
       } finally {
         if (gen === panelOpenFetchGen.current) {
           setIsLoadingSchema(false);
@@ -359,7 +364,7 @@ export function ConnectorPanel() {
 
   const resolveAuthenticateOrReturn = useCallback((): boolean => {
     if (!connectorSchema) {
-      setSaveError(t('workspace.connectors.loadingConfig'));
+      setSaveError(localizedText('workspace.connectors.loadingConfig'));
       return false;
     }
     const disableCredEdit = useConnectorsStore.getState().disableCredentialEditWhenLinked;
@@ -530,7 +535,7 @@ export function ConnectorPanel() {
         const newConnectorId =
           result?.connector?.connectorId ?? result?._key ?? result?.connectorId;
         if (!newConnectorId) {
-          setSaveError(t('workspace.connectors.errors.missingCreatedId'));
+      setSaveError(localizedText('workspace.connectors.errors.missingCreatedId'));
           return;
         }
 
@@ -556,7 +561,7 @@ export function ConnectorPanel() {
           ]);
           setSchemaAndConfig(schemaRes.schema, configRes);
         } catch {
-          setSaveError(t('workspace.connectors.errors.createdConfigUnavailable'));
+          setSaveError(localizedText('workspace.connectors.errors.createdConfigUnavailable'));
         } finally {
           setIsLoadingConfig(false);
         }
@@ -572,8 +577,9 @@ export function ConnectorPanel() {
           setPanelActiveTab('configure');
         }
       } catch (err: unknown) {
-        const message = getUserFacingErrorMessage(err, t('workspace.connectors.toasts.createError'));
-        setSaveError(message);
+        setSaveError(
+          getUserFacingErrorText(err, localizedText('workspace.connectors.toasts.createError')),
+        );
       } finally {
         setIsSavingAuth(false);
       }
@@ -627,8 +633,9 @@ export function ConnectorPanel() {
           setPanelActiveTab('configure');
         }
       } catch (err: unknown) {
-        const message = getUserFacingErrorMessage(err, t('workspace.connectors.toasts.authSaveError'));
-        setSaveError(message);
+        setSaveError(
+          getUserFacingErrorText(err, localizedText('workspace.connectors.toasts.authSaveError')),
+        );
       } finally {
         setIsSavingAuth(false);
       }
@@ -662,7 +669,7 @@ export function ConnectorPanel() {
       panelConnectorId || useConnectorsStore.getState().panelConnectorId;
 
     if (!currentConnectorId) {
-      setSaveError(t('workspace.connectors.errors.authenticateFirst'));
+      setSaveError(localizedText('workspace.connectors.errors.authenticateFirst'));
       return;
     }
 
@@ -747,10 +754,10 @@ export function ConnectorPanel() {
         );
       }
     } catch (err: unknown) {
-      const message =
-        typeof err === 'object' && err !== null && 'message' in err
-          ? String((err as { message: unknown }).message)
-          : t('workspace.connectors.toasts.configSaveError');
+      const message = getUserFacingErrorText(
+        err,
+        localizedText('workspace.connectors.toasts.configSaveError'),
+      );
       // No toast here: the axios interceptor already raises one carrying this same
       // message (lib/api/error-toast.ts). This only drives the inline panel alert.
       setSaveError(message);
@@ -781,7 +788,7 @@ export function ConnectorPanel() {
       panelConnectorId || useConnectorsStore.getState().panelConnectorId;
 
     if (!currentConnectorId) {
-      setSaveError(t('workspace.connectors.errors.authenticateFirst'));
+      setSaveError(localizedText('workspace.connectors.errors.authenticateFirst'));
       return;
     }
 
@@ -817,8 +824,17 @@ export function ConnectorPanel() {
       collectSyncFilterErrors(syncFields, formData.filters.sync)
     )[0];
     if (firstSyncFilterError) {
-      setSaveError(firstSyncFilterError);
-      addToast({ variant: 'error', title: firstSyncFilterError, duration: 4500 });
+      const message = localizedText(
+        `workspace.connectors.validation.${firstSyncFilterError.code}`,
+        firstSyncFilterError.values,
+      );
+      setSaveError(message);
+      addToast({
+        variant: 'error',
+        title: '',
+        titleText: message,
+        duration: 4500,
+      });
       return;
     }
 

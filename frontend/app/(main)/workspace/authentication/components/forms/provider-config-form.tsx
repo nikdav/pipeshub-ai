@@ -117,12 +117,21 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
     return (
       <Flex direction="column" gap="4">
         {config.fields.map((field) => {
+          const fieldKey = `workspace.authentication.providerFields.${method}.${field.key}`;
+
           if (field.type === 'readonly') {
             const warned = field.warningKey ? Boolean(values[field.warningKey]) : false;
+            const localizedField = {
+              ...field,
+              label: t(`${fieldKey}.label`),
+              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
+              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              warningText: field.warningText ? t(`${fieldKey}.warning`) : undefined,
+            };
             return (
               <ReadonlyField
                 key={field.key}
-                field={field}
+                field={localizedField}
                 value={String(values[field.key] ?? '')}
                 warned={warned}
               />
@@ -130,10 +139,19 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
           }
 
           if (field.type === 'text') {
+            const localizedField = {
+              ...field,
+              label: t(`${fieldKey}.label`),
+              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
+              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              placeholder: field.translatePlaceholder && field.placeholder
+                ? t(`${fieldKey}.placeholder`)
+                : field.placeholder,
+            };
             return (
               <InputField
                 key={field.key}
-                field={field}
+                field={localizedField}
                 value={String(values[field.key] ?? '')}
                 onChange={(val) => setString(field.key, val)}
               />
@@ -141,10 +159,19 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
           }
 
           if (field.type === 'password') {
+            const localizedField = {
+              ...field,
+              label: t(`${fieldKey}.label`),
+              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
+              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              placeholder: field.translatePlaceholder && field.placeholder
+                ? t(`${fieldKey}.placeholder`)
+                : field.placeholder,
+            };
             return (
               <PasswordInputField
                 key={field.key}
-                field={field}
+                field={localizedField}
                 value={String(values[field.key] ?? '')}
                 onChange={(val) => setString(field.key, val)}
               />
@@ -152,10 +179,19 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
           }
 
           if (field.type === 'textarea') {
+            const localizedField = {
+              ...field,
+              label: t(`${fieldKey}.label`),
+              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
+              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              placeholder: field.translatePlaceholder && field.placeholder
+                ? t(`${fieldKey}.placeholder`)
+                : field.placeholder,
+            };
             return (
               <TextareaField
                 key={field.key}
-                field={field}
+                field={localizedField}
                 value={String(values[field.key] ?? '')}
                 onChange={(val) => setString(field.key, val)}
               />
@@ -174,10 +210,16 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
           }
 
           if (field.type === 'xml-upload') {
+            const localizedField = {
+              ...field,
+              label: t(`${fieldKey}.label`),
+              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
+              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+            };
             return (
               <XmlUploadField
                 key={field.key}
-                field={field}
+                field={localizedField}
                 onPopulate={(parsed) => {
                   setValues((prev) => ({ ...prev, ...parsed }));
                 }}

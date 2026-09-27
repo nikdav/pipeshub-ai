@@ -18,6 +18,7 @@ import type { ConfigurableMethod } from './types';
 interface BaseFieldDef {
   key: string;
   label: string;
+  translatePlaceholder?: boolean;
   /** Shown after the label in muted weight, e.g. "(optional)" */
   labelSuffix?: string;
   helperText?: string;
@@ -132,6 +133,7 @@ export const PROVIDER_CONFIGS: Record<ConfigurableMethod, ProviderFormConfig> = 
         key: 'clientId',
         label: 'Client ID',
         placeholder: 'Enter your Google OAuth Client ID',
+        translatePlaceholder: true,
         required: true,
         icon: 'tag',
         helperText: 'The client ID from your Google OAuth credentials',
@@ -179,6 +181,7 @@ export const PROVIDER_CONFIGS: Record<ConfigurableMethod, ProviderFormConfig> = 
         key: 'clientId',
         label: 'Client ID',
         placeholder: 'Enter your Microsoft Application (client) ID',
+        translatePlaceholder: true,
         required: true,
         icon: 'tag',
         helperText: 'The Application (client) ID from your Azure portal app registration',
@@ -188,6 +191,7 @@ export const PROVIDER_CONFIGS: Record<ConfigurableMethod, ProviderFormConfig> = 
         key: 'tenantId',
         label: 'Tenant ID',
         placeholder: 'Enter your Microsoft Directory (tenant) ID',
+        translatePlaceholder: true,
         required: true,
         icon: 'tag',
         helperText: 'The Directory (tenant) ID from your Azure portal app registration',
@@ -351,6 +355,7 @@ export const PROVIDER_CONFIGS: Record<ConfigurableMethod, ProviderFormConfig> = 
         key: 'clientId',
         label: 'Client ID',
         placeholder: 'Enter your OAuth Client ID',
+        translatePlaceholder: true,
         required: true,
         icon: 'tag',
       },
@@ -359,6 +364,7 @@ export const PROVIDER_CONFIGS: Record<ConfigurableMethod, ProviderFormConfig> = 
         key: 'clientSecret',
         label: 'Client Secret',
         placeholder: 'Enter your OAuth Client Secret',
+        translatePlaceholder: true,
         required: true,
       },
       {

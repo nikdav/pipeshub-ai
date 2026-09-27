@@ -780,7 +780,11 @@ export function KbListView({
           }}
         >
           <Text size="2" style={{ color: 'var(--slate-9)' }}>
-            Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems} Items
+            {t('kb.pagination.showing', {
+              start: ((pagination.page - 1) * pagination.limit) + 1,
+              end: Math.min(pagination.page * pagination.limit, pagination.totalItems),
+              total: pagination.totalItems,
+            })}
           </Text>
           <Flex gap="3" align="center">
             {/* Previous Button */}
@@ -856,7 +860,7 @@ export function KbListView({
                     key={limit}
                     onClick={() => onLimitChange?.(limit)}
                   >
-                    {limit} per page
+                    {t('kb.pagination.perPage', { limit })}
                   </DropdownMenu.Item>
                 ))}
               </DropdownMenu.Content>

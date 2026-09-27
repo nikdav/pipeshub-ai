@@ -6,6 +6,8 @@ import { KnowledgeBaseApi } from '@/app/(main)/knowledge-base/api';
 import { Spinner } from '@/app/components/ui/spinner';
 import { isSignedUrl, isTrustedApiUrl } from '../../utils/parse-download-markers';
 import type { ChatArtifact } from '../../types';
+import { useTranslation } from 'react-i18next';
+import { formatLocalizedBytes, resolveLocalizedText } from '@/lib/i18n/localized-text';
 
 interface ArtifactsPanelProps {
   artifacts: ChatArtifact[];
@@ -35,10 +37,8 @@ function getIconForMime(mimeType: string): string {
   return 'attach_file';
 }
 
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+function formatFileSize(bytes: number, locale: string): string {
+  return formatLocalizedBytes(bytes, locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 }
 
 function isPreviewableImage(mimeType: string): boolean {
@@ -99,6 +99,7 @@ export function ArtifactsPanel({
   onViewSource,
   latestArtifactVersions,
 }: ArtifactsPanelProps) {
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(false);
 
   if (!artifacts.length) return null;
@@ -115,7 +116,10 @@ export function ArtifactsPanel({
           {collapsed ? 'expand_more' : 'expand_less'}
         </span>
         <Text size="2" weight="medium" style={{ color: 'var(--slate-11)' }}>
-          {artifacts.length} artifact{artifacts.length !== 1 ? 's' : ''} generated
+          {t('chat.artifacts.generated', {
+            count: artifacts.length,
+            defaultValue: `${artifacts.length} artifact${artifacts.length === 1 ? '' : 's'} generated`,
+          })}
         </Text>
       </Flex>
 
@@ -282,7 +286,9 @@ function ArtifactCard({
   /** Set to the higher version number when a later turn has since produced a newer copy of this same artifact. */
   newerVersionAvailable?: number;
 }) {
+  const { t, i18n } = useTranslation();
   const icon = getIconForMime(artifact.mimeType);
+  const fileName = resolveLocalizedText(artifact.fileNameText, t, artifact.fileName);
   const showThumbnail = isPreviewableImage(artifact.mimeType);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
@@ -370,7 +376,7 @@ function ArtifactCard({
       <Flex direction="column" style={{ flex: 1, minWidth: 0 }}>
         <Flex align="center" gap="1">
           <Text size="2" weight="medium" style={{ color: 'var(--slate-12)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {artifact.fileName}
+            {fileName}
           </Text>
           {!!artifact.version && (
             <Text
@@ -389,11 +395,14 @@ function ArtifactCard({
           )}
         </Flex>
         <Text size="1" style={{ color: 'var(--slate-9)' }}>
-          {artifact.artifactType} {artifact.sizeBytes > 0 ? `· ${formatFileSize(artifact.sizeBytes)}` : ''}
+          {artifact.artifactType} {artifact.sizeBytes > 0 ? `· ${formatFileSize(artifact.sizeBytes, i18n.resolvedLanguage ?? i18n.language)}` : ''}
         </Text>
         {newerVersionAvailable !== undefined && (
           <Text size="1" weight="medium" style={{ color: 'var(--amber-11)' }}>
-            Newer version available (v{newerVersionAvailable})
+            {t('chat.artifacts.newerVersionAvailable', {
+              version: newerVersionAvailable,
+              defaultValue: `Newer version available (v${newerVersionAvailable})`,
+            })}
           </Text>
         )}
       </Flex>
@@ -405,8 +414,12 @@ function ArtifactCard({
             variant="ghost"
             onClick={runViewSource}
             disabled={isViewingSource}
-            aria-label={isViewingSource ? 'Loading source code' : 'View source code'}
-            title="View the code that generated this artifact"
+            aria-label={isViewingSource
+              ? t('chat.artifacts.loadingSource', { defaultValue: 'Loading source code…' })
+              : t('chat.artifacts.viewSource', { defaultValue: 'View source code' })}
+            title={t('chat.artifacts.viewSourceTitle', {
+              defaultValue: 'View the code that generated this artifact',
+            })}
             style={{ cursor: isViewingSource ? 'wait' : 'pointer' }}
           >
             {isViewingSource ? (

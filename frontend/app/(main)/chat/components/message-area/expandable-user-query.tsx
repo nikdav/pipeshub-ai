@@ -4,12 +4,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Flex, Heading, Text, Button, IconButton } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ICON_SIZES } from '@/lib/constants/icon-sizes';
+import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText, type LocalizedText, type TranslateText } from '@/lib/i18n/localized-text';
 
 export const QUESTION_CHAR_LIMIT = 250;
 export const EXPANDED_MAX_HEIGHT_PX = 360;
 
 export interface ExpandableUserQueryProps {
   question: string;
+  questionText?: LocalizedText;
   isMobile?: boolean;
   messageId?: string;
   isStreaming?: boolean;
@@ -56,6 +59,7 @@ function ToggleButton({
   expanded: boolean;
   onToggle: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Button
       color="gray"
@@ -73,7 +77,7 @@ function ToggleButton({
         height: 'auto',
       }}
     >
-      {expanded ? 'Show less' : 'Show more'}
+      {expanded ? t('askUserQuestion.showLess') : t('askUserQuestion.showMore')}
       <MaterialIcon
         name={expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}
         size={ICON_SIZES.PRIMARY}
@@ -93,6 +97,7 @@ function QueryActions({
   onEdit?: () => void;
   visible: boolean;
 }) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -113,7 +118,7 @@ function QueryActions({
     <Flex align="center" gap="1" style={{ flexShrink: 0 }}>
       {question.trim() ? (
         <ActionIconButton
-          ariaLabel={copied ? 'Copied' : 'Copy'}
+          ariaLabel={copied ? t('chatStream.copiedCode') : t('chat.copy')}
           icon={copied ? 'check' : 'content_copy'}
           visible={visible}
           onClick={handleCopy}
@@ -122,7 +127,7 @@ function QueryActions({
       ) : null}
       {showEdit && onEdit ? (
         <ActionIconButton
-          ariaLabel="Edit"
+          ariaLabel={t('chat.editQuery')}
           icon="edit"
           visible={visible}
           onClick={onEdit}
@@ -134,25 +139,28 @@ function QueryActions({
 
 export function ExpandableUserQuery({
   question,
+  questionText,
   isMobile: _isMobile = false,
   messageId,
   isStreaming = false,
   onEdit,
 }: ExpandableUserQueryProps) {
+  const { t } = useTranslation();
+  const displayQuestion = resolveLocalizedText(questionText, t as TranslateText, question);
   const [expanded, setExpanded] = useState(false);
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => setExpanded(false), [question]);
 
-  const isLong = Boolean(question.trim()) && question.length > QUESTION_CHAR_LIMIT;
+  const isLong = Boolean(displayQuestion.trim()) && displayQuestion.length > QUESTION_CHAR_LIMIT;
   const showEdit = Boolean(!isStreaming && messageId && onEdit);
   const toggle = () => setExpanded((prev) => !prev);
 
   if (!isLong || !expanded) {
     const displayed =
       isLong && !expanded
-        ? question.slice(0, QUESTION_CHAR_LIMIT).trimEnd() + '…'
-        : question;
+        ? displayQuestion.slice(0, QUESTION_CHAR_LIMIT).trimEnd() + '…'
+        : displayQuestion;
 
     return (
       <Box
@@ -218,7 +226,7 @@ export function ExpandableUserQuery({
             overflowY: 'auto',
           }}
         >
-          {question}
+          {displayQuestion}
         </Text>
         <Flex
           data-testid="user-query-actions"

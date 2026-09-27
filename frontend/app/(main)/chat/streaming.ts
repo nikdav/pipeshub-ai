@@ -21,6 +21,7 @@ import { buildChatArtifact } from './utils/build-chat-artifact';
 import { debugLog } from './debug-logger';
 import { loadHistoricalMessages, getThreadMessagePlainText } from './runtime';
 import { i18n } from '@/lib/i18n';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import { showNoModelToast } from './utils/no-model-toast';
 import type { ThreadMessageLike } from '@assistant-ui/react';
 import {
@@ -153,18 +154,29 @@ function applyAskUserQuestionSse(
  */
 function withStreamingErrorMessage(
   currentMessages: ThreadMessageLike[],
-  errorText: string
+  errorText: string,
+  messageText?: LocalizedText,
 ): ThreadMessageLike[] {
   const last = currentMessages[currentMessages.length - 1];
   if (last?.role === 'assistant' && getThreadMessagePlainText(last).trim() === '') {
     return [
       ...currentMessages.slice(0, -1),
-      { ...last, content: [{ type: 'text' as const, text: errorText }] },
+      {
+        ...last,
+        content: [{ type: 'text' as const, text: errorText }],
+        ...(messageText
+          ? { metadata: { ...last.metadata, custom: { ...last.metadata?.custom, messageText } } }
+          : {}),
+      },
     ];
   }
   return [
     ...currentMessages,
-    { role: 'assistant' as const, content: [{ type: 'text' as const, text: errorText }] },
+    {
+      role: 'assistant' as const,
+      content: [{ type: 'text' as const, text: errorText }],
+      ...(messageText ? { metadata: { custom: { messageText } } } : {}),
+    },
   ];
 }
 
@@ -178,6 +190,7 @@ function statusMessageFromConnectedEvent(data: SSEConnectedEvent): StatusMessage
     id: 'status-connected',
     status: 'connected',
     message: looksTechnical ? 'Connected — working on your request…' : raw,
+    ...(looksTechnical ? { messageText: localizedText('chatStream.connectedWorking') } : {}),
     timestamp: new Date().toISOString(),
   };
 }
@@ -187,7 +200,8 @@ function statusMessageRestreaming(): StatusMessage {
   return {
     id: `status-restreaming-${Date.now()}`,
     status: 'restreaming',
-    message: i18n.t('chatStream.refiningResponse'),
+    message: 'Refining response…',
+    messageText: localizedText('chatStream.refiningResponse'),
     timestamp: new Date().toISOString(),
   };
 }
@@ -210,7 +224,8 @@ function statusMessageIdleThinking(): StatusMessage {
   return {
     id: `status-idle-${Date.now()}`,
     status: 'calling_llm',
-    message: i18n.t('chatStream.thinkingFallback'),
+    message: 'Thinking…',
+    messageText: localizedText('chatStream.thinkingFallback'),
     timestamp: new Date().toISOString(),
   };
 }
@@ -575,6 +590,7 @@ export async function streamMessageForSlot(
           id: `status-${Date.now()}`,
           status: data.status,
           message: data.message,
+          ...(data.messageText ? { messageText: data.messageText } : {}),
           timestamp: new Date().toISOString(),
         };
         if (data.status === 'calling_llm') {
@@ -798,7 +814,13 @@ export async function streamMessageForSlot(
         cancelPendingStatus();
         console.error('[streaming] Stream error for slot', slotId, error);
         const currentMessages = useChatStore.getState().slots[slotId]?.messages ?? [];
+        const inheritedMessageText = 'messageText' in error
+          ? (error as Error & { messageText?: LocalizedText }).messageText
+          : undefined;
         const err = error.message || 'An error occurred. Please try again.';
+        const errorMessageText = inheritedMessageText ?? (!error.message
+          ? localizedText('chatStream.errorFallback')
+          : undefined);
         useChatStore.getState().updateSlot(slotId, {
           isStreaming: false,
           streamingContent: '',
@@ -811,7 +833,7 @@ export async function streamMessageForSlot(
           runId: null,
           stopping: false,
           pendingAskUserQuestion: null,
-          messages: withStreamingErrorMessage(currentMessages, err),
+          messages: withStreamingErrorMessage(currentMessages, err, errorMessageText),
         });
         if (isNewConversation) {
           useChatStore.getState().clearPendingConversation(slotId);
@@ -861,9 +883,14 @@ export async function streamMessageForSlot(
 
     console.error('[streaming] Fatal error for slot', slotId, error);
     const currentMessages = useChatStore.getState().slots[slotId]?.messages ?? [];
-    const errorMessage = error instanceof Error
-      ? error.message
-      : i18n.t('chatStream.errorFallback');
+    const rawErrorMessage = error instanceof Error ? error.message : '';
+    const inheritedMessageText = error instanceof Error && 'messageText' in error
+      ? (error as Error & { messageText?: LocalizedText }).messageText
+      : undefined;
+    const errorMessage = rawErrorMessage || i18n.t('chatStream.errorFallback');
+    const errorMessageText = inheritedMessageText ?? (!rawErrorMessage
+      ? localizedText('chatStream.errorFallback')
+      : undefined);
     useChatStore.getState().updateSlot(slotId, {
       isStreaming: false,
       streamingContent: '',
@@ -876,7 +903,7 @@ export async function streamMessageForSlot(
       runId: null,
       stopping: false,
       pendingAskUserQuestion: null,
-      messages: withStreamingErrorMessage(currentMessages, errorMessage),
+      messages: withStreamingErrorMessage(currentMessages, errorMessage, errorMessageText),
     });
     if (isNewConversation) {
       useChatStore.getState().clearPendingConversation(slotId);
@@ -1040,6 +1067,7 @@ export async function streamRegenerateForSlot(
         id: `status-${Date.now()}`,
         status: data.status,
         message: data.message,
+        ...(data.messageText ? { messageText: data.messageText } : {}),
         timestamp: new Date().toISOString(),
       };
       if (data.status === 'calling_llm') {

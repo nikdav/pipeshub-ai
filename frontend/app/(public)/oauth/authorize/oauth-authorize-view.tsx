@@ -13,6 +13,7 @@ import { LoadingScreen } from '@/app/components/ui/auth-guard';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
 import { LoadingButton } from '@/app/components/ui/loading-button';
 import { OAuthConnectionOutcome } from '@/app/(public)/oauth/components/oauth-connection-outcome';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 const OAUTH_AUTHORIZE_PATH = '/oauth/authorize';
 const AUTHORIZE_API = '/api/v1/oauth2/authorize';
@@ -72,7 +73,7 @@ function extractOAuthErrorCode(data: unknown): string | null {
 }
 
 /** Extract the best human-readable message from an error, preferring error_description. */
-function errorMessageFromUnknown(err: unknown): string {
+function errorMessageFromUnknown(err: unknown): LocalizedTextValue {
   if (isAxiosError(err)) {
     const data = err.response?.data;
     // Prefer error_description (OAuth-style) over the generic error code
@@ -88,10 +89,10 @@ function errorMessageFromUnknown(err: unknown): string {
     const fromBody = extractApiErrorMessage(data);
     if (fromBody) return fromBody;
     const processed = processError(err as AxiosError);
-    return processed.message;
+    return processed.messageText ?? processed.message;
   }
   if (err instanceof Error) return err.message;
-  return 'An error occurred';
+  return localizedText('message.error');
 }
 
 /** Extract the OAuth error code from an error, if present. */
@@ -121,7 +122,7 @@ function extractErrorFromRedirectUrl(
 type ConsentOutcome =
   | { type: 'idle' }
   | { type: 'success'; redirectUrl: string; consent: 'granted' | 'denied' }
-  | { type: 'error'; message: string };
+  | { type: 'error'; message: LocalizedTextValue };
 
 export function OAuthAuthorizeView() {
   const { t } = useTranslation();
@@ -132,7 +133,7 @@ export function OAuthAuthorizeView() {
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<LocalizedTextValue | ''>('');
   const [errorCode, setErrorCode] = useState('');
   const [outcome, setOutcome] = useState<ConsentOutcome>({ type: 'idle' });
   const [consentData, setConsentData] = useState<ConsentData | null>(null);
@@ -170,7 +171,7 @@ export function OAuthAuthorizeView() {
     if (!isHydrated || !isAuthenticated) return;
 
     if (!clientId || !redirectUri) {
-      setError(t('oauthConsent.missingParams'));
+      setError(localizedText('oauthConsent.missingParams'));
       setLoading(false);
       return;
     }
@@ -214,7 +215,7 @@ export function OAuthAuthorizeView() {
           setCodeChallenge(data.codeChallenge ?? '');
           setCodeChallengeMethod(data.codeChallengeMethod ?? '');
         } else {
-          setError(t('oauthConsent.noData'));
+          setError(localizedText('oauthConsent.noData'));
         }
       } catch (err) {
         if (axios.isCancel(err)) return;
@@ -231,7 +232,8 @@ export function OAuthAuthorizeView() {
       cancelled = true;
       controller.abort();
     };
-  }, [isHydrated, isAuthenticated, clientId, redirectUri, queryParams, t]);
+  // The error state is descriptor-backed; language changes should not restart the authorize request.
+  }, [isHydrated, isAuthenticated, clientId, redirectUri, queryParams]);
 
   const successRedirectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -280,7 +282,7 @@ export function OAuthAuthorizeView() {
         setOutcome({ type: 'success', redirectUrl: data.redirectUrl, consent });
         return;
       }
-      setOutcome({ type: 'error', message: t('oauthConsent.noRedirect') });
+      setOutcome({ type: 'error', message: localizedText('oauthConsent.noRedirect') });
     } catch (err) {
       setOutcome({ type: 'error', message: errorMessageFromUnknown(err) });
     } finally {
@@ -388,7 +390,7 @@ export function OAuthAuthorizeView() {
               size="2"
               style={{ color: 'var(--gray-11)', textAlign: 'center', lineHeight: 1.5 }}
             >
-              {error}
+              {resolveLocalizedText(error, t)}
             </Text>
 
             {errorHint && (
@@ -474,7 +476,7 @@ export function OAuthAuthorizeView() {
       <OAuthConnectionOutcome
         variant="error"
         title={t('oauthConsent.outcomeErrorTitle')}
-        descriptionLines={[outcome.message]}
+        descriptionLines={[resolveLocalizedText(outcome.message, t)]}
         primaryActionLabel={t('oauthConsent.tryAgain')}
         onPrimaryAction={() => setOutcome({ type: 'idle' })}
       />

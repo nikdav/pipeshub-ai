@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Button } from '@radix-ui/themes';
 import { LoadingButton } from '@/app/components/ui/loading-button';
 
@@ -45,8 +46,9 @@ export function SettingsSaveBar({
   onDiscard,
   onSave,
   isSaving = false,
-  saveLabel = 'Save',
+  saveLabel,
 }: SettingsSaveBarProps) {
+  const { t } = useTranslation();
   const [localSaving, setLocalSaving] = useState(false);
 
   const isActuallySaving = isSaving || localSaving;
@@ -92,16 +94,16 @@ export function SettingsSaveBar({
         disabled={isActuallySaving}
         style={{ cursor: 'pointer' }}
       >
-        Discard changes
+        {t('workspace.settings.discardChanges')}
       </Button>
       <LoadingButton
         size="2"
         variant="solid"
         onClick={handleSave}
         loading={isActuallySaving}
-        loadingLabel="Saving..."
+        loadingLabel={t('action.saving')}
       >
-        {saveLabel}
+        {saveLabel ?? t('action.save')}
       </LoadingButton>
     </Flex>
   );

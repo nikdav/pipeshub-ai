@@ -132,10 +132,10 @@ export function FilterBar({ pageViewMode }: KBFilterBarProps) {
     if (!availableFilters?.origins) return [];
     return availableFilters.origins.map((opt) => ({
       value: opt.id,
-      label: opt.id === 'COLLECTION' ? 'Collections' : opt.label,
+      label: opt.id === 'COLLECTION' ? t('nav.collections') : opt.label,
       icon: opt.id === 'COLLECTION' ? 'folder' : 'cloud',
     }));
-  }, [availableFilters]);
+  }, [availableFilters, t]);
 
   const connectorOptions = useMemo(() => {
     if (!availableFilters?.connectors) return [];

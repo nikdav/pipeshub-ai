@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LoadingScreen } from '@/app/components/ui/auth-guard';
 
 const MS_OAUTH_CB_PREFIX = 'ms_oauth_cb_';
 
 export default function MicrosoftCallbackPage() {
+  const { i18n } = useTranslation();
   useEffect(() => {
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const queryParams = new URLSearchParams(window.location.search);
@@ -36,7 +38,7 @@ export default function MicrosoftCallbackPage() {
         window.opener.postMessage(
           {
             type: 'MICROSOFT_AUTH_ERROR',
-            error: 'Authentication response validation failed. Please try again.',
+            error: i18n.t('auth.oauth.microsoftCallback.validationFailed'),
           },
           window.location.origin,
         );
@@ -50,7 +52,7 @@ export default function MicrosoftCallbackPage() {
         window.opener.postMessage(
           {
             type: 'MICROSOFT_AUTH_ERROR',
-            error: errorDescription || error || 'Microsoft sign-in failed.',
+            error: errorDescription || error || i18n.t('auth.oauth.microsoftCallback.failed'),
           },
           window.location.origin,
         );
@@ -68,13 +70,14 @@ export default function MicrosoftCallbackPage() {
       window.opener.postMessage(
         {
           type: 'MICROSOFT_AUTH_ERROR',
-          error: 'No authorization code received from Microsoft.',
+          error: i18n.t('auth.oauth.microsoftCallback.noCode'),
         },
         window.location.origin,
       );
     }
 
     window.close();
+  // Callback validation is deliberately one-shot; a language change must not repost tokens/errors.
   }, []);
 
   return <LoadingScreen />;

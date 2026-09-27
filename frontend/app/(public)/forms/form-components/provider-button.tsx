@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { LoadingButton } from '@/app/components/ui/loading-button';
+import { useTranslation } from 'react-i18next';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -10,15 +11,15 @@ export type AuthProviderType = 'sso' | 'google' | 'microsoft' | 'oauth' | 'githu
 
 const PROVIDER_CONFIG: Record<
   AuthProviderType,
-  { label: string; icon: React.ReactNode }
+  { labelKey: string; icon: React.ReactNode }
 > = {
   /** SSO has no logo — fallback label when `samlProviderName` is not provided. */
   sso: {
-    label: 'Sign in with SSO',
+    labelKey: 'auth.providers.signInWithSso',
     icon: null,
   },
   google: {
-    label: 'Continue with Google',
+    labelKey: 'auth.providers.continueWithGoogle',
     icon: (
       <Image
         src="/login-page-assets/providers/google-fill.svg"
@@ -29,7 +30,7 @@ const PROVIDER_CONFIG: Record<
     ),
   },
   microsoft: {
-    label: 'Continue with Microsoft',
+    labelKey: 'auth.providers.continueWithMicrosoft',
     icon: (
       <Image
         src="/login-page-assets/providers/microsoft.svg"
@@ -40,7 +41,7 @@ const PROVIDER_CONFIG: Record<
     ),
   },
   oauth: {
-    label: 'Continue with OAuth',
+    labelKey: 'auth.providers.continueWithOAuth',
     icon: (
       <span className="material-icons-outlined" style={{ fontSize: '18px' }}>
         login
@@ -48,7 +49,7 @@ const PROVIDER_CONFIG: Record<
     ),
   },
   github: {
-    label: 'Continue with GitHub',
+    labelKey: 'auth.providers.continueWithGitHub',
     icon: (
       <Image
         src="/icons/auth-config/github.svg"
@@ -115,12 +116,13 @@ export default function ProviderButton({
   samlProviderName,
   oauthProviderName,
 }: ProviderButtonProps) {
-  const { icon, label: defaultLabel } = PROVIDER_CONFIG[provider];
-  let label = defaultLabel;
+  const { t } = useTranslation();
+  const { icon, labelKey } = PROVIDER_CONFIG[provider];
+  let label = t(labelKey);
   if (provider === 'sso' && samlProviderName?.trim()) {
-    label = `Continue with ${samlProviderName.trim()}`;
+    label = t('auth.providers.continueWithProvider', { provider: samlProviderName.trim() });
   } else if (provider === 'oauth' && oauthProviderName?.trim()) {
-    label = `Continue with ${oauthProviderName.trim()}`;
+    label = t('auth.providers.continueWithProvider', { provider: oauthProviderName.trim() });
   }
   return (
     <LoadingButton
@@ -129,7 +131,7 @@ export default function ProviderButton({
       variant={primary ? 'solid' : 'outline'}
       disabled={disabled}
       loading={loading}
-      loadingLabel="Connecting…"
+      loadingLabel={t('auth.providers.connecting')}
       style={{
         width: '100%',
         fontWeight: 500,

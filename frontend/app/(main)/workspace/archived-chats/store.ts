@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type { Conversation, ConversationMessage, AgentArchivedGroup } from './types';
@@ -58,7 +59,7 @@ interface ArchivedChatsState {
   // -- Selected conversation --
   selected: SelectedConversationState | null;
   isLoadingConversation: boolean;
-  conversationError: string | null;
+  conversationError: LocalizedTextValue | null;
 }
 
 interface ArchivedChatsActions {
@@ -302,7 +303,7 @@ export const useArchivedChatsStore = create<ArchivedChatsStore>()(
               state.isLoadingConversation = false;
             });
           } catch (err) {
-            const message = err instanceof Error ? err.message : 'Failed to load conversation';
+            const message = err instanceof Error ? err.message : localizedText('workspace.archivedChats.conversationLoadError');
             set((state) => {
               state.conversationError = message;
               state.isLoadingConversation = false;
@@ -341,7 +342,7 @@ export const useArchivedChatsStore = create<ArchivedChatsStore>()(
             state.isLoadingConversation = false;
           });
         } catch (err) {
-          const message = err instanceof Error ? err.message : 'Failed to load conversation';
+          const message = err instanceof Error ? err.message : localizedText('workspace.archivedChats.conversationLoadError');
           set((state) => {
             state.conversationError = message;
             state.isLoadingConversation = false;

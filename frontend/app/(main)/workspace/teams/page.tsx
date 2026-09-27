@@ -43,7 +43,7 @@ const TEAMS_FILTER_CHIPS: FilterChipConfig[] = [
 // ========================================
 
 function TeamsPageContent() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentUser = useAuthStore((s) => s.user);
   const profile = useUserStore((s) => s.profile);
   const addToast = useToastStore((s) => s.addToast);
@@ -89,7 +89,7 @@ function TeamsPageContent() {
     },
     mapOption: (u) => ({
       value: u.userId,
-      label: u.name || u.email || 'Unknown User',
+      label: u.name || u.email || '',
       icon: 'person',
     }),
   });
@@ -307,7 +307,10 @@ function TeamsPageContent() {
             <FilterDropdown
               label={filter.label}
               icon={filter.icon}
-              options={userFilter.options}
+              options={userFilter.options.map((option) => ({
+                ...option,
+                label: option.label || t('workspace.common.unknownUser'),
+              }))}
               selectedValues={filters.createdBy ? [filters.createdBy] : []}
               onSelectionChange={(values) =>
                 setFilters({ createdBy: values[0] ?? undefined })
@@ -412,7 +415,7 @@ function TeamsPageContent() {
           const currentUserId = (profile?.userId ?? currentUser?.id ?? '').trim();
           return (
             <AvatarCell
-              name={creator.name || creator.email || 'Unknown User'}
+              name={creator.name || creator.email || t('workspace.common.unknownUser')}
               email={creator.email}
               isSelf={Boolean(currentUserId && creator.userId === currentUserId)}
               profilePicture={creator.profilePicture ?? undefined}
@@ -426,7 +429,7 @@ function TeamsPageContent() {
         width: '140px',
         render: (team) => (
           <Text size="2" style={{ color: 'var(--slate-11)' }}>
-            {team.createdAtTimestamp ? formatDate(team.createdAtTimestamp) : '-'}
+            {team.createdAtTimestamp ? formatDate(team.createdAtTimestamp, i18n.resolvedLanguage ?? i18n.language) : '-'}
           </Text>
         ),
       },

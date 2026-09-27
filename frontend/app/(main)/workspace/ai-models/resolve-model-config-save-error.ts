@@ -1,7 +1,8 @@
 'use client';
 
-import type { TFunction } from 'i18next';
 import { ErrorType, isProcessedError } from '@/lib/api/api-error';
+import { localizedText } from '@/lib/i18n/localized-text';
+import type { LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 export function extractErrorCode(value: unknown, depth = 0): string | undefined {
   if (depth > 6 || value == null || typeof value !== 'object') return undefined;
@@ -16,7 +17,7 @@ export function extractErrorCode(value: unknown, depth = 0): string | undefined 
   return undefined;
 }
 
-export function resolveModelConfigSaveError(err: unknown, t: TFunction): string {
+export function resolveModelConfigSaveError(err: unknown): LocalizedTextValue {
   if (isProcessedError(err)) {
     const fromDetails = extractErrorCode(err.details);
     const fromAxiosBody = extractErrorCode(
@@ -24,15 +25,15 @@ export function resolveModelConfigSaveError(err: unknown, t: TFunction): string 
     );
     const code = fromDetails ?? fromAxiosBody;
     if (code === 'outbound_connectivity') {
-      return t('workspace.aiModels.configSaveOutboundError');
+      return localizedText('workspace.aiModels.configSaveOutboundError');
     }
     if (code === 'health_check_timeout' || err.type === ErrorType.TIMEOUT_ERROR) {
-      return t('workspace.aiModels.configSaveTimeoutError');
+      return localizedText('workspace.aiModels.configSaveTimeoutError');
     }
     if (err.message.trim()) {
       return err.message.trim();
     }
   }
 
-  return t('workspace.aiModels.configSaveErrorFallback');
+  return localizedText('workspace.aiModels.configSaveErrorFallback');
 }

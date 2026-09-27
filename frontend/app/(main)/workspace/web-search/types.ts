@@ -56,15 +56,14 @@ export interface WebSearchProviderMeta {
   iconType: 'material' | 'image';
   configurable: boolean;
   docUrl: string;
-  apiKeyHelperText?: string;
-  apiKeyPlaceholder?: string;
+  apiKeyUrl?: string;
 }
 
 export const WEB_SEARCH_PROVIDER_META: WebSearchProviderMeta[] = [
   {
     type: 'duckduckgo',
     label: 'DuckDuckGo',
-    description: 'Built-in, no configuration required',
+    description: '',
     icon: '/icons/web-search/duckduckgo.svg',
     iconType: 'image',
     configurable: false,
@@ -78,8 +77,7 @@ export const WEB_SEARCH_PROVIDER_META: WebSearchProviderMeta[] = [
     iconType: 'image',
     configurable: true,
     docUrl: 'https://serper.dev/docs',
-    apiKeyHelperText: 'Get your API key from https://serper.dev',
-    apiKeyPlaceholder: 'Enter your Serper API key',
+    apiKeyUrl: 'https://serper.dev',
   },
   {
     type: 'tavily',
@@ -89,8 +87,7 @@ export const WEB_SEARCH_PROVIDER_META: WebSearchProviderMeta[] = [
     iconType: 'image',
     configurable: true,
     docUrl: 'https://docs.tavily.com',
-    apiKeyHelperText: 'Get your API key from https://tavily.com',
-    apiKeyPlaceholder: 'Enter your Tavily API key',
+    apiKeyUrl: 'https://tavily.com',
   },
   {
     type: 'exa',
@@ -100,8 +97,7 @@ export const WEB_SEARCH_PROVIDER_META: WebSearchProviderMeta[] = [
     iconType: 'image',
     configurable: true,
     docUrl: 'https://docs.exa.ai',
-    apiKeyHelperText: 'Get your API key from https://dashboard.exa.ai/api-keys',
-    apiKeyPlaceholder: 'Enter your Exa API key',
+    apiKeyUrl: 'https://dashboard.exa.ai/api-keys',
   },
 ];
 

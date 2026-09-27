@@ -37,7 +37,8 @@ import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { getAgentBuilderPermissions } from './agent-builder-permissions';
 import { useUserPermission } from '@/config';
 import { toast } from '@/lib/store/toast-store';
-import { getUserFacingErrorMessage } from '@/lib/api/api-error';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue, type TranslateText } from '@/lib/i18n/localized-text';
 import {
   collectActiveToolsetTypeKeysFromNodes,
   type ToolsetTypeKeyFlowNode,
@@ -120,7 +121,7 @@ export function AgentBuilder({ agentKey }: { agentKey: string | null }) {
   } = useAgentBuilderState(loadedAgent?.name || '');
 
   const [shareWithOrg, setShareWithOrg] = useState(false);
-  const [banner, setBanner] = useState<string | null>(null);
+  const [banner, setBanner] = useState<LocalizedTextValue | null>(null);
   const [showPostUpdateDialog, setShowPostUpdateDialog] = useState(false);
 
   // ── Dirty tracking ──────────────────────────────────────────────────────────
@@ -130,7 +131,7 @@ export function AgentBuilder({ agentKey }: { agentKey: string | null }) {
 
   const [serviceAccountConfirmOpen, setServiceAccountConfirmOpen] = useState(false);
   const [serviceAccountCreating, setServiceAccountCreating] = useState(false);
-  const [serviceAccountError, setServiceAccountError] = useState<string | null>(null);
+  const [serviceAccountError, setServiceAccountError] = useState<LocalizedTextValue | null>(null);
   const [agentToolsetDialog, setAgentToolsetDialog] = useState<{
     toolset: BuilderSidebarToolset;
     instanceId: string;
@@ -657,7 +658,7 @@ export function AgentBuilder({ agentKey }: { agentKey: string | null }) {
         router.replace(`/agents/edit?agentKey=${encodeURIComponent(created._key)}`);
       }
     } catch (e: unknown) {
-      setError(getUserFacingErrorMessage(e, t('agentBuilder.saveFailed')));
+      setError(getUserFacingErrorText(e, localizedText('agentBuilder.saveFailed')));
     } finally {
       setSaving(false);
       saveRef.current = false;
@@ -737,7 +738,7 @@ export function AgentBuilder({ agentKey }: { agentKey: string | null }) {
         router.replace(`/agents/edit?agentKey=${encodeURIComponent(created._key)}&sa=1`);
       }
     } catch (e: unknown) {
-      setServiceAccountError(getUserFacingErrorMessage(e, t('agentBuilder.svcAcctEnableFailed')));
+      setServiceAccountError(getUserFacingErrorText(e, localizedText('agentBuilder.svcAcctEnableFailed')));
     } finally {
       setServiceAccountCreating(false);
     }
@@ -783,7 +784,7 @@ export function AgentBuilder({ agentKey }: { agentKey: string | null }) {
       setAgentDeleteDialogOpen(false);
       router.replace('/chat/');
     } catch (e: unknown) {
-      setError(getUserFacingErrorMessage(e, t('agentBuilder.deleteAgentFailed')));
+      setError(getUserFacingErrorText(e, localizedText('agentBuilder.deleteAgentFailed')));
     } finally {
       setIsDeletingAgent(false);
     }
@@ -856,7 +857,9 @@ export function AgentBuilder({ agentKey }: { agentKey: string | null }) {
             {error ? (
               <Callout.Root color="red" variant="surface" size="1">
                 <Flex align="start" justify="between" gap="3" wrap="wrap">
-                  <Callout.Text style={{ flex: 1, minWidth: 0 }}>{error}</Callout.Text>
+                  <Callout.Text style={{ flex: 1, minWidth: 0 }}>
+                    {resolveLocalizedText(error, t as TranslateText)}
+                  </Callout.Text>
                   <Button variant="soft" color="gray" size="1" onClick={() => setError(null)}>
                     {t('agentBuilder.dismiss')}
                   </Button>
@@ -866,7 +869,9 @@ export function AgentBuilder({ agentKey }: { agentKey: string | null }) {
             {banner ? (
               <Callout.Root color="amber" variant="surface" size="1">
                 <Flex align="start" justify="between" gap="3" wrap="wrap">
-                  <Callout.Text style={{ flex: 1, minWidth: 0 }}>{banner}</Callout.Text>
+                  <Callout.Text style={{ flex: 1, minWidth: 0 }}>
+                    {resolveLocalizedText(banner, t as TranslateText)}
+                  </Callout.Text>
                   <Button variant="soft" color="gray" size="1" onClick={() => setBanner(null)}>
                     {t('common.ok')}
                   </Button>

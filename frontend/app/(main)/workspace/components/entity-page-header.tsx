@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Heading, Text, Button, TextField, Tooltip } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 
@@ -38,7 +39,7 @@ export interface EntityPageHeaderProps {
 export function EntityPageHeader({
   title,
   subtitle,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder,
   searchValue,
   onSearchChange,
   ctaLabel,
@@ -48,6 +49,7 @@ export function EntityPageHeader({
   ctaDisabled = false,
   ctaTooltip,
 }: EntityPageHeaderProps) {
+  const { t } = useTranslation();
   const ctaButton = (
     <Button
       size="2"
@@ -83,7 +85,7 @@ export function EntityPageHeader({
       <Flex align="center" gap="3">
         <TextField.Root
           size="2"
-          placeholder={searchPlaceholder}
+          placeholder={searchPlaceholder ?? t('form.searchPlaceholder')}
           value={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
           style={{ width: '224px' }}

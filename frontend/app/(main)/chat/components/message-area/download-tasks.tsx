@@ -6,9 +6,12 @@ import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ICON_SIZES } from '@/lib/constants/icon-sizes';
 import { apiClient } from '@/lib/api';
 import { isTrustedApiUrl, isSignedUrl } from '../../utils/parse-download-markers';
+import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 
 interface DownloadTask {
   fileName: string;
+  fileNameText?: LocalizedText;
   url: string;
 }
 
@@ -17,6 +20,7 @@ interface DownloadTasksProps {
 }
 
 export function DownloadTasks({ tasks }: DownloadTasksProps) {
+  const { t } = useTranslation();
   const handleDownload = useCallback(async (task: DownloadTask) => {
     try {
       // Signed URLs carry their own auth. Untrusted origins (anything not
@@ -58,7 +62,9 @@ export function DownloadTasks({ tasks }: DownloadTasksProps) {
   return (
     <Flex direction="column" gap="2" style={{ marginTop: 'var(--space-3)' }}>
       <Text size="1" color="gray">
-        You can download the complete query results:
+        {t('chat.downloadTasks.completeResults', {
+          defaultValue: 'You can download the complete query results:',
+        })}
       </Text>
       <Flex gap="2" wrap="wrap">
         {tasks.map((task, idx) => (
@@ -71,7 +77,7 @@ export function DownloadTasks({ tasks }: DownloadTasksProps) {
             style={{ cursor: 'pointer' }}
           >
             <MaterialIcon name="download" size={ICON_SIZES.SECONDARY} />
-            {task.fileName}
+            {resolveLocalizedText(task.fileNameText, t, task.fileName)}
           </Button>
         ))}
       </Flex>

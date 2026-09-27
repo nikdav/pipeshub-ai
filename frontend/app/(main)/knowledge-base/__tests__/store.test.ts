@@ -117,7 +117,7 @@ describe('deleting a selection', () => {
     await store().bulkDeleteSelected(items, refresh);
 
     expect(refresh).toHaveBeenCalledWith(['r1', 'r3']);
-    expect(toasts()).toEqual([expect.objectContaining({ variant: 'warning', title: 'Deleted 2 items, 1 failed' })]);
+    expect(toasts()).toEqual([expect.objectContaining({ variant: 'warning', title: 'Deleted 2 items; 1 failed.' })]);
     expect(store().selectedItems.size).toBe(0);
     expect(store().deletingNodeIds.size).toBe(0);
     expect(store().nodeChildrenCache.get('kb-1')?.map((n) => n.id)).toEqual(['r2']);
@@ -139,7 +139,7 @@ describe('deleting a selection', () => {
       throw new Error('Network error. Please check your connection.');
     });
 
-    expect(toasts()).toEqual([expect.objectContaining({ variant: 'warning', title: 'Deleted 1 items, 1 failed' })]);
+    expect(toasts()).toEqual([expect.objectContaining({ variant: 'warning', title: 'Deleted 1 items; 1 failed.' })]);
     // r1 was deleted; r2's delete failed, so it stays; r3 was never selected.
     expect(store().tableData?.items.map((i) => i.id)).toEqual(['r2', 'r3']);
     expect(store().allRecordsTableData?.items.map((i) => i.id)).toEqual(['r2']);
@@ -165,7 +165,7 @@ describe('re-indexing a selection', () => {
     );
 
     expect(api.sent.map((r) => r.url).sort()).toEqual([`${KB}/reindex/record-group/g1`, `${KB}/reindex/record/r1`]);
-    expect(toasts()).toEqual([expect.objectContaining({ variant: 'warning', title: 'Reindexed 1 items, 1 failed' })]);
+    expect(toasts()).toEqual([expect.objectContaining({ variant: 'warning', title: 'Reindexed 1 items; 1 failed.' })]);
     expect(store().selectedItems.size).toBe(0);
     expect(refresh).toHaveBeenCalledTimes(1);
   });
@@ -175,7 +175,7 @@ describe('re-indexing a selection', () => {
     await store().bulkReindexSelected([{ id: 'r1', name: 'a.pdf', nodeType: 'record' }], async () => {
       throw new Error('Network error. Please check your connection.');
     });
-    expect(toasts()).toEqual([expect.objectContaining({ variant: 'success', title: 'Successfully reindexed 1 items' })]);
+    expect(toasts()).toEqual([expect.objectContaining({ variant: 'success', title: 'Successfully reindexed 1 item' })]);
   });
 });
 

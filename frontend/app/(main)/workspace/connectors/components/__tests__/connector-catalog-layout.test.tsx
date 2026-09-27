@@ -98,6 +98,20 @@ describe('ConnectorCatalogLayout: configured connectors', () => {
     expect(screen.getAllByTestId('connector-card-Jira')).toHaveLength(1);
   });
 
+  it('uses count-based plural resolution for multiple active and inactive instances', () => {
+    renderCatalog({
+      activeConnectors: [
+        ...active,
+        makeInstance({ _key: 'j3', name: 'Jira HR', isActive: true }),
+        makeInstance({ _key: 'j4', name: 'Jira Finance', isActive: false }),
+      ],
+    });
+
+    const c = cardFor('Jira');
+    expect(within(c).getByText('2 active instances')).toBeTruthy();
+    expect(within(c).getByText('2 inactive instances')).toBeTruthy();
+  });
+
   it('counts configured and not-configured types for the tabs', () => {
     renderCatalog({ activeConnectors: active });
     expect(tab('Configured (1)')).toBeTruthy();

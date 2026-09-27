@@ -68,7 +68,7 @@ export function DeleteChatDialog({
         }}
       >
         <VisuallyHidden>
-          <Dialog.Title>Delete Confirmation</Dialog.Title>
+          <Dialog.Title>{t('dialog.deleteConfirmation')}</Dialog.Title>
         </VisuallyHidden>
         <Flex direction="column" gap="4">
           <Flex direction="column" gap="1">

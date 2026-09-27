@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -8,6 +9,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import { Markdown } from 'tiptap-markdown';
 import { Flex, IconButton, Separator, Tooltip } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
+import { getLocalizedModifierSymbol } from '@/lib/utils/platform';
 
 // ========================================
 // Props
@@ -21,6 +23,8 @@ interface MarkdownEditorProps {
   editable?: boolean;
   minHeight?: number;
 }
+
+const placeholderTextByToken = new WeakMap<object, string>();
 
 // ========================================
 // Component
@@ -39,6 +43,9 @@ export function MarkdownEditor({
   editable = true,
   minHeight = 280,
 }: MarkdownEditorProps) {
+  const { t } = useTranslation();
+  const placeholderText = placeholder ?? t('workspace.skills.form.bodyPlaceholder');
+  const placeholderToken = useMemo(() => ({}), []);
   // Tracks whether the last `setContent` was from an external `value` change
   // (e.g. switching skills) vs. our own `onUpdate` echoing back — avoids a
   // feedback loop that would otherwise reset the cursor on every keystroke.
@@ -48,7 +55,7 @@ export function MarkdownEditor({
     extensions: [
       StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
       Link.configure({ openOnClick: false, autolink: true }),
-      Placeholder.configure({ placeholder: placeholder ?? 'Describe how to perform this skill…' }),
+      Placeholder.configure({ placeholder: () => placeholderTextByToken.get(placeholderToken) ?? '' }),
       Markdown.configure({ html: false, transformCopiedText: true }),
     ],
     content: value,
@@ -71,6 +78,12 @@ export function MarkdownEditor({
   useEffect(() => {
     editor?.setEditable(editable);
   }, [editable, editor]);
+
+  useEffect(() => {
+    placeholderTextByToken.set(placeholderToken, placeholderText);
+    if (!editor) return;
+    editor.view.dispatch(editor.state.tr);
+  }, [placeholderText, editor, placeholderToken]);
 
   if (!editor) return null;
 
@@ -107,18 +120,21 @@ export function MarkdownEditor({
 // ========================================
 
 function MarkdownEditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> }) {
+  const { t } = useTranslation();
   if (!editor) return null;
 
+  const modifier = getLocalizedModifierSymbol(t);
+
   const items: { icon: string; label: string; action: () => void; isActive: () => boolean }[] = [
-    { icon: 'format_bold', label: 'Bold (Ctrl+B)', action: () => editor.chain().focus().toggleBold().run(), isActive: () => editor.isActive('bold') },
-    { icon: 'format_italic', label: 'Italic (Ctrl+I)', action: () => editor.chain().focus().toggleItalic().run(), isActive: () => editor.isActive('italic') },
-    { icon: 'code', label: 'Inline code', action: () => editor.chain().focus().toggleCode().run(), isActive: () => editor.isActive('code') },
-    { icon: 'title', label: 'Heading 2', action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(), isActive: () => editor.isActive('heading', { level: 2 }) },
-    { icon: 'format_list_bulleted', label: 'Bullet list', action: () => editor.chain().focus().toggleBulletList().run(), isActive: () => editor.isActive('bulletList') },
-    { icon: 'format_list_numbered', label: 'Numbered list', action: () => editor.chain().focus().toggleOrderedList().run(), isActive: () => editor.isActive('orderedList') },
-    { icon: 'code_blocks', label: 'Code block', action: () => editor.chain().focus().toggleCodeBlock().run(), isActive: () => editor.isActive('codeBlock') },
-    { icon: 'format_quote', label: 'Blockquote', action: () => editor.chain().focus().toggleBlockquote().run(), isActive: () => editor.isActive('blockquote') },
-    { icon: 'horizontal_rule', label: 'Horizontal rule', action: () => editor.chain().focus().setHorizontalRule().run(), isActive: () => false },
+    { icon: 'format_bold', label: t('workspace.skills.editorToolbar.bold', { modifier }), action: () => editor.chain().focus().toggleBold().run(), isActive: () => editor.isActive('bold') },
+    { icon: 'format_italic', label: t('workspace.skills.editorToolbar.italic', { modifier }), action: () => editor.chain().focus().toggleItalic().run(), isActive: () => editor.isActive('italic') },
+    { icon: 'code', label: t('workspace.skills.editorToolbar.inlineCode'), action: () => editor.chain().focus().toggleCode().run(), isActive: () => editor.isActive('code') },
+    { icon: 'title', label: t('workspace.skills.editorToolbar.heading2'), action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(), isActive: () => editor.isActive('heading', { level: 2 }) },
+    { icon: 'format_list_bulleted', label: t('workspace.skills.editorToolbar.bulletList'), action: () => editor.chain().focus().toggleBulletList().run(), isActive: () => editor.isActive('bulletList') },
+    { icon: 'format_list_numbered', label: t('workspace.skills.editorToolbar.numberedList'), action: () => editor.chain().focus().toggleOrderedList().run(), isActive: () => editor.isActive('orderedList') },
+    { icon: 'code_blocks', label: t('workspace.skills.editorToolbar.codeBlock'), action: () => editor.chain().focus().toggleCodeBlock().run(), isActive: () => editor.isActive('codeBlock') },
+    { icon: 'format_quote', label: t('workspace.skills.editorToolbar.blockquote'), action: () => editor.chain().focus().toggleBlockquote().run(), isActive: () => editor.isActive('blockquote') },
+    { icon: 'horizontal_rule', label: t('workspace.skills.editorToolbar.horizontalRule'), action: () => editor.chain().focus().setHorizontalRule().run(), isActive: () => false },
   ];
 
   return (
@@ -136,6 +152,7 @@ function MarkdownEditorToolbar({ editor }: { editor: ReturnType<typeof useEditor
         <Tooltip key={item.icon} content={item.label}>
           <IconButton
             type="button"
+            aria-label={item.label}
             variant={item.isActive() ? 'solid' : 'ghost'}
             color={item.isActive() ? undefined : 'gray'}
             size="1"
@@ -147,13 +164,13 @@ function MarkdownEditorToolbar({ editor }: { editor: ReturnType<typeof useEditor
         </Tooltip>
       ))}
       <Separator orientation="vertical" size="1" style={{ margin: '0 4px' }} />
-      <Tooltip content="Undo">
-        <IconButton type="button" variant="ghost" color="gray" size="1" onClick={() => editor.chain().focus().undo().run()} style={{ cursor: 'pointer' }}>
+      <Tooltip content={t('workspace.skills.editorToolbar.undo')}>
+        <IconButton type="button" variant="ghost" color="gray" size="1" aria-label={t('workspace.skills.editorToolbar.undo')} onClick={() => editor.chain().focus().undo().run()} style={{ cursor: 'pointer' }}>
           <MaterialIcon name="undo" size={15} color="var(--slate-11)" />
         </IconButton>
       </Tooltip>
-      <Tooltip content="Redo">
-        <IconButton type="button" variant="ghost" color="gray" size="1" onClick={() => editor.chain().focus().redo().run()} style={{ cursor: 'pointer' }}>
+      <Tooltip content={t('workspace.skills.editorToolbar.redo')}>
+        <IconButton type="button" variant="ghost" color="gray" size="1" aria-label={t('workspace.skills.editorToolbar.redo')} onClick={() => editor.chain().focus().redo().run()} style={{ cursor: 'pointer' }}>
           <MaterialIcon name="redo" size={15} color="var(--slate-11)" />
         </IconButton>
       </Tooltip>

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text, Button, Spinner } from '@radix-ui/themes';
 import { submitUserBackgroundSurvey } from '@/app/(main)/onboarding/api';
 import { PipesHubIcon } from '@/app/components/ui';
@@ -15,20 +16,20 @@ const isUserBackgroundSurveyActive = process.env.NEXT_PUBLIC_USER_BACKGROUND_SUR
 // ===============================
 
 const ROLE_OPTIONS = [
-  { value: 'software-developer', label: 'Software Developer' },
-  { value: 'product-manager', label: 'Product Manager' },
-  { value: 'marketer', label: 'Marketer' },
-  { value: 'designer', label: 'Designer' },
-  { value: 'project-manager', label: 'Project Manager' },
-  { value: 'operations', label: 'Operations' },
-  { value: 'it-support', label: 'IT Support Specialist' },
-  { value: 'human-resources', label: 'Human Resources' },
-  { value: 'finance-officer', label: 'Finance Officer' },
-  { value: 'legal', label: 'Legal' },
-  { value: 'compliance-officer', label: 'Compliance Officer' },
-  { value: 'sales-representative', label: 'Sales Representative' },
-  { value: 'data-scientist', label: 'Data Scientist' },
-  { value: 'customer-service', label: 'Customer Service' },
+  { value: 'software-developer', key: 'softwareDeveloper' },
+  { value: 'product-manager', key: 'productManager' },
+  { value: 'marketer', key: 'marketer' },
+  { value: 'designer', key: 'designer' },
+  { value: 'project-manager', key: 'projectManager' },
+  { value: 'operations', key: 'operations' },
+  { value: 'it-support', key: 'itSupport' },
+  { value: 'human-resources', key: 'humanResources' },
+  { value: 'finance-officer', key: 'financeOfficer' },
+  { value: 'legal', key: 'legal' },
+  { value: 'compliance-officer', key: 'complianceOfficer' },
+  { value: 'sales-representative', key: 'salesRepresentative' },
+  { value: 'data-scientist', key: 'dataScientist' },
+  { value: 'customer-service', key: 'customerService' },
 ];
 
 // ===============================
@@ -38,6 +39,7 @@ const ROLE_OPTIONS = [
 const SURVEY_DISMISSED_KEY = 'pipeshub:userBackgroundSurveyDismissed';
 
 export function UserBackgroundSurvey() {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(() =>
     isUserBackgroundSurveyActive && !localStorage.getItem(SURVEY_DISMISSED_KEY)
   );
@@ -109,7 +111,7 @@ export function UserBackgroundSurvey() {
             align="center"
             style={{ color: 'var(--gray-12)', marginBottom: '4px' }}
           >
-            What kind of work do you do?
+            {t('onboarding.userBackgroundSurvey.title')}
           </Text>
 
           {/* Subtitle */}
@@ -119,7 +121,7 @@ export function UserBackgroundSurvey() {
             align="center"
             style={{ color: 'var(--gray-9)', marginBottom: '12px', display: 'block' }}
           >
-            This will help us personalise your Pipeshub experience
+            {t('onboarding.userBackgroundSurvey.subtitle')}
           </Text>
         </Box>
 
@@ -178,7 +180,7 @@ export function UserBackgroundSurvey() {
                     }
                   }}
                 >
-                  {role.label}
+                  {t(`onboarding.userBackgroundSurvey.roles.${role.key}`)}
                 </button>
               );
             })}
@@ -202,10 +204,10 @@ export function UserBackgroundSurvey() {
             {submitting ? (
               <Flex align="center" gap="2">
                 <Spinner size="1" />
-                Saving…
+                {t('onboarding.saving')}
               </Flex>
             ) : (
-              'Save'
+              t('onboarding.save')
             )}
           </Button>
         </Box>

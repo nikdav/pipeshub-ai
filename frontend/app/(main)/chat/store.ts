@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { debugLog } from './debug-logger';
+import type { LocalizedText } from '@/lib/i18n/localized-text';
 import {
   Conversation,
   ChatMode,
@@ -88,6 +89,8 @@ function lsSetReasoningEffort(
 /** Row shape for the Actions / MCP tabs of the scoped resources panel (agent or project). */
 export interface ScopedToolGroupRow {
   label: string;
+  /** Present only when `label` is a local generic fallback. */
+  labelText?: LocalizedText;
   fullNames: string[];
   toolDescriptions?: Record<string, string>;
   toolsetSlug: string;
@@ -125,6 +128,8 @@ export interface ChatPreviewFile {
   size?: number;
   isLoading?: boolean;
   error?: string;
+  /** Runtime-localized companion for app-authored preview errors. */
+  errorText?: LocalizedText;
   recordDetails?: RecordDetailsResponse;
   /** Initial page to navigate to (from citation pageNum) */
   initialPage?: number;
@@ -363,10 +368,16 @@ interface ChatState {
   /** Distinct KB / collection ids the agent can use (Collections tab). */
   agentChatKbIds: string[];
   /** Agent KB rows with labels from the knowledge graph (record groups). */
-  agentKnowledgeCollectionRows: Array<{ id: string; name: string; sourceType?: string }>;
+  agentKnowledgeCollectionRows: Array<{
+    id: string;
+    name: string;
+    nameText?: LocalizedText;
+    sourceType?: string;
+  }>;
   /** Toolsets for grouped Actions UI (`label` prefers per-instance `instanceName`, else `displayName` / `name`). */
   agentChatToolGroups: Array<{
     label: string;
+    labelText?: LocalizedText;
     fullNames: string[];
     /** Maps tool `fullName` → API description (for search / optional UI). */
     toolDescriptions?: Record<string, string>;
@@ -377,6 +388,7 @@ interface ChatState {
   /** Attached MCP server groups for the MCP tab — same row shape as `agentChatToolGroups`. */
   agentChatMcpGroups: Array<{
     label: string;
+    labelText?: LocalizedText;
     fullNames: string[];
     toolDescriptions?: Record<string, string>;
     toolsetSlug: string;
@@ -474,6 +486,8 @@ interface ChatState {
   searchId: string | null;
   isSearching: boolean;
   searchError: string | null;
+  /** Runtime-localized companion for app-authored search errors. */
+  searchErrorText: LocalizedText | null;
 
   // ── Slot actions ──
   /** Create a new slot. Returns the generated slotId. */
@@ -692,7 +706,7 @@ interface ChatState {
   // ── Search actions ──
   setSearchResults: (results: SearchResultItem[], searchId: string | null, query: string) => void;
   setIsSearching: (loading: boolean) => void;
-  setSearchError: (error: string | null) => void;
+  setSearchError: (error: string | null, errorText?: LocalizedText | null) => void;
   clearSearchResults: () => void;
 
   // ── Cache actions ──
@@ -741,9 +755,15 @@ const initialState = {
   agentToolCatalogFullNames: [] as string[],
   agentChatConnectors: [] as Array<{ id: string; label: string; connectorKind: string }>,
   agentChatKbIds: [] as string[],
-  agentKnowledgeCollectionRows: [] as Array<{ id: string; name: string; sourceType?: string }>,
+  agentKnowledgeCollectionRows: [] as Array<{
+    id: string;
+    name: string;
+    nameText?: LocalizedText;
+    sourceType?: string;
+  }>,
   agentChatToolGroups: [] as Array<{
     label: string;
+    labelText?: LocalizedText;
     fullNames: string[];
     toolDescriptions?: Record<string, string>;
     toolsetSlug: string;
@@ -752,6 +772,7 @@ const initialState = {
   }>,
   agentChatMcpGroups: [] as Array<{
     label: string;
+    labelText?: LocalizedText;
     fullNames: string[];
     toolDescriptions?: Record<string, string>;
     toolsetSlug: string;
@@ -825,6 +846,7 @@ const initialState = {
   searchId: null as string | null,
   isSearching: false,
   searchError: null as string | null,
+  searchErrorText: null as LocalizedText | null,
 };
 
 // ── Store creation ──────────────────────────────────────────────────
@@ -1441,7 +1463,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   // ── Settings actions ─────────────────────────────────────────────
 
-  setPreviewFile: (file) => set({ previewFile: file }),
+  setPreviewFile: (file) =>
+    set((state) => {
+      if (!file) return { previewFile: null };
+      const errorText = !file.error
+        ? undefined
+        : state.previewFile?.error !== file.error &&
+            state.previewFile?.errorText === file.errorText
+          ? undefined
+          : file.errorText;
+      return { previewFile: { ...file, errorText } };
+    }),
 
   setPreviewMode: (mode) => set({ previewMode: mode }),
 
@@ -1565,10 +1597,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   setIsSearching: (loading) => set({ isSearching: loading }),
 
-  setSearchError: (error) => set({ searchError: error }),
+  setSearchError: (error, errorText) =>
+    set({ searchError: error, searchErrorText: error ? errorText ?? null : null }),
 
   clearSearchResults: () =>
-    set({ searchResults: [], searchQuery: '', searchId: null, searchError: null }),
+    set({ searchResults: [], searchQuery: '', searchId: null, searchError: null, searchErrorText: null }),
 
   // ── Cache ────────────────────────────────────────────────────────
 
@@ -1695,7 +1728,7 @@ if (typeof window !== 'undefined') {
     'settings', 'previewFile', 'previewMode', 'expansionViewMode',
     'scopedAgentCapabilities',
     'collectionNamesCache', 'collectionMetaCache', 'conversationsVersion',
-    'searchResults', 'searchQuery', 'searchId', 'isSearching', 'searchError',
+    'searchResults', 'searchQuery', 'searchId', 'isSearching', 'searchError', 'searchErrorText',
   ] as const;
 
   useChatStore.subscribe((state, prev) => {

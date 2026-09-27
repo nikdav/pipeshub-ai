@@ -2,6 +2,8 @@ import React from 'react';
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
+import i18next from 'i18next';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import {
   ExpandableUserQuery,
   QUESTION_CHAR_LIMIT,
@@ -12,8 +14,36 @@ afterEach(() => cleanup());
 
 const h = React.createElement;
 
+const testI18n = i18next.createInstance();
+await testI18n.use(initReactI18next).init({
+  lng: 'en-US',
+  fallbackLng: false,
+  interpolation: { escapeValue: false },
+  resources: {
+    'en-US': {
+      translation: {
+        askUserQuestion: {
+          showMore: 'Show more',
+          showLess: 'Show less',
+        },
+        chat: {
+          editQuery: 'Edit query',
+          copy: 'Copy',
+        },
+        chatStream: {
+          copiedCode: 'Copied',
+        },
+      },
+    },
+  },
+});
+
 function renderQuery(props: Partial<React.ComponentProps<typeof ExpandableUserQuery>> & { question: string }) {
-  return render(h(Theme, null, h(ExpandableUserQuery, props)));
+  return render(
+    h(I18nextProvider, { i18n: testI18n },
+      h(Theme, null, h(ExpandableUserQuery, props)),
+    ),
+  );
 }
 
 function longQuestion(overBy = 20): string {

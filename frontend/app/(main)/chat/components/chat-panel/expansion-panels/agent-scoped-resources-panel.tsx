@@ -14,6 +14,7 @@ import {
   TextField,
 } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText, type LocalizedText, type TranslateText } from '@/lib/i18n/localized-text';
 import { useThemeAppearance } from '@/app/components/theme-provider';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ConnectorIcon, resolveConnectorType } from '@/app/components/ui/ConnectorIcon';
@@ -29,6 +30,13 @@ type ExpansionViewMode = 'inline' | 'overlay';
 
 const TAB_VALUES = ['connectors', 'collections', 'actions', 'mcp'] as const;
 type TabValue = (typeof TAB_VALUES)[number];
+
+type ScopedCollectionRow = {
+  id: string;
+  name: string;
+  nameText?: LocalizedText;
+  sourceType?: string;
+};
 
 /**
  * Figma segmented control track (`7523:16159` / Settings spec): 32px height, 4px radius.
@@ -60,6 +68,7 @@ function AgentFilterTablist({
   /** Tabs excluded entirely (not just disabled) — e.g. 'mcp' when ENABLE_MCP is off. */
   hiddenTabs?: TabValue[];
 }) {
+  const { t } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDark = appearance === 'dark';
 
@@ -113,7 +122,7 @@ function AgentFilterTablist({
   return (
     <div
       role="tablist"
-      aria-label="Chat filters"
+          aria-label={t('chat.agentResources.filtersAriaLabel', { defaultValue: 'Resource filters' })}
       onKeyDown={onKeyDown}
       style={trackStyle}
     >
@@ -239,9 +248,10 @@ function useScopedResourceSource(scope: ScopedResourcesSource) {
 
   if (isProject) {
     const defaults = projectScope?.knowledgeDefaults ?? EMPTY_KNOWLEDGE;
+    const collectionRows: ScopedCollectionRow[] = projectScope?.knowledgeCollectionRows ?? EMPTY_ROWS;
     return {
       connectors: projectScope?.connectors ?? EMPTY_ROWS,
-      collectionRows: projectScope?.knowledgeCollectionRows ?? EMPTY_ROWS,
+      collectionRows,
       toolGroups: projectScope?.toolGroups ?? EMPTY_ROWS,
       mcpGroups: projectScope?.mcpGroups ?? EMPTY_ROWS,
       defaults,
@@ -325,6 +335,7 @@ function AgentToolsetRowIcon({
 /** Row shape shared by `agentChatToolGroups` (Actions tab) and `agentChatMcpGroups` (MCP tab). */
 interface ChatToolGroupRow {
   label: string;
+  labelText?: import('@/lib/i18n/localized-text').LocalizedText;
   fullNames: string[];
   toolDescriptions?: Record<string, string>;
   toolsetSlug: string;
@@ -675,6 +686,7 @@ export function AgentScopedResourcesPanel({
             ? `${keyPrefix}:${group.instanceId}`
             : `${keyPrefix}:${group.toolsetSlug || 'toolset'}:${group.label}:${group.fullNames[0] ?? ''}`;
           const subtitle = toolsetSubtitle(group);
+          const displayLabel = resolveLocalizedText(group.labelText, t as TranslateText, group.label);
           const expanded = Boolean(expandedGroups[groupKey]);
           const checkState = groupCheckState(group.fullNames);
 
@@ -709,7 +721,7 @@ export function AgentScopedResourcesPanel({
                   {renderGroupIcon(group)}
                   <Flex align="center" gap="1" style={{ flex: 1, minWidth: 0, flexWrap: 'wrap' }}>
                     <Text size="2" weight="medium" style={{ color: 'var(--gray-11)' }} truncate>
-                      {group.label}
+                      {displayLabel}
                     </Text>
                     {subtitle ? (
                       <>
@@ -950,6 +962,7 @@ export function AgentScopedResourcesPanel({
                   key={row.id}
                   id={row.id}
                   name={row.name}
+                  nameText={row.nameText}
                   sourceType={row.sourceType}
                   isSelected={eff.kb.includes(row.id)}
                   onToggle={toggleKb}

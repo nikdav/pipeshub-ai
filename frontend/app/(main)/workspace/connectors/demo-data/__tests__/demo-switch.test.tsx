@@ -12,18 +12,22 @@ import { DemoDataSection } from '@/app/(main)/workspace/profile/components/demo-
 import { DemoDataRemovalNotice } from '../components/demo-data-removal-notice';
 import type { Connector } from '../../types';
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => {
-      let cur: unknown = en;
-      for (const part of key.split('.')) {
-        if (typeof cur !== 'object' || cur === null || !(part in cur)) return key;
-        cur = (cur as Record<string, unknown>)[part];
-      }
-      return typeof cur === 'string' ? cur : key;
-    },
-  }),
-}));
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string) => {
+        let cur: unknown = en;
+        for (const part of key.split('.')) {
+          if (typeof cur !== 'object' || cur === null || !(part in cur)) return key;
+          cur = (cur as Record<string, unknown>)[part];
+        }
+        return typeof cur === 'string' ? cur : key;
+      },
+    }),
+  };
+});
 vi.mock('../api', () => ({ DemoDataApi: { getStatus: vi.fn(), setInclude: vi.fn(), setEnabledForEveryone: vi.fn() } }));
 vi.mock('../../api', () => ({ ConnectorsApi: { getActiveConnectors: vi.fn(), getConnectorStats: vi.fn() } }));
 vi.mock('@/app/(main)/knowledge-base/api', () => ({ KnowledgeHubApi: { searchAllRecords: vi.fn(async () => ({ items: [] })) } }));

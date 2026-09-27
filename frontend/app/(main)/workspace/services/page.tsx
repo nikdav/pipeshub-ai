@@ -14,7 +14,7 @@ import {
 } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
-import { useToastStore } from '@/lib/store/toast-store';
+import { toast } from '@/lib/store/toast-store';
 import { useUserStore, selectIsAdmin, selectIsProfileInitialized } from '@/lib/store/user-store';
 import {
   useServicesHealthStore,
@@ -147,6 +147,7 @@ function ServiceRow({
   status: ServiceStatus | undefined;
   displayName?: string;
 }) {
+  const { t } = useTranslation();
   return (
     <Flex
       align="center"
@@ -173,7 +174,7 @@ function ServiceRow({
         {meta.logoSlug ? (
           <Box
             role="img"
-            aria-label={`${meta.label} logo`}
+            aria-label={t('workspace.services.logoAlt', { service: meta.label })}
             style={{
               width: LOGO_SIZE,
               height: LOGO_SIZE,
@@ -220,13 +221,10 @@ function ServiceRow({
 // ========================================
 
 export default function ServicesPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const isAdmin = useUserStore(selectIsAdmin);
   const isProfileInitialized = useUserStore(selectIsProfileInitialized);
-
-  const addToast = useToastStore((s) => s.addToast);
-
   const infraServices = useServicesHealthStore(selectInfraServices);
   const appServices = useServicesHealthStore(selectAppServices);
   const lastChecked = useServicesHealthStore(selectLastChecked);
@@ -266,20 +264,21 @@ export default function ServicesPage() {
 
       if (showToast) {
         const allHealthy = infraData?.status === 'healthy' && servicesData?.status === 'healthy';
-        addToast({
-          variant: allHealthy ? 'success' : 'warning',
-          title: allHealthy ? t('workspace.services.allHealthy') : t('workspace.services.someUnhealthy'),
-        });
+        if (allHealthy) {
+          toast.success({ key: 'workspace.services.allHealthy' });
+        } else {
+          toast.warning({ key: 'workspace.services.someUnhealthy' });
+        }
       }
     } catch {
       if (showToast) {
-        addToast({ variant: 'error', title: t('workspace.services.fetchFailed') });
+        toast.error({ key: 'workspace.services.fetchFailed' });
       }
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
     }
-  }, [addToast, t]);
+  }, []);
 
   useEffect(() => {
     if (!isProfileInitialized || isAdmin === false) return;
@@ -304,7 +303,9 @@ export default function ServicesPage() {
   }
 
   const lastCheckedLabel = localLastChecked
-    ? t('workspace.services.lastChecked', { time: new Date(localLastChecked).toLocaleTimeString() })
+    ? t('workspace.services.lastChecked', {
+        time: new Date(localLastChecked).toLocaleTimeString(i18n.resolvedLanguage || i18n.language),
+      })
     : null;
 
   return (

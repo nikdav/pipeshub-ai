@@ -7,7 +7,10 @@ import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { WorkspaceRightPanel } from '../../components/workspace-right-panel';
 import { ConfirmationDialog } from '../../components/confirmation-dialog';
 import { InheritedConfigNotice } from '@/config';
-import { isProcessedError } from '@/lib/api';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import type { LocalizedTextValue } from '@/lib/i18n/localized-text';
+import { localizedText } from '@/lib/i18n/localized-text';
+import { resolveLocalizedText } from '@/lib/i18n/localized-text';
 import { WebSearchApi } from '../api';
 import type {
   ConfigurableProvider,
@@ -52,7 +55,7 @@ export function ConfigurePanel({
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<LocalizedTextValue | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteUsageAgents, setDeleteUsageAgents] = useState<WebSearchProviderAgentUsage[]>([]);
@@ -60,6 +63,7 @@ export function ConfigurePanel({
   const usageCheckedRef = useRef(false);
 
   const isEdit = !!existingProvider;
+  const apiKeyHelpUrl = providerMeta?.apiKeyUrl ?? '';
 
   useEffect(() => {
     if (!open) return;
@@ -105,12 +109,9 @@ export function ConfigurePanel({
       onSaveSuccess({ provider, isEdit });
       onClose();
     } catch (err) {
-      const message = isProcessedError(err)
-        ? err.message
-        : err instanceof Error
-          ? err.message
-          : 'Failed to save provider';
-      setErrorMessage(message);
+      setErrorMessage(
+        getUserFacingErrorText(err, localizedText('workspace.webSearch.configure.errors.save')),
+      );
     } finally {
       setIsSaving(false);
     }
@@ -129,12 +130,9 @@ export function ConfigurePanel({
       setDeleteDialogOpen(false);
       onClose();
     } catch (err) {
-      const message = isProcessedError(err)
-        ? err.message
-        : err instanceof Error
-          ? err.message
-          : 'Failed to delete provider';
-      setErrorMessage(message);
+      setErrorMessage(
+        getUserFacingErrorText(err, localizedText('workspace.webSearch.configure.errors.delete')),
+      );
       setDeleteDialogOpen(false);
     } finally {
       setIsDeleting(false);
@@ -177,8 +175,8 @@ export function ConfigurePanel({
         title={providerMeta.label}
         icon={headerIcon}
         headerActions={docButton}
-        primaryLabel={isEdit ? 'Update' : 'Save'}
-        secondaryLabel="Cancel"
+        primaryLabel={isEdit ? t('workspace.webSearch.configure.update') : t('action.save')}
+        secondaryLabel={t('action.cancel')}
         primaryDisabled={!apiKey.trim()}
         primaryLoading={isSaving}
         onPrimaryClick={handleSave}
@@ -198,19 +196,19 @@ export function ConfigurePanel({
               </Callout.Icon>
               <Callout.Text>
                 {existingProvider?.isDefault
-                  ? 'This provider is currently set as default. Updating the API key will keep it as default.'
-                  : 'Editing an existing configuration. Changes take effect immediately after saving.'}
+                  ? t('workspace.webSearch.configure.defaultKeyNotice')
+                  : t('workspace.webSearch.configure.editNotice')}
               </Callout.Text>
             </Callout.Root>
           )}
 
           <Flex direction="column" gap="1">
             <Text size="1" weight="medium" style={{ color: 'var(--slate-12)' }}>
-              API Key
+              {t('workspace.webSearch.configure.apiKeyLabel')}
             </Text>
             <TextField.Root
               type={showKey ? 'text' : 'password'}
-              placeholder={providerMeta.apiKeyPlaceholder}
+              placeholder={t('workspace.webSearch.configure.apiKeyPlaceholder', { provider: providerMeta.label })}
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               disabled={isSaving || isDeleting}
@@ -219,21 +217,23 @@ export function ConfigurePanel({
                 <MaterialIcon name="key" size={16} color="var(--slate-9)" />
               </TextField.Slot>
               <TextField.Slot side="right">
-                <span
+                <button
+                  type="button"
+                  aria-label={t(`workspace.webSearch.configure.secret.${showKey ? 'hide' : 'show'}`)}
                   onClick={() => setShowKey((v) => !v)}
-                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', border: 0, padding: 0, background: 'transparent' }}
                 >
                   <MaterialIcon
                     name={showKey ? 'visibility_off' : 'visibility'}
                     size={16}
                     color="var(--slate-9)"
                   />
-                </span>
+                </button>
               </TextField.Slot>
             </TextField.Root>
-            {providerMeta.apiKeyHelperText && (
+            {apiKeyHelpUrl && (
               <Text size="1" style={{ color: 'var(--slate-10)' }}>
-                {providerMeta.apiKeyHelperText}
+                {t('workspace.webSearch.configure.apiKeyHelp', { url: apiKeyHelpUrl })}
               </Text>
             )}
           </Flex>
@@ -243,7 +243,7 @@ export function ConfigurePanel({
               <Callout.Icon>
                 <MaterialIcon name="error" size={14} color="var(--red-11)" />
               </Callout.Icon>
-              <Callout.Text>{errorMessage}</Callout.Text>
+              <Callout.Text>{resolveLocalizedText(errorMessage, t)}</Callout.Text>
             </Callout.Root>
           )}
 
@@ -260,11 +260,10 @@ export function ConfigurePanel({
               }}
             >
               <Text size="1" weight="medium" style={{ color: 'var(--slate-12)' }}>
-                Danger zone
+                {t('workspace.webSearch.configure.dangerZone')}
               </Text>
               <Text size="1" style={{ color: 'var(--slate-11)', fontWeight: 300 }}>
-                Remove this provider&apos;s configuration. If it is the default, DuckDuckGo will
-                be used instead.
+                {t('workspace.webSearch.configure.removeDescription')}
               </Text>
               <Flex>
                 <Button
@@ -292,7 +291,7 @@ export function ConfigurePanel({
                   }}
                 >
                   <MaterialIcon name="delete" size={14} color="var(--red-11)" />
-                  Delete provider
+                  {t('workspace.webSearch.configure.deleteProvider')}
                 </Button>
               </Flex>
             </Flex>
@@ -308,14 +307,14 @@ export function ConfigurePanel({
         }}
         title={
           !isCheckingUsage && deleteUsageAgents.length > 0
-            ? `Cannot delete ${providerMeta.label}`
-            : `Delete ${providerMeta.label} configuration?`
+            ? t('workspace.webSearch.configure.delete.cannotDelete', { provider: providerMeta.label })
+            : t('workspace.webSearch.configure.delete.title', { provider: providerMeta.label })
         }
         message={
           <Flex direction="column" gap="2">
             {isCheckingUsage && (
               <Text size="2" style={{ color: 'var(--slate-10)', fontStyle: 'italic' }}>
-                Checking agent usage…
+                {t('workspace.webSearch.configure.delete.checkingUsage')}
               </Text>
             )}
             {!isCheckingUsage && deleteUsageAgents.length > 0 && (
@@ -330,8 +329,7 @@ export function ConfigurePanel({
                 }}
               >
                 <Text size="1" weight="medium" style={{ color: 'var(--red-11)' }}>
-                  This provider is currently used by {deleteUsageAgents.length}{' '}
-                  {deleteUsageAgents.length === 1 ? 'agent' : 'agents'}:
+                  {t('workspace.webSearch.configure.delete.usage', { count: deleteUsageAgents.length })}
                 </Text>
                 <Flex direction="column" gap="1" style={{ paddingLeft: 4 }}>
                   {deleteUsageAgents.map((agent) => (
@@ -339,31 +337,29 @@ export function ConfigurePanel({
                       • <Text weight="medium" size="1">{agent.name}</Text>
                       {agent.creatorName && (
                         <Text size="1" style={{ color: 'var(--slate-10)' }}>
-                          {' '}(created by {agent.creatorName})
+                          {' '}{t('workspace.webSearch.configure.delete.createdBy', { creator: agent.creatorName })}
                         </Text>
                       )}
                     </Text>
                   ))}
                 </Flex>
                 <Text size="1" style={{ color: 'var(--red-11)', marginTop: 2 }}>
-                  Please remove the web search configuration from these agents before deleting this provider.
+                  {t('workspace.webSearch.configure.delete.removeFromAgents')}
                 </Text>
               </Flex>
             )}
             {!isCheckingUsage && deleteUsageAgents.length === 0 && (
               <Text size="2" style={{ color: 'var(--slate-12)', lineHeight: '20px' }}>
-                {`This will permanently remove your ${providerMeta.label} API key. ${
-                  existingProvider?.isDefault
-                    ? 'DuckDuckGo will become the default web search provider.'
-                    : 'You can reconfigure it later.'
-                }`}
+                {existingProvider?.isDefault
+                  ? t('workspace.webSearch.configure.delete.defaultDescription', { provider: providerMeta.label })
+                  : t('workspace.webSearch.configure.delete.description', { provider: providerMeta.label })}
               </Text>
             )}
           </Flex>
         }
         hideConfirm={isCheckingUsage || deleteUsageAgents.length > 0}
-        confirmLabel="Delete"
-        confirmLoadingLabel="Deleting..."
+        confirmLabel={t('action.delete')}
+        confirmLoadingLabel={t('action.deleting')}
         confirmVariant="danger"
         isLoading={isDeleting}
         onConfirm={handleDelete}

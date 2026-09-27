@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Flex, Text, Button } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { Spinner } from '@/app/components/ui/spinner';
+import { useTranslation } from 'react-i18next';
 
 // ========================================
 // Types
@@ -51,10 +52,11 @@ export interface EntityBulkActionBarProps {
  */
 export function EntityBulkActionBar({
   selectedCount,
-  itemLabel = 'Users',
+  itemLabel,
   actions,
   visible,
 }: EntityBulkActionBarProps) {
+  const { t } = useTranslation();
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
 
   if (!visible) return null;
@@ -90,7 +92,10 @@ export function EntityBulkActionBar({
       <Flex align="center" gap="2">
         <MaterialIcon name="check" size={16} color="var(--slate-11)" />
         <Text size="2" weight="medium" style={{ color: 'var(--slate-11)', whiteSpace: 'nowrap' }}>
-          {selectedCount} {itemLabel} Selected
+          {t('workspace.entities.selectedSummary', {
+            count: selectedCount,
+            itemLabel: itemLabel ?? t('workspace.users.bulkLabel'),
+          })}
         </Text>
       </Flex>
 

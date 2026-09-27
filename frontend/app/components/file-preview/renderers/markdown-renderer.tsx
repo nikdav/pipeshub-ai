@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import { Box, Flex, Text } from '@radix-ui/themes';
 import { useThemeAppearance } from '@/app/components/theme-provider';
 import ReactMarkdown from 'react-markdown';
@@ -34,11 +36,12 @@ interface MarkdownRendererProps {
 }
 
 export function MarkdownRenderer({ fileUrl, fileName: _fileName, citations, activeCitationId, onHighlightClick }: MarkdownRendererProps) {
+  const { t } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDark = appearance === 'dark';
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedText | null>(null);
   /** True once ReactMarkdown has painted real block content (refs do not retrigger effects). */
   const [markdownDomReady, setMarkdownDomReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,7 +59,7 @@ export function MarkdownRenderer({ fileUrl, fileName: _fileName, citations, acti
 
   useEffect(() => {
     if (!fileUrl || fileUrl.trim() === '') {
-      setError('File URL not available');
+      setError(localizedText('filePreview.markdownLoadFailed.noUrl'));
       setIsLoading(false);
       return;
     }
@@ -65,14 +68,16 @@ export function MarkdownRenderer({ fileUrl, fileName: _fileName, citations, acti
       try {
         const response = await fetch(fileUrl);
         if (!response.ok) {
-          throw new Error('Failed to fetch markdown content');
+          throw new Error('FETCH_FAILED');
         }
         const text = await response.text();
         setContent(text);
         setError(null);
       } catch (err) {
         console.error('Error loading markdown file:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load file');
+        setError(localizedText(err instanceof Error && err.message === 'FETCH_FAILED'
+          ? 'filePreview.markdownLoadFailed.fetchFailed'
+          : 'filePreview.markdownLoadFailed.loadFailed'));
       } finally {
         setIsLoading(false);
       }
@@ -191,7 +196,7 @@ export function MarkdownRenderer({ fileUrl, fileName: _fileName, citations, acti
     return (
       <Flex align="center" justify="center" style={{ height: '100%', padding: 'var(--space-6)' }}>
         <Text size="2" color="gray">
-          Loading markdown...
+          {t('filePreview.markdownLoadFailed.loading')}
         </Text>
       </Flex>
     );
@@ -204,7 +209,7 @@ export function MarkdownRenderer({ fileUrl, fileName: _fileName, citations, acti
           error_outline
         </span>
         <Text size="3" weight="medium" color="red">
-          {error}
+          {resolveLocalizedText(error, t)}
         </Text>
       </Flex>
     );

@@ -5,6 +5,7 @@ import { Flex, Text, Box } from '@radix-ui/themes';
 import { ReferenceCard } from './citation-card';
 import { getCitationCountBySource } from './utils';
 import type { CitationMaps, CitationCallbacks } from './types';
+import { useTranslation } from 'react-i18next';
 
 interface SourcesTabProps {
   citationMaps: CitationMaps;
@@ -19,13 +20,14 @@ interface SourcesTabProps {
  * count of all citations referencing that record.
  */
 export function SourcesTab({ citationMaps, callbacks }: SourcesTabProps) {
+  const { t } = useTranslation();
   const { sourcesOrder, sources, citations } = citationMaps;
 
   if (sourcesOrder.length === 0) {
     return (
       <Box style={{ padding: 'var(--space-4) 0' }}>
         <Text size="2" style={{ color: 'var(--slate-11)' }}>
-          No sources available.
+          {t('chat.noSourcesAvailable', { defaultValue: 'No sources available.' })}
         </Text>
       </Box>
     );

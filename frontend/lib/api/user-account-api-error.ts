@@ -1,4 +1,10 @@
 import type { AxiosError } from 'axios';
+import i18n from '@/lib/i18n/config';
+import {
+  localizedText,
+  resolveLocalizedText,
+  type LocalizedTextValue,
+} from '@/lib/i18n/localized-text';
 
 /** Error body returned by userAccount APIs (e.g. POST /userAccount/authenticate). */
 export interface UserAccountApiErrorBody {
@@ -26,8 +32,17 @@ export function getUserAccountApiResponseMessage(err: unknown): string | undefin
  */
 export function getUserAccountApiErrorMessage(
   err: unknown,
-  fallback = 'Something went wrong. Please try again.',
+  fallback: LocalizedTextValue = localizedText('auth.common.errorFallback'),
 ): string {
+  const value = getUserAccountApiErrorText(err, fallback);
+  return resolveLocalizedText(value, i18n.t.bind(i18n));
+}
+
+/** Keeps app fallback metadata available for an error screen rendered later. */
+export function getUserAccountApiErrorText(
+  err: unknown,
+  fallback: LocalizedTextValue = localizedText('auth.common.errorFallback'),
+): LocalizedTextValue {
   const fromBody = getUserAccountApiResponseMessage(err);
   if (fromBody) return fromBody;
   if (err instanceof Error && err.message) {

@@ -98,6 +98,31 @@ test('checks placeholders inside a plural category the source does not define', 
   assert.equal(result.valid, false);
 });
 
+test('checks a target-only plural category against source _other when _one has different placeholders', () => {
+  const source = { thought_one: 'Thought about this', thought_other: 'Thought {{count}} times' };
+  const target = {
+    thought_one: 'Reflexionó sobre esto',
+    thought_many: 'Reflexionó {{count}} veces',
+    thought_other: 'Reflexionó {{count}} veces',
+  };
+
+  assert.equal(checkLocaleParity(source, target, 'es-ES').valid, true);
+
+  const missingCount = checkLocaleParity(
+    source,
+    { ...target, thought_many: 'Reflexionó muchas veces' },
+    'es-ES',
+  );
+  assert.deepEqual(missingCount.errors.placeholders, ['thought_many: count / ']);
+
+  const renamedCount = checkLocaleParity(
+    source,
+    { ...target, thought_many: 'Reflexionó {{total}} veces' },
+    'es-ES',
+  );
+  assert.deepEqual(renamedCount.errors.placeholders, ['thought_many: count / total']);
+});
+
 test('judges plural groups inside an absent subtree by the target language, not the source', () => {
   const source = { panel: { title: 'Title', items_one: '{{count}} item', items_other: '{{count}} items' } };
 

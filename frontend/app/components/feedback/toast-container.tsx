@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 import { Box, Text, Theme } from '@radix-ui/themes';
 import {
   useToastStore,
@@ -34,6 +35,7 @@ function ToastStack({
   onHoverChange,
   onDismiss,
 }: ToastStackProps) {
+  const { t } = useTranslation();
   if (toasts.length === 0) return null;
 
   const maxVisible = 3;
@@ -105,7 +107,7 @@ function ToastStack({
           }}
         >
           <Text size="1" style={{ color: 'var(--slate-11)', fontWeight: 500 }}>
-            +{hiddenCount} more
+            {t('notifications.hiddenCount', { count: hiddenCount })}
           </Text>
         </Box>
       ) : null}

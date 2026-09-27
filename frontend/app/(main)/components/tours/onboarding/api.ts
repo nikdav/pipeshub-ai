@@ -21,12 +21,14 @@ const STEP1_STATE: TourState = {
   currentStep: 'step1',
   completionPercentage: 0,
   title: "You're Almost There!",
+  titleKey: 'onboarding.tour.stubs.almostThereTitle',
   subtitle: 'Finish the following actions to know what Pipeshub can do',
+  subtitleKey: 'onboarding.tour.stubs.almostThereSubtitle',
   stepsOrder: ['step1', 'step2', 'step3'],
   stepsDetails: {
-    step1: { title: 'Connect your first app', relativeLink: '/workspace/connectors' },
-    step2: { title: 'Create a collection', relativeLink: '/knowledge-base' },
-    step3: { title: 'Invite Team Members', relativeLink: '/workspace/users/?panel=invite' },
+    step1: { title: 'Connect your first app', titleKey: 'onboarding.tour.stubs.connectFirstApp', relativeLink: '/workspace/connectors' },
+    step2: { title: 'Create a collection', titleKey: 'onboarding.tour.stubs.createCollection', relativeLink: '/knowledge-base' },
+    step3: { title: 'Invite Team Members', titleKey: 'onboarding.tour.stubs.inviteTeamMembers', relativeLink: '/workspace/users/?panel=invite' },
   },
 };
 
@@ -35,11 +37,13 @@ const STEP2_STATE: TourState = {
   currentStep: 'step2',
   completionPercentage: 33,
   title: "You're Almost There!",
+  titleKey: 'onboarding.tour.stubs.almostThereTitle',
   subtitle: 'Finish the following actions to know what Pipeshub can do',
+  subtitleKey: 'onboarding.tour.stubs.almostThereSubtitle',
   stepsOrder: ['step2', 'step3'],
   stepsDetails: {
-    step2: { title: 'Create a collection', relativeLink: '/knowledge-base' },
-    step3: { title: 'Invite Team Members', relativeLink: '/workspace/users/?panel=invite' },
+    step2: { title: 'Create a collection', titleKey: 'onboarding.tour.stubs.createCollection', relativeLink: '/knowledge-base' },
+    step3: { title: 'Invite Team Members', titleKey: 'onboarding.tour.stubs.inviteTeamMembers', relativeLink: '/workspace/users/?panel=invite' },
   },
 };
 
@@ -48,16 +52,19 @@ const STEP3_STATE: TourState = {
   currentStep: 'step3',
   completionPercentage: 66,
   title: 'Keep going!',
+  titleKey: 'onboarding.tour.stubs.keepGoingTitle',
   subtitle: 'How about sharing the word with your team members?',
+  subtitleKey: 'onboarding.tour.stubs.keepGoingSubtitle',
   stepsOrder: ['step3'],
   stepsDetails: {
-    step3: { title: 'Invite Team Members', relativeLink: '/workspace/users/?panel=invite' },
+    step3: { title: 'Invite Team Members', titleKey: 'onboarding.tour.stubs.inviteTeamMembers', relativeLink: '/workspace/users/?panel=invite' },
   },
 };
 
 const COMPLETED_STATE: TourState = {
   status: 'completed',
   title: "Let's go!",
+  titleKey: 'onboarding.tour.stubs.completedTitle',
   subtitle:
     "You're all set now. If you want to know more check out documentation.",
 };

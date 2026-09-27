@@ -186,22 +186,27 @@ export function getCitationCopyHref(citation: CitationData): string | undefined 
 /**
  * Format an ISO date string as a relative "Synced X ago" label.
  */
-export function formatSyncLabel(isoDate?: string): string | undefined {
+export function formatSyncLabel(
+  isoDate?: string,
+  locale = i18n.resolvedLanguage ?? i18n.language,
+  translate = i18n.t.bind(i18n),
+): string | undefined {
   if (!isoDate) return undefined;
   const diff = Date.now() - new Date(isoDate).getTime();
-  if (diff < 0) return 'Synced just now';
+  if (diff < 0) return translate('chat.syncedJustNow', { defaultValue: 'Synced just now' });
   const seconds = Math.floor(diff / 1000);
-  if (seconds < 60) return 'Synced just now';
+  if (seconds < 60) return translate('chat.syncedJustNow', { defaultValue: 'Synced just now' });
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `Synced ${minutes}m ago`;
+  const relativeTime = new Intl.RelativeTimeFormat(locale, { numeric: 'always', style: 'narrow' });
+  if (minutes < 60) return translate('chat.syncedRelativeTime', { relativeTime: relativeTime.format(-minutes, 'minute'), defaultValue: 'Synced {{relativeTime}}' });
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `Synced ${hours}h ago`;
+  if (hours < 24) return translate('chat.syncedRelativeTime', { relativeTime: relativeTime.format(-hours, 'hour'), defaultValue: 'Synced {{relativeTime}}' });
   const days = Math.floor(hours / 24);
-  if (days < 30) return `Synced ${days}d ago`;
+  if (days < 30) return translate('chat.syncedRelativeTime', { relativeTime: relativeTime.format(-days, 'day'), defaultValue: 'Synced {{relativeTime}}' });
   const months = Math.floor(days / 30);
-  if (months < 12) return `Synced ${months}mo ago`;
+  if (months < 12) return translate('chat.syncedRelativeTime', { relativeTime: relativeTime.format(-months, 'month'), defaultValue: 'Synced {{relativeTime}}' });
   const years = Math.floor(months / 12);
-  return `Synced ${years}y ago`;
+  return translate('chat.syncedRelativeTime', { relativeTime: relativeTime.format(-years, 'year'), defaultValue: 'Synced {{relativeTime}}' });
 }
 
 /**

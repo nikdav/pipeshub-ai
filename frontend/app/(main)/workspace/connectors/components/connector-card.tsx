@@ -240,7 +240,7 @@ function ActiveInstanceBar({
             }}
           >
             <Text size="1" weight="medium" style={{ color: 'var(--green-a11)', whiteSpace: 'nowrap' }}>
-              {activeCount === 1 ? t('workspace.actions.card.activeOne') : t('workspace.actions.card.activeMany', { count: activeCount })}
+              {t('workspace.actions.card.active', { count: activeCount })}
             </Text>
           </Flex>
         )}
@@ -262,7 +262,7 @@ function ActiveInstanceBar({
             }}
           >
             <Text size="1" weight="medium" style={{ color: 'var(--amber-a11)', whiteSpace: 'nowrap' }}>
-              {inactiveCount === 1 ? t('workspace.actions.card.inactiveOne') : t('workspace.actions.card.inactiveMany', { count: inactiveCount })}
+              {t('workspace.actions.card.inactive', { count: inactiveCount })}
             </Text>
           </Flex>
         )}

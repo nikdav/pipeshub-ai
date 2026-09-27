@@ -17,7 +17,8 @@ import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LoadingButton } from '@/app/components/ui/loading-button';
 import { AgentsApi } from '@/app/(main)/agents/api';
-import { getUserFacingErrorMessage } from '@/lib/api/api-error';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue, type TranslateText } from '@/lib/i18n/localized-text';
 import { ServiceAccountConfirmDialog } from '@/app/(main)/agents/agent-builder/components/service-account-confirm-dialog';
 
 type AgentType = 'user' | 'service';
@@ -34,12 +35,12 @@ export function CreateAgentDialog({ open, onOpenChange }: CreateAgentDialogProps
   const [agentName, setAgentName] = useState('');
   const [agentType, setAgentType] = useState<AgentType>('user');
   const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [nameError, setNameError] = useState(false);
 
   const [showServiceConfirm, setShowServiceConfirm] = useState(false);
   const [serviceCreating, setServiceCreating] = useState(false);
-  const [serviceError, setServiceError] = useState<string | null>(null);
+  const [serviceError, setServiceError] = useState<LocalizedTextValue | null>(null);
 
   // Ref guards prevent duplicate submissions when the user double-clicks or
   // hammers Enter before React has re-rendered the button into its disabled state.
@@ -104,7 +105,7 @@ export function CreateAgentDialog({ open, onOpenChange }: CreateAgentDialogProps
       // the button stays disabled until this component unmounts.
       router.replace(`/agents/edit?agentKey=${encodeURIComponent(created._key)}`);
     } catch (e: unknown) {
-      setError(getUserFacingErrorMessage(e, t('agentBuilder.saveFailed')));
+      setError(getUserFacingErrorText(e, localizedText('agentBuilder.saveFailed')));
     } finally {
       // Only unlock on failure — on success we stay locked until unmount.
       if (!succeeded) {
@@ -138,7 +139,7 @@ export function CreateAgentDialog({ open, onOpenChange }: CreateAgentDialogProps
       succeeded = true;
       router.replace(`/agents/edit?agentKey=${encodeURIComponent(created._key)}&sa=1`);
     } catch (e: unknown) {
-      setServiceError(getUserFacingErrorMessage(e, t('agentBuilder.svcAcctEnableFailed')));
+      setServiceError(getUserFacingErrorText(e, localizedText('agentBuilder.svcAcctEnableFailed')));
     } finally {
       if (!succeeded) {
         serviceCreateRef.current = false;
@@ -334,7 +335,7 @@ export function CreateAgentDialog({ open, onOpenChange }: CreateAgentDialogProps
                 <Callout.Icon>
                   <MaterialIcon name="error" size={16} />
                 </Callout.Icon>
-                <Callout.Text size="2">{error}</Callout.Text>
+                <Callout.Text size="2">{resolveLocalizedText(error, t as TranslateText)}</Callout.Text>
               </Callout.Root>
             )}
 

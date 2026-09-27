@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Text, TextField } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { FieldLabel } from './field-label';
@@ -13,6 +14,7 @@ interface PasswordInputFieldProps {
 }
 
 export function PasswordInputField({ field, value, onChange }: PasswordInputFieldProps) {
+  const { t } = useTranslation();
   const [showSecret, setShowSecret] = useState(false);
 
   return (
@@ -25,16 +27,18 @@ export function PasswordInputField({ field, value, onChange }: PasswordInputFiel
         onChange={(e) => onChange(e.target.value)}
       >
         <TextField.Slot side="right">
-          <span
+          <button
+            type="button"
+            aria-label={t(showSecret ? 'workspace.authentication.password.hide' : 'workspace.authentication.password.show')}
             onClick={() => setShowSecret((v) => !v)}
-            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', border: 0, padding: 0, background: 'transparent' }}
           >
             <MaterialIcon
               name={showSecret ? 'visibility_off' : 'visibility'}
               size={16}
               color="var(--slate-9)"
             />
-          </span>
+          </button>
         </TextField.Slot>
       </TextField.Root>
       {field.helperText && (

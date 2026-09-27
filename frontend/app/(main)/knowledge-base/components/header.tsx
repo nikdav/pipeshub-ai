@@ -335,7 +335,7 @@ export function Header({
         {isSearchActive ? (
           <Flex align="center" gap="2">
             <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-              Results
+              {t('chat.results')}
             </Text>
           </Flex>
         ) : (

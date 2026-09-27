@@ -5,33 +5,35 @@ import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text, IconButton } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { FileIcon } from '@/app/components/ui/file-icon';
+import { formatLocalizedBytes, resolveLocalizedText } from '@/lib/i18n/localized-text';
 import { useUploadStore } from '@/lib/store/upload-store';
 import type { UploadItem, UploadSession } from '@/lib/store/upload-store';
 
 type TrackerTab = 'all' | 'completed' | 'failed';
 const TRACKER_TABS: TrackerTab[] = ['all', 'completed', 'failed'];
 
-// Format bytes to human readable
-const formatSize = (bytes: number): string => {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-};
-
 interface UploadItemRowProps {
   item: UploadItem;
 }
 
 function UploadItemRow({ item }: UploadItemRowProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
+  const formatSize = (bytes: number) => formatLocalizedBytes(
+    bytes,
+    i18n.resolvedLanguage || i18n.language,
+    { units: ['B', 'KB', 'MB'] },
+  );
 
   const isFailed = item.status === 'failed';
   // A file can fail for more than one reason (size, type, backend error). Show
   // them all; fall back to a generic hint when the backend gave none.
   const failureReasons =
     isFailed
-      ? (item.errors?.map((e) => e?.trim()).filter((e): e is string => !!e) ?? [])
+      ? (item.errors?.map((error, index) => {
+          const descriptor = item.errorTexts?.[index];
+          return descriptor ? resolveLocalizedText(descriptor, t) : error?.trim();
+        }).filter((e): e is string => !!e) ?? [])
       : [];
   const resolvedReasons =
     isFailed && failureReasons.length === 0
@@ -293,7 +295,7 @@ function SessionCard({ group, filter }: { group: SessionGroup; filter: TrackerTa
 }
 
 export function UploadProgressTracker() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     items,
     sessions,
@@ -348,6 +350,11 @@ export function UploadProgressTracker() {
   const failedBytes = items.reduce(
     (s, i) => s + (i.status === 'failed' ? i.size : 0),
     0,
+  );
+  const formatSize = (bytes: number) => formatLocalizedBytes(
+    bytes,
+    i18n.resolvedLanguage || i18n.language,
+    { units: ['B', 'KB', 'MB'] },
   );
 
   const hasActiveUploads = items.some(

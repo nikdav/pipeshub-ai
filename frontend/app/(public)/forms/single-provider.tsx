@@ -3,6 +3,8 @@
 import React, { useRef, useState } from 'react';
 import { Box, Flex, Text, Button, Callout } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText } from '@/lib/i18n/localized-text';
+import type { LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { isValidEmail } from '@/lib/utils/validators';
 import { LoadingButton } from '@/app/components/ui/loading-button';
 import AuthTitleSection from '../components/auth-title-section';
@@ -60,7 +62,7 @@ export default function SingleProvider({
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordRequiredError, setPasswordRequiredError] = useState('');
-  const [providerError, setProviderError] = useState('');
+  const [providerError, setProviderError] = useState<LocalizedTextValue | ''>('');
   const searchParams = useSearchParams();
   const returnTo = searchParams.get('returnTo');
   const auth = useAuthActions({ email, authProviders, redirectTo: returnTo ?? undefined });
@@ -182,7 +184,7 @@ export default function SingleProvider({
             {auth.error?.type === 'generic' && auth.error.message && (
               <Callout.Root color="red" size="1" variant="surface">
                 <Callout.Text>
-                  <Text size="2">{auth.error.message}</Text>
+                  <Text size="2">{auth.error.messageText ? resolveLocalizedText(auth.error.messageText, t) : auth.error.message}</Text>
                 </Callout.Text>
               </Callout.Root>
             )}
@@ -246,7 +248,7 @@ export default function SingleProvider({
           {providerError && (
             <Callout.Root color="red" size="1" variant="surface">
               <Callout.Text>
-                <Text size="2">{providerError}</Text>
+              <Text size="2">{resolveLocalizedText(providerError, t)}</Text>
               </Callout.Text>
             </Callout.Root>
           )}
@@ -287,7 +289,7 @@ export default function SingleProvider({
           {providerError && (
             <Callout.Root color="red" size="1" variant="surface">
               <Callout.Text>
-                <Text size="2">{providerError}</Text>
+                <Text size="2">{resolveLocalizedText(providerError, t)}</Text>
               </Callout.Text>
             </Callout.Root>
           )}
@@ -330,14 +332,14 @@ export default function SingleProvider({
           {providerError && (
             <Callout.Root color="red" size="1" variant="surface">
               <Callout.Text>
-                <Text size="2">{providerError}</Text>
+                <Text size="2">{resolveLocalizedText(providerError, t)}</Text>
               </Callout.Text>
             </Callout.Root>
           )}
           {auth.error?.type === 'generic' && auth.error.message && (
             <Callout.Root color="red" size="1" variant="surface">
               <Callout.Text>
-                <Text size="2">{auth.error.message}</Text>
+                <Text size="2">{auth.error.messageText ? resolveLocalizedText(auth.error.messageText, t) : auth.error.message}</Text>
               </Callout.Text>
             </Callout.Root>
           )}

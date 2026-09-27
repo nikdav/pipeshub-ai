@@ -60,8 +60,13 @@ export function isMcpTypeIdConflict(
   return Boolean(existingInstanceId && existingInstanceId !== instanceId);
 }
 
-export function buildMcpServerDragPayload(entry: McpMyServerEntry): Record<string, string> {
-  const displayName = entry.name || entry.typeId || 'MCP Server';
+export function buildMcpServerDragPayload(
+  entry: McpMyServerEntry,
+  defaultName = 'MCP Server',
+): Record<string, string> {
+  const displayName = [entry.name, entry.typeId].find(
+    (value) => typeof value === 'string' && value.trim(),
+  ) || defaultName;
   return {
     'application/reactflow': `mcp-${entry._id}`,
     type: 'mcp-server',

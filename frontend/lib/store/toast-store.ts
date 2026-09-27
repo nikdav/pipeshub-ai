@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import i18n from '@/lib/i18n/config';
+import { resolveLocalizedText, type LocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 // ========================================
 // Toast Types
 // ========================================
@@ -13,6 +15,7 @@ export type ToastPlacement = 'top' | 'bottom';
 
 export interface ToastAction {
   label: string;
+  labelText?: LocalizedText;
   icon?: string;
   onClick?: () => void;
   /** Renders as a link when set (use with `openInNewTab` for external/same-app new tab). */
@@ -24,7 +27,9 @@ export interface Toast {
   id: string;
   variant: ToastVariant;
   title: string;
+  titleText?: LocalizedText;
   description?: string;
+  descriptionText?: LocalizedText;
   // Rich content rendered instead of `description` when set. A FUNCTION (not a
   // node) so the immer store never holds/auto-freezes React elements — fresh
   // elements are created at render time, avoiding frozen-element crashes.
@@ -42,7 +47,9 @@ export interface Toast {
 }
 
 export interface ToastOptions {
-  description?: string;
+  description?: LocalizedTextValue;
+  titleText?: LocalizedText;
+  descriptionText?: LocalizedText;
   renderDescription?: () => ReactNode;
   icon?: string;
   showCloseButton?: boolean;
@@ -50,6 +57,42 @@ export interface ToastOptions {
   duration?: number | null;         // Override default duration
   contentLayout?: 'default' | 'expanded';
   placement?: ToastPlacement;
+}
+
+export type ToastUpdateOptions = Omit<Partial<Omit<Toast, 'id' | 'createdAt'>>, 'title' | 'description'> & {
+  title?: LocalizedTextValue;
+  description?: LocalizedTextValue;
+};
+
+function normalizeText(value: LocalizedTextValue | undefined): {
+  text: string | undefined;
+  descriptor?: LocalizedText;
+} {
+  if (typeof value === 'string') return { text: value };
+  if (!value) return { text: undefined };
+  return { text: resolveLocalizedText(value, i18n.t.bind(i18n)), descriptor: value };
+}
+
+function createToast(
+  variant: ToastVariant,
+  title: LocalizedTextValue,
+  options: ToastOptions = {},
+): string {
+  const normalizedTitle = options.titleText
+    ? normalizeText(options.titleText)
+    : normalizeText(title);
+  const normalizedDescription = options.descriptionText
+    ? normalizeText(options.descriptionText)
+    : normalizeText(options.description);
+  const { description: _description, descriptionText: _descriptionText, titleText: _titleText, ...fields } = options;
+  return useToastStore.getState().addToast({
+    variant,
+    title: normalizedTitle.text ?? '',
+    ...(normalizedTitle.descriptor && { titleText: normalizedTitle.descriptor }),
+    ...(normalizedDescription.text !== undefined && { description: normalizedDescription.text }),
+    ...(normalizedDescription.descriptor && { descriptionText: normalizedDescription.descriptor }),
+    ...fields,
+  });
 }
 
 // Immer cannot safely hold render callbacks; keep them outside the draft state.
@@ -74,7 +117,7 @@ interface ToastState {
 interface ToastActions {
   addToast: (toast: Omit<Toast, 'id' | 'createdAt' | 'isExiting'>) => string;
   removeToast: (id: string) => void;
-  updateToast: (id: string, updates: Partial<Omit<Toast, 'id' | 'createdAt'>>) => void;
+  updateToast: (id: string, updates: ToastUpdateOptions) => void;
   clearAll: () => void;
   setHovered: (hovered: boolean) => void;
 }
@@ -171,7 +214,17 @@ export const useToastStore = create<ToastStore>()(
       },
 
       updateToast: (id, updates) => {
-        const { renderDescription, ...toastUpdates } = updates;
+        const { renderDescription, title, description, titleText, descriptionText, ...rest } = updates;
+        const normalizedTitle = titleText ? normalizeText(titleText) : normalizeText(title);
+        const normalizedDescription = descriptionText ? normalizeText(descriptionText) : normalizeText(description);
+        const toastUpdates = {
+          ...rest,
+          ...(title !== undefined || titleText ? { title: normalizedTitle.text ?? '', titleText: normalizedTitle.descriptor } : {}),
+          ...(description !== undefined || descriptionText ? {
+            description: normalizedDescription.text,
+            descriptionText: normalizedDescription.descriptor,
+          } : {}),
+        };
         if (renderDescription !== undefined) {
           if (renderDescription) {
             renderDescriptionByToastId.set(id, renderDescription);
@@ -238,62 +291,42 @@ export const toast = {
    * Show a loading toast (persists until updated/removed)
    * @returns Toast ID for later updates
    */
-  loading: (title: string, options?: ToastOptions): string => {
-    return useToastStore.getState().addToast({
-      variant: 'loading',
-      title,
-      ...options,
-    });
+  loading: (title: LocalizedTextValue, options?: ToastOptions): string => {
+    return createToast('loading', title, options);
   },
 
   /**
    * Show a success toast (auto-dismiss after 3s)
    */
-  success: (title: string, options?: ToastOptions): string => {
-    return useToastStore.getState().addToast({
-      variant: 'success',
-      title,
-      ...options,
-    });
+  success: (title: LocalizedTextValue, options?: ToastOptions): string => {
+    return createToast('success', title, options);
   },
 
   /**
    * Show an error toast (auto-dismiss after 3s)
    */
-  error: (title: string, options?: ToastOptions): string => {
-    return useToastStore.getState().addToast({
-      variant: 'error',
-      title,
-      ...options,
-    });
+  error: (title: LocalizedTextValue, options?: ToastOptions): string => {
+    return createToast('error', title, options);
   },
 
   /**
    * Show an info toast (auto-dismiss after 3s)
    */
-  info: (title: string, options?: ToastOptions): string => {
-    return useToastStore.getState().addToast({
-      variant: 'info',
-      title,
-      ...options,
-    });
+  info: (title: LocalizedTextValue, options?: ToastOptions): string => {
+    return createToast('info', title, options);
   },
 
   /**
    * Show a warning toast (auto-dismiss after 4s)
    */
-  warning: (title: string, options?: ToastOptions): string => {
-    return useToastStore.getState().addToast({
-      variant: 'warning',
-      title,
-      ...options,
-    });
+  warning: (title: LocalizedTextValue, options?: ToastOptions): string => {
+    return createToast('warning', title, options);
   },
 
   /**
    * Update an existing toast (useful for loading -> success/error transitions)
    */
-  update: (id: string, updates: Partial<Omit<Toast, 'id' | 'createdAt'>>): void => {
+  update: (id: string, updates: ToastUpdateOptions): void => {
     useToastStore.getState().updateToast(id, updates);
   },
 

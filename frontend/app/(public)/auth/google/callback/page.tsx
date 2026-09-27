@@ -15,7 +15,7 @@ import { Flex, Text } from '@radix-ui/themes';
  * for this message and forwards the id_token to the backend.
  */
 export default function GoogleCallbackPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     // The id_token is in the fragment (hash), not query params —
@@ -38,7 +38,7 @@ export default function GoogleCallbackPage() {
         window.opener.postMessage(
           {
             type: 'GOOGLE_AUTH_ERROR',
-            error: 'Authentication response validation failed. Please try again.',
+            error: i18n.t('auth.oauth.googleCallback.validationFailed'),
           },
           window.location.origin,
         );
@@ -56,13 +56,14 @@ export default function GoogleCallbackPage() {
       window.opener.postMessage(
         {
           type: 'GOOGLE_AUTH_ERROR',
-          error: errorDescription || error || 'Google sign-in failed.',
+          error: errorDescription || error || i18n.t('auth.oauth.googleCallback.failed'),
         },
         window.location.origin,
       );
     }
 
     window.close();
+  // Callback validation is deliberately one-shot; a language change must not repost tokens/errors.
   }, []);
 
   return (

@@ -107,7 +107,7 @@ export function AgentBuilderMcpSection(props: {
         const isDuplicate =
           activeInstanceIds.has(entry._id) || isMcpTypeIdConflict(activeTypeIds, entry._id, entry.typeId);
         const dragBlocked = !entry.isAuthenticated || isDuplicate;
-        const dragPayload = buildMcpServerDragPayload(entry);
+        const dragPayload = buildMcpServerDragPayload(entry, t('agentBuilder.mcpServerDefaultName'));
         const dragType = dragBlocked ? undefined : dragPayload['application/reactflow'];
 
         const onDragAttempt = structureLocked

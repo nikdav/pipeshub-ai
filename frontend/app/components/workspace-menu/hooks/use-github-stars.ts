@@ -1,20 +1,24 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const GITHUB_API_URL = 'https://api.github.com/repos/pipeshub-ai/pipeshub-ai';
-const CACHE_KEY = 'pipeshub:github-stars:v1';
+const CACHE_KEY = 'pipeshub:github-stars:v2';
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24h — star count changes slowly
 const STALE_RETRY_MS = 5 * 60 * 1000; // back off 5min after a failed fetch
 
-type CacheEntry = { value: string; fetchedAt: number };
+type CacheEntry = { value: number; fetchedAt: number };
 
 let inMemoryCache: CacheEntry | null = null;
-let inflight: Promise<string | null> | null = null;
+let inflight: Promise<number | null> | null = null;
 let lastFailureAt = 0;
 
-function formatStars(count: number): string {
-  return count >= 1000 ? `${(count / 1000).toFixed(1)}k` : String(count);
+function formatStars(count: number, locale: string): string {
+  return new Intl.NumberFormat(locale, {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(count);
 }
 
 function readPersistedCache(): CacheEntry | null {
@@ -24,7 +28,7 @@ function readPersistedCache(): CacheEntry | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<CacheEntry>;
     if (
-      typeof parsed?.value === 'string' &&
+      typeof parsed?.value === 'number' &&
       typeof parsed?.fetchedAt === 'number'
     ) {
       return { value: parsed.value, fetchedAt: parsed.fetchedAt };
@@ -48,7 +52,7 @@ function isFresh(entry: CacheEntry | null): entry is CacheEntry {
   return !!entry && Date.now() - entry.fetchedAt < CACHE_TTL_MS;
 }
 
-async function fetchStars(): Promise<string | null> {
+async function fetchStars(): Promise<number | null> {
   if (inflight) return inflight;
   if (Date.now() - lastFailureAt < STALE_RETRY_MS) return null;
 
@@ -64,11 +68,10 @@ async function fetchStars(): Promise<string | null> {
         lastFailureAt = Date.now();
         return null;
       }
-      const formatted = formatStars(data.stargazers_count);
-      const entry: CacheEntry = { value: formatted, fetchedAt: Date.now() };
+      const entry: CacheEntry = { value: data.stargazers_count, fetchedAt: Date.now() };
       inMemoryCache = entry;
       writePersistedCache(entry);
-      return formatted;
+      return data.stargazers_count;
     } catch {
       lastFailureAt = Date.now();
       return null;
@@ -81,14 +84,16 @@ async function fetchStars(): Promise<string | null> {
 }
 
 /**
- * Returns the formatted GitHub star count (e.g. "2.5k").
+ * Returns the GitHub star count formatted with the active locale's compact notation.
  *
  * Cached at module level + in `localStorage` for {@link CACHE_TTL_MS} so
  * multiple consumers and remounts share a single request — keeps the
  * unauthenticated GitHub API well under its 60/hr rate limit.
  */
 export function useGitHubStars(): string | null {
-  const [stars, setStars] = useState<string | null>(() => {
+  const { i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
+  const [stars, setStars] = useState<number | null>(() => {
     if (inMemoryCache) return inMemoryCache.value;
     const persisted = readPersistedCache();
     if (persisted) {
@@ -110,5 +115,5 @@ export function useGitHubStars(): string | null {
     };
   }, []);
 
-  return stars;
+  return stars === null ? null : formatStars(stars, locale);
 }

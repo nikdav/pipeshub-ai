@@ -13,6 +13,10 @@
       "newPasswordPlaceholder": "Geben Sie Ihr neues Passwort ein",
       "confirmPasswordLabel": "Passwort bestätigen*",
       "confirmPasswordPlaceholder": "Passwort bestätigen"
+    },
+    "success": {
+      "title": "Ihr Passwort wurde geändert!",
+      "description": "Ihr Passwort wurde erfolgreich aktualisiert. Sie können sich jetzt mit Ihrem neuen Passwort bei Ihrem Pipeshub-Arbeitsbereich anmelden."
     }
   },
   "agents": {
@@ -52,7 +56,14 @@
     "refiningResponse": "Antwort wird verfeinert…",
     "errorFallback": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
     "copyCode": "Kopieren",
-    "copiedCode": "Kopiert"
+    "copiedCode": "Kopiert",
+    "status": {
+      "delegatingTo": "Weiterleitung an {{roleName}} …",
+      "toolActivity": "{{label}} …",
+      "starting": "Wird gestartet …",
+      "executingTool": "Tool wird ausgeführt …"
+    },
+    "connectedWorking": "Verbunden – Ihre Anfrage wird bearbeitet"
   },
   "uploadProgress": {
     "uploadFailedDefault": "Upload fehlgeschlagen",
@@ -108,7 +119,13 @@
       "unsupportedType": "Nicht unterstützter Dateityp",
       "duplicateName": "Eine Datei mit diesem Namen existiert bereits",
       "rejected": "Datei abgelehnt"
-    }
+    },
+    "errors": {
+      "httpFallback": "Der Upload wurde nicht abgeschlossen. Bitte versuchen Sie es erneut. Falls er weiterhin fehlschlägt, wenden Sie sich an Ihre Administration.",
+      "stalled": "PipesHub hat nicht mehr reagiert, bevor dieser Upload abgeschlossen war. Bitte laden Sie diese Dateien erneut hoch.",
+      "incomplete": "Upload nicht abgeschlossen"
+    },
+    "fileExceedsSizeLimit": "Diese Datei überschreitet die Größenbegrenzung von {{maxFileSizeMB}} MB. Verkleinern oder teilen Sie sie und laden Sie sie anschließend erneut hoch."
   },
   "onboarding": {
     "skipEmbeddingDefault": "Überspringen",
@@ -177,7 +194,9 @@
       "baseUrlLabel": "Basis-URL (optional)",
       "baseUrlPlaceholder": "z.B.: http://localhost:3000/files",
       "saveSuccessFallback": "Speicherkonfiguration gespeichert.",
-      "saveErrorFallback": "Speicherkonfiguration konnte nicht gespeichert werden."
+      "saveErrorFallback": "Speicherkonfiguration konnte nicht gespeichert werden.",
+      "s3HealthCheckFailedWithBase": "{{message}} ({{details}})",
+      "s3HealthCheckFailed": "S3-Integritätsprüfung fehlgeschlagen ({{details}})"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -214,7 +233,37 @@
     },
     "tour": {
       "dismiss": "Tour schließen",
-      "completedDescription": "Die Einrichtung ist abgeschlossen. Weitere Informationen finden Sie in der <docs>Dokumentation</docs>."
+      "completedDescription": "Die Einrichtung ist abgeschlossen. Weitere Informationen finden Sie in der <docs>Dokumentation</docs>.",
+      "stubs": {
+        "almostThereTitle": "Fast geschafft!",
+        "almostThereSubtitle": "Führen Sie die folgenden Schritte aus, um zu erfahren, was Pipeshub für Sie tun kann.",
+        "connectFirstApp": "Verbinden Sie Ihre erste App",
+        "createCollection": "Erstellen Sie eine Sammlung",
+        "inviteTeamMembers": "Laden Sie Teammitglieder ein",
+        "keepGoingTitle": "Weiter geht's!",
+        "keepGoingSubtitle": "Wie wäre es, wenn Sie Ihren Teammitgliedern davon erzählen?",
+        "completedTitle": "Los geht's!"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "Welche Art von Arbeit üben Sie aus?",
+      "subtitle": "Das hilft uns, Ihr Pipeshub-Erlebnis zu personalisieren.",
+      "roles": {
+        "softwareDeveloper": "Softwareentwicklung",
+        "productManager": "Produktmanagement",
+        "marketer": "Marketing",
+        "designer": "Design",
+        "projectManager": "Projektmanagement",
+        "operations": "Operations",
+        "itSupport": "IT-Support",
+        "humanResources": "Personalwesen",
+        "financeOfficer": "Finanzwesen",
+        "legal": "Recht",
+        "complianceOfficer": "Compliance-Beauftragter",
+        "salesRepresentative": "Vertrieb",
+        "dataScientist": "Datenwissenschaft",
+        "customerService": "Kundenservice"
+      }
     }
   },
   "nav": {
@@ -253,7 +302,9 @@
     "filterTooltip": "Filter: {{filter}}",
     "loadFailed": "Benachrichtigungen konnten nicht geladen werden",
     "updateFailed": "Benachrichtigung konnte nicht aktualisiert werden",
-    "removeFailed": "Benachrichtigung konnte nicht entfernt werden"
+    "removeFailed": "Benachrichtigung konnte nicht entfernt werden",
+    "hiddenCount_one": "+{{count}} weitere",
+    "hiddenCount_other": "+{{count}} weitere"
   },
   "action": {
     "find": "Finden",
@@ -350,7 +401,14 @@
     "willBeDeleted": "wird gelöscht",
     "willBeReindexed": "wird neu indiziert",
     "reindexConfirm": "Diesen {{type}} neu indizieren?",
-    "reindexDescription": "Dies aktualisiert den Suchindex für diesen {{type}} und seinen Inhalt."
+    "reindexDescription": "Dies aktualisiert den Suchindex für diesen {{type}} und seinen Inhalt.",
+    "bulkDeleteQuestion_one": "{{itemCount}} Element löschen?",
+    "bulkDeleteQuestion_other": "{{itemCount}} Elemente löschen?",
+    "bulkDeleteAction_one": "{{itemCount}} Element löschen",
+    "bulkDeleteAction_other": "{{itemCount}} Elemente löschen",
+    "bulkDeleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden. Alle ausgewählten Elemente werden dauerhaft gelöscht.",
+    "deleteItemDescription": "{{itemType}} wird gelöscht",
+    "deleteItemFromCollectionDescription": "{{itemType}} wird aus der Sammlung gelöscht"
   },
   "table": {
     "fileName": "Dateiname",
@@ -364,7 +422,8 @@
     "loading": "Daten werden geladen...",
     "selectAll": "Alle auswählen",
     "selected": "{{count}} ausgewählt",
-    "emptyState": "Keine Elemente zum Anzeigen"
+    "emptyState": "Keine Elemente zum Anzeigen",
+    "selectRow": "{{item}} auswählen"
   },
   "status": {
     "indexed": "Indiziert",
@@ -442,7 +501,59 @@
     "openProfile": "Profil öffnen",
     "loading": "Wird geladen...",
     "moreOptions": "Weitere Optionen",
-    "docs": "Dokumentation"
+    "docs": "Dokumentation",
+    "errors": {
+      "api": {
+        "cancelled": "Anfrage wurde abgebrochen.",
+        "timeout": "Zeitüberschreitung bei der Anfrage. Bitte versuchen Sie es erneut.",
+        "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+        "sessionExpired": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+        "forbidden": "Sie sind nicht berechtigt, diese Aktion auszuführen.",
+        "notFound": "Die angeforderte Ressource wurde nicht gefunden.",
+        "validation": "Ungültige Anfrage. Bitte überprüfen Sie Ihre Eingaben.",
+        "conflict": "Es ist ein Konflikt aufgetreten. Bitte versuchen Sie es erneut.",
+        "busy": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in einigen Sekunden erneut.",
+        "busyRetry_one": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in {{count}} Sekunde erneut.",
+        "busyRetry_other": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in {{count}} Sekunden erneut.",
+        "server": "Serverfehler. Bitte versuchen Sie es später erneut.",
+        "unknown": "Ein unerwarteter Fehler ist aufgetreten."
+      },
+      "toast": {
+        "authorizationTitle": "Zugriff verweigert",
+        "authorizationDescription": "Sie sind nicht berechtigt, diese Aktion auszuführen.",
+        "validationTitle": "Ungültige Anfrage",
+        "validationDescription": "Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.",
+        "notFoundTitle": "Nicht gefunden",
+        "notFoundDescription": "Die angeforderte Ressource wurde nicht gefunden.",
+        "conflictTitle": "Aktion erforderlich",
+        "conflictDescription": "Es ist ein Konflikt aufgetreten. Bitte prüfen Sie die Details und versuchen Sie es erneut.",
+        "networkTitle": "Verbindungsfehler",
+        "networkDescription": "Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+        "serverTitle": "Serverfehler",
+        "serverDescription": "Auf unserer Seite ist ein Fehler aufgetreten. Bitte versuchen Sie es gleich noch einmal. Falls das Problem bestehen bleibt, wenden Sie sich an die Administration Ihres Arbeitsbereichs.",
+        "timeoutTitle": "Zeitüberschreitung bei der Anfrage",
+        "timeoutDescription": "Der Server hat zu lange für eine Antwort gebraucht. Bitte versuchen Sie es erneut.",
+        "unknownTitle": "Ein Fehler ist aufgetreten",
+        "unknownDescription": "Das hat nicht funktioniert. Bitte versuchen Sie es erneut. Falls das Problem bestehen bleibt, wenden Sie sich an die Administration Ihres Arbeitsbereichs.",
+        "busyTitle": "Bitte versuchen Sie es gleich noch einmal",
+        "withReference": "{{message}} Referenz: {{requestId}}"
+      },
+      "stream": {
+        "sessionExpired": "Ihre Sitzung ist abgelaufen. Melden Sie sich erneut an, um fortzufahren.",
+        "forbidden": "Sie haben keinen Zugriff darauf. Wenden Sie sich an die Administration des Arbeitsbereichs, wenn Sie Zugriff benötigen.",
+        "offline": "PipesHub konnte nicht erreicht werden. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+        "interrupted": "Die Verbindung zu PipesHub wurde unterbrochen, bevor der Vorgang abgeschlossen war. Bitte versuchen Sie es erneut.",
+        "unavailable": "PipesHub hat gerade ein Problem. Bitte versuchen Sie es in einer Minute erneut.",
+        "chatInterrupted": "Die Antwort wurde vorzeitig unterbrochen. Klicken Sie auf „Neu generieren“ oder senden Sie Ihre Nachricht erneut.",
+        "chatUnavailable": "PipesHub kann gerade nicht antworten. Bitte versuchen Sie es in einer Minute erneut.",
+        "busy": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in einigen Sekunden erneut.",
+        "busyRetry_one": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in {{count}} Sekunde erneut.",
+        "busyRetry_other": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in {{count}} Sekunden erneut."
+      }
+    },
+    "unknown": "Unbekannt",
+    "connectorIconAlt": "{{type}}-Symbol",
+    "submit": "Absenden"
   },
   "units": {
     "bytes": "Bytes",
@@ -524,7 +635,11 @@
     "searchEmptyHint": "Keine passenden Ergebnisse gefunden. Versuchen Sie einen anderen Suchbegriff.",
     "adjustFiltersHint": "Wählen Sie eine andere Quelle oder passen Sie Ihre Filter an",
     "addFromCollectionsHint": "Sie können Unternehmensdateien oder -ordner über die Sammlungen hinzufügen",
-    "addFilesHint": "Fügen Sie Ihre Dateien oder Ordner hinzu"
+    "addFilesHint": "Fügen Sie Ihre Dateien oder Ordner hinzu",
+    "pagination": {
+      "showing": "{{start}}–{{end}} von {{total}} Elementen werden angezeigt",
+      "perPage": "{{limit}} pro Seite"
+    }
   },
   "connectorTypes": {
     "slack": "Slack",
@@ -550,7 +665,8 @@
       "open": "{{source}} öffnen",
       "openIn": "In {{source}} öffnen",
       "openInCollections": "In Sammlungen öffnen",
-      "relevance": "Relevanz: {{percent}} %"
+      "relevance": "Relevanz: {{percent}} %",
+      "viewSource": "Quelle anzeigen"
     },
     "results": "Ergebnisse",
     "greeting": "Was möchten Sie heute erkunden?",
@@ -592,7 +708,8 @@
       "browseWorkspaceMcp": "MCP-Server durchsuchen",
       "browseWorkspaceMcpAria": "MCP-Server öffnen, um Verbindungen hinzuzufügen oder zu verwalten",
       "noActionMatches": "Keine Aktionen entsprechen Ihrer Suche.",
-      "noMcpMatches": "Keine MCP-Server entsprechen Ihrer Suche."
+      "noMcpMatches": "Keine MCP-Server entsprechen Ihrer Suche.",
+      "filtersAriaLabel": "Ressourcenfilter"
     },
     "projectResources": {
       "noConnectors": "Für dieses Projekt sind keine Konnektoren aktiviert.",
@@ -955,7 +1072,8 @@
         "suggestPlanWork": "Eine Aufgabe planen",
         "suggestWriteInstructions": "Die Projektanweisungen schreiben",
         "suggestSummariseDocumentPrompt": "Fasse das wichtigste Dokument in den Dateien dieses Projekts zusammen.",
-        "suggestPlanWorkPrompt": "Hilf mir, eine Aufgabe für dieses Projekt zu planen. Unterteile sie in konkrete nächste Schritte."
+        "suggestPlanWorkPrompt": "Hilf mir, eine Aufgabe für dieses Projekt zu planen. Unterteile sie in konkrete nächste Schritte.",
+        "projectActions": "Projektaktionen"
       },
       "moveDialog": {
         "title": "In Projekt verschieben",
@@ -1001,7 +1119,15 @@
       "closePreview": "Schließen",
       "loadingPreview": "Wird geladen…",
       "pasteMeta_one": "{{chars}} Zeichen · {{count}} Zeile",
-      "pasteMeta_other": "{{chars}} Zeichen · {{count}} Zeilen"
+      "pasteMeta_other": "{{chars}} Zeichen · {{count}} Zeilen",
+      "failedToAttach": "{{fileName}} konnte nicht angehängt werden. {{reason}}",
+      "failedToAttachFallback": "{{fileName}} konnte nicht angehängt werden. Bitte versuchen Sie es erneut.",
+      "fileActionAria": {
+        "uploading": "{{name}} wird hochgeladen",
+        "retry": "Upload von {{name}} wiederholen",
+        "remove": "{{name}} entfernen"
+      },
+      "uploadMissingReference": "Der Upload hat keinen Anhangsverweis zurückgegeben."
     },
     "voiceSttNotConfigured": "Konfigurieren Sie in den KI-Modelleinstellungen ein Speech-to-Text-Modell (STT), um die Spracheingabe zu aktivieren.",
     "voiceSttLoading": "Sprachfunktionen werden geprüft…",
@@ -1042,7 +1168,8 @@
       "loadingMcp": "MCP-Server werden geladen…",
       "noMcpServers": "Keine authentifizierten MCP-Server gefunden. Verbinden Sie einen unter „Arbeitsbereich → MCP-Server“.",
       "toolCount_one": "{{count}} Tool",
-      "toolCount_other": "{{count}} Tools"
+      "toolCount_other": "{{count}} Tools",
+      "filtersAriaLabel": "Ressourcenfilter"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "Für diesen Agenten nicht konfiguriert",
@@ -1093,7 +1220,121 @@
     "sendMessage": "Nachricht senden",
     "demoHide": "Demodaten ausblenden",
     "demoRestrictedHint": "Nur für das Preiskomitee, deshalb erhalten Sie hier keine Antwort. So wirken Berechtigungen.",
-    "demoRestrictedHintSignIn": "Nur für das Preiskomitee, deshalb erhalten Sie hier keine Antwort. Melden Sie sich als {{email}} an, um die Antwort zu sehen."
+    "demoRestrictedHintSignIn": "Nur für das Preiskomitee, deshalb erhalten Sie hier keine Antwort. Melden Sie sich als {{email}} an, um die Antwort zu sehen.",
+    "noModelConfigured": {
+      "title": "Kein KI-Modell konfiguriert",
+      "memberDescription": "Für diesen Arbeitsbereich ist noch kein KI-Modell eingerichtet, daher kann der Chat keine Antworten geben. Bitten Sie die Administration Ihres Arbeitsbereichs, unter „Arbeitsbereich → KI-Modelle“ ein Modell hinzuzufügen.",
+      "adminDescription": "Für diesen Arbeitsbereich ist noch kein KI-Modell eingerichtet, daher kann der Chat keine Antworten geben. Fügen Sie unter „KI-Modelle“ ein Modell hinzu und senden Sie Ihre Nachricht erneut.",
+      "action": "KI-Modelle öffnen"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "Skills werden aufgelistet",
+          "past": "Skills aufgelistet"
+        },
+        "search": {
+          "present": "Skills werden gesucht",
+          "past": "Skills durchsucht"
+        },
+        "load": {
+          "present": "Skill wird geladen",
+          "past": "Skill geladen"
+        },
+        "loadResource": {
+          "present": "Skill-Datei wird geladen",
+          "past": "Skill-Datei geladen"
+        },
+        "manage": {
+          "present": "Skill wird verwaltet",
+          "past": "Skill verwaltet"
+        }
+      },
+      "usedTool": "Tool verwendet",
+      "usingTool": "{{toolName}} wird verwendet"
+    },
+    "unnamedArtifact": "Artefakt",
+    "unnamedDownload": "Download",
+    "searchFailed": "Suche fehlgeschlagen",
+    "collectionRow": {
+      "folders_one": "{{count}} Ordner",
+      "folders_other": "{{count}} Ordner",
+      "files_one": "{{count}} Datei",
+      "files_other": "{{count}} Dateien"
+    },
+    "modelSelector": {
+      "providerByline": "von {{provider}}",
+      "multimodalBadge": "Multimodal"
+    },
+    "agentActivity": {
+      "thinking": "Denkt nach",
+      "arguments": "Argumente",
+      "resultError": "Fehler",
+      "resultBlocked": "Blockiert",
+      "result": "Ergebnis",
+      "subAgent": "Sub-Agent",
+      "groupSkills_one": "{{count}} Skill verwendet",
+      "groupSkills_other": "{{count}} Skills verwendet",
+      "groupSearches_one": "{{count}} Suche untersucht",
+      "groupSearches_other": "{{count}} Suchen untersucht",
+      "groupTools_one": "{{count}} Tool ausgeführt",
+      "groupTools_other": "{{count}} Tools ausgeführt",
+      "summaryThought_one": "Darüber nachgedacht",
+      "summaryThought_other": "{{count}}-mal darüber nachgedacht",
+      "summaryTools_one": "{{count}} Tool verwendet",
+      "summaryTools_other": "{{count}} Tools verwendet",
+      "summaryDelegatedAgents_one": "An {{count}} Sub-Agent delegiert",
+      "summaryDelegatedAgents_other": "An {{count}} Sub-Agenten delegiert",
+      "summaryWorked": "Daran gearbeitet"
+    },
+    "callouts": {
+      "note": "Hinweis",
+      "tip": "Tipp",
+      "important": "Wichtig",
+      "warning": "Warnung",
+      "caution": "Vorsicht",
+      "info": "Info",
+      "success": "Erfolg",
+      "danger": "Gefahr",
+      "error": "Fehler",
+      "question": "Frage",
+      "bug": "Fehler im Code",
+      "example": "Beispiel",
+      "abstract": "Abstrakt",
+      "summary": "Zusammenfassung",
+      "quote": "Zitat"
+    },
+    "linkToSection": "Link zum Abschnitt",
+    "artifacts": {
+      "generated_one": "{{count}} Artefakt erstellt",
+      "generated_other": "{{count}} Artefakte erstellt",
+      "newerVersionAvailable": "Neuere Version verfügbar (v{{version}})",
+      "viewSource": "Quellcode anzeigen",
+      "viewSourceTitle": "Den Code anzeigen, mit dem dieses Artefakt erstellt wurde",
+      "loadingSource": "Quellcode wird geladen …"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "Frage {{number}}: {{question}}",
+      "readAloudOption": "Option: {{option}}"
+    },
+    "confidenceTooltip": "Konfidenzniveau der Antwort des Assistenten",
+    "downloadTasks": {
+      "completeResults": "Sie können die vollständigen Abfrageergebnisse herunterladen:"
+    },
+    "sourcesHeading_one": "Quelle ({{count}}):",
+    "sourcesHeading_other": "Quellen ({{count}}):",
+    "citationCount_one": "{{count}} Zitat",
+    "citationCount_other": "{{count}} Zitate",
+    "noCitationsAvailable": "Keine Zitate verfügbar.",
+    "noSourcesAvailable": "Keine Quellen verfügbar.",
+    "recordDetailsUnavailable": "Datensatzdetails nicht verfügbar",
+    "syncedJustNow": "Gerade synchronisiert",
+    "syncedRelativeTime": "Synchronisiert {{relativeTime}}",
+    "processingStatus": "Wird verarbeitet …",
+    "noResultsForQuery": "Keine Ergebnisse für {{query}} gefunden",
+    "couldNotLoadConversations": "Unterhaltungen konnten nicht geladen werden",
+    "archiveConfirmation": "Archivierung bestätigen",
+    "questionFallback": "Frage"
   },
   "workspaceMenu": {
     "appearance": "Darstellung",
@@ -1193,7 +1434,8 @@
         "pending": "Ausstehend",
         "expired": "Abgelaufen",
         "deactivated": "Deaktiviert",
-        "blocked": "Gesperrt"
+        "blocked": "Gesperrt",
+        "inactive": "Inaktiv"
       },
       "invite": {
         "title": "Benutzer einladen",
@@ -1416,6 +1658,20 @@
         "saveErrorDescription": "Team konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
         "applyToAll": "Auf alle anwenden",
         "newMemberRoles": "Rollen neuer Mitglieder"
+      },
+      "roles": {
+        "owner": {
+          "label": "Inhaber",
+          "description": "Volle Kontrolle über das Team und seine Ressourcen"
+        },
+        "writer": {
+          "label": "Bearbeiter",
+          "description": "Kann Teamressourcen ansehen und bearbeiten"
+        },
+        "reader": {
+          "label": "Leser",
+          "description": "Kann Teamressourcen ansehen"
+        }
       }
     },
     "oauth2": {
@@ -1688,12 +1944,15 @@
           "label": "Video",
           "badge": "Multimodal"
         }
-      }
+      },
+      "requiredFileUploadError": "Erforderlicher Datei-Upload fehlt: {{fieldNames}}. Bitte laden Sie die Datei hoch und versuchen Sie es erneut.",
+      "defaultModelName": "Modell"
     },
     "common": {
       "loadingUsers": "Benutzer werden geladen...",
       "noUsersAvailable": "Keine Benutzer verfügbar",
-      "selected": "{{count}} Ausgewählt"
+      "selected": "{{count}} Ausgewählt",
+      "unknownUser": "Unbekannter Benutzer"
     },
     "filters": {
       "role": "Rolle",
@@ -1707,7 +1966,8 @@
     "pagination": {
       "showing": "Zeige {{from}}-{{to}} von {{total}} Einträgen",
       "previous": "Zurück",
-      "next": "Weiter"
+      "next": "Weiter",
+      "perPage": "{{value}} pro Seite"
     },
     "sidebar": {
       "backToApp": "Zurück zur App",
@@ -1759,7 +2019,9 @@
         "configured": "Konfiguriert",
         "notConfigured": "Nicht konfiguriert",
         "authenticated": "Authentifiziert",
-        "notAuthenticated": "Nicht authentifiziert"
+        "notAuthenticated": "Nicht authentifiziert",
+        "labelWithCount_one": "{{label}} ({{formattedCount}})",
+        "labelWithCount_other": "{{label}} ({{formattedCount}})"
       },
       "personalSegment": {
         "my": "Meine Aktionen",
@@ -1821,7 +2083,12 @@
         "authenticatedOne": "1 authentifiziert",
         "authenticatedMany": "{{count}} authentifiziert",
         "needsAuthOne": "1 benötigt Anmeldung",
-        "needsAuthMany": "{{count}} benötigen Anmeldung"
+        "needsAuthMany": "{{count}} benötigen Anmeldung",
+        "active_one": "{{count}} aktive Instanz",
+        "active_other": "{{count}} aktive Instanzen",
+        "inactive_one": "{{count}} inaktive Instanz",
+        "inactive_other": "{{count}} inaktive Instanzen",
+        "addInstance": "Instanz hinzufügen"
       },
       "typeDetail": {
         "scopeTeam": "Aktionen",
@@ -1895,7 +2162,8 @@
         "urlProtocol": "{{field}} muss http oder https verwenden"
       },
       "adminRequiredToast": "Nur Administratoren können neue Aktionen hinzufügen. Bitten Sie Ihren Administrator, diese Aktion zuerst zu konfigurieren.",
-      "personalNonAdminHint": "Als „Nicht konfiguriert“ markierte Aktionen müssen zunächst von einem Administrator eingerichtet werden, bevor Sie sie verwenden können."
+      "personalNonAdminHint": "Als „Nicht konfiguriert“ markierte Aktionen müssen zunächst von einem Administrator eingerichtet werden, bevor Sie sie verwenden können.",
+      "searchPlaceholder": "Suchen …"
     },
     "rightPanel": {
       "primaryDisabledHint": "Scrollen Sie nach oben und füllen Sie die Pflichtfelder (mit *) aus, um fortzufahren.",
@@ -1916,7 +2184,9 @@
       "assistantChat": "Assistenten-Chat",
       "agents": "Agenten",
       "showMore": "Mehr anzeigen",
-      "moreAgents": "Weitere Agenten"
+      "moreAgents": "Weitere Agenten",
+      "searchError": "Archivierte Chats konnten nicht durchsucht werden. Bitte versuchen Sie es erneut.",
+      "conversationLoadError": "Diese Unterhaltung konnte nicht geladen werden. Bitte versuchen Sie es erneut."
     },
     "general": {
       "subtitle": "Allgemeine Informationen Ihres Unternehmens",
@@ -2062,7 +2332,8 @@
       },
       "xmlUpload": {
         "parseError": "SAML-Metadaten konnten aus dieser Datei nicht gelesen werden. Prüfen Sie, ob es sich um eine gültige IdP-Metadaten-XML handelt.",
-        "readError": "Datei konnte nicht gelesen werden."
+        "readError": "Datei konnte nicht gelesen werden.",
+        "chooseFile": "XML-Datei auswählen"
       },
       "riskDialog": {
         "title": "Authentifizierungsänderungen bestätigen",
@@ -2075,6 +2346,129 @@
       "userMethods": {
         "heading": "Anmeldemethoden für Benutzer",
         "subtitle": "Legen Sie fest, welche Anmeldemethoden allen Benutzern in allen Organisationen zur Verfügung stehen."
+      },
+      "methods": {
+        "password": {
+          "label": "Passwort",
+          "description": "Klassische Authentifizierung mit E-Mail-Adresse und Passwort"
+        },
+        "otp": {
+          "label": "Einmalpasswort",
+          "description": "Bestätigungscode per E-Mail senden"
+        },
+        "google": {
+          "description": "Anmeldung mit Google-Konten ermöglichen"
+        },
+        "microsoft": {
+          "description": "Anmeldung mit Microsoft-Konten ermöglichen"
+        },
+        "samlSso": {
+          "description": "Single Sign-On mit dem SAML-Protokoll"
+        },
+        "oauth": {
+          "description": "Authentifizierung mit einem generischen OAuth-2.0-Anbieter"
+        }
+      },
+      "password": {
+        "show": "Passwort anzeigen",
+        "hide": "Passwort verbergen"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "Weiterleitungs-URI",
+            "labelSuffix": "(zu den Google-OAuth-Einstellungen hinzufügen)"
+          },
+          "authorizedOrigin": {
+            "label": "Autorisierter Ursprung",
+            "labelSuffix": "(zu den Google-OAuth-Einstellungen hinzufügen)",
+            "warning": "Der aktuelle Ursprung unterscheidet sich von der konfigurierten Frontend-URL. Verwenden Sie den obigen Wert in den Google-OAuth-Einstellungen."
+          },
+          "clientId": {
+            "label": "Client-ID",
+            "placeholder": "Geben Sie Ihre Google-OAuth-Client-ID ein",
+            "hint": "Die Client-ID aus Ihren Google-OAuth-Anmeldedaten"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "Weiterleitungs-URI",
+            "labelSuffix": "(zu den Microsoft-OAuth-Einstellungen hinzufügen)"
+          },
+          "clientId": {
+            "label": "Client-ID",
+            "placeholder": "Geben Sie Ihre Microsoft-Anwendungs-ID (Client-ID) ein",
+            "hint": "Die Anwendungs-ID (Client-ID) aus der App-Registrierung in Ihrem Azure-Portal"
+          },
+          "tenantId": {
+            "label": "Mandanten-ID",
+            "placeholder": "Geben Sie Ihre Microsoft-Verzeichnis-ID (Mandanten-ID) ein",
+            "hint": "Die Verzeichnis-ID (Mandanten-ID) aus Ihrem Azure-Portal"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS-URL (Assertion Consumer Service)",
+            "labelSuffix": "(zu Ihrem Identitätsanbieter hinzufügen)",
+            "warning": "Der aktuelle Ursprung unterscheidet sich von der konfigurierten Frontend-URL. Fügen Sie den obigen Wert zu Ihrem Identitätsanbieter hinzu."
+          },
+          "spEntityId": {
+            "label": "SP-Entitäts-ID (Aussteller)",
+            "labelSuffix": "(zu Ihrem Identitätsanbieter hinzufügen)",
+            "hint": "Die in SAML-Anfragen gesendete Dienstanbieter-Entitäts-ID. Überschreiben Sie sie mit der Umgebungsvariable SAML_SP_ENTITY_ID."
+          },
+          "_xmlFile": {
+            "label": "IdP-Metadaten-XML",
+            "hint": "Laden Sie die Metadaten-XML Ihres Identitätsanbieters hoch."
+          },
+          "entryPoint": {
+            "label": "SSO-Einstiegspunkt (IdP-URL)",
+            "hint": "Die von Ihrem Identitätsanbieter bereitgestellte Single-Sign-On-URL"
+          },
+          "certificate": {
+            "label": "X.509-Zertifikat",
+            "hint": "Das öffentliche Zertifikat Ihres Identitätsanbieters (PEM-Format)"
+          },
+          "emailKey": {
+            "label": "E-Mail-Attributschlüssel",
+            "hint": "Der SAML-Attributname, der die E-Mail-Adresse des Benutzers enthält"
+          },
+          "samlPlatform": {
+            "label": "Anbietername",
+            "labelSuffix": "(optional)"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "Anbietername"
+          },
+          "redirectUri": {
+            "label": "Weiterleitungs-URI",
+            "labelSuffix": "(bei Ihrem OAuth-Anbieter registrieren)"
+          },
+          "clientId": {
+            "label": "Client-ID",
+            "placeholder": "Geben Sie Ihre OAuth-Client-ID ein"
+          },
+          "clientSecret": {
+            "label": "Client-Geheimnis",
+            "placeholder": "Geben Sie Ihr OAuth-Client-Geheimnis ein"
+          },
+          "authorizationUrl": {
+            "label": "Autorisierungs-URL"
+          },
+          "tokenEndpoint": {
+            "label": "Token-Endpunkt"
+          },
+          "userInfoEndpoint": {
+            "label": "UserInfo-Endpunkt"
+          },
+          "scope": {
+            "label": "Geltungsbereich",
+            "labelSuffix": "(optional)",
+            "hint": "Durch Leerzeichen getrennte OAuth-Geltungsbereiche. Standardmäßig werden openid email profile verwendet."
+          }
+        }
       }
     },
     "connectors": {
@@ -2111,7 +2505,10 @@
         "configSaveError": "Konfiguration konnte nicht gespeichert werden",
         "oauthAppUnavailableTitle": "Für diesen Konnektor sind keine OAuth-Apps verfügbar",
         "oauthAppUnavailableDescription": "Bitten Sie den Administrator Ihres Arbeitsbereichs, zuerst eine OAuth-App für {{name}} zu erstellen, und versuchen Sie es dann erneut.",
-        "thisConnectorFallback": "diesen Konnektor"
+        "thisConnectorFallback": "diesen Konnektor",
+        "syncToggleDisabled": "Konnektor-Synchronisierung deaktiviert",
+        "syncToggleEnabled": "Konnektor-Synchronisierung aktiviert",
+        "syncToggleError": "Konnektor konnte nicht aktualisiert werden"
       },
       "tabs": {
         "authenticate": "Instanz authentifizieren",
@@ -2212,7 +2609,36 @@
         "oauthAppNamePlaceholder": "z. B. {{name}} OAuth",
         "oauthAppNameHelper": "Dieser Name wird mit der OAuth-Registrierung gespeichert und angezeigt, wenn Benutzer eine gespeicherte App für andere Instanzen auswählen.",
         "oauthAppNameRequired": "Geben Sie einen Namen für die neue OAuth-App ein.",
-        "oauthAppChangeReauthWarning": "Wenn Sie die OAuth-App oder ihre Anmeldedaten ändern, müssen Sie den Konnektor erneut authentifizieren."
+        "oauthAppChangeReauthWarning": "Wenn Sie die OAuth-App oder ihre Anmeldedaten ändern, müssen Sie den Konnektor erneut authentifizieren.",
+        "authTypes": {
+          "oauth": "OAuth 2.0",
+          "oauthAdminConsent": "OAuth (Administratorzustimmung)",
+          "oauthCertificate": "OAuth (Zertifikat)",
+          "apiToken": "API-Token",
+          "usernamePassword": "Benutzername und Passwort",
+          "basicAuth": "Standardauthentifizierung",
+          "bearerToken": "Bearer-Token",
+          "custom": "Benutzerdefiniert",
+          "none": "Keine"
+        },
+        "redirectCallbackUrlCopyErrorTitle": "Kopieren nicht möglich",
+        "redirectCallbackUrlCopyErrorDescription": "Kopieren Sie die URL manuell oder erlauben Sie dieser Website den Zugriff auf die Zwischenablage.",
+        "methodDescription": "Wählen Sie aus, wie sich diese Konnektor-Instanz bei {{name}} authentifizieren soll.",
+        "oauthAppUnnamed": "Unbenannte OAuth-App",
+        "oauthAppsLoadFailed": "Die OAuth-Apps für diesen Konnektor konnten nicht geladen werden.",
+        "oauthAppLinkedNamed": "{{name}} (verknüpft)",
+        "oauthAppLinkedRegistration": "Verknüpfte OAuth-Registrierung",
+        "oauthAppsEmptyLinkedAdminExisting": "Diese Instanz ist mit einer OAuth-Registrierung verknüpft, die nicht in der Liste angezeigt wird. Wählen Sie unten eine andere gespeicherte App aus oder behalten Sie die aktuelle Verknüpfung bei.",
+        "oauthAppsEmptyLinkedAdminNew": "Diese Instanz ist mit einer OAuth-Registrierung verknüpft, die nicht in der Liste angezeigt wird. Wählen Sie unten eine andere App aus, verwenden Sie „Neu erstellen“ oder behalten Sie die aktuelle Verknüpfung bei.",
+        "oauthAppsEmptyLinkedUser": "Diese Instanz ist mit einer OAuth-Registrierung verknüpft, die nicht in der Liste angezeigt wird. Sie können wechseln, sobald Ihre Administration weitere gespeicherte Apps hinzugefügt hat.",
+        "oauthAppsEmptyRegisteredNone": "Es sind noch keine OAuth-Apps registriert. Bitten Sie Ihre Administration, in den Konnektor-Einstellungen des Arbeitsbereichs eine App hinzuzufügen.",
+        "oauthAppsEmptyCredentials": "Geben Sie unten die OAuth-Client-Anmeldedaten ein oder wählen Sie eine gespeicherte App aus, sobald eine verfügbar ist.",
+        "oauthAppLabel": "OAuth-App",
+        "oauthAppsLoading": "OAuth-Konfigurationen werden geladen …",
+        "oauthAppPlaceholderAdmin": "OAuth-App auswählen oder neu erstellen …",
+        "oauthAppPlaceholder": "OAuth-App auswählen (erforderlich) …",
+        "oauthAppNew": "Neue OAuth-App erstellen",
+        "oauthAppSelectionRequired": "Bitte wählen Sie eine OAuth-App aus."
       },
       "docSection": {
         "title": "Einrichtungsdokumentation",
@@ -2243,7 +2669,8 @@
       "instancePanel": {
         "overview": "Übersicht",
         "settings": "Einstellungen",
-        "manageConfig": "Konfiguration verwalten"
+        "manageConfig": "Konfiguration verwalten",
+        "syncedAt": "Synchronisiert {{lastSynced}}"
       },
       "overview": {
         "progressPercent": "{{n}}% abgeschlossen",
@@ -2271,7 +2698,16 @@
         "recordsByType": "Datensätze nach Typ",
         "noRecordTypes": "Keine Datensatztypen verfügbar",
         "localWatcherLabel": "LOKALER WATCHER",
-        "localWatcherStatus": "{{state}} · {{pending}} ausstehend · {{failed}} fehlgeschlagen"
+        "localWatcherStatus": "{{state}} · {{pending}} ausstehend · {{failed}} fehlgeschlagen",
+        "actions": {
+          "syncStarted": "Synchronisierung gestartet",
+          "syncStartFailed": "Synchronisierung konnte nicht gestartet werden",
+          "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten.",
+          "reindexFailedStarted": "Fehlerhafte Datensätze werden erneut indiziert …",
+          "reindexFailedError": "Fehlerhafte Datensätze konnten nicht erneut indiziert werden",
+          "manualIndexStarted": "Datensätze mit manueller Indizierung werden indiziert …",
+          "manualIndexError": "Die manuelle Indizierung konnte nicht gestartet werden"
+        }
       },
       "settingsTab": {
         "instanceName": "Instanzname",
@@ -2303,7 +2739,23 @@
         "removing": "Dieser Konnektor wird entfernt.",
         "configureFirst": "Schließen Sie die Konfiguration ab, bevor Sie die Synchronisierung aktivieren.",
         "authenticateFirst": "Authentifizieren Sie diesen Konnektor, bevor Sie die Synchronisierung aktivieren.",
-        "selected": "{{field}} ausgewählt"
+        "selected": "{{field}} ausgewählt",
+        "syncAction": {
+          "label": "Synchronisieren",
+          "syncing": "Synchronisierung läuft …",
+          "retry": "Synchronisierung fehlgeschlagen – erneut versuchen",
+          "started": "Synchronisierung gestartet",
+          "failed": "Synchronisierung fehlgeschlagen",
+          "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
+        },
+        "fullSyncAction": {
+          "label": "Vollständige Synchronisierung",
+          "syncing": "Vollständige Synchronisierung läuft …",
+          "retry": "Vollständige Synchronisierung fehlgeschlagen – erneut versuchen",
+          "started": "Vollständige Synchronisierung gestartet",
+          "failed": "Vollständige Synchronisierung fehlgeschlagen"
+        },
+        "connect": "Verbinden"
       },
       "instanceStatus": {
         "setup": {
@@ -2334,14 +2786,40 @@
         "unclaimedToast": "Dieser Connector wurde noch auf keinem Desktop eingerichtet. Öffnen Sie die PipesHub-Desktop-App auf dem Rechner, dem dieser Ordner gehört, und aktivieren Sie dort einmalig die Synchronisierung.",
         "ownedByOtherDeviceToast": "Dieser Connector gehört zum Gerät {{deviceName}}. Aktivieren Sie die Synchronisierung dort in der PipesHub-Desktop-App.",
         "ownedByOtherDeviceUnknownToast": "Dieser Connector gehört zu einem anderen Gerät. Aktivieren Sie die Synchronisierung dort in der PipesHub-Desktop-App.",
-        "deviceIdentityError": "Dieses Gerät konnte nicht identifiziert werden: {{error}}"
+        "deviceIdentityError": "Dieses Gerät konnte nicht identifiziert werden: {{error}}",
+        "anotherConnector": "anderer Konnektor",
+        "rootPathConflict": "Der lokale Synchronisierungs-Stammpfad wird bereits von Konnektor „{{owner}}“ synchronisiert: {{rootPath}}"
       },
       "schemaForm": {
         "tagsPlaceholder": "Tippen und Enter drücken, um Tags hinzuzufügen",
         "removeTagAriaLabel": "{{tag}} entfernen",
         "chooseFolder": "Ordner auswählen",
         "folderPickerUnavailableTitle": "Ordnerauswahl nicht verfügbar",
-        "folderPickerUnavailableDescription": "Starten Sie die Desktop-App neu oder aktualisieren Sie auf die neueste Version."
+        "folderPickerUnavailableDescription": "Starten Sie die Desktop-App neu oder aktualisieren Sie auf die neueste Version.",
+        "examples": {
+          "copyFailed": "Kopieren fehlgeschlagen",
+          "heading": "Beispiel",
+          "headingPlural": "Beispiele",
+          "copied": "Kopiert",
+          "copyToClipboard": "In die Zwischenablage kopieren",
+          "copyExample": "Beispiel {{label}} kopieren"
+        },
+        "selectPlaceholder": "Auswählen …",
+        "fileUpload": {
+          "invalidJson": "Die Datei muss gültiges JSON enthalten.",
+          "missingRequiredFields": "Erforderliche Felder fehlen: {{missing}}",
+          "fieldMustEqual": "Das Feld „{{field}}“ muss „{{value}}“ entsprechen.",
+          "contentMustContain": "Der Inhalt muss Folgendes enthalten: {{pattern}}",
+          "contentMustNotContain": "Der Inhalt darf Folgendes nicht enthalten: {{pattern}}",
+          "tooLarge": "Die Datei ist zu groß ({{size}} KB). Für Uploads von Schlüsseln, Zertifikaten oder JSON-Dateien sind maximal {{max}} KB zulässig.",
+          "invalidFile": "Ungültige Datei.",
+          "readFailed": "Datei konnte nicht gelesen werden.",
+          "optional": "(optional)",
+          "alreadyConfigured": "Bereits konfiguriert",
+          "replace": "Ersetzen",
+          "clickToUpload": "Klicken Sie, um eine Datei hochzuladen",
+          "maxSize": "Max. {{max}} KB"
+        }
       },
       "personal": {
         "desktopRequiredTitle": "Desktop-App erforderlich",
@@ -2357,7 +2835,10 @@
       "errors": {
         "missingCreatedId": "Der Konnektor wurde erstellt, aber es wurde keine Konnektor-ID zurückgegeben",
         "createdConfigUnavailable": "Der Konnektor wurde erstellt, aber die Konfiguration konnte nicht geladen werden. Öffnen Sie das Panel erneut.",
-        "authenticateFirst": "Keine Konnektor-ID gefunden. Schließen Sie zuerst die Authentifizierung ab."
+        "authenticateFirst": "Keine Konnektor-ID gefunden. Schließen Sie zuerst die Authentifizierung ab.",
+        "connectorInstanceUnavailable": "Diese Konnektor-Instanz ist nicht verfügbar. Aktualisieren Sie die Seite und versuchen Sie es erneut.",
+        "connectorTypeRequired": "Die Synchronisierung konnte nicht gestartet werden, da der Konnektortyp fehlt.",
+        "settingsLoadFallback": "Die Einstellungen dieses Konnektors konnten nicht geladen werden. Bitte versuchen Sie es gleich noch einmal."
       },
       "syncIntervals": {
         "5": "Alle 5 Minuten",
@@ -2444,7 +2925,9 @@
           "title": "Alle Embeddings löschen?",
           "body": "Die gemeinsame Vektorsammlung wird gelöscht und leer neu erstellt.",
           "warning": "Die Suche liefert für niemanden mehr Ergebnisse, bis die Neuindizierung abgeschlossen ist. Bei großen Bereitstellungen kann das mehrere Stunden dauern. Ihre Datensätze werden nicht gelöscht, sondern nur deren Embeddings.",
-          "confirm": "Embeddings löschen"
+          "confirm": "Embeddings löschen",
+          "started": "Bereinigung gestartet",
+          "startedDetail": "Die Sammlung wird neu erstellt. Die Suche bleibt leer, bis die Neuindizierung abgeschlossen ist."
         },
         "reindex": {
           "label": "Embeddings neu indexieren",
@@ -2453,9 +2936,28 @@
           "title": "Alle Datensätze neu indexieren?",
           "body": "Die Embeddings aller Datensätze werden anhand der gespeicherten Inhalte neu erstellt. Quellen werden weder erneut heruntergeladen noch erneut geparst.",
           "warning": "Dies kann bei großen Bereitstellungen lange dauern und wird im Hintergrund ausgeführt.",
-          "confirm": "Neuindizierung starten"
+          "confirm": "Neuindizierung starten",
+          "started": "Neuindizierung gestartet",
+          "startedDetail": "Datensätze werden im Hintergrund erneut eingebettet. Dieser Vorgang kann einige Zeit dauern."
         },
         "typePrompt": "Geben Sie zur Bestätigung {{token}} ein."
+      },
+      "authorizeTab": {
+        "signInHeading": "Mit Ihrem Anbieter anmelden",
+        "signInDescription": "Öffnen Sie das Anmeldefenster Ihres Identitätsanbieters und stimmen Sie dem Zugriff zu. Wählen Sie nach erfolgreicher Anmeldung unten „Mit der Konfiguration fortfahren“, um Synchronisierung, Filter und Datensätze einzurichten.",
+        "authorizationStatus": "Autorisierungsstatus",
+        "authorizationStatusDescription": "Diese Instanz kann beim Anbieter auf Ihre Daten zugreifen. Fahren Sie mit der Einrichtung von Synchronisierung und Indizierung fort oder melden Sie sich erneut an, wenn Sie den Zugriff widerrufen oder Anmeldedaten geändert haben.",
+        "connected": "Verbunden – Sie können mit „Datensätze konfigurieren“ fortfahren.",
+        "signInFailed": "Die Anmeldung wurde nicht abgeschlossen. Versuchen Sie es erneut oder prüfen Sie die Einstellungen Ihres Identitätsanbieters.",
+        "refreshAccess": "Zugriff aktualisieren",
+        "refreshAccessDescription": "Entspricht der bisherigen Aktion „Erneut authentifizieren“, wenn Tokens erneuert werden müssen.",
+        "authenticating": "Authentifizierung läuft …",
+        "reauthenticate": "Beim Anbieter erneut authentifizieren"
+      },
+      "validation": {
+        "syncFilterRequired": "Wählen Sie {{field}} aus, bevor Sie speichern. Pro Konnektor-Instanz kann jeweils nur eine Auswahl für {{field}} synchronisiert werden.",
+        "syncFilterSingleSelection": "Für {{field}} wurden {{count}} Werte ausgewählt. Grenzen Sie die Auswahl auf einen Wert ein, um fortzufahren; pro Konnektor-Instanz kann nur ein Wert für {{field}} synchronisiert werden.",
+        "syncFilterUnsupportedOperator": "Wählen Sie {{field}} erneut aus, um fortzufahren. Die gespeicherte Konfiguration verwendet eine nicht unterstützte Regel „{{operator}}“."
       }
     },
     "mcpServers": {
@@ -2603,7 +3105,13 @@
         "noState": "Es wurde kein State-Parameter zurückgegeben.",
         "backendRejected": "Der Server hat die Autorisierungsanfrage abgelehnt."
       },
-      "deleteDisabledTooltip": "Dieser Server kann nicht gelöscht werden"
+      "deleteDisabledTooltip": "Dieser Server kann nicht gelöscht werden",
+      "authModes": {
+        "none": "Keine Authentifizierung",
+        "apiToken": "API-Token",
+        "oauth": "OAuth 2.0",
+        "headers": "Benutzerdefinierter Header"
+      }
     },
     "bots": {
       "subtitle": "Konfigurieren Sie Bot-Anmeldedaten und ordnen Sie optional jeden Bot einem Agenten zu",
@@ -2689,7 +3197,11 @@
         "loadConfigs": "Bot-Konfigurationen konnten nicht geladen werden",
         "loadData": "Daten konnten nicht geladen werden"
       },
-      "refreshed": "Aktualisiert"
+      "refreshed": "Aktualisiert",
+      "secretVisibility": {
+        "show": "{{secret}} anzeigen",
+        "hide": "{{secret}} verbergen"
+      }
     },
     "mail": {
       "subtitle": "E-Mail-Server-Konfiguration für OTP und Benachrichtigungen",
@@ -2749,6 +3261,11 @@
         "usernamePlaceholder": "SMTP-Benutzernamen eingeben",
         "password": "Passwort (optional)",
         "passwordHint": "Passwort für die SMTP-Authentifizierung (falls erforderlich)"
+      },
+      "configure": "SMTP konfigurieren",
+      "password": {
+        "show": "Passwort anzeigen",
+        "hide": "Passwort verbergen"
       }
     },
     "prompts": {
@@ -2822,7 +3339,8 @@
         "default": "Standard",
         "configured": "Konfiguriert",
         "notConfigured": "Nicht konfiguriert",
-        "active": "Konfiguriert"
+        "active": "Konfiguriert",
+        "builtIn": "Integriert"
       },
       "heading": "Websuche-Konfiguration",
       "methodsSection": "Verschiedene Websuche-Methoden",
@@ -2831,7 +3349,102 @@
       "verifying": "Verbindung wird überprüft...",
       "disabledReasonConfigure": "Konfigurieren Sie diesen Anbieter, bevor Sie ihn aktivieren.",
       "disabledReasonActive": "Deaktivieren Sie den aktuell aktiven Anbieter, bevor Sie diesen aktivieren.",
-      "configureTip": "Konfigurieren"
+      "configureTip": "Konfigurieren",
+      "errors": {
+        "updateSettings": "Websucheinstellungen konnten nicht aktualisiert werden",
+        "addProvider": "Anbieter konnte nicht hinzugefügt werden",
+        "updateProvider": "Anbieter konnte nicht aktualisiert werden",
+        "deleteProvider": "Anbieter konnte nicht gelöscht werden",
+        "setDefaultProvider": "Standardanbieter konnte nicht festgelegt werden"
+      },
+      "actions": {
+        "configureBeforeDefault": "Konfigurieren Sie diesen Anbieter zuerst, bevor Sie ihn als Standard festlegen.",
+        "setAsDefault": "Als Standard festlegen",
+        "setting": "Wird festgelegt …",
+        "editConfiguration": "Konfiguration bearbeiten",
+        "deleteConfiguration": "Konfiguration löschen"
+      },
+      "providers": {
+        "builtInDescription": "Integriert, keine Konfiguration erforderlich"
+      },
+      "configure": {
+        "update": "Aktualisieren",
+        "defaultKeyNotice": "Dieser Anbieter ist derzeit als Standard festgelegt. Wenn Sie den API-Schlüssel aktualisieren, bleibt er weiterhin der Standard.",
+        "editNotice": "Sie bearbeiten eine bestehende Konfiguration. Änderungen werden unmittelbar nach dem Speichern wirksam.",
+        "apiKeyLabel": "API-Schlüssel",
+        "apiKeyPlaceholder": "Geben Sie Ihren API-Schlüssel für {{provider}} ein",
+        "apiKeyHelp": "Sie erhalten Ihren API-Schlüssel unter {{url}}",
+        "secret": {
+          "show": "API-Schlüssel anzeigen",
+          "hide": "API-Schlüssel verbergen"
+        },
+        "errors": {
+          "save": "Anbieter konnte nicht gespeichert werden",
+          "delete": "Anbieter konnte nicht gelöscht werden"
+        },
+        "dangerZone": "Gefahrenbereich",
+        "removeDescription": "Konfiguration dieses Anbieters entfernen. Wenn er als Standard festgelegt ist, wird stattdessen DuckDuckGo verwendet.",
+        "deleteProvider": "Anbieter löschen",
+        "delete": {
+          "cannotDelete": "{{provider}} kann nicht gelöscht werden",
+          "title": "Konfiguration für {{provider}} löschen?",
+          "checkingUsage": "Agentennutzung wird überprüft …",
+          "usage_one": "Dieser Anbieter wird derzeit von {{count}} Service-Agent verwendet:",
+          "usage_other": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
+          "createdBy": "(erstellt von {{creator}})",
+          "removeFromAgents": "Entfernen Sie die Websuchkonfiguration aus diesen Agents, bevor Sie diesen Anbieter löschen.",
+          "defaultDescription": "Dadurch wird Ihr API-Schlüssel für {{provider}} dauerhaft gelöscht. DuckDuckGo wird zum Standardanbieter für die Websuche.",
+          "description": "Dadurch wird Ihr API-Schlüssel für {{provider}} dauerhaft gelöscht. Sie können ihn später erneut konfigurieren."
+        }
+      },
+      "images": {
+        "maxImages": "Maximale Anzahl Eingabebilder pro LLM-Aufruf",
+        "invalidMaxImages": "Geben Sie eine ganze Zahl zwischen 1 und 500 ein",
+        "maxImagesHelp": "Geben Sie eine ganze Zahl zwischen 1 und 500 ein",
+        "costWarning": "Das Einbeziehen von Bildern kann die Kosten erhöhen und Websuchanfragen verzögern."
+      },
+      "page": {
+        "toasts": {
+          "loadFailed": "Websucheinstellungen konnten nicht geladen werden",
+          "providerUpdated": "{{provider}} aktualisiert",
+          "providerAdded": "{{provider}} hinzugefügt",
+          "configurationSaved": "Konfiguration erfolgreich gespeichert.",
+          "providerConfigured": "{{provider}} ist jetzt konfiguriert. Klicken Sie auf „Als Standard festlegen“, um den Anbieter zu verwenden.",
+          "providerRemoved": "{{provider}} entfernt",
+          "duckDuckGoDefault": "DuckDuckGo ist jetzt der Standardanbieter für die Websuche.",
+          "configurationDeleted": "Konfiguration erfolgreich gelöscht.",
+          "resetDefaultFailed": "Standardanbieter konnte nicht zurückgesetzt werden",
+          "configureProviderFirst": "Konfigurieren Sie zuerst {{provider}}",
+          "providerDefault": "{{provider}} ist jetzt der Standardanbieter",
+          "setDefaultFailed": "Standardanbieter konnte nicht festgelegt werden",
+          "deleteFailed": "Anbieter konnte nicht gelöscht werden",
+          "imageSettingsFailed": "Bildeinstellungen konnten nicht aktualisiert werden",
+          "imagesEnabled": "Bilder werden an das LLM gesendet",
+          "imagesDisabled": "Bilder werden nicht an das LLM gesendet",
+          "maxImagesUpdated_one": "Maximale Bildanzahl auf {{count}} festgelegt.",
+          "maxImagesUpdated_other": "Maximale Bildanzahl auf {{count}} festgelegt."
+        },
+        "providers": {
+          "heading": "Websuchanbieter",
+          "description": "Konfigurieren Sie die gewünschten Anbieter und wählen Sie dann einen als Standard aus."
+        },
+        "images": {
+          "heading": "Bildeinstellungen",
+          "description": "Legen Sie fest, ob bei der Websuche Bilder an das LLM gesendet werden."
+        },
+        "delete": {
+          "cannotDelete": "{{provider}} kann nicht gelöscht werden",
+          "title": "Konfiguration für {{provider}} löschen?",
+          "providerTitle": "Anbieter löschen?",
+          "checkingUsage": "Agentennutzung wird überprüft …",
+          "usage_one": "Dieser Anbieter wird derzeit von {{count}} Service-Agent verwendet:",
+          "usage_other": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
+          "createdBy": "(erstellt von {{creator}})",
+          "removeFromAgents": "Entfernen Sie die Websuchkonfiguration aus diesen Agents, bevor Sie diesen Anbieter löschen.",
+          "defaultDescription": "Dieser Anbieter ist derzeit der Standard. Beim Löschen wird DuckDuckGo wieder als Standard festgelegt.",
+          "description": "Dadurch wird die Anbieterkonfiguration dauerhaft gelöscht. Sie können sie später erneut einrichten."
+        }
+      }
     },
     "profile": {
       "subtitle": "Verwalten Sie hier alle Ihre persönlichen Profildaten",
@@ -3026,7 +3639,8 @@
           "label": "Extraktionsdienst",
           "description": "LLM-basierte Dokumentklassifizierung und Metadatenextraktion"
         }
-      }
+      },
+      "logoAlt": "{{service}}-Logo"
     },
     "tenants": {
       "title": "Mandanten",
@@ -3370,7 +3984,8 @@
         "empty": "Noch keine Ressourcen enthalten.",
         "addNew": "Ressource hinzufügen",
         "path": "Pfad",
-        "content": "Inhalt"
+        "content": "Inhalt",
+        "remove": "{{path}} entfernen"
       },
       "versions": {
         "empty": "Noch kein Versionsverlauf.",
@@ -3411,12 +4026,26 @@
         "reject": "Ablehnen",
         "view": "Anzeigen",
         "hide": "Ausblenden",
-        "editAndApprove": "Bearbeiten und genehmigen"
+        "editAndApprove": "Bearbeiten und genehmigen",
+        "sourceSummaryHeading": "So wurde es gelernt:"
       },
       "availability": {
         "label": "Für Agenten verfügbar",
         "description": "Wenn deaktiviert, bleibt dieser Skill in Ihrer Bibliothek, kann von Agenten jedoch nicht gefunden oder geladen werden.",
         "descriptionBuiltin": "Wenn deaktiviert, bleibt dieser integrierte Skill in der Bibliothek, kann jedoch von Agenten in der gesamten Organisation nicht gefunden oder geladen werden."
+      },
+      "editorToolbar": {
+        "bold": "Fett ({{modifier}}+B)",
+        "italic": "Kursiv ({{modifier}}+I)",
+        "inlineCode": "Inline-Code",
+        "heading2": "Überschrift 2",
+        "bulletList": "Aufzählungsliste",
+        "numberedList": "Nummerierte Liste",
+        "codeBlock": "Codeblock",
+        "blockquote": "Zitatblock",
+        "horizontalRule": "Horizontale Linie",
+        "undo": "Rückgängig",
+        "redo": "Wiederholen"
       }
     },
     "serviceAccounts": {
@@ -3495,6 +4124,32 @@
       "disableTitle": "Dieses Dienstkonto deaktivieren?",
       "disableDescription": "{{name}} funktioniert sofort nicht mehr – einschließlich aller bereits vorhandenen Tokens, nicht erst bei der nächsten Anmeldung. Alles, was eines dieser Tokens verwendet, schlägt fehl, bis Sie das Konto wieder aktivieren.",
       "disableConfirm": "Deaktivieren"
+    },
+    "avatar": {
+      "upload": "Hochladen",
+      "remove": "Entfernen"
+    },
+    "entities": {
+      "selectedSummary_one": "{{count}} {{itemLabel}} ausgewählt",
+      "selectedSummary_other": "{{count}} {{itemLabel}} ausgewählt"
+    },
+    "form": {
+      "optional": "optional"
+    },
+    "members": {
+      "noItemsFound": "Keine Elemente gefunden"
+    },
+    "selector": {
+      "searchOrSelect": "Suchen oder auswählen",
+      "noOptionsAvailable": "Keine Optionen verfügbar",
+      "selectOption": "Option auswählen",
+      "removeOption": "{{option}} entfernen"
+    },
+    "settings": {
+      "discardChanges": "Änderungen verwerfen"
+    },
+    "tagInput": {
+      "placeholder": "Wert eingeben"
     }
   },
   "filePreview": {
@@ -3516,7 +4171,83 @@
     "resizeCitations": "Größe des Quellen-Panels ändern",
     "resizePreview": "Größe der Dateivorschau ändern",
     "viewCitations": "Quellen anzeigen",
-    "openNamedInSource": "{{name}} in der Quelle öffnen"
+    "openNamedInSource": "{{name}} in der Quelle öffnen",
+    "openFailedFallback": "Für diese Datei konnte keine Vorschau geöffnet werden. Laden Sie die Datei stattdessen herunter oder versuchen Sie es gleich noch einmal.",
+    "dialogDescription": "Vorschaubereich für {{name}}. Hier werden Dokumentinhalt, Dateidetails und zugehörige Zitate angezeigt.",
+    "documentLoadFailed": {
+      "loading": "Dokument wird geladen …",
+      "fileUnavailable": "Dateidaten nicht verfügbar",
+      "fetchFailed": "Dokument konnte nicht abgerufen werden",
+      "emptyServerFile": "Vom Server wurde eine leere Datei empfangen.",
+      "emptyDocument": "Das Dokument ist leer.",
+      "renderFailed": "Dieses Dokument kann nicht dargestellt werden.",
+      "loadFailed": "Dokument konnte nicht geladen werden"
+    },
+    "htmlLoadFailed": {
+      "loading": "HTML wird geladen …",
+      "noUrl": "Datei-URL nicht verfügbar",
+      "fetchFailed": "Dateiinhalt konnte nicht abgerufen werden",
+      "loadFailed": "Datei konnte nicht geladen werden"
+    },
+    "imageLoadFailed": {
+      "noUrl": "URL der Bilddatei nicht verfügbar",
+      "failed": "Bild konnte nicht geladen werden",
+      "couldNotDisplay": "Die Bilddatei konnte nicht angezeigt werden.",
+      "loading": "Bild wird geladen …",
+      "goToCitation": "Zu Zitat {{id}} wechseln"
+    },
+    "mediaUnavailable": {
+      "videoSourceUnavailable": "URL der Videodatei nicht verfügbar",
+      "audioSourceUnavailable": "URL der Audiodatei nicht verfügbar",
+      "videoUnsupported": "Ihr Browser unterstützt keine Videowiedergabe.",
+      "audioUnsupported": "Ihr Browser unterstützt keine Audiowiedergabe."
+    },
+    "pdfLoadFailed": {
+      "noUrl": "PDF-Datei-URL nicht verfügbar",
+      "unableToLoadPreview": "Vorschau für {{fileName}} kann nicht geladen werden",
+      "loading": "PDF wird geladen …",
+      "loadFailed": "PDF-Datei konnte nicht geladen werden"
+    },
+    "unsupportedDocument": {
+      "legacyDoc": "Diese Datei liegt im veralteten Word-Format (.doc) vor. Eine Vorschau im Browser wird hier nicht unterstützt. Laden Sie die Datei herunter, um sie in Word zu öffnen, oder speichern Sie eine Kopie als .docx, um sie in Pipeshub in der Vorschau anzuzeigen.",
+      "documentType": "Für diesen Dokumenttyp ist keine Vorschau verfügbar. Bitte laden Sie das Dokument herunter, um es anzusehen.",
+      "fileType": "Für diesen Dateityp ist keine Vorschau verfügbar.",
+      "openInBrowser": "Im Browser öffnen"
+    },
+    "markdownLoadFailed": {
+      "loading": "Markdown wird geladen …",
+      "noUrl": "Datei-URL nicht verfügbar",
+      "fetchFailed": "Markdown-Inhalt konnte nicht abgerufen werden",
+      "loadFailed": "Datei konnte nicht geladen werden"
+    },
+    "spreadsheet": {
+      "column": "Spalte {{number}}",
+      "emptyCell": "(Leer)",
+      "loading": "Tabelle wird geladen …",
+      "noUrl": "Datei-URL nicht verfügbar",
+      "fetchFailed": "Tabelle konnte nicht abgerufen werden",
+      "loadFailed": "Tabelle konnte nicht geladen werden",
+      "emptySheet": "Dieses Tabellenblatt ist leer.",
+      "showingRows_one": "Die ersten {{shown}} von {{total}} Zeilen werden angezeigt. Laden Sie die Datei herunter, um alle Daten zu sehen.",
+      "showingRows_other": "Die ersten {{shown}} von {{total}} Zeilen werden angezeigt. Laden Sie die Datei herunter, um alle Daten zu sehen."
+    },
+    "switchVersion": {
+      "switchLabel": "Version {{version}}, Version wechseln",
+      "versionLabel": "Version {{version}}",
+      "switchTitle": "Version wechseln",
+      "optionLabel": "Version {{version}}",
+      "latest": "neueste"
+    },
+    "tabs": {
+      "preview": "Vorschau",
+      "fileDetails": "Dateidetails"
+    },
+    "textLoadFailed": {
+      "loading": "Datei wird geladen …",
+      "noUrl": "Datei-URL nicht verfügbar",
+      "fetchFailed": "Dateiinhalt konnte nicht abgerufen werden",
+      "loadFailed": "Datei konnte nicht geladen werden"
+    }
   },
   "agentBuilder": {
     "goBack": "Zurück",
@@ -3837,7 +4568,8 @@
     "mcpServerWithToolCount_other": "MCP-Server mit {{count}} Tools",
     "deprecatedToolsBanner_one": "{{count}} Tool dieses Agenten ist veraltet. Entfernen Sie es: {{tools}}",
     "deprecatedToolsBanner_other": "{{count}} Tools dieses Agenten sind veraltet. Entfernen Sie diese: {{tools}}",
-    "skillDisabled": "Dieser Skill ist deaktiviert und steht dem Agenten erst wieder zur Verfügung, wenn er erneut aktiviert wird."
+    "skillDisabled": "Dieser Skill ist deaktiviert und steht dem Agenten erst wieder zur Verfügung, wenn er erneut aktiviert wird.",
+    "loadResourcesFailed": "Fehler beim Laden der Builder-Ressourcen"
   },
   "recordView": {
     "sections": {
@@ -3949,7 +4681,8 @@
     "forceReindexDescription": "Das Dokument wird von Grund auf neu indexiert. Dabei können zusätzliche Kosten entstehen. Verwenden Sie diese Option, wenn Suchergebnisse veraltet sind oder das Dokument trotz abgeschlossener Indexierung nicht durchsuchbar ist.",
     "deleteRecord": "Datensatz löschen",
     "previewConversionFailed": "Konvertierung für die Vorschau fehlgeschlagen. Sie können die Datei weiterhin herunterladen.",
-    "missingRecordId": "Datensatz-ID fehlt"
+    "missingRecordId": "Datensatz-ID fehlt",
+    "chatAttachment": "Chat-Anhang"
   },
   "oauthConsent": {
     "loading": "Autorisierungsanfrage wird geladen…",
@@ -4063,7 +4796,13 @@
       "orgEmailVerifiedTitle": "Organisation verifiziert",
       "orgEmailVerifiedDescription": "Ihre Organisation ist jetzt aktiv. Melden Sie sich an, um fortzufahren.",
       "orgEmailVerifyFailedTitle": "Verifizierung fehlgeschlagen",
-      "orgEmailVerifyFailedDescription": "Der Link ist möglicherweise ungültig oder abgelaufen. Bitte registrieren Sie sich erneut."
+      "orgEmailVerifyFailedDescription": "Der Link ist möglicherweise ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "Die JIT-Bereitstellung ist für Ihre Organisation deaktiviert.",
+        "samlSsoDisabled": "SAML-SSO ist für Ihre Organisation nicht aktiviert.",
+        "samlAuthenticationFailed": "Die SAML-Authentifizierung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "unexpectedSamlFailure": "Bei der Anmeldung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      }
     },
     "common": {
       "signIn": "Anmelden",
@@ -4096,13 +4835,118 @@
       "showPassword": "Passwort anzeigen",
       "hidePassword": "Passwort verbergen",
       "accountDisabled": "Ihr Konto wurde deaktiviert.",
-      "tooManyIncorrectCredentials": "Sie haben zu oft falsche Anmeldedaten eingegeben"
+      "tooManyIncorrectCredentials": "Sie haben zu oft falsche Anmeldedaten eingegeben",
+      "orContinueWithProviders": "oder mit einem dieser Anbieter fortfahren",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "E-Mail-OTP",
+      "errorFallback": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "Die Authentifizierungsantwort konnte nicht validiert werden. Bitte versuchen Sie es erneut.",
+        "failed": "Die Anmeldung mit Google ist fehlgeschlagen."
+      },
+      "microsoftCallback": {
+        "validationFailed": "Die Authentifizierungsantwort konnte nicht validiert werden. Bitte versuchen Sie es erneut.",
+        "failed": "Die Anmeldung mit Microsoft ist fehlgeschlagen.",
+        "noCode": "Von Microsoft wurde kein Autorisierungscode empfangen."
+      },
+      "callback": {
+        "authenticationFailed": "Die Authentifizierung ist fehlgeschlagen ({{status}}).",
+        "noCode": "Es wurde kein Autorisierungscode empfangen.",
+        "noState": "Es wurde kein Statusparameter empfangen.",
+        "validationFailed": "Die Authentifizierungsantwort konnte nicht validiert werden. Bitte versuchen Sie es erneut.",
+        "invalidState": "Ungültiger Statusparameter.",
+        "missingProvider": "Ungültiger OAuth-Status: Anbieter fehlt.",
+        "noToken": "Die Authentifizierung war erfolgreich, aber es wurde kein Zugriffstoken zurückgegeben.",
+        "failed": "OAuth-Authentifizierung fehlgeschlagen.",
+        "signInFailed": "Anmeldung fehlgeschlagen",
+        "closeAndRetry": "Sie können dieses Fenster schließen und es erneut versuchen."
+      },
+      "googlePopupError": {
+        "popupBlocked": "Das Google-Anmeldefenster wurde blockiert. Bitte erlauben Sie Pop-ups für diese Website.",
+        "failed": "Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "Der Token-Austausch mit Microsoft ist fehlgeschlagen.",
+        "noIdToken": "Von Microsoft wurde kein ID-Token empfangen.",
+        "failed": "Die Anmeldung mit Microsoft ist fehlgeschlagen.",
+        "popupBlocked": "Das Pop-up wurde blockiert. Bitte erlauben Sie Pop-ups für diese Website und versuchen Sie es erneut.",
+        "startFailed": "Die Microsoft-Anmeldung konnte nicht gestartet werden. Bitte versuchen Sie es erneut."
+      },
+      "popupError": {
+        "popupBlocked": "Das Anmelde-Pop-up wurde blockiert. Bitte erlauben Sie Pop-ups für diese Website.",
+        "failed": "Die OAuth-Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "hero": {
+      "tagline": "Nachvollziehbare Unternehmenssuche für moderne Unternehmen.",
+      "description": "Durchsuchen Sie alle Ihre Business-Apps."
+    },
+    "emailStep": {
+      "genericError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "noAccount": "Für diese E-Mail-Adresse wurde kein Konto gefunden.",
+      "checking": "Wird überprüft …"
+    },
+    "providers": {
+      "signInWithSso": "Mit SSO anmelden",
+      "continueWithGoogle": "Mit Google fortfahren",
+      "continueWithMicrosoft": "Mit Microsoft fortfahren",
+      "continueWithOAuth": "Mit OAuth fortfahren",
+      "continueWithGitHub": "Mit GitHub fortfahren",
+      "continueWithProvider": "Mit {{provider}} fortfahren",
+      "connecting": "Verbindung wird hergestellt …"
+    },
+    "actionFeedback": {
+      "blockedUntil": "Versuchen Sie es nach {{date}} erneut.",
+      "unexpectedResponse": "Unerwartete Antwort. Bitte versuchen Sie es erneut.",
+      "passwordSignInFailed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "noPasswordSetTitle": "Für dieses Konto ist kein Passwort festgelegt.",
+      "noPasswordSetDescription": "Verwenden Sie unten „Passwort vergessen“, um ein Passwort festzulegen.",
+      "resetEmailSuccessDescription": "Falls ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen des Passworts gesendet.",
+      "resetEmailErrorTitle": "Das Zurücksetzen des Passworts konnte nicht angefordert werden",
+      "tryAgainLater": "Bitte versuchen Sie es später erneut.",
+      "googleSignInFailed": "Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "additionalVerificationTitle": "Zusätzliche Überprüfung erforderlich",
+      "additionalVerificationDescription": "Führen Sie den nächsten Schritt aus, um fortzufahren.",
+      "oauthSignInFailed": "Die OAuth-Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "otpSendSuccessTitle": "Prüfen Sie Ihre E-Mails",
+      "otpSendSuccessDescription": "Falls Sie sich mit einem Code über diese E-Mail-Adresse anmelden können, wird gerade ein Code gesendet. Wenn in einigen Minuten nichts angekommen ist, prüfen Sie Ihren Spam-Ordner oder versuchen Sie es später erneut.",
+      "otpSendErrorTitle": "Der Bestätigungscode konnte nicht gesendet werden",
+      "verificationFailed": "Die Überprüfung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "microsoftSignInFailed": "Die Anmeldung mit Microsoft ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "contactAdministrator": "Bitte wenden Sie sich an Ihre Administration."
+    },
+    "emailVerification": {
+      "missingToken": "Im Bestätigungslink fehlt ein Token.",
+      "completing": "E-Mail-Adresse wird bestätigt …",
+      "failed": "Die E-Mail-Bestätigung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
     }
   },
   "healthGate": {
     "title": "Verbindung zum Server nicht möglich",
     "description": "Der Server ist derzeit nicht erreichbar. Möglicherweise wird er gerade gestartet oder gewartet. Wir versuchen, die Verbindung wiederherzustellen.",
-    "contactAdmin": "Falls das Problem weiterhin besteht, wenden Sie sich bitte an Ihren PipesHub-Administrator."
+    "contactAdmin": "Falls das Problem weiterhin besteht, wenden Sie sich bitte an Ihren PipesHub-Administrator.",
+    "toast": {
+      "critical": {
+        "title": "Einige Dienste sind nicht verfügbar",
+        "memberDescription": "Einige Funktionen sind vorübergehend nicht verfügbar. Die Verbindung wird automatisch wiederhergestellt. Falls das Problem bestehen bleibt, wenden Sie sich an Ihre Administration.",
+        "adminDescription": "Betroffen: {{services}}"
+      },
+      "viewStatus": "Status anzeigen",
+      "nonCritical": {
+        "adminTitle_one": "{{services}} ist derzeit nicht verfügbar",
+        "adminTitle_other": "{{services}} sind derzeit nicht verfügbar",
+        "memberTitle": "Einige Funktionen sind vorübergehend nicht verfügbar"
+      }
+    },
+    "serviceGate": {
+      "title": "Dienst nicht verfügbar",
+      "adminDescription_one": "Diese Seite benötigt {{services}}, das derzeit nicht verfügbar ist. Sie wird automatisch wieder verfügbar, sobald der Dienst wieder funktioniert.",
+      "adminDescription_other": "Diese Seite benötigt {{services}}, die derzeit nicht verfügbar sind. Sie wird automatisch wieder verfügbar, sobald die Dienste wieder funktionieren.",
+      "memberDescription": "Diese Seite ist vorübergehend nicht verfügbar. Sie wird automatisch wieder verfügbar. Falls das Problem bestehen bleibt, wenden Sie sich an Ihre Administration.",
+      "viewStatus": "Dienststatus anzeigen"
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "Frage :",
@@ -4148,6 +4992,13 @@
       "reindexFailedError": "Fehlgeschlagene Datensätze konnten nicht neu indexiert werden",
       "manualIndexStart": "Datensätze mit manueller Indexierung werden indexiert…",
       "manualIndexError": "Manuelle Indexierung konnte nicht gestartet werden"
+    },
+    "toast": {
+      "renameFailed": "Umbenennen fehlgeschlagen",
+      "folderRenamed": "Ordner erfolgreich umbenannt",
+      "collectionRenamed": "Sammlung erfolgreich umbenannt",
+      "renameRefreshWarningTitle": "Liste konnte nicht aktualisiert werden",
+      "renameRefreshWarningDescription": "{{kind}} wurde umbenannt, aber die Liste wurde nicht aktualisiert. Aktualisieren Sie die Seite, um die aktuelle Liste zu sehen."
     }
   },
   "reindexScope": {
@@ -4216,7 +5067,10 @@
     },
     "team": "Team",
     "teamsNoRoles": "Teams haben keine Rollen",
-    "invite": "Zu PipesHub einladen"
+    "invite": "Zu PipesHub einladen",
+    "shareConversation": "Chat teilen",
+    "memberNameUnknown": "Unbekannt",
+    "searchPlaceholder": "E-Mail-Adressen, Teams oder Namen (durch Kommas getrennt)"
   },
   "demoData": {
     "badge": {
@@ -4257,5 +5111,162 @@
       "onTitle": "Demodaten für alle wieder eingeschaltet",
       "errorTitle": "Die Demodaten konnten nicht für alle geändert werden"
     }
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "Profil vervollständigen",
+      "description": "Bitte geben Sie Ihren vollständigen Namen ein, um fortzufahren. So können Ihre Teammitglieder Sie in allen Arbeitsbereichen erkennen.",
+      "errors": {
+        "required": "Der vollständige Name ist erforderlich",
+        "minimumLength": "Der vollständige Name muss mindestens 2 Zeichen lang sein",
+        "userUnavailable": "Benutzer konnte nicht ermittelt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut.",
+        "saveFailed": "Ihr Name konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+      },
+      "saveAndContinue": "Speichern und fortfahren"
+    }
+  },
+  "connectors": {
+    "oauthCallback": {
+      "errors": {
+        "serverConfirmation": "Der Server hat den Abschluss der OAuth-Anmeldung nicht bestätigt.",
+        "authenticationFailed": "Die Authentifizierung ist fehlgeschlagen. Bitte versuchen Sie es erneut oder wenden Sie sich an Ihre Administration.",
+        "rejected": "Der Server hat die OAuth-Authentifizierung abgelehnt."
+      }
+    }
+  },
+  "knowledgeBase": {
+    "accessRevoked": "Sie haben keinen Zugriff mehr auf diese Sammlung.",
+    "bulkDeleteFailed": "Massenlöschung fehlgeschlagen",
+    "bulkDeleteFallback": "Die ausgewählten Elemente konnten nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "bulkDeletePartial_one": "{{successCount}} Element gelöscht; {{failCount}} fehlgeschlagen.",
+    "bulkDeletePartial_other": "{{successCount}} Elemente gelöscht; {{failCount}} fehlgeschlagen.",
+    "bulkDeleteProgress_one": "{{count}} Element wird gelöscht …",
+    "bulkDeleteProgress_other": "{{count}} Elemente werden gelöscht …",
+    "bulkDeleteSuccess_one": "{{count}} Element erfolgreich gelöscht",
+    "bulkDeleteSuccess_other": "{{count}} Elemente erfolgreich gelöscht",
+    "bulkReindexFailed": "Massenindizierung fehlgeschlagen",
+    "bulkReindexFallback": "Die ausgewählten Elemente konnten nicht erneut indiziert werden. Bitte versuchen Sie es erneut.",
+    "bulkReindexPartial_one": "{{successCount}} Element erneut indiziert; {{failCount}} fehlgeschlagen.",
+    "bulkReindexPartial_other": "{{successCount}} Elemente erneut indiziert; {{failCount}} fehlgeschlagen.",
+    "bulkReindexProgress_one": "{{count}} Element wird erneut indiziert …",
+    "bulkReindexProgress_other": "{{count}} Elemente werden erneut indiziert …",
+    "bulkReindexSuccess_one": "{{count}} Element erfolgreich erneut indiziert",
+    "bulkReindexSuccess_other": "{{count}} Elemente erfolgreich erneut indiziert",
+    "collectionsLoadFailedTitle": "Sammlungen konnten nicht geladen werden",
+    "createFolderFailed": "Ordner konnte nicht erstellt werden",
+    "createFolderFallback": "Der Ordner konnte nicht erstellt werden. Überprüfen Sie den Namen und versuchen Sie es erneut.",
+    "createFolderSuccess": "Ordner erfolgreich erstellt",
+    "createFolderSuccessDescription": "„{{name}}“ wurde erstellt",
+    "deleteFailed": "{{kind}} konnte nicht gelöscht werden",
+    "deleteFailedTitle": "Löschen fehlgeschlagen",
+    "deleteFallback": "Löschen fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "deleteRefreshFailed": "Liste konnte nicht aktualisiert werden",
+    "deleteRefreshFailedDescription": "{{kind}} wurde gelöscht, aber die Liste wurde nicht aktualisiert. Aktualisieren Sie die Seite, um die aktuelle Liste zu sehen.",
+    "deleteSuccess": "„{{name}}“ erfolgreich gelöscht",
+    "deleteSuccessDescription": "{{kind}} wurde gelöscht.",
+    "deleteSuccessTitle": "Erfolgreich gelöscht",
+    "downloadFailed": "Download fehlgeschlagen",
+    "downloadFallback": "Die Datei konnte nicht heruntergeladen werden. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "errors": {
+      "folderCollectionIdRequired": "Die Sammlungs-ID ist erforderlich, um diesen Ordner zu aktualisieren."
+    },
+    "folderDetails": {
+      "collection": "Sammlung",
+      "connector": "Konnektor",
+      "createdAt": "Erstellt am",
+      "empty": "Keine Ordnerdetails verfügbar",
+      "folder": "Ordner",
+      "indexingStatus": "Indizierungsstatus",
+      "metadata": "Metadaten",
+      "origin": "Ursprung",
+      "permissions": "Berechtigungen",
+      "recordGroup": "Datensatzgruppe",
+      "recordType": "Datensatztyp",
+      "title": "Ordnerdetails",
+      "totalItems": "Elemente insgesamt",
+      "updatedAt": "Aktualisiert am",
+      "version": "Version"
+    },
+    "loadCollectionsFallback": "Ihre Sammlungen konnten nicht geladen werden. Überprüfen Sie Ihre Verbindung und wählen Sie dann „Erneut versuchen“.",
+    "loadItemsFailed": "Elemente konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "loadMoreConnectorsFailed": "Weitere Konnektoren konnten nicht geladen werden",
+    "loadMoreFailedDescription": "Bitte versuchen Sie es erneut oder aktualisieren Sie die Seite.",
+    "loadMoreItemsFailed": "Weitere Elemente konnten nicht geladen werden",
+    "loadRecordsFailed": "Datensätze konnten nicht geladen werden",
+    "moveFailed": "Element konnte nicht verschoben werden",
+    "moveFallback": "Das Element konnte nicht verschoben werden. Bitte versuchen Sie es gleich noch einmal.",
+    "moveSuccess": "Element erfolgreich verschoben",
+    "moveSuccessDescription": "„{{name}}“ wurde verschoben",
+    "reindex": {
+      "toast": {
+        "indexing": "Wird indiziert …",
+        "reindexing": "Wird erneut indiziert …",
+        "queuedIndexing": "Erfolgreich zur Indizierung vorgemerkt",
+        "queuedReindexing": "Erfolgreich zur erneuten Indizierung vorgemerkt"
+      }
+    },
+    "reindexFallback": "Die erneute Indizierung konnte nicht gestartet werden. Bitte versuchen Sie es gleich noch einmal.",
+    "renameFailed": "Umbenennen fehlgeschlagen",
+    "renameFallback": "Das Element konnte nicht umbenannt werden. Bitte versuchen Sie es gleich noch einmal.",
+    "renameSuccess": "Erfolgreich umbenannt",
+    "renameSuccessDescription": "Umbenannt in „{{name}}“",
+    "replaceFailed": "Datei konnte nicht ersetzt werden",
+    "replaceFallback": "Die Datei konnte nicht ersetzt werden. Bitte versuchen Sie es gleich noch einmal.",
+    "replaceFile": {
+      "allowedFileType": "Zum Ersetzen dieser Datei können Sie nur {{fileType}}-Dateien ({{extension}}) hochladen.",
+      "currentFile": "Aktuelle Datei",
+      "maxSize": "Sie können Dateien bis zu {{maxFileSizeMB}} MB hochladen.",
+      "name": "Name",
+      "supports": "Unterstützt: nur {{fileType}}",
+      "title": "Datei ersetzen",
+      "upload": "Hochladen"
+    },
+    "replaceSuccess": "Datei erfolgreich ersetzt",
+    "replaceSuccessDescription": "„{{oldName}}“ wurde durch „{{newName}}“ ersetzt",
+    "sidebarLoadFailedAppSectionsDescription": "App-Bereiche konnten nicht geladen werden. Bitte aktualisieren Sie die Seite.",
+    "sidebarLoadFailedCollectionsDescription": "Sammlungen konnten nicht geladen werden. Bitte aktualisieren Sie die Seite.",
+    "sidebarLoadFailedTitle": "Seitenleiste konnte nicht geladen werden",
+    "upload": {
+      "addFiles": "Dateien hinzufügen",
+      "addFolder": "Ordner hinzufügen",
+      "collapseFolder": "Ordner zuklappen",
+      "documentation": "Dokumentation",
+      "expandFolder": "Ordner aufklappen",
+      "fileCount_one": "{{count}} Datei",
+      "fileCount_other": "{{count}} Dateien",
+      "fileLimitDescription": "Bis zu {{maxFileSizeMB}} MB pro Datei; Dateityp und -größe werden beim Hochladen geprüft",
+      "folderCount_one": "{{count}} Ordner",
+      "folderCount_other": "{{count}} Ordner",
+      "folderLimitDescription": "Jede Datei wird beim Hochladen geprüft (max. {{maxFileSizeMB}} MB pro Datei)",
+      "moreBelow": "Weitere Elemente unten",
+      "or": "ODER",
+      "removeNamedItem": "{{name}} entfernen",
+      "title": "Daten hochladen",
+      "upload": "Hochladen",
+      "uploadFiles": "Dateien hochladen",
+      "uploadFolders": "Ordner hochladen"
+    }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Ctrl"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "Am",
+      "between": "Zwischen",
+      "before": "Vor",
+      "after": "Nach"
+    },
+    "startDateEndDate": "Startdatum – Enddatum",
+    "pickDate": "Datum auswählen",
+    "endDate": "Enddatum",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "time": "Uhrzeit",
+    "apply": "Anwenden",
+    "previousMonth": "Vorheriger Monat",
+    "nextMonth": "Nächster Monat"
   }
 }

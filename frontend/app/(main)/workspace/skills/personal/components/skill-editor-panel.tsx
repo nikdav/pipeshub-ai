@@ -723,7 +723,7 @@ function ResourcesTab({
                 <Text size="1" style={{ color: 'var(--slate-12)', fontFamily: 'monospace' }}>{path}</Text>
               </Flex>
               {!readOnly && (
-                <Button variant="ghost" color="red" size="1" onClick={() => handleRemove(path)} disabled={busy} style={{ cursor: 'pointer' }}>
+                <Button variant="ghost" color="red" size="1" onClick={() => handleRemove(path)} disabled={busy} aria-label={t('workspace.skills.resources.remove', { path })} style={{ cursor: 'pointer' }}>
                   <MaterialIcon name="close" size={14} color="var(--red-a11)" />
                 </Button>
               )}

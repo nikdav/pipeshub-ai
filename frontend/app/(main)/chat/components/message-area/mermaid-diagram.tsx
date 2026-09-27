@@ -540,7 +540,7 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
   const [open, setOpen]                   = useState(false);
   const [zoom, setZoom]                   = useState(DEFAULT_ZOOM);
   const [copyFeedback, setCopyFeedback]   = useState<CopyFeedback>(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   // Inline view: max-width variant — natural size for compact diagrams,
   // shrinks to fit container for wide ones (no horizontal scroll).
@@ -897,7 +897,10 @@ export function MermaidDiagram({ chart }: MermaidDiagramProps) {
                   userSelect: 'none',
                 }}
               >
-                {zoom}%
+                {new Intl.NumberFormat(i18n.resolvedLanguage ?? i18n.language, {
+                  style: 'percent',
+                  maximumFractionDigits: 0,
+                }).format(zoom / 100)}
               </Text>
 
               <IconButton

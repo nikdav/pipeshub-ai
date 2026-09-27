@@ -6,6 +6,7 @@ import { Dialog, Button, Flex, Box, Text, Callout, TextField } from '@radix-ui/t
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LoadingButton } from '@/app/components/ui/loading-button';
 import { useToastStore } from '@/lib/store/toast-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 import { ConnectorsApi } from '../api';
 
 // ========================================
@@ -110,20 +111,18 @@ export function VectorStoreActions() {
           await ConnectorsApi.reindexVectorStore();
         }
         closeDialog();
+        const titleText = localizedText(
+          `workspace.connectors.vectorStore.${operation}.started`,
+        );
+        const descriptionText = localizedText(
+          `workspace.connectors.vectorStore.${operation}.startedDetail`,
+        );
         addToast({
           variant: 'success',
-          title: t(
-            `workspace.connectors.vectorStore.${operation}.started`,
-            operation === 'cleanup'
-              ? 'Cleanup started'
-              : 'Reindex started',
-          ),
-          description: t(
-            `workspace.connectors.vectorStore.${operation}.startedDetail`,
-            operation === 'cleanup'
-              ? 'The collection is being recreated. Search stays empty until a reindex completes.'
-              : 'Records are being re-embedded in the background. This can take a while.',
-          ),
+          title: t(titleText.key),
+          titleText,
+          description: t(descriptionText.key),
+          descriptionText,
         });
       } catch {
         // apiClient surfaces the server message (409 when a job is already
