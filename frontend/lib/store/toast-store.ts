@@ -215,16 +215,22 @@ export const useToastStore = create<ToastStore>()(
 
       updateToast: (id, updates) => {
         const { renderDescription, title, description, titleText, descriptionText, ...rest } = updates;
+        const hasTitleText = Object.prototype.hasOwnProperty.call(updates, 'titleText');
+        const hasDescription = Object.prototype.hasOwnProperty.call(updates, 'description');
+        const hasDescriptionText = Object.prototype.hasOwnProperty.call(updates, 'descriptionText');
         const normalizedTitle = titleText ? normalizeText(titleText) : normalizeText(title);
         const normalizedDescription = descriptionText ? normalizeText(descriptionText) : normalizeText(description);
         const toastUpdates = {
           ...rest,
+          ...(hasTitleText && { titleText }),
+          ...(hasDescriptionText && { descriptionText }),
           ...(title !== undefined || titleText ? { title: normalizedTitle.text ?? '', titleText: normalizedTitle.descriptor } : {}),
-          ...(description !== undefined || descriptionText ? {
+          ...(hasDescription || descriptionText ? {
             description: normalizedDescription.text,
             descriptionText: normalizedDescription.descriptor,
           } : {}),
         };
+
         if (renderDescription !== undefined) {
           if (renderDescription) {
             renderDescriptionByToastId.set(id, renderDescription);

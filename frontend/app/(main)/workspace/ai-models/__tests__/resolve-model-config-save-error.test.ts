@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { ErrorType, type ProcessedError } from '@/lib/api/api-error';
+import { AxiosError } from 'axios';
+import { ErrorType, processError, type ProcessedError } from '@/lib/api/api-error';
 import {
   extractErrorCode,
   resolveModelConfigSaveError,
@@ -87,6 +88,15 @@ describe('resolveModelConfigSaveError', () => {
       message: 'Incorrect API key provided',
     });
     expect(resolveModelConfigSaveError(err)).toBe('Incorrect API key provided');
+  });
+
+  it('preserves a processed localized fallback when no domain error applies', () => {
+    const err = processError({
+      message: 'Request failed with status code 500',
+      response: { status: 500, data: {} },
+    } as AxiosError);
+
+    expect(resolveModelConfigSaveError(err)).toEqual({ key: 'common.errors.api.server' });
   });
 
   it('uses the fallback key for unknown errors', () => {

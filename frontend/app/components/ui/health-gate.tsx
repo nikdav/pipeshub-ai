@@ -138,6 +138,7 @@ export function HealthGate({ children }: { children: React.ReactNode }) {
   const infraServiceNames = useServicesHealthStore(selectInfraServiceNames);
 
   const criticalToastIdRef = useRef<string | null>(null);
+  const nonCriticalToastIdRef = useRef<string | null>(null);
   const lastNonCriticalToastRef = useRef<number>(0);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wasUnreachableRef = useRef(false);
@@ -268,15 +269,15 @@ export function HealthGate({ children }: { children: React.ReactNode }) {
     // Non-critical services (indexing, docling) → auto-dismiss toast, once per hour
     if (nonCritical.length > 0) {
       const now = Date.now();
+      const title = isAdmin === true
+        ? localizedText('healthGate.toast.nonCritical.adminTitle', {
+            count: nonCritical.length,
+            services: formatServiceList(displayNames(nonCritical), locale),
+          })
+        : localizedText('healthGate.toast.nonCritical.memberTitle');
       if (now - lastNonCriticalToastRef.current >= NON_CRITICAL_TOAST_INTERVAL) {
         lastNonCriticalToastRef.current = now;
-        const title = isAdmin === true
-          ? localizedText('healthGate.toast.nonCritical.adminTitle', {
-              count: nonCritical.length,
-              services: formatServiceList(displayNames(nonCritical), locale),
-            })
-          : localizedText('healthGate.toast.nonCritical.memberTitle');
-        toast.warning(title, {
+        nonCriticalToastIdRef.current = toast.warning(title, {
             ...(isAdmin === true && {
               action: {
                 label: t('healthGate.toast.viewStatus'),
@@ -285,9 +286,11 @@ export function HealthGate({ children }: { children: React.ReactNode }) {
               },
             }),
           });
+      } else if (nonCriticalToastIdRef.current) {
+        toast.update(nonCriticalToastIdRef.current, { title });
       }
     }
-  }, [apiServerReachable, backgroundCheckFailed, appServices, infraServices, infraServiceNames, isAdmin, router, t, i18n.language]);
+  }, [apiServerReachable, backgroundCheckFailed, appServices, infraServices, infraServiceNames, isAdmin, router, t, i18n.language, i18n.resolvedLanguage]);
 
   if (!apiServerReachable) {
     return <BackendUnavailableScreen />;

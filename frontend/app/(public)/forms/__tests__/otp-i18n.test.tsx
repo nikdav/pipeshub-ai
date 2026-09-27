@@ -59,14 +59,14 @@ describe('OTP localization', () => {
       </Theme></I18nextProvider>,
     );
     const input = screen.getByLabelText('OTP') as HTMLInputElement;
-    fireEvent.click(screen.getByRole('button', { name: i18n.t('auth.common.showPassword') }));
+    fireEvent.click(screen.getByRole('button', { name: i18n.t('auth.common.showOtp') }));
     expect(input.type).toBe('text');
     await act(async () => { await i18n.changeLanguage('de-DE'); });
-    expect(screen.getByRole('button', { name: i18n.t('auth.common.hidePassword') })).toBeTruthy();
+    expect(screen.getByRole('button', { name: i18n.t('auth.common.hideOtp') })).toBeTruthy();
     expect(input.value).toBe('123456');
     expect(input.type).toBe('text');
     expect(onChange).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: i18n.t('auth.common.hidePassword') }));
+    fireEvent.click(screen.getByRole('button', { name: i18n.t('auth.common.hideOtp') }));
     expect(input.type).toBe('password');
   });
 

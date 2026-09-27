@@ -15,33 +15,13 @@ vi.mock('@/app/components/theme-provider', () => ({
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 
-function setPath(target: Record<string, unknown>, path: string, value: string): void {
-  const parts = path.split('.');
-  let current = target;
-  for (const part of parts.slice(0, -1)) {
-    current[part] ??= {};
-    current = current[part] as Record<string, unknown>;
-  }
-  current[parts[parts.length - 1]] = value;
-}
-
 async function translations() {
-  const catalogs = structuredClone(locales) as Record<string, Record<string, unknown>>;
-  setPath(catalogs['en-US'], 'filePreview.textLoadFailed.loading', 'Loading file...');
-  setPath(catalogs['en-US'], 'filePreview.textLoadFailed.noUrl', 'File URL not available');
-  setPath(catalogs['en-US'], 'filePreview.textLoadFailed.fetchFailed', 'Failed to fetch file content');
-  setPath(catalogs['en-US'], 'filePreview.textLoadFailed.loadFailed', 'Failed to load file');
-  setPath(catalogs['de-DE'], 'filePreview.textLoadFailed.loading', 'Datei wird geladen...');
-  setPath(catalogs['de-DE'], 'filePreview.textLoadFailed.noUrl', 'Datei-URL nicht verfügbar');
-  setPath(catalogs['de-DE'], 'filePreview.textLoadFailed.fetchFailed', 'Dateiinhalt konnte nicht geladen werden');
-  setPath(catalogs['de-DE'], 'filePreview.textLoadFailed.loadFailed', 'Datei konnte nicht geladen werden');
-
   const i18n = createInstance();
   await i18n.use(initReactI18next).init({
     lng: 'en-US',
     fallbackLng: 'en-US',
     resources: Object.fromEntries(
-      Object.entries(catalogs).map(([language, catalogue]) => [language, { translation: catalogue }]),
+      Object.entries(locales).map(([language, catalogue]) => [language, { translation: catalogue }]),
     ) as Resource,
     interpolation: { escapeValue: false },
   });
@@ -64,7 +44,7 @@ describe('preview language changes', () => {
     expect(await screen.findByText('Failed to fetch file content')).toBeTruthy();
     await act(async () => { await i18n.changeLanguage('de-DE'); });
 
-    expect(screen.getByText('Dateiinhalt konnte nicht geladen werden')).toBeTruthy();
+    expect(screen.getByText('Dateiinhalt konnte nicht abgerufen werden')).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
@@ -73,7 +53,7 @@ describe('preview language changes', () => {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(
       workbook,
-      XLSX.utils.aoa_to_sheet([['Heading'], ['First sheet content']]),
+      XLSX.utils.aoa_to_sheet([['Heading', null], ['First sheet content', 'Second column content']]),
       'First sheet',
     );
     XLSX.utils.book_append_sheet(
@@ -97,12 +77,17 @@ describe('preview language changes', () => {
     );
 
     expect(await screen.findByText('First sheet content')).toBeTruthy();
+    expect(screen.getByText('(Empty)')).toBeTruthy();
+    expect(screen.queryByText('Column 2')).toBeNull();
     fireEvent.click(screen.getByText('Second sheet'));
     expect(await screen.findByText('User supplied value')).toBeTruthy();
     await act(async () => { await i18n.changeLanguage('de-DE'); });
 
     expect(screen.getByText('User heading')).toBeTruthy();
     expect(screen.getByText('User supplied value')).toBeTruthy();
+    fireEvent.click(screen.getByText('First sheet'));
+    expect(screen.getByText('(Leer)')).toBeTruthy();
+    expect(screen.queryByText('Spalte 2')).toBeNull();
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -4212,7 +4212,6 @@
       "loadFailed": "加载文件失败"
     },
     "spreadsheet": {
-      "column": "第 {{number}} 列",
       "emptyCell": "（空）",
       "loading": "正在加载电子表格…",
       "noUrl": "文件 URL 不可用",
@@ -4822,6 +4821,8 @@
       "oauthUnavailable": "OAuth 登录目前不可用。请联系您的管理员。",
       "showPassword": "显示密码",
       "hidePassword": "隐藏密码",
+      "showOtp": "显示验证码",
+      "hideOtp": "隐藏验证码",
       "accountDisabled": "您的账号已被停用。",
       "tooManyIncorrectCredentials": "您输入错误凭据的次数过多",
       "errorFallback": "发生错误。请重试。",

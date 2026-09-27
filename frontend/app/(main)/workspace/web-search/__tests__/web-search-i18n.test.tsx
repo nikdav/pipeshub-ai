@@ -107,7 +107,7 @@ describe('web-search localized feedback', () => {
       messageText: localizedText('workspace.webSearch.configure.errors.save'),
     });
     mocks.addProvider.mockRejectedValue(error);
-    const { rerender } = renderWithI18n(
+    renderWithI18n(
       <ConfigurePanel
         open
         provider="serper"
@@ -129,19 +129,6 @@ describe('web-search localized feedback', () => {
     expect(mocks.addProvider).toHaveBeenCalledTimes(1);
 
     await act(async () => { await i18n.changeLanguage('de-DE'); });
-    rerender(
-      <I18nextProvider i18n={i18n}>
-        <ConfigurePanel
-          open
-          provider="serper"
-          providerMeta={providerMeta}
-          existingProvider={null}
-          onClose={vi.fn()}
-          onSaveSuccess={vi.fn()}
-          onDeleteSuccess={vi.fn()}
-        />
-      </I18nextProvider>,
-    );
     expect(await screen.findByText('Deutscher lokaler Fehler')).toBeTruthy();
     expect(mocks.addProvider).toHaveBeenCalledTimes(1);
     expect(mocks.updateProvider).not.toHaveBeenCalled();

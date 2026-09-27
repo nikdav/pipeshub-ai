@@ -4221,7 +4221,6 @@
       "loadFailed": "फ़ाइल लोड नहीं हो सकी"
     },
     "spreadsheet": {
-      "column": "कॉलम {{number}}",
       "emptyCell": "(खाली)",
       "loading": "स्प्रेडशीट लोड हो रही है…",
       "noUrl": "फ़ाइल URL उपलब्ध नहीं है",
@@ -4834,6 +4833,8 @@
       "oauthUnavailable": "OAuth साइन-इन अभी उपलब्ध नहीं। अपने प्रशासक से संपर्क करें।",
       "showPassword": "पासवर्ड दिखाएं",
       "hidePassword": "पासवर्ड छुपाएं",
+      "showOtp": "OTP दिखाएँ",
+      "hideOtp": "OTP छिपाएँ",
       "accountDisabled": "आपका खाता अक्षम कर दिया गया है।",
       "tooManyIncorrectCredentials": "आपने बहुत बार ग़लत क्रेडेंशियल दर्ज किए हैं",
       "orContinueWithProviders": "या इसके ज़रिए जारी रखें",

@@ -88,7 +88,7 @@ const OtpField = React.forwardRef<HTMLInputElement, OtpFieldProps>(function OtpF
             variant="ghost"
             color="gray"
             onClick={() => setVisible((v) => !v)}
-            aria-label={visible ? t('auth.common.hidePassword') : t('auth.common.showPassword')}
+            aria-label={visible ? t('auth.common.hideOtp') : t('auth.common.showOtp')}
           >
             <span
               className="material-icons-outlined"

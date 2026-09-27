@@ -4246,7 +4246,6 @@
       "loadFailed": "Failed to load file"
     },
     "spreadsheet": {
-      "column": "Column {{number}}",
       "emptyCell": "(Empty)",
       "loading": "Loading spreadsheet...",
       "noUrl": "File URL not available",
@@ -4871,6 +4870,8 @@
       "oauthUnavailable": "OAuth sign-in is currently unavailable. Contact your administrator.",
       "showPassword": "Show password",
       "hidePassword": "Hide password",
+      "showOtp": "Show OTP",
+      "hideOtp": "Hide OTP",
       "accountDisabled": "Your account has been disabled.",
       "tooManyIncorrectCredentials": "You have entered incorrect credentials too many times",
       "orContinueWithProviders": "or continue with",

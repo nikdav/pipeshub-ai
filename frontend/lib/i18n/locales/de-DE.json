@@ -1300,7 +1300,7 @@
       "question": "Frage",
       "bug": "Fehler im Code",
       "example": "Beispiel",
-      "abstract": "Abstrakt",
+      "abstract": "Kurzfassung",
       "summary": "Zusammenfassung",
       "quote": "Zitat"
     },
@@ -4221,7 +4221,6 @@
       "loadFailed": "Datei konnte nicht geladen werden"
     },
     "spreadsheet": {
-      "column": "Spalte {{number}}",
       "emptyCell": "(Leer)",
       "loading": "Tabelle wird geladen …",
       "noUrl": "Datei-URL nicht verfügbar",
@@ -4834,6 +4833,8 @@
       "oauthUnavailable": "OAuth-Anmeldung ist derzeit nicht verfügbar. Kontaktieren Sie Ihren Administrator.",
       "showPassword": "Passwort anzeigen",
       "hidePassword": "Passwort verbergen",
+      "showOtp": "OTP anzeigen",
+      "hideOtp": "OTP verbergen",
       "accountDisabled": "Ihr Konto wurde deaktiviert.",
       "tooManyIncorrectCredentials": "Sie haben zu oft falsche Anmeldedaten eingegeben",
       "orContinueWithProviders": "oder mit einem dieser Anbieter fortfahren",

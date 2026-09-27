@@ -114,6 +114,7 @@ describe('small citation helpers', () => {
     vi.setSystemTime(new Date('2026-09-24T12:00:00Z'));
     const ago = (ms: number) => new Date(Date.now() - ms).toISOString();
     expect(formatSyncLabel(undefined)).toBeUndefined();
+    expect(formatSyncLabel('not a valid date')).toBeUndefined();
     expect(formatSyncLabel(ago(-5000))).toBe('Synced just now');
     expect(formatSyncLabel(ago(30_000))).toBe('Synced just now');
     expect(formatSyncLabel(ago(5 * 60_000))).toBe('Synced 5m ago');

@@ -30,6 +30,9 @@ export function resolveModelConfigSaveError(err: unknown): LocalizedTextValue {
     if (code === 'health_check_timeout' || err.type === ErrorType.TIMEOUT_ERROR) {
       return localizedText('workspace.aiModels.configSaveTimeoutError');
     }
+    if (err.messageText) {
+      return err.messageText;
+    }
     if (err.message.trim()) {
       return err.message.trim();
     }

@@ -40,6 +40,18 @@ describe('localized text descriptors', () => {
 
 describe('formatLocalizedBytes', () => {
   it('preserves the existing binary thresholds and unit labels while localizing decimals', () => {
+    expect(formatLocalizedBytes(0, 'en-US', {
+      base: 1024,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+      units: ['Bytes', 'KB', 'MB'],
+    })).toBe('0 Bytes');
+    expect(formatLocalizedBytes(1023, 'en-US', {
+      base: 1024,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+      units: ['Bytes', 'KB', 'MB'],
+    })).toBe('1,023 Bytes');
     expect(formatLocalizedBytes(900, 'de-DE', { units: ['B', 'KB', 'MB'] })).toBe('900 B');
     expect(formatLocalizedBytes(1536, 'en-US', { units: ['B', 'KB', 'MB'] })).toBe('1.5 KB');
     expect(formatLocalizedBytes(1536, 'de-DE', { units: ['B', 'KB', 'MB'] })).toBe('1,5 KB');

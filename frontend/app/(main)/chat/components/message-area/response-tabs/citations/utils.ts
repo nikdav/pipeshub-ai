@@ -192,7 +192,9 @@ export function formatSyncLabel(
   translate = i18n.t.bind(i18n),
 ): string | undefined {
   if (!isoDate) return undefined;
-  const diff = Date.now() - new Date(isoDate).getTime();
+  const timestamp = new Date(isoDate).getTime();
+  if (!Number.isFinite(timestamp)) return undefined;
+  const diff = Date.now() - timestamp;
   if (diff < 0) return translate('chat.syncedJustNow', { defaultValue: 'Synced just now' });
   const seconds = Math.floor(diff / 1000);
   if (seconds < 60) return translate('chat.syncedJustNow', { defaultValue: 'Synced just now' });

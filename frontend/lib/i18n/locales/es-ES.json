@@ -4270,7 +4270,6 @@
       "loadFailed": "No se pudo cargar el archivo"
     },
     "spreadsheet": {
-      "column": "Columna {{number}}",
       "emptyCell": "(Vacía)",
       "loading": "Cargando hoja de cálculo...",
       "noUrl": "La URL del archivo no está disponible.",
@@ -4886,6 +4885,8 @@
       "oauthUnavailable": "El inicio de sesión OAuth no está disponible. Contacta a tu administrador.",
       "showPassword": "Mostrar contraseña",
       "hidePassword": "Ocultar contraseña",
+      "showOtp": "Mostrar código OTP",
+      "hideOtp": "Ocultar código OTP",
       "accountDisabled": "Su cuenta se ha deshabilitado.",
       "tooManyIncorrectCredentials": "Ha introducido credenciales incorrectas demasiadas veces",
       "orContinueWithProviders": "o continuar con",

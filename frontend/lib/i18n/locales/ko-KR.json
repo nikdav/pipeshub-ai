@@ -4212,7 +4212,6 @@
       "loadFailed": "파일을 불러오지 못했습니다"
     },
     "spreadsheet": {
-      "column": "{{number}}열",
       "emptyCell": "(비어 있음)",
       "loading": "스프레드시트를 불러오는 중...",
       "noUrl": "파일 URL을 사용할 수 없습니다",
@@ -4822,6 +4821,8 @@
       "oauthUnavailable": "현재 OAuth 로그인을 사용할 수 없습니다. 관리자에게 문의하세요.",
       "showPassword": "비밀번호 표시",
       "hidePassword": "비밀번호 숨기기",
+      "showOtp": "OTP 표시",
+      "hideOtp": "OTP 숨기기",
       "accountDisabled": "계정이 비활성화되었습니다.",
       "tooManyIncorrectCredentials": "잘못된 자격 증명을 너무 여러 번 입력했습니다",
       "orContinueWithProviders": "또는 다음 제공자로 계속",

@@ -1,6 +1,7 @@
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { Theme } from '@radix-ui/themes';
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import en from '@/lib/i18n/locales/en-US.json';
@@ -19,23 +20,6 @@ vi.mock('../../../api', () => ({ ChatApi: { submitFeedback: mocks.submitFeedback
 vi.mock('../../../store', () => ({
   useChatStore: { getState: () => ({ activeSlotId: 'slot', slots: { slot: { convId: 'original-conversation' } } }) },
 }));
-vi.mock('@/app/components/ui/MaterialIcon', () => ({ MaterialIcon: () => null }));
-// Keep portal behavior out of this test; the component's actual state and callbacks remain in use.
-vi.mock('@radix-ui/themes', () => {
-  const Wrapper = ({ children, onClick }: React.PropsWithChildren<{ onClick?: React.MouseEventHandler<HTMLDivElement> }>) => (
-    <div onClick={onClick}>{children}</div>
-  );
-  return {
-    Flex: Wrapper, Box: Wrapper, Text: Wrapper,
-    IconButton: ({ children, onClick }: React.PropsWithChildren<{ onClick?: React.MouseEventHandler<HTMLButtonElement> }>) => (
-      <button type="button" onClick={onClick}>{children}</button>
-    ),
-    Popover: { Root: Wrapper, Trigger: Wrapper, Content: Wrapper },
-    Tooltip: ({ children, content }: React.PropsWithChildren<{ content: string }>) => (
-      <><span data-testid="tooltip-content">{content}</span>{children}</>
-    ),
-  };
-});
 
 afterEach(() => {
   cleanup(); vi.clearAllTimers(); vi.useRealTimers(); vi.unstubAllGlobals(); vi.clearAllMocks();
@@ -52,6 +36,19 @@ async function translations() {
   return i18n;
 }
 
+function renderActions(i18n: Awaited<ReturnType<typeof translations>>, props: React.ComponentProps<typeof MessageActions>) {
+  vi.stubGlobal('ResizeObserver', class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  });
+  return render(
+    <Theme>
+      <I18nextProvider i18n={i18n}><MessageActions {...props} /></I18nextProvider>
+    </Theme>,
+  );
+}
+
 describe('message-action language changes', () => {
   it.each([
     ['chat.markdownWithCitations', 'chat.copiedAsMarkdown', '**User text**'],
@@ -61,17 +58,18 @@ describe('message-action language changes', () => {
     let complete!: () => void;
     mocks.writeText.mockReturnValue(new Promise<void>((resolve) => { complete = resolve; }));
     vi.stubGlobal('navigator', { clipboard: { writeText: mocks.writeText } });
-    render(<I18nextProvider i18n={i18n}><MessageActions content="**User text**" /></I18nextProvider>);
+    renderActions(i18n, { content: '**User text**' });
+    fireEvent.click(screen.getByRole('button', { name: /content_copy/ }));
     fireEvent.click(screen.getByText(i18n.t(option)));
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     await act(async () => { complete(); });
-    expect(screen.getByTestId('tooltip-content').textContent).toBe(i18n.t(feedback));
+    expect(screen.getByRole('tooltip').textContent).toBe(i18n.t(feedback));
     expect(mocks.writeText).toHaveBeenCalledTimes(1);
     expect(mocks.writeText).toHaveBeenCalledWith(expectedText);
     await act(async () => { await i18n.changeLanguage('en-US'); });
-    expect(screen.getByTestId('tooltip-content').textContent).toBe(i18n.t(feedback));
+    expect(screen.getByRole('tooltip').textContent).toBe(i18n.t(feedback));
     act(() => { vi.advanceTimersByTime(2000); });
-    expect(screen.getByTestId('tooltip-content').textContent).toBe(i18n.t('chat.copy'));
+    expect(screen.queryByText(i18n.t(feedback))).toBeNull();
   });
 
   it.each([
@@ -81,8 +79,9 @@ describe('message-action language changes', () => {
     const i18n = await translations();
     let complete!: () => void;
     mocks.submitFeedback.mockReturnValue(new Promise<void>((resolve) => { complete = resolve; }));
-    render(<I18nextProvider i18n={i18n}><MessageActions content="User text" messageId="original-message" /></I18nextProvider>);
-    fireEvent.click(screen.getByText(i18n.t(category)));
+    renderActions(i18n, { content: 'User text', messageId: 'original-message' });
+    fireEvent.click(screen.getByRole('button', { name: isHelpful ? /thumb_up_off_alt/ : /thumb_down_off_alt/ }));
+    fireEvent.click(screen.getByRole('button', { name: i18n.t(category) }));
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     await act(async () => { complete(); });
     expect(mocks.success).toHaveBeenCalledWith(i18n.t('chat.thankYouForFeedback'), {
@@ -97,8 +96,9 @@ describe('message-action language changes', () => {
     const i18n = await translations();
     let fail!: (error: Error) => void;
     mocks.submitFeedback.mockReturnValue(new Promise<void>((_resolve, reject) => { fail = reject; }));
-    render(<I18nextProvider i18n={i18n}><MessageActions content="User text" messageId="original-message" /></I18nextProvider>);
-    fireEvent.click(screen.getByText(i18n.t('chat.feedbackCategoryExcellentAnswer')));
+    renderActions(i18n, { content: 'User text', messageId: 'original-message' });
+    fireEvent.click(screen.getByRole('button', { name: /thumb_up_off_alt/ }));
+    fireEvent.click(screen.getByRole('button', { name: i18n.t('chat.feedbackCategoryExcellentAnswer') }));
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     await act(async () => { fail(new Error('Server failure')); });
     expect(mocks.error).toHaveBeenCalledWith(i18n.t('chat.feedbackError'));
@@ -107,7 +107,7 @@ describe('message-action language changes', () => {
   it('retranslates built-in mode labels without changing model names', async () => {
     const i18n = await translations();
     const modelInfo = { modelKey: 'original-model-key', chatMode: 'agent:verification', modelName: 'Original provider model' };
-    render(<I18nextProvider i18n={i18n}><MessageActions content="User text" modelInfo={modelInfo} /></I18nextProvider>);
+    renderActions(i18n, { content: 'User text', modelInfo });
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     const label = `${i18n.t('chat.queryModes.agent.label')} (${i18n.t('chat.agentStrategy.modes.plan-execute.label')})`;
     expect(screen.getByText(label)).toBeTruthy();

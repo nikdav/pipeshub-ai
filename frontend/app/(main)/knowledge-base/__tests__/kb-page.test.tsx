@@ -1090,7 +1090,7 @@ describe('Knowledge base page — selecting several items', () => {
     const bar = screen.getByText('2 selected').parentElement!;
     fireEvent.click(within(bar).getByRole('button', { name: /Reindex/ }));
 
-    await waitFor(() => expect(toastTexts()).toContain('Reindexed 1 items; 1 failed.'));
+    await waitFor(() => expect(toastTexts()).toContain('Reindexed 1 item; 1 failed.'));
   });
 
   it('clears the selection', async () => {

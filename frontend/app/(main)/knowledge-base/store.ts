@@ -1198,7 +1198,7 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
             toast.update(toastId, {
               variant: 'warning',
               title: localizedText('knowledgeBase.bulkReindexPartial', {
-                count: items.length,
+                count: successCount,
                 successCount,
                 failCount,
               }),
@@ -1254,7 +1254,7 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
             toast.update(toastId, {
               variant: 'warning',
               title: localizedText('knowledgeBase.bulkDeletePartial', {
-                count: items.length,
+                count: successCount,
                 successCount,
                 failCount,
               }),

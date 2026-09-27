@@ -1,11 +1,13 @@
 import React from 'react';
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest';
-import { render, cleanup } from '@testing-library/react';
+import { act, render, cleanup } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 import testI18n from '@/lib/__tests__/test-i18n';
+import de from '@/lib/i18n/locales/de-DE.json';
 
-const toastError = vi.fn(() => 'critical-toast');
-const toastUpdate = vi.fn();
+const toastError = vi.fn((..._args: unknown[]) => 'critical-toast');
+const toastWarning = vi.fn((..._args: unknown[]) => 'non-critical-toast');
+const toastUpdate = vi.fn((..._args: unknown[]) => undefined);
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock('@/app/components/ui/MaterialIcon', () => ({ MaterialIcon: () => null }));
@@ -13,7 +15,7 @@ vi.mock('@/app/components/ui/lottie-loader', () => ({ LottieLoader: () => null }
 vi.mock('@/lib/store/toast-store', () => ({
   toast: {
     error: (...args: unknown[]) => toastError(...args),
-    warning: vi.fn(),
+    warning: (...args: unknown[]) => toastWarning(...args),
     update: (...args: unknown[]) => toastUpdate(...args),
     dismiss: vi.fn(),
   },
@@ -36,38 +38,42 @@ const healthState = {
   startBackgroundPolling: vi.fn(),
   stopBackgroundPolling: vi.fn(),
   retryServerConnection: vi.fn(),
+  apiServerReachable: true,
+  backgroundCheckFailed: true,
+  appServices: { query: 'unhealthy' } as Record<string, 'healthy' | 'unhealthy'>,
+  infraServices: {},
+  infraServiceNames: {},
 };
 
 vi.mock('@/lib/store/services-health-store', () => ({
   useServicesHealthStore: (selector: (s: unknown) => unknown) => selector(healthState),
-  selectApiServerReachable: () => true,
-  selectBackgroundCheckFailed: () => true,
-  selectAppServices: () => ({ query: 'unhealthy' }),
-  selectInfraServices: () => ({}),
-  selectInfraServiceNames: () => ({}),
-  APP_SERVICE_LABELS: { query: 'Query Service' },
+  selectApiServerReachable: (state: typeof healthState) => state.apiServerReachable,
+  selectBackgroundCheckFailed: (state: typeof healthState) => state.backgroundCheckFailed,
+  selectAppServices: (state: typeof healthState) => state.appServices,
+  selectInfraServices: (state: typeof healthState) => state.infraServices,
+  selectInfraServiceNames: (state: typeof healthState) => state.infraServiceNames,
+  APP_SERVICE_LABELS: { query: 'Query Service', indexing: 'Indexing Service' },
   CRITICAL_APP_SERVICES: ['query'],
   formatServiceList: (labels: string[]) => labels.join(' and '),
 }));
 
 import { HealthGate } from '../health-gate';
 
-testI18n.addResourceBundle('en-US', 'translation', {
-  workspace: { services: { app: { query: { label: 'Query Service' } } } },
-  healthGate: {
-    toast: {
-      critical: {
-        title: 'Some services are unavailable',
-        adminDescription: 'Affected: {{services}}',
-      },
-      viewStatus: 'View status',
-    },
-  },
-}, true, true);
+testI18n.addResourceBundle('de-DE', 'translation', de, true, true);
 
-beforeEach(() => {
+beforeEach(async () => {
+  await testI18n.changeLanguage('en-US');
   toastError.mockClear();
+  toastWarning.mockClear();
   toastUpdate.mockClear();
+  healthState.startBackgroundPolling.mockClear();
+  healthState.stopBackgroundPolling.mockClear();
+  healthState.retryServerConnection.mockClear();
+  healthState.apiServerReachable = true;
+  healthState.backgroundCheckFailed = true;
+  healthState.appServices = { query: 'unhealthy' };
+  healthState.infraServices = {};
+  healthState.infraServiceNames = {};
 });
 
 afterEach(() => {
@@ -103,5 +109,31 @@ describe('the "View status" action on the services toast', () => {
       | { action?: { label: string } }
       | undefined;
     expect(updated?.action?.label).toBe('View status');
+  });
+
+  it('updates the existing non-critical admin toast when language and service labels change', async () => {
+    isAdmin = true;
+    healthState.appServices = { query: 'healthy', indexing: 'unhealthy' };
+    render(
+      <I18nextProvider i18n={testI18n}>
+        <HealthGate>
+          <div>body</div>
+        </HealthGate>
+      </I18nextProvider>,
+    );
+
+    expect(toastWarning).toHaveBeenCalledTimes(1);
+    expect(healthState.startBackgroundPolling).toHaveBeenCalledTimes(1);
+    const createdTitle = toastWarning.mock.calls[0]?.[0] as { key: string; values?: Record<string, unknown> };
+    expect(createdTitle.values?.services).toBe('Indexing Service');
+
+    await act(async () => { await testI18n.changeLanguage('de-DE'); });
+
+    expect(toastWarning).toHaveBeenCalledTimes(1);
+    expect(healthState.startBackgroundPolling).toHaveBeenCalledTimes(1);
+    const [toastId, updates] = toastUpdate.mock.calls.at(-1) as [string, { title: { key: string; values?: Record<string, unknown> } }];
+    expect(toastId).toBe('non-critical-toast');
+    expect(updates.title.values?.services).toBe('Indizierungsdienst');
+    expect(testI18n.t(updates.title.key, updates.title.values)).toBe('Indizierungsdienst ist derzeit nicht verfügbar');
   });
 });

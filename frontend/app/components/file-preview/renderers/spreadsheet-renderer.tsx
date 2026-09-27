@@ -774,15 +774,10 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
                     {rowNum}
                   </td>
 
-                  {currentSheetData.headers.map((header, colIndex) => (
+                  {currentSheetData.headers.map((_header, colIndex) => (
                     <TableCellMemo
                       key={`${state.selectedSheet}-${displayIndex}-${colIndex}`}
-                      value={isHeaderRow && !header
-                        ? t('filePreview.spreadsheet.column', {
-                            number: new Intl.NumberFormat(i18n.resolvedLanguage || i18n.language)
-                              .format((currentSheetData.visibleColumns[colIndex] ?? colIndex) + 1),
-                          })
-                        : row[`__col_${colIndex}`]}
+                      value={row[`__col_${colIndex}`]}
                       colIndex={colIndex}
                       isHeaderRow={isHeaderRow}
                       highlighted={isHighlighted}
