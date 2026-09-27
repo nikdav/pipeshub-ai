@@ -4898,7 +4898,7 @@
       "connecting": "कनेक्ट हो रहा है…"
     },
     "actionFeedback": {
-      "blockedUntil": "{{date}} के बाद फिर प्रयास करें।",
+      "blockedUntil": "{{date, datetime}} के बाद फिर प्रयास करें।",
       "unexpectedResponse": "अनपेक्षित प्रतिक्रिया मिली। कृपया फिर प्रयास करें।",
       "passwordSignInFailed": "साइन इन विफल हुआ। कृपया फिर प्रयास करें।",
       "noPasswordSetTitle": "इस खाते के लिए पासवर्ड सेट नहीं है।",

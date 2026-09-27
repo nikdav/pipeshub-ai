@@ -1272,11 +1272,11 @@
       "resultBlocked": "Blocked",
       "result": "Result",
       "subAgent": "Sub-agent",
-      "groupSkills_one": "Used {{count}} skills",
+      "groupSkills_one": "Used {{count}} skill",
       "groupSkills_other": "Used {{count}} skills",
-      "groupSearches_one": "Explored {{count}} searches",
+      "groupSearches_one": "Explored {{count}} search",
       "groupSearches_other": "Explored {{count}} searches",
-      "groupTools_one": "Ran {{count}} tools",
+      "groupTools_one": "Ran {{count}} tool",
       "groupTools_other": "Ran {{count}} tools",
       "summaryThought_one": "Thought about this",
       "summaryThought_other": "Thought {{count}} times",
@@ -4898,7 +4898,7 @@
       "connecting": "Connecting…"
     },
     "actionFeedback": {
-      "blockedUntil": "Try again after {{date}}.",
+      "blockedUntil": "Try again after {{date, datetime}}.",
       "unexpectedResponse": "Unexpected response. Please try again.",
       "passwordSignInFailed": "Sign in failed. Please try again.",
       "noPasswordSetTitle": "No password set for this account.",
@@ -5168,7 +5168,7 @@
     "downloadFailed": "Failed to download",
     "downloadFallback": "We couldn't download the file. Check your connection and try again.",
     "errors": {
-      "folderCollectionIdRequired": "Knowledge base id is required to update this folder."
+      "folderCollectionIdRequired": "Collection ID is required to update this folder."
     },
     "folderDetails": {
       "collection": "Collection",

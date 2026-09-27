@@ -4219,7 +4219,7 @@
       "fetchFailed": "获取电子表格失败",
       "loadFailed": "加载电子表格失败",
       "emptySheet": "此工作表为空",
-      "showingRows_other": "正在显示前 {{total}} 行中的 {{shown}} 行。下载即可查看所有数据。"
+      "showingRows_other": "正在显示共 {{total}} 行中的前 {{shown}} 行。下载即可查看所有数据。"
     },
     "switchVersion": {
       "switchLabel": "版本 {{version}}，切换版本",
@@ -4886,7 +4886,7 @@
       "connecting": "正在连接…"
     },
     "actionFeedback": {
-      "blockedUntil": "请在 {{date}} 后重试。",
+      "blockedUntil": "请在 {{date, datetime}} 后重试。",
       "unexpectedResponse": "响应异常。请重试。",
       "passwordSignInFailed": "登录失败。请重试。",
       "noPasswordSetTitle": "此账号尚未设置密码。",

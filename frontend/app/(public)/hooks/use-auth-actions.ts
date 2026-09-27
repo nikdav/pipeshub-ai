@@ -8,7 +8,7 @@ import { toast } from '@/lib/store/toast-store';
 import { fetchAndSetCurrentUser } from '@/lib/auth/hydrate-user';
 import { AuthApi } from '../api';
 import { getApiBaseUrl } from '@/lib/utils/api-base-url';
-import { localizedText, resolveLocalizedText, type LocalizedText, type LocalizedTextValue, type TranslateText } from '@/lib/i18n/localized-text';
+import { localizedText, resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import {
   getUserAccountApiErrorText,
   getUserAccountApiResponseMessage,
@@ -46,34 +46,23 @@ function extractErrorMessage(error: unknown): string {
   ).toLowerCase();
 }
 
-function formatBlockedUntilLocal(blockedUntilIso: string | undefined, locale: string): string | undefined {
+function getBlockedUntilDescription(error: unknown): LocalizedText | undefined {
+  const blockedUntilIso = getUserAccountBlockedUntil(error);
   if (!blockedUntilIso) {
     return undefined;
   }
 
-  const blockedUntilDate = new Date(blockedUntilIso);
-  if (Number.isNaN(blockedUntilDate.getTime())) {
+  const blockedUntilTimestamp = new Date(blockedUntilIso).getTime();
+  if (!Number.isFinite(blockedUntilTimestamp)) {
     return undefined;
   }
 
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(blockedUntilDate);
-}
-
-function getBlockedUntilDescription(error: unknown, locale: string): LocalizedText | undefined {
-  const blockedUntilIso = getUserAccountBlockedUntil(error);
-  const blockedUntilLocal = formatBlockedUntilLocal(blockedUntilIso, locale);
-  if (!blockedUntilLocal) {
-    return undefined;
-  }
-
-  return localizedText('auth.actionFeedback.blockedUntil', { date: blockedUntilLocal });
-}
-
-function resolveAuthText(value: LocalizedTextValue, t: TranslateText): string {
-  return resolveLocalizedText(value, t);
+  return localizedText('auth.actionFeedback.blockedUntil', {
+    date: blockedUntilTimestamp,
+    formatParams: {
+      date: { dateStyle: 'medium', timeStyle: 'short' },
+    },
+  });
 }
 
 function classifyAuthError(error: unknown): AuthErrorKind {
@@ -190,7 +179,7 @@ export function useAuthActions({
           const messageText = response.message ?? localizedText('auth.actionFeedback.unexpectedResponse');
           setError({
             type: 'generic',
-            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            message: resolveLocalizedText(messageText, i18n.t.bind(i18n)),
             ...(typeof messageText !== 'string' && { messageText }),
           });
         }
@@ -201,10 +190,10 @@ export function useAuthActions({
           err,
           localizedText('auth.actionFeedback.passwordSignInFailed'),
         );
-        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
+        const apiMsg = resolveLocalizedText(apiMsgText, i18n.t.bind(i18n));
 
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
+          const blockedUntilDescription = getBlockedUntilDescription(err);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -212,10 +201,10 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error(i18n.t('auth.common.accountDisabled'), {
+            toast.error(localizedText('auth.common.accountDisabled'), {
               description:
                 blockedUntilDescription ??
-                i18n.t('auth.common.tooManyIncorrectCredentials'),
+                localizedText('auth.common.tooManyIncorrectCredentials'),
               duration: null,
               showCloseButton: true,
             });
@@ -306,7 +295,7 @@ export function useAuthActions({
           const messageText = response.message ?? localizedText('auth.actionFeedback.googleSignInFailed');
           setError({
             type: 'generic',
-            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            message: resolveLocalizedText(messageText, i18n.t.bind(i18n)),
             ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
         }
@@ -317,9 +306,9 @@ export function useAuthActions({
           err,
           localizedText('auth.actionFeedback.googleSignInFailed'),
         );
-        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
+        const apiMsg = resolveLocalizedText(apiMsgText, i18n.t.bind(i18n));
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
+          const blockedUntilDescription = getBlockedUntilDescription(err);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -327,7 +316,7 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error(i18n.t('auth.common.accountDisabled'), {
+            toast.error(localizedText('auth.common.accountDisabled'), {
               description: blockedUntilDescription ?? localizedText('auth.actionFeedback.contactAdministrator'),
               duration: null,
               showCloseButton: true,
@@ -376,14 +365,14 @@ export function useAuthActions({
           const messageText = response.message ?? localizedText('auth.actionFeedback.additionalVerificationTitle');
           setError({
             type: 'generic',
-            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            message: resolveLocalizedText(messageText, i18n.t.bind(i18n)),
             ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
         } else {
           const messageText = response.message ?? localizedText('auth.actionFeedback.oauthSignInFailed');
           setError({
             type: 'generic',
-            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            message: resolveLocalizedText(messageText, i18n.t.bind(i18n)),
             ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
         }
@@ -394,9 +383,9 @@ export function useAuthActions({
           err,
           localizedText('auth.actionFeedback.oauthSignInFailed'),
         );
-        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
+        const apiMsg = resolveLocalizedText(apiMsgText, i18n.t.bind(i18n));
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
+          const blockedUntilDescription = getBlockedUntilDescription(err);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -404,7 +393,7 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error(i18n.t('auth.common.accountDisabled'), {
+            toast.error(localizedText('auth.common.accountDisabled'), {
               description: blockedUntilDescription ?? localizedText('auth.actionFeedback.contactAdministrator'),
               duration: null,
               showCloseButton: true,
@@ -478,7 +467,7 @@ export function useAuthActions({
           const messageText = response.message ?? localizedText('auth.actionFeedback.additionalVerificationTitle');
           setError({
             type: 'generic',
-            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            message: resolveLocalizedText(messageText, i18n.t.bind(i18n)),
             ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
           return;
@@ -490,7 +479,7 @@ export function useAuthActions({
         });
         setError({
           type: 'generic',
-          message: resolveAuthText(unexpectedMsg, i18n.t.bind(i18n)),
+          message: resolveLocalizedText(unexpectedMsg, i18n.t.bind(i18n)),
           ...(typeof unexpectedMsg !== 'string' ? { messageText: unexpectedMsg } : {}),
         });
       } catch (err: unknown) {
@@ -500,10 +489,10 @@ export function useAuthActions({
           err,
           localizedText('auth.actionFeedback.verificationFailed'),
         );
-        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
+        const apiMsg = resolveLocalizedText(apiMsgText, i18n.t.bind(i18n));
 
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
+          const blockedUntilDescription = getBlockedUntilDescription(err);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -511,10 +500,10 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error(i18n.t('auth.common.accountDisabled'), {
+            toast.error(localizedText('auth.common.accountDisabled'), {
               description:
                 blockedUntilDescription ??
-                i18n.t('auth.common.tooManyIncorrectCredentials'),
+                localizedText('auth.common.tooManyIncorrectCredentials'),
               duration: null,
               showCloseButton: true,
             });
@@ -557,7 +546,7 @@ export function useAuthActions({
           const messageText = response.message ?? localizedText('auth.actionFeedback.microsoftSignInFailed');
           setError({
             type: 'generic',
-            message: resolveAuthText(messageText, i18n.t.bind(i18n)),
+            message: resolveLocalizedText(messageText, i18n.t.bind(i18n)),
             ...(typeof messageText !== 'string' ? { messageText } : {}),
           });
         }
@@ -568,9 +557,9 @@ export function useAuthActions({
           err,
           localizedText('auth.actionFeedback.microsoftSignInFailed'),
         );
-        const apiMsg = resolveAuthText(apiMsgText, i18n.t.bind(i18n));
+        const apiMsg = resolveLocalizedText(apiMsgText, i18n.t.bind(i18n));
         if (kind === 'accessRevoked') {
-          const blockedUntilDescription = getBlockedUntilDescription(err, i18n.language);
+          const blockedUntilDescription = getBlockedUntilDescription(err);
           if (bodyMsg) {
             toast.error(bodyMsg, {
               description: blockedUntilDescription,
@@ -578,7 +567,7 @@ export function useAuthActions({
               showCloseButton: true,
             });
           } else {
-            toast.error(i18n.t('auth.common.accountDisabled'), {
+            toast.error(localizedText('auth.common.accountDisabled'), {
               description: blockedUntilDescription ?? localizedText('auth.actionFeedback.contactAdministrator'),
               duration: null,
               showCloseButton: true,

@@ -4886,7 +4886,7 @@
       "connecting": "正在連線…"
     },
     "actionFeedback": {
-      "blockedUntil": "請於 {{date}} 後再試一次。",
+      "blockedUntil": "請於 {{date, datetime}} 後再試一次。",
       "unexpectedResponse": "收到非預期的回應。請再試一次。",
       "passwordSignInFailed": "登入失敗。請再試一次。",
       "noPasswordSetTitle": "此帳戶尚未設定密碼。",

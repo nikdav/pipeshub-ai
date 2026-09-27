@@ -1352,8 +1352,8 @@
     },
     "sourcesHeading_one": "Fuente ({{count}}):",
     "sourcesHeading_other": "Fuentes ({{count}}):",
-    "citationCount_one": "Cita {{count}}",
-    "citationCount_other": "Citas {{count}}",
+    "citationCount_one": "{{count}} cita",
+    "citationCount_other": "{{count}} citas",
     "noCitationsAvailable": "No hay citas disponibles.",
     "noSourcesAvailable": "No hay fuentes disponibles.",
     "recordDetailsUnavailable": "Los detalles del registro no están disponibles",
@@ -1365,7 +1365,7 @@
     "archiveConfirmation": "Confirmar el archivado",
     "questionFallback": "Pregunta",
     "sourcesHeading_many": "Fuentes ({{count}}):",
-    "citationCount_many": "Citas {{count}}"
+    "citationCount_many": "{{count}} citas"
   },
   "workspaceMenu": {
     "appearance": "Apariencia",
@@ -4950,7 +4950,7 @@
       "connecting": "Conectando…"
     },
     "actionFeedback": {
-      "blockedUntil": "Inténtelo de nuevo después de {{date}}.",
+      "blockedUntil": "Inténtelo de nuevo después de {{date, datetime}}.",
       "unexpectedResponse": "Respuesta inesperada. Por favor inténtalo de nuevo.",
       "passwordSignInFailed": "Error al iniciar sesión. Por favor inténtalo de nuevo.",
       "noPasswordSetTitle": "No se ha establecido ninguna contraseña para esta cuenta.",

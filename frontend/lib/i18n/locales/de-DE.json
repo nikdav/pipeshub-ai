@@ -1283,7 +1283,7 @@
       "summaryThought_other": "{{count}}-mal darüber nachgedacht",
       "summaryTools_one": "{{count}} Tool verwendet",
       "summaryTools_other": "{{count}} Tools verwendet",
-      "summaryDelegatedAgents_one": "An {{count}} Sub-Agent delegiert",
+      "summaryDelegatedAgents_one": "An {{count}} Sub-Agenten delegiert",
       "summaryDelegatedAgents_other": "An {{count}} Sub-Agenten delegiert",
       "summaryWorked": "Daran gearbeitet"
     },
@@ -3389,10 +3389,10 @@
           "cannotDelete": "{{provider}} kann nicht gelöscht werden",
           "title": "Konfiguration für {{provider}} löschen?",
           "checkingUsage": "Agentennutzung wird überprüft …",
-          "usage_one": "Dieser Anbieter wird derzeit von {{count}} Service-Agent verwendet:",
+          "usage_one": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
           "usage_other": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
           "createdBy": "(erstellt von {{creator}})",
-          "removeFromAgents": "Entfernen Sie die Websuchkonfiguration aus diesen Agents, bevor Sie diesen Anbieter löschen.",
+          "removeFromAgents": "Entfernen Sie die Websuchkonfiguration aus diesen Service-Agenten, bevor Sie diesen Anbieter löschen.",
           "defaultDescription": "Dadurch wird Ihr API-Schlüssel für {{provider}} dauerhaft gelöscht. DuckDuckGo wird zum Standardanbieter für die Websuche.",
           "description": "Dadurch wird Ihr API-Schlüssel für {{provider}} dauerhaft gelöscht. Sie können ihn später erneut konfigurieren."
         }
@@ -3437,10 +3437,10 @@
           "title": "Konfiguration für {{provider}} löschen?",
           "providerTitle": "Anbieter löschen?",
           "checkingUsage": "Agentennutzung wird überprüft …",
-          "usage_one": "Dieser Anbieter wird derzeit von {{count}} Service-Agent verwendet:",
+          "usage_one": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
           "usage_other": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
           "createdBy": "(erstellt von {{creator}})",
-          "removeFromAgents": "Entfernen Sie die Websuchkonfiguration aus diesen Agents, bevor Sie diesen Anbieter löschen.",
+          "removeFromAgents": "Entfernen Sie die Websuchkonfiguration aus diesen Service-Agenten, bevor Sie diesen Anbieter löschen.",
           "defaultDescription": "Dieser Anbieter ist derzeit der Standard. Beim Löschen wird DuckDuckGo wieder als Standard festgelegt.",
           "description": "Dadurch wird die Anbieterkonfiguration dauerhaft gelöscht. Sie können sie später erneut einrichten."
         }
@@ -4898,7 +4898,7 @@
       "connecting": "Verbindung wird hergestellt …"
     },
     "actionFeedback": {
-      "blockedUntil": "Versuchen Sie es nach {{date}} erneut.",
+      "blockedUntil": "Versuchen Sie es nach {{date, datetime}} erneut.",
       "unexpectedResponse": "Unerwartete Antwort. Bitte versuchen Sie es erneut.",
       "passwordSignInFailed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
       "noPasswordSetTitle": "Für dieses Konto ist kein Passwort festgelegt.",
@@ -4942,7 +4942,7 @@
     },
     "serviceGate": {
       "title": "Dienst nicht verfügbar",
-      "adminDescription_one": "Diese Seite benötigt {{services}}, das derzeit nicht verfügbar ist. Sie wird automatisch wieder verfügbar, sobald der Dienst wieder funktioniert.",
+      "adminDescription_one": "Diese Seite benötigt {{services}}, der derzeit nicht verfügbar ist. Sie wird automatisch wieder verfügbar, sobald der Dienst wieder funktioniert.",
       "adminDescription_other": "Diese Seite benötigt {{services}}, die derzeit nicht verfügbar sind. Sie wird automatisch wieder verfügbar, sobald die Dienste wieder funktionieren.",
       "memberDescription": "Diese Seite ist vorübergehend nicht verfügbar. Sie wird automatisch wieder verfügbar. Falls das Problem bestehen bleibt, wenden Sie sich an Ihre Administration.",
       "viewStatus": "Dienststatus anzeigen"
@@ -5249,7 +5249,7 @@
   },
   "keyboard": {
     "modifier": {
-      "ctrl": "Ctrl"
+      "ctrl": "Strg"
     }
   },
   "dateRangePicker": {

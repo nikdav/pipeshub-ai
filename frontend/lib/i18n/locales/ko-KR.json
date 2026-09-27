@@ -4886,7 +4886,7 @@
       "connecting": "연결 중…"
     },
     "actionFeedback": {
-      "blockedUntil": "{{date}} 이후에 다시 시도해 주세요.",
+      "blockedUntil": "{{date, datetime}} 이후에 다시 시도해 주세요.",
       "unexpectedResponse": "예상하지 못한 응답입니다. 다시 시도해 주세요.",
       "passwordSignInFailed": "로그인에 실패했습니다. 다시 시도해 주세요.",
       "noPasswordSetTitle": "이 계정에는 비밀번호가 설정되어 있지 않습니다.",
