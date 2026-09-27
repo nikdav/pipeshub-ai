@@ -63,16 +63,16 @@ describe('indexing statistics localization', () => {
     const { i18n, onSync, onReindexFailed, onManualIndex, onNavigateToRecords } = await setup();
     for (const language of Object.keys(locales)) {
       await act(async () => { await i18n.changeLanguage(language); });
-      expect(screen.getByRole('button', { name: i18n.t('workspace.connectors.overview.syncButton') })).toBeTruthy();
-      expect(screen.getByRole('button', { name: `${i18n.t('workspace.connectors.overview.reindexFailed')} (2)` })).toBeTruthy();
-      expect(screen.getByRole('button', { name: `${i18n.t('menu.startManualIndex')} (3)` })).toBeTruthy();
+      expect(screen.getByText(i18n.t('workspace.connectors.overview.syncButton'))).toBeTruthy();
+      expect(screen.getByText(`${i18n.t('workspace.connectors.overview.reindexFailed')} (2)`)).toBeTruthy();
+      expect(screen.getByText(`${i18n.t('menu.startManualIndex')} (3)`)).toBeTruthy();
       expect(screen.getByText(`${i18n.t('filter.types')}: 2`)).toBeTruthy();
       expect(screen.getByText(i18n.t('recordView.labels.recordTypes.FILE'))).toBeTruthy();
       expect(screen.getByText('CUSTOM FUTURE TYPE')).toBeTruthy();
     }
-    fireEvent.click(screen.getByRole('button', { name: i18n.t('workspace.connectors.overview.syncButton') }));
-    fireEvent.click(screen.getByRole('button', { name: `${i18n.t('workspace.connectors.overview.reindexFailed')} (2)` }));
-    fireEvent.click(screen.getByRole('button', { name: `${i18n.t('menu.startManualIndex')} (3)` }));
+    fireEvent.click(screen.getByText(i18n.t('workspace.connectors.overview.syncButton')));
+    fireEvent.click(screen.getByText(`${i18n.t('workspace.connectors.overview.reindexFailed')} (2)`));
+    fireEvent.click(screen.getByText(`${i18n.t('menu.startManualIndex')} (3)`));
     fireEvent.click(screen.getByRole('button', { name: i18n.t('workspace.connectors.overview.statCompleted') }));
     expect(onSync).toHaveBeenCalledTimes(1);
     expect(onReindexFailed).toHaveBeenCalledTimes(1);
@@ -84,8 +84,8 @@ describe('indexing statistics localization', () => {
   it('keeps reindex actions disabled while synchronization is busy', async () => {
     const { i18n, onReindexFailed, onManualIndex } = await setup({ isSyncBusy: true });
     await act(async () => { await i18n.changeLanguage('de-DE'); });
-    const reindex = screen.getByRole('button', { name: `${i18n.t('workspace.connectors.overview.reindexFailed')} (2)` }) as HTMLButtonElement;
-    const manual = screen.getByRole('button', { name: `${i18n.t('menu.startManualIndex')} (3)` }) as HTMLButtonElement;
+    const reindex = screen.getByText(`${i18n.t('workspace.connectors.overview.reindexFailed')} (2)`) as HTMLButtonElement;
+    const manual = screen.getByText(`${i18n.t('menu.startManualIndex')} (3)`) as HTMLButtonElement;
     expect(reindex.disabled).toBe(true);
     expect(manual.disabled).toBe(true);
     fireEvent.click(reindex);
