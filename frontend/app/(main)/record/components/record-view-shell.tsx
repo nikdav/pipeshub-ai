@@ -20,6 +20,8 @@ import { resolveWebUrl } from '@/app/components/file-preview/resolve-web-url';
 import { withCurrentOrgId } from '@/lib/navigation';
 import type { PaginationControls } from '@/app/components/file-preview/types';
 import { KnowledgeBaseApi } from '@/app/(main)/knowledge-base/api';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import {
   canShowReindexMenu,
   getReindexNodeFromHubItem,
@@ -42,18 +44,6 @@ interface RecordViewShellProps {
 
 function isStreamableRecordType(recordType: string): boolean {
   return recordType === 'FILE' || recordType === 'ARTIFACT';
-}
-
-// Keep frontend fallback keys so changing language does not restart record requests.
-type RecordViewError = { message: string } | { translationKey: string };
-
-function getRecordViewError(e: unknown, fallbackKey: string): RecordViewError {
-  if (e instanceof Error && e.message.trim()) return { message: e.message.trim() };
-  if (e && typeof e === 'object' && 'message' in e) {
-    const msg = (e as { message?: unknown }).message;
-    if (typeof msg === 'string' && msg.trim()) return { message: msg.trim() };
-  }
-  return { translationKey: fallbackKey };
 }
 
 /** Returns a Material icon name matching the record type. */
@@ -84,8 +74,8 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
   const [fileBlob, setFileBlob] = useState<Blob | undefined>(undefined);
   const [fileType, setFileType] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<RecordViewError | null>(null);
-  const [previewError, setPreviewError] = useState<RecordViewError | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
+  const [previewError, setPreviewError] = useState<LocalizedTextValue | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState<number | null>(null);
@@ -171,7 +161,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
                 setFileUrl(nextUrl);
                 setFileBlob(undefined);
               }
-              setPreviewError({ translationKey: 'recordView.previewConversionFailed' });
+              setPreviewError(localizedText('recordView.previewConversionFailed'));
               setIsLoading(false);
               return;
             }
@@ -201,13 +191,13 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
         } catch (streamErr) {
           if (cancelled) return;
           setPreviewError(
-            getRecordViewError(streamErr, 'recordView.previewUnavailable'),
+            getUserFacingErrorText(streamErr, localizedText('recordView.previewUnavailable')),
           );
           setIsLoading(false);
         }
       } catch (e) {
         if (cancelled) return;
-        setError(getRecordViewError(e, 'recordView.loadFailed'));
+        setError(getUserFacingErrorText(e, localizedText('recordView.loadFailed')));
         setIsLoading(false);
       }
     })();
@@ -269,10 +259,8 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
   const hasError = !isLoading && !!error;
   const hasPreviewError = !isLoading && !!previewError;
   const hasDownloadableFile = Boolean(fileUrl || fileBlob);
-  const errorText = error && ('translationKey' in error ? t(error.translationKey) : error.message);
-  const previewErrorText = previewError && (
-    'translationKey' in previewError ? t(previewError.translationKey) : previewError.message
-  );
+  const errorText = error && resolveLocalizedText(error, t);
+  const previewErrorText = previewError && resolveLocalizedText(previewError, t);
   const displayName = recordDetails
     ? recordDetails.record.recordName || recordDetails.record.fileRecord?.name || t('itemType.record')
     : fileName;

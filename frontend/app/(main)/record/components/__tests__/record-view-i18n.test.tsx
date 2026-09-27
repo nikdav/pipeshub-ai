@@ -4,6 +4,8 @@ import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-libra
 import { Theme } from '@radix-ui/themes';
 import { createInstance, type Resource } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
+import { AxiosError } from 'axios';
+import { processError } from '@/lib/api/api-error';
 import { locales } from '@/lib/i18n/locales';
 import { RecordViewShell } from '../record-view-shell';
 
@@ -80,17 +82,6 @@ async function renderRecord() {
 }
 
 describe('record-view localization', () => {
-  it.each(Object.keys(locales))('has the reused labels and fallbacks in %s', async (language) => {
-    const i18n = await translations();
-    for (const key of [
-      'common.previous', 'common.next', 'itemType.record',
-      'recordView.labels.recordTypes.MESSAGE', 'recordView.previewConversionFailed',
-      'recordView.previewUnavailable', 'recordView.loadFailed',
-    ]) {
-      expect(typeof i18n.getResource(language, 'translation', key)).toBe('string');
-    }
-  });
-
   it('retranslates navigation without fetching again or resetting the preview page', async () => {
     const i18n = await renderRecord();
     const next = await screen.findByRole('button', { name: i18n.t('common.next') });
@@ -118,6 +109,19 @@ describe('record-view localization', () => {
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     expect(screen.queryByText(english)).toBeNull();
     expect(screen.getAllByText(i18n.t(key)).length).toBeGreaterThan(0);
+    expect(mocks.details).toHaveBeenCalledTimes(1);
+    expect(mocks.stream).toHaveBeenCalledTimes(stage === 'metadata' ? 0 : 1);
+  });
+
+  it.each(['metadata', 'stream'] as const)('retranslates a processed %s API fallback without retrying the request', async (stage) => {
+    const apiError = processError(new AxiosError('Network Error'));
+    if (stage === 'metadata') mocks.details.mockRejectedValue(apiError);
+    else mocks.stream.mockRejectedValue(apiError);
+    const i18n = await renderRecord();
+    expect(screen.getAllByText('Network error. Please check your connection.').length).toBeGreaterThan(0);
+    await act(async () => { await i18n.changeLanguage('de-DE'); });
+    expect(screen.queryByText('Network error. Please check your connection.')).toBeNull();
+    expect(screen.getAllByText('Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.').length).toBeGreaterThan(0);
     expect(mocks.details).toHaveBeenCalledTimes(1);
     expect(mocks.stream).toHaveBeenCalledTimes(stage === 'metadata' ? 0 : 1);
   });

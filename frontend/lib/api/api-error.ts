@@ -140,32 +140,44 @@ function isAxiosRequestCancelled(error: AxiosError): boolean {
   return error.code === 'ERR_CANCELED' || error.message === 'canceled';
 }
 
+function withLocalizedFallbackMessage(processed: ProcessedError): ProcessedError {
+  if (!processed.messageText) return processed;
+  return {
+    ...processed,
+    message: resolveLocalizedText(
+      processed.messageText,
+      (key, options) => i18n.t(key, { ...options, defaultValue: processed.message }),
+      processed.message,
+    ),
+  };
+}
+
 export function processError(error: AxiosError<ApiErrorResponse>): ProcessedError {
   // Network error - no response received
   if (!error.response) {
     if (isAxiosRequestCancelled(error)) {
-      return {
+      return withLocalizedFallbackMessage({
         type: ErrorType.REQUEST_CANCELLED,
         message: 'Request was cancelled.',
         messageText: localizedText('common.errors.api.cancelled'),
         originalError: error,
-      };
+      });
     }
     if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-      return {
+      return withLocalizedFallbackMessage({
         type: ErrorType.TIMEOUT_ERROR,
         message: 'Request timed out. Please try again.',
         messageText: localizedText('common.errors.api.timeout'),
         originalError: error,
-      };
+      });
     }
 
-    return {
+    return withLocalizedFallbackMessage({
       type: ErrorType.NETWORK_ERROR,
       message: 'Network error. Please check your connection.',
       messageText: localizedText('common.errors.api.network'),
       originalError: error,
-    };
+    });
   }
 
   const { status, data } = error.response;
@@ -296,17 +308,8 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
 
   // The reference rides beside the message, never inside it: a client that
   // filters technical-looking text would otherwise drop the whole sentence.
-  const withLocalizedSnapshot = processed.messageText
-    ? {
-        ...processed,
-        message: resolveLocalizedText(
-          processed.messageText,
-          (key, options) => i18n.t(key, { ...options, defaultValue: processed.message }),
-          processed.message,
-        ),
-      }
-    : processed;
-  return requestId ? { ...withLocalizedSnapshot, requestId } : withLocalizedSnapshot;
+  const localized = withLocalizedFallbackMessage(processed);
+  return requestId ? { ...localized, requestId } : localized;
 }
 
 /**

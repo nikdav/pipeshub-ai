@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { AxiosError, AxiosHeaders } from 'axios';
 import {
   ErrorType,
@@ -130,23 +130,26 @@ describe('getUserFacingErrorText', () => {
 });
 
 describe('processError localized compatibility snapshots', () => {
-  it('localizes only app-authored fallback snapshots in the active language', async () => {
+  it('localizes connection and HTTP fallback snapshots with the active catalogue', async () => {
     const previousLanguage = i18n.language;
     await i18n.changeLanguage('de-DE');
-    const translate = vi.spyOn(i18n, 't').mockImplementation(((key: string, options?: Record<string, unknown>) => {
-      const english = options?.defaultValue;
-      return typeof english === 'string' ? `DE: ${english}` : key;
-    }) as never);
     try {
-      const processed = processError(httpError(500, {}));
-      expect(processed.message).toBe('DE: Server error. Please try again later.');
-      expect(processed.messageText).toEqual(localizedText('common.errors.api.server'));
-      expect(translate).toHaveBeenCalledWith(
-        'common.errors.api.server',
-        expect.objectContaining({ defaultValue: 'Server error. Please try again later.' }),
-      );
+      const cases = [
+        [new AxiosError('canceled', 'ERR_CANCELED'), 'Anfrage wurde abgebrochen.', 'cancelled'],
+        [new AxiosError('timeout of 1000ms exceeded', 'ECONNABORTED'), 'Zeitüberschreitung bei der Anfrage. Bitte versuchen Sie es erneut.', 'timeout'],
+        [new AxiosError('Network Error'), 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.', 'network'],
+      ] as const;
+
+      for (const [error, message, key] of cases) {
+        const processed = processError(error);
+        expect(processed.message).toBe(message);
+        expect(processed.messageText).toEqual(localizedText(`common.errors.api.${key}`));
+      }
+
+      const httpProcessed = processError(httpError(500, {}));
+      expect(httpProcessed.message).toBe('Serverfehler. Bitte versuchen Sie es später erneut.');
+      expect(httpProcessed.messageText).toEqual(localizedText('common.errors.api.server'));
     } finally {
-      translate.mockRestore();
       await i18n.changeLanguage(previousLanguage);
     }
   });
