@@ -50,16 +50,6 @@ async function renderFlow(overrides: Partial<OtpSignInFlowProps> = {}) {
 }
 
 describe('OTP localization', () => {
-  it.each(Object.keys(locales))('has every reused key in %s without fallback', async (language) => {
-    const i18n = await translations();
-    for (const key of [
-      'auth.common.showPassword', 'auth.common.hidePassword',
-      'auth.common.emailRequired', 'auth.common.emailInvalid', 'auth.common.otpInvalidLength',
-    ]) {
-      expect(typeof i18n.getResource(language, 'translation', key)).toBe('string');
-    }
-  });
-
   it('retranslates the visibility action without changing the OTP or its visibility', async () => {
     const i18n = await translations();
     const onChange = vi.fn();

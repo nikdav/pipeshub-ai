@@ -185,7 +185,7 @@ export function ExpandableUserQuery({
             style={{ marginLeft: 'var(--space-2)', verticalAlign: 'middle', display: 'inline-flex' }}
           >
             <QueryActions
-              question={question}
+              question={displayQuestion}
               showEdit={showEdit}
               onEdit={onEdit}
               visible={hovered}
@@ -240,7 +240,7 @@ export function ExpandableUserQuery({
         >
           <ToggleButton expanded onToggle={toggle} />
           <QueryActions
-            question={question}
+            question={displayQuestion}
             showEdit={showEdit}
             onEdit={onEdit}
             visible

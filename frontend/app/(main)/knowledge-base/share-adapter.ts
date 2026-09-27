@@ -34,10 +34,12 @@ export function createKBShareAdapter(kbId: string): ShareAdapter {
         const id = isTeam ? (p.id as string) : (mongoUserId ?? (p.id as string));
         const displayName =
           typeof p.name === 'string' && p.name ? p.name : typeof p.email === 'string' && p.email ? p.email : undefined;
-        const member = {
+        const member: SharedMember = {
           id,
           type: (isTeam ? 'team' : 'user') as 'user' | 'team',
-          name: displayName ?? '',
+          get name() {
+            return displayName ?? i18n.t('common.unknown');
+          },
           email: p.email as string | undefined,
           avatarUrl: p.avatarUrl as string | undefined,
           memberCount: p.memberCount as number | undefined,
@@ -45,11 +47,6 @@ export function createKBShareAdapter(kbId: string): ShareAdapter {
           isOwner: ((p.role as string) ?? (p.relationship as string)) === 'OWNER',
           isCurrentUser: !isTeam && id === currentUserId,
         };
-        Object.defineProperty(member, 'name', {
-          configurable: true,
-          enumerable: true,
-          get: () => displayName ?? i18n.t('common.unknown'),
-        });
         return member;
       });
     },

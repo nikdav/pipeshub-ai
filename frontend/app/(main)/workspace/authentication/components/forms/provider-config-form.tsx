@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flex, Text } from '@radix-ui/themes';
+import { Flex } from '@radix-ui/themes';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
 import { PROVIDER_CONFIGS } from '../../constants';
 import type { ConfigurableMethod } from '../../types';
@@ -119,13 +119,28 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
         {config.fields.map((field) => {
           const fieldKey = `workspace.authentication.providerFields.${method}.${field.key}`;
 
+          if (field.type === 'jit') {
+            return (
+              <JitField
+                key="jit"
+                providerName={field.providerName}
+                checked={Boolean(values.enableJit)}
+                onCheckedChange={(val) => setBool('enableJit', val)}
+              />
+            );
+          }
+
+          const localizedText = {
+            label: t(`${fieldKey}.label`),
+            labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
+            helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+          };
+
           if (field.type === 'readonly') {
             const warned = field.warningKey ? Boolean(values[field.warningKey]) : false;
             const localizedField = {
               ...field,
-              label: t(`${fieldKey}.label`),
-              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
-              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              ...localizedText,
               warningText: field.warningText ? t(`${fieldKey}.warning`) : undefined,
             };
             return (
@@ -141,9 +156,7 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
           if (field.type === 'text') {
             const localizedField = {
               ...field,
-              label: t(`${fieldKey}.label`),
-              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
-              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              ...localizedText,
               placeholder: field.translatePlaceholder && field.placeholder
                 ? t(`${fieldKey}.placeholder`)
                 : field.placeholder,
@@ -161,9 +174,7 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
           if (field.type === 'password') {
             const localizedField = {
               ...field,
-              label: t(`${fieldKey}.label`),
-              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
-              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              ...localizedText,
               placeholder: field.translatePlaceholder && field.placeholder
                 ? t(`${fieldKey}.placeholder`)
                 : field.placeholder,
@@ -181,9 +192,7 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
           if (field.type === 'textarea') {
             const localizedField = {
               ...field,
-              label: t(`${fieldKey}.label`),
-              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
-              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              ...localizedText,
               placeholder: field.translatePlaceholder && field.placeholder
                 ? t(`${fieldKey}.placeholder`)
                 : field.placeholder,
@@ -198,23 +207,10 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
             );
           }
 
-          if (field.type === 'jit') {
-            return (
-              <JitField
-                key="jit"
-                providerName={field.providerName}
-                checked={Boolean(values.enableJit)}
-                onCheckedChange={(val) => setBool('enableJit', val)}
-              />
-            );
-          }
-
           if (field.type === 'xml-upload') {
             const localizedField = {
               ...field,
-              label: t(`${fieldKey}.label`),
-              labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
-              helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+              ...localizedText,
             };
             return (
               <XmlUploadField

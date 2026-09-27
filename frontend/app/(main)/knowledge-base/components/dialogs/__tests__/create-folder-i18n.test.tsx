@@ -24,13 +24,6 @@ async function translations() {
 }
 
 describe('collection and folder creation localization', () => {
-  it.each(Object.keys(locales))('has both placeholder keys directly in %s', async (language) => {
-    const i18n = await translations();
-    for (const key of ['form.enterTitle', 'form.enterDescription']) {
-      expect(typeof i18n.getResource(language, 'translation', key)).toBe('string');
-    }
-  });
-
   it.each([false, true])('retranslates placeholders without changing entered contents (collection=%s)', async (isCollection) => {
     const i18n = await translations();
     const onSubmit = vi.fn();

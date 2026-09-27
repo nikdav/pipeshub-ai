@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -24,8 +24,6 @@ interface MarkdownEditorProps {
   minHeight?: number;
 }
 
-const placeholderTextByToken = new WeakMap<object, string>();
-
 // ========================================
 // Component
 // ========================================
@@ -45,7 +43,7 @@ export function MarkdownEditor({
 }: MarkdownEditorProps) {
   const { t } = useTranslation();
   const placeholderText = placeholder ?? t('workspace.skills.form.bodyPlaceholder');
-  const placeholderToken = useMemo(() => ({}), []);
+  const placeholderRef = useRef(placeholderText);
   // Tracks whether the last `setContent` was from an external `value` change
   // (e.g. switching skills) vs. our own `onUpdate` echoing back — avoids a
   // feedback loop that would otherwise reset the cursor on every keystroke.
@@ -55,7 +53,9 @@ export function MarkdownEditor({
     extensions: [
       StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
       Link.configure({ openOnClick: false, autolink: true }),
-      Placeholder.configure({ placeholder: () => placeholderTextByToken.get(placeholderToken) ?? '' }),
+      // The Placeholder extension calls this when ProseMirror computes decorations, outside React render.
+      // eslint-disable-next-line react-hooks/refs
+      Placeholder.configure({ placeholder: () => placeholderRef.current }),
       Markdown.configure({ html: false, transformCopiedText: true }),
     ],
     content: value,
@@ -80,10 +80,10 @@ export function MarkdownEditor({
   }, [editable, editor]);
 
   useEffect(() => {
-    placeholderTextByToken.set(placeholderToken, placeholderText);
+    placeholderRef.current = placeholderText;
     if (!editor) return;
     editor.view.dispatch(editor.state.tr);
-  }, [placeholderText, editor, placeholderToken]);
+  }, [placeholderText, editor]);
 
   if (!editor) return null;
 
