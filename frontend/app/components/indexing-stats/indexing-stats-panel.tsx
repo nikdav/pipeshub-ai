@@ -84,7 +84,7 @@ export function IndexingStatsPanel({
               <Flex align="center" gap="1">
                 {onSync && (
                   <StatusActionButton
-                    label="Sync now"
+                    label={t('workspace.connectors.overview.syncButton')}
                     icon="sync"
                     onClick={() => void onSync()}
                     disabled={isSyncBusy || reindexActionsBusy}
@@ -103,7 +103,7 @@ export function IndexingStatsPanel({
                 <Flex align="center" gap="1">
                   {showReindexFailedAction && onReindexFailed && (
                     <IndexActionButton
-                      label={`Reindex failed (${recordsStatus.failed})`}
+                      label={`${t('workspace.connectors.overview.reindexFailed')} (${recordsStatus.failed})`}
                       icon="error_outline"
                       color="orange"
                       iconColor="var(--orange-11)"
@@ -114,7 +114,7 @@ export function IndexingStatsPanel({
                   )}
                   {showManualIndexAction && onManualIndex && (
                     <IndexActionButton
-                      label={`Manual index (${recordsStatus.autoIndexOff})`}
+                      label={`${t('menu.startManualIndex')} (${recordsStatus.autoIndexOff})`}
                       icon="touch_app"
                       color="gray"
                       iconColor="var(--gray-11)"
@@ -211,7 +211,7 @@ export function IndexingStatsPanel({
             <OverviewTypesBadgeShimmer />
           ) : (
             <Badge variant="soft" color="gray" size="1">
-              {byRecordType.length} Types
+              {t('filter.types')}: {byRecordType.length}
             </Badge>
           )}
         </Flex>
@@ -235,7 +235,9 @@ export function IndexingStatsPanel({
                 }}
               >
                 <Text size="2" style={{ color: 'var(--gray-12)' }}>
-                  {formatSnakeCaseTitle(rt.recordType)}
+                  {t(`recordView.labels.recordTypes.${rt.recordType}`, {
+                    defaultValue: formatSnakeCaseTitle(rt.recordType),
+                  })}
                 </Text>
                 <Text size="2" weight="medium" style={{ color: 'var(--gray-11)' }}>
                   {rt.total}
