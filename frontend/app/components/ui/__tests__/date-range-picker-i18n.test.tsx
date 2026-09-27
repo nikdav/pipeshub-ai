@@ -22,18 +22,8 @@ describe('calendar localization', () => {
       lng: 'en-US',
       fallbackLng: 'en-US',
       resources: {
-        'en-US': { translation: { ...en, dateRangePicker: {
-          type: { on: 'On', between: 'Between', before: 'Before', after: 'After' },
-          startDateEndDate: 'Start Date - End Date', pickDate: 'Pick a date', endDate: 'End Date',
-          startTime: 'Start time', endTime: 'End time', time: 'Time', apply: 'Apply',
-          previousMonth: 'Previous month', nextMonth: 'Next month',
-        } } },
-        'de-DE': { translation: { ...de, dateRangePicker: {
-          type: { on: 'Am', between: 'Zwischen', before: 'Vor', after: 'Nach' },
-          startDateEndDate: 'Startdatum - Enddatum', pickDate: 'Datum wählen', endDate: 'Enddatum',
-          startTime: 'Startzeit', endTime: 'Endzeit', time: 'Uhrzeit', apply: 'Anwenden',
-          previousMonth: 'Vorheriger Monat', nextMonth: 'Nächster Monat',
-        } } },
+        'en-US': { translation: en },
+        'de-DE': { translation: de },
       },
       interpolation: { escapeValue: false },
     });
@@ -47,25 +37,23 @@ describe('calendar localization', () => {
       </Theme></I18nextProvider>,
     );
     expect(screen.getByRole('button', { name: en.common.clear })).toBeTruthy();
-    // The first button is the trigger; its accessible name includes the selected value.
-    fireEvent.click(screen.getAllByRole('button')[0]);
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${en.dateRangePicker.type.on}`) }));
     const monthOptions = { month: 'long', year: 'numeric', calendar: 'gregory' } as const;
     const weekdayOptions = { weekday: 'short', calendar: 'gregory' } as const;
     const month = new Date(2026, 2, 1);
     const sunday = new Date(2023, 0, 1);
     expect(await screen.findByText(new Intl.DateTimeFormat('en-US', monthOptions).format(month))).toBeTruthy();
     expect(screen.getByText(new Intl.DateTimeFormat('en-US', weekdayOptions).format(sunday))).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Previous month' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Apply' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: en.dateRangePicker.previousMonth })).toBeTruthy();
+    expect(screen.getByRole('button', { name: en.dateRangePicker.apply })).toBeTruthy();
     expect(screen.getByText(new Intl.DateTimeFormat('en-US', { dateStyle: 'short', calendar: 'gregory' }).format(new Date(2026, 2, 15)))).toBeTruthy();
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     expect(screen.getByText(new Intl.DateTimeFormat('de-DE', monthOptions).format(month))).toBeTruthy();
     expect(screen.getByText(new Intl.DateTimeFormat('de-DE', weekdayOptions).format(sunday))).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Vorheriger Monat' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Anwenden' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: de.dateRangePicker.previousMonth })).toBeTruthy();
+    expect(screen.getByRole('button', { name: de.dateRangePicker.apply })).toBeTruthy();
     expect(screen.getByText(new Intl.DateTimeFormat('de-DE', { dateStyle: 'short', calendar: 'gregory' }).format(new Date(2026, 2, 15)))).toBeTruthy();
-    const buttons = within(screen.getByRole('dialog')).getAllByRole('button');
-    fireEvent.click(buttons[buttons.length - 1]);
+    fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: de.dateRangePicker.apply }));
     expect(onApply).toHaveBeenCalledWith('2026-03-15', undefined, 'on');
     const clear = await screen.findByRole('button', { name: de.common.clear });
     fireEvent.click(clear);

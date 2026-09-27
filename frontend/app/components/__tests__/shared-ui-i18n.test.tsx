@@ -30,22 +30,8 @@ async function createTranslations() {
     lng: 'en-US',
     fallbackLng: 'en-US',
     resources: {
-      'en-US': { translation: {
-        ...en,
-        common: { ...en.common, connectorIconAlt: '{{type}} icon' },
-        action: { ...en.action, share: 'Share' },
-        nav: { ...en.nav, connectors: 'Connectors' },
-        filePreview: { ...en.filePreview, showMore: 'Show more', showLess: 'Show less' },
-        shareSidebar: { ...en.shareSidebar, searchPlaceholder: 'Emails, teams or names (separated by commas)' },
-      } },
-      'de-DE': { translation: {
-        ...de,
-        common: { ...de.common, connectorIconAlt: 'Symbol für {{type}}' },
-        action: { ...de.action, share: 'Teilen' },
-        nav: { ...de.nav, connectors: 'Konnektoren' },
-        filePreview: { ...de.filePreview, showMore: 'Mehr anzeigen', showLess: 'Weniger anzeigen' },
-        shareSidebar: { ...de.shareSidebar, searchPlaceholder: 'E-Mails, Teams oder Namen (durch Kommas getrennt)' },
-      } },
+      'en-US': { translation: en },
+      'de-DE': { translation: de },
     },
     interpolation: { escapeValue: false },
   });
@@ -85,22 +71,22 @@ describe('shared UI locale behavior', () => {
       </Theme>,
     );
 
-    const input = screen.getByPlaceholderText('Emails, teams or names (separated by commas)') as HTMLInputElement;
+    const input = screen.getByPlaceholderText(en.shareSidebar.searchPlaceholder) as HTMLInputElement;
     expect(input.value).toBe('person@example.com');
-    expect(screen.getByRole('heading', { name: 'Connectors' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: en.nav.connectors })).toBeTruthy();
     expect(screen.getByText(en.agents.comingSoon)).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Share' })).toBeTruthy();
-    expect(screen.getByRole('img', { name: 'slack icon' })).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    expect(screen.getByRole('button', { name: 'Show less' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: en.action.share })).toBeTruthy();
+    expect(screen.getByRole('img', { name: en.common.connectorIconAlt.replace('{{type}}', 'slack') })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: en.filePreview.showMore }));
+    expect(screen.getByRole('button', { name: en.filePreview.showLess })).toBeTruthy();
 
     await act(async () => { await i18n.changeLanguage('de-DE'); });
-    expect(screen.getByRole('heading', { name: 'Konnektoren' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: de.nav.connectors })).toBeTruthy();
     expect(screen.getByText(de.agents.comingSoon)).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Teilen' })).toBeTruthy();
-    expect(screen.getByRole('img', { name: 'Symbol für slack' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: 'Weniger anzeigen' })).toBeTruthy();
-    const germanInput = screen.getByPlaceholderText('E-Mails, Teams oder Namen (durch Kommas getrennt)') as HTMLInputElement;
+    expect(screen.getByRole('button', { name: de.action.share })).toBeTruthy();
+    expect(screen.getByRole('img', { name: de.common.connectorIconAlt.replace('{{type}}', 'slack') })).toBeTruthy();
+    expect(screen.getByRole('button', { name: de.filePreview.showLess })).toBeTruthy();
+    const germanInput = screen.getByPlaceholderText(de.shareSidebar.searchPlaceholder) as HTMLInputElement;
     expect(germanInput).toBe(input);
     expect(germanInput.value).toBe('person@example.com');
   });

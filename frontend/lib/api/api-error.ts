@@ -367,22 +367,11 @@ export function getUserFacingErrorText(
   error: unknown,
   fallback: LocalizedTextValue,
 ): LocalizedTextValue {
-  if (isAxiosError(error)) {
-    const processed = processError(error);
-    if (processed.messageText) return processed.messageText;
-    const text = getUserFacingErrorMessage(error, '').trim();
-    return !text || looksTechnical(text) ? fallback : text;
-  }
-  if (isProcessedError(error)) {
-    if (error.messageText) return error.messageText;
-    const text = getUserFacingErrorMessage(error, '').trim();
-    return !text || looksTechnical(text) ? fallback : text;
-  }
-
-  const messageText = (error as { messageText?: unknown } | null)?.messageText;
+  const source = isAxiosError(error) ? processError(error) : error;
+  const messageText = (source as { messageText?: unknown } | null | undefined)?.messageText;
   if (isLocalizedText(messageText)) return messageText;
 
-  const text = messageOf(error).trim();
+  const text = messageOf(source).trim();
   if (!text || looksTechnical(text)) return fallback;
   return text;
 }

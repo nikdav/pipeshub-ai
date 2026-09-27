@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildAgentChatMcpGroups, buildAgentChatToolGroups, extractAgentKnowledgeCollectionRows } from '../api';
 import type { AgentDetail } from '../types';
-import { resolveLocalizedText } from '@/lib/i18n/localized-text';
-
-function localized(value: { key: string; values?: Record<string, unknown> } | undefined, language: string, fallback: string) {
-  return resolveLocalizedText(value, (key) => `${language}:${key}`, fallback);
-}
 
 describe('agent resource fallback localization metadata', () => {
   it('marks only missing tool, web-search, and MCP names for render-time localization', () => {
@@ -26,8 +21,6 @@ describe('agent resource fallback localization metadata', () => {
     expect(tools[1]).toMatchObject({ label: 'Provider label' });
     expect(tools[1]!.labelText).toBeUndefined();
     expect(tools[2]).toMatchObject({ label: 'Web Search', labelText: { key: 'agentBuilder.webSearch' } });
-    expect(localized(tools[0]!.labelText, 'de-DE', tools[0]!.label)).toBe('de-DE:agentBuilder.tools');
-    expect(localized(tools[0]!.labelText, 'es-ES', tools[0]!.label)).toBe('es-ES:agentBuilder.tools');
 
     const mcp = buildAgentChatMcpGroups(agent);
     expect(mcp[0]).toMatchObject({ label: 'MCP Server', labelText: { key: 'agentBuilder.mcpServerDefaultName' } });
@@ -51,8 +44,5 @@ describe('agent resource fallback localization metadata', () => {
     });
     expect(rows[1]).toMatchObject({ id: 'kb/2', name: 'My saved collection' });
     expect(rows[1]!.nameText).toBeUndefined();
-    expect(localized(rows[0]!.nameText, 'de-DE', rows[0]!.name)).toBe(
-      'de-DE:agentBuilder.nodeCollectionFallbackName',
-    );
   });
 });

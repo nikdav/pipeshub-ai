@@ -3,7 +3,7 @@ import { describe, it, expect, afterEach, vi } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
 import { I18nextProvider } from 'react-i18next';
-import testI18n from '@/lib/__tests__/test-i18n';
+import testI18n, { en } from '@/lib/__tests__/test-i18n';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
@@ -41,24 +41,13 @@ function renderGate() {
   );
 }
 
-testI18n.addResourceBundle('en-US', 'translation', {
-  workspace: { services: { app: { query: { label: 'Query Service' } } } },
-  healthGate: {
-    serviceGate: {
-      title: 'Service Unavailable',
-      adminDescription_one: 'This page requires {{services}} which is currently unavailable.',
-      adminDescription_other: 'This page requires {{services}} which are currently unavailable.',
-      memberDescription: 'This page is temporarily unavailable. It will come back automatically; if it lasts, contact your admin.',
-    },
-  },
-}, true, true);
-
 describe('ServiceGate when a service is down', () => {
   it('names the service for an admin, who can act on it', () => {
     isAdmin = true;
     renderGate();
     // The sentence names it, and the badge repeats it.
-    expect(screen.getAllByText(/Query Service/).length).toBeGreaterThan(0);
+    const serviceLabel = en.workspace.services.app.query.label;
+    expect(screen.getAllByText((content) => content.includes(serviceLabel)).length).toBeGreaterThan(0);
   });
 
   it.each([
@@ -67,9 +56,8 @@ describe('ServiceGate when a service is down', () => {
   ])('tells %s what to expect without naming services', (_label, admin) => {
     isAdmin = admin;
     renderGate();
-    expect(screen.queryByText(/Query Service/)).toBeNull();
-    expect(
-      screen.getByText(/temporarily unavailable.*contact your admin/i),
-    ).toBeTruthy();
+    const serviceLabel = en.workspace.services.app.query.label;
+    expect(screen.queryByText((content) => content.includes(serviceLabel))).toBeNull();
+    expect(screen.getByText(en.healthGate.serviceGate.memberDescription)).toBeTruthy();
   });
 });

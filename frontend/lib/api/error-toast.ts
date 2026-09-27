@@ -1,6 +1,6 @@
 import { toast, useToastStore } from '@/lib/store/toast-store';
 import { ErrorType, getUserFacingErrorText, ProcessedError } from './api-error';
-import { localizedText, type LocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 
 interface ErrorToastConfig {
   title: LocalizedText;
@@ -66,16 +66,12 @@ export function showErrorToast(error: ProcessedError): void {
   // sentence above, which always says what to do next.
   const base = getUserFacingErrorText(error, config.description);
   // Quoting the reference is how an admin finds this failure in the logs.
-  const descriptionText: LocalizedTextValue = error.requestId
+  const description = error.requestId
     ? localizedText('common.errors.toast.withReference', {
         message: base,
         requestId: error.requestId,
       })
     : base;
-  const compatibilityBase = typeof base === 'string' ? base : error.message;
-  const description = error.requestId
-    ? `${compatibilityBase} Reference: ${error.requestId}`
-    : compatibilityBase;
   // Busy or slow is worth a retry, not a "Server Error" scare.
   const title = BUSY_STATUSES.has(error.statusCode ?? 0)
     ? localizedText('common.errors.toast.busyTitle')
@@ -83,7 +79,6 @@ export function showErrorToast(error: ProcessedError): void {
 
   const id = toast.error(title, {
     description,
-    ...(typeof descriptionText !== 'string' && { descriptionText }),
     duration: null,
     showCloseButton: true,
   });

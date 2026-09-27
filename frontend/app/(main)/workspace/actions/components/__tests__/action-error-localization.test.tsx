@@ -3,8 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
-import { localizedText, resolveLocalizedText } from '@/lib/i18n/localized-text';
-import { apiErrorDetail } from '@/app/(main)/agents/agent-builder/components/toolset-agent-auth-helpers';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 const mocks = vi.hoisted(() => ({
   getToolsetRegistrySchema: vi.fn(),
@@ -59,7 +58,7 @@ afterEach(() => {
 });
 
 describe('action setup localized errors', () => {
-  it('re-resolves stored descriptors after a language change without retrying creation', async () => {
+  it('re-resolves stored descriptors and keeps provider wording in the form', async () => {
     const i18n = await makeI18n();
     mocks.getToolsetRegistrySchema.mockResolvedValue({});
     mocks.listToolsetOAuthConfigs.mockResolvedValue([]);
@@ -86,12 +85,11 @@ describe('action setup localized errors', () => {
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     expect(screen.getByText('Deutscher lokaler Fehler')).toBeTruthy();
     expect(mocks.createToolsetInstance).toHaveBeenCalledTimes(1);
-  });
 
-  it('keeps backend/provider error wording unchanged', async () => {
-    const i18n = await makeI18n();
     const sourceMessage = 'Provider supplied raw authorization detail';
-    const resolved = resolveLocalizedText(apiErrorDetail(new Error(sourceMessage)), i18n.t);
-    expect(resolved).toBe(sourceMessage);
+    mocks.createToolsetInstance.mockRejectedValueOnce(new Error(sourceMessage));
+    fireEvent.click(screen.getByRole('button', { name: 'Erstellen' }));
+    expect(await screen.findByText(sourceMessage)).toBeTruthy();
+    expect(mocks.createToolsetInstance).toHaveBeenCalledTimes(2);
   });
 });
