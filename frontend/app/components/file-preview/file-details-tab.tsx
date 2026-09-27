@@ -108,7 +108,7 @@ function LinkRow({ label, href }: LinkRowProps) {
 }
 
 export function FileDetailsTab({ recordDetails }: FileDetailsTabProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   if (!recordDetails) {
     return (
       <Flex
@@ -137,12 +137,14 @@ export function FileDetailsTab({ recordDetails }: FileDetailsTabProps) {
   // Extract topic names
   const _topics = metadata.topics.map(t => t.name).filter(Boolean);
   
+  const locale = i18n.resolvedLanguage || i18n.language;
+
   // Format timestamps to date strings
   const createdDate = record.createdAtTimestamp 
-    ? formatDate(new Date(record.createdAtTimestamp).toISOString()) 
+    ? formatDate(new Date(record.createdAtTimestamp).toISOString(), locale)
     : undefined;
   const updatedDate = record.updatedAtTimestamp 
-    ? formatDate(new Date(record.updatedAtTimestamp).toISOString()) 
+    ? formatDate(new Date(record.updatedAtTimestamp).toISOString(), locale)
     : undefined;
 
   return (

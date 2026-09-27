@@ -11,8 +11,16 @@ export function formatSize(bytes?: number): string {
 /**
  * Format date string to localized format (e.g., "3 Nov 2025")
  */
-export function formatDate(dateString: string | number): string {
+export function formatDate(dateString: string | number, locale?: string): string {
   const date = new Date(dateString);
+  if (locale) {
+    return date.toLocaleDateString(locale, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  }
+  // Preserve the historical format for callers that do not supply a UI locale.
   const day = date.getDate();
   const month = date.toLocaleDateString('en-US', { month: 'short' });
   const year = date.getFullYear();
