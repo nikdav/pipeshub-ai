@@ -661,7 +661,9 @@ function UsersPageContent() {
         width: '112px',
         render: (user) => (
           <Text size="2" style={{ color: 'var(--slate-12)' }}>
-            {user.role || t('workspace.users.roles.member')}
+            {user.role
+              ? t(`workspace.users.roles.${user.role.toLowerCase()}`, user.role)
+              : t('workspace.users.roles.member')}
           </Text>
         ),
       },
@@ -698,7 +700,7 @@ function UsersPageContent() {
         ),
       },
     ],
-    [t, currentUser]
+    [t, currentUser, i18n.resolvedLanguage, i18n.language]
   );
 
   // ── Row actions ────────────
@@ -1239,8 +1241,18 @@ function UsersPageContent() {
         title={t('workspace.users.actions.changeRoleConfirmTitle', 'Change role?')}
         message={t('workspace.users.actions.changeRoleConfirmMessage', {
           name: roleChangeTarget?.user.name || roleChangeTarget?.user.email || '',
-          currentRole: roleChangeTarget?.user.role || t('workspace.users.roles.member'),
-          newRole: roleChangeTarget?.newRole || '',
+          currentRole: roleChangeTarget?.user.role
+            ? t(
+                `workspace.users.roles.${roleChangeTarget.user.role.toLowerCase()}`,
+                roleChangeTarget.user.role,
+              )
+            : t('workspace.users.roles.member'),
+          newRole: roleChangeTarget?.newRole
+            ? t(
+                `workspace.users.roles.${roleChangeTarget.newRole.toLowerCase()}`,
+                roleChangeTarget.newRole,
+              )
+            : '',
           defaultValue:
             'Are you sure you want to change {{name}} from {{currentRole}} to {{newRole}}?',
         })}

@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Flex } from '@radix-ui/themes';
-import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/config';
 import { toast } from '@/lib/store/toast-store';
 import { GuestGuard } from '@/app/components/ui/guest-guard';
@@ -50,7 +49,6 @@ export default function LoginPage() {
   const router = useRouter();
   const splitLayout = useAuthWideLayout();
   const isHydrated = useAuthStore((s) => s.isHydrated);
-  const { t } = useTranslation();
   const [step, setStep] = useState<AuthStep>({ type: 'loading' });
 
   // Prevents the initAuth call from running twice in React Strict Mode
@@ -96,7 +94,7 @@ export default function LoginPage() {
     const samlErrorCode = params.get('saml_error');
     if (samlErrorCode) {
       samlErrorHandledRef.current = true;
-      toast.error(t('auth.login.samlErrorTitle'), {
+      toast.error(localizedText('auth.login.samlErrorTitle'), {
         description: getSamlErrorDescription(samlErrorCode),
       });
       router.replace('/login');
@@ -105,8 +103,8 @@ export default function LoginPage() {
 
     if (params.get('error') === 'saml_sso') {
       samlErrorHandledRef.current = true;
-      toast.error(t('auth.login.samlSignInFailedTitle'), {
-        description: t('auth.login.samlSignInFailedDescription'),
+      toast.error(localizedText('auth.login.samlSignInFailedTitle'), {
+        description: localizedText('auth.login.samlSignInFailedDescription'),
       });
       router.replace('/login');
     }

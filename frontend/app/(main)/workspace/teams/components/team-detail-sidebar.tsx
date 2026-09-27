@@ -841,7 +841,7 @@ export function TeamDetailSidebar({
                       >
                         <Box style={{ flex: 1, minWidth: 0 }}>
                           <AvatarCell
-                            name={user.label}
+                            name={user.isUnknownUser ? t('workspace.common.unknownUser') : user.label}
                             email={user.subtitle}
                             avatarSize={28}
                             profilePicture={user.profilePicture}

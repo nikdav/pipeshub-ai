@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import i18n from '../config';
 import {
   formatLocalizedBytes,
   localizedText,
@@ -35,6 +36,31 @@ describe('localized text descriptors', () => {
       localizedText('sample.reference', { message, requestId: 'req-42' }),
       t,
     )).toBe('Try again Reference: req-42');
+  });
+
+  it('applies catalogue-selected lowercase formatting in the active production locale', async () => {
+    const originalLanguage = i18n.language;
+    const key = 'workspace.connectors.validation.syncFilterRequired';
+
+    try {
+      await i18n.changeLanguage('en-US');
+      expect(i18n.language).toBe('en-US');
+      expect(resolveLocalizedText(
+        localizedText(key, { field: 'Project' }),
+        i18n.t.bind(i18n),
+      )).toBe('Select a project before saving. Each connector instance syncs exactly one project.');
+
+      await i18n.changeLanguage('de-DE');
+      expect(i18n.language).toBe('de-DE');
+      expect(resolveLocalizedText(
+        localizedText(key, { field: 'Projekt' }),
+        i18n.t.bind(i18n),
+      )).toBe('Wählen Sie Projekt aus, bevor Sie speichern. Pro Konnektor-Instanz kann jeweils nur eine Auswahl für Projekt synchronisiert werden.');
+    } finally {
+      await i18n.changeLanguage(originalLanguage);
+    }
+
+    expect(i18n.language).toBe(originalLanguage);
   });
 });
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
 import { createInstance } from 'i18next';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
@@ -56,15 +56,62 @@ describe('workspace admin labels', () => {
     expect(screen.queryByText('Pending')).toBeNull();
   });
 
+  it('retranslates the default selector placeholder while closed and open, preserving an empty override', async () => {
+    const i18n = await createTestI18n();
+    const scrollIntoViewDescriptor = Object.getOwnPropertyDescriptor(Element.prototype, 'scrollIntoView');
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(Element.prototype, 'scrollIntoView', {
+      configurable: true,
+      writable: true,
+      value: scrollIntoView,
+    });
+
+    try {
+      const view = render(
+        <I18nextProvider i18n={i18n}><Theme>
+          <SearchableCheckboxDropdown options={[]} selectedIds={[]} onSelectionChange={() => {}} />
+        </Theme></I18nextProvider>,
+      );
+
+      expect(screen.getByText('Search or select')).toBeTruthy();
+      await act(async () => { await i18n.changeLanguage('de-DE'); });
+      expect(screen.getByText('Suchen oder auswählen')).toBeTruthy();
+
+      fireEvent.click(screen.getByText('Suchen oder auswählen'));
+      await waitFor(() => expect(scrollIntoView).toHaveBeenCalled());
+      expect(screen.getByRole('textbox').getAttribute('placeholder')).toBe('Suchen oder auswählen');
+      await act(async () => { await i18n.changeLanguage('en-US'); });
+      expect(screen.getByRole('textbox').getAttribute('placeholder')).toBe('Search or select');
+
+      view.rerender(
+        <I18nextProvider i18n={i18n}><Theme>
+          <SearchableCheckboxDropdown
+            options={[]}
+            selectedIds={[]}
+            onSelectionChange={() => {}}
+            placeholder=""
+          />
+        </Theme></I18nextProvider>,
+      );
+      expect(screen.getByRole('textbox').getAttribute('placeholder')).toBe('');
+    } finally {
+      if (scrollIntoViewDescriptor) {
+        Object.defineProperty(Element.prototype, 'scrollIntoView', scrollIntoViewDescriptor);
+      } else {
+        Reflect.deleteProperty(Element.prototype, 'scrollIntoView');
+      }
+    }
+  });
+
   it('retranslates missing-name options and accessible remove labels without changing IDs', async () => {
     const i18n = await createTestI18n();
-    const selection = ['user-1'];
+    const onSelectionChange = vi.fn();
     render(
       <I18nextProvider i18n={i18n}><Theme>
         <SearchableCheckboxDropdown
           options={[{ id: 'user-1', label: 'Unknown User', isUnknownUser: true }]}
-          selectedIds={selection}
-          onSelectionChange={() => {}}
+          selectedIds={['user-1']}
+          onSelectionChange={onSelectionChange}
         />
       </Theme></I18nextProvider>,
     );
@@ -74,7 +121,7 @@ describe('workspace admin labels', () => {
     await act(async () => { await i18n.changeLanguage('de-DE'); });
     expect(screen.getByText('Unbekannte Person')).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Unbekannte Person entfernen' })).toBeTruthy();
-    expect(selection).toEqual(['user-1']);
+    expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
   it('keeps chip removal keyboard and pointer accessible while respecting disabled state', async () => {

@@ -1,8 +1,6 @@
 import type { AxiosError } from 'axios';
-import i18n from '@/lib/i18n/config';
 import {
   localizedText,
-  resolveLocalizedText,
   type LocalizedTextValue,
 } from '@/lib/i18n/localized-text';
 
@@ -25,17 +23,6 @@ export function getUserAccountApiResponseMessage(err: unknown): string | undefin
   const raw = nested ?? flat;
   if (!raw) return undefined;
   return raw.replace(/\s*\[blockedUntil:[^\]]+\]/g, '').trim();
-}
-
-/**
- * Reads the user-facing message from an axios error response or a thrown Error.
- */
-export function getUserAccountApiErrorMessage(
-  err: unknown,
-  fallback: LocalizedTextValue = localizedText('auth.common.errorFallback'),
-): string {
-  const value = getUserAccountApiErrorText(err, fallback);
-  return resolveLocalizedText(value, i18n.t.bind(i18n));
 }
 
 /** Keeps app fallback metadata available for an error screen rendered later. */

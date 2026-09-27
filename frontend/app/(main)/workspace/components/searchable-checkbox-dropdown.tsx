@@ -73,6 +73,7 @@ export function SearchableCheckboxDropdown({
   hasMore = false,
 }: SearchableCheckboxDropdownProps) {
   const { t } = useTranslation();
+  const searchPlaceholder = placeholder ?? t('workspace.selector.searchOrSelect');
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [openDirection, setOpenDirection] = useState<'down' | 'up'>('down');
@@ -331,7 +332,7 @@ export function SearchableCheckboxDropdown({
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
               onKeyDown={handleSearchKeyDown}
-              placeholder={selectedIds.length === 0 ? placeholder ?? t('workspace.selector.searchOrSelect') : ''}
+              placeholder={selectedIds.length === 0 ? searchPlaceholder : ''}
               style={{
                 border: 'none',
                 outline: 'none',
@@ -354,7 +355,7 @@ export function SearchableCheckboxDropdown({
                   padding: '2px 4px',
                 }}
               >
-                {placeholder}
+                {searchPlaceholder}
               </Text>
             )
           )}

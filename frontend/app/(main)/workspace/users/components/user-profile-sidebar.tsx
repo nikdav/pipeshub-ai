@@ -139,7 +139,9 @@ export function UserProfileSidebar() {
         />
         <ProfileField
           label={t('workspace.users.profile.role')}
-          value={profileUser.role || t('workspace.users.roles.member')}
+          value={profileUser.role
+            ? t(`workspace.users.roles.${profileUser.role.toLowerCase()}`, profileUser.role)
+            : t('workspace.users.roles.member')}
         />
         <ProfileField
           label={t('workspace.users.profile.companyDesignation')}
