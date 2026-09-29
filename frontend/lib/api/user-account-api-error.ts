@@ -1,4 +1,8 @@
 import type { AxiosError } from 'axios';
+import {
+  localizedText,
+  type LocalizedTextValue,
+} from '@/lib/i18n/localized-text';
 
 /** Error body returned by userAccount APIs (e.g. POST /userAccount/authenticate). */
 export interface UserAccountApiErrorBody {
@@ -21,13 +25,11 @@ export function getUserAccountApiResponseMessage(err: unknown): string | undefin
   return raw.replace(/\s*\[blockedUntil:[^\]]+\]/g, '').trim();
 }
 
-/**
- * Reads the user-facing message from an axios error response or a thrown Error.
- */
-export function getUserAccountApiErrorMessage(
+/** Keeps app fallback metadata available for an error screen rendered later. */
+export function getUserAccountApiErrorText(
   err: unknown,
-  fallback = 'Something went wrong. Please try again.',
-): string {
+  fallback: LocalizedTextValue = localizedText('auth.common.errorFallback'),
+): LocalizedTextValue {
   const fromBody = getUserAccountApiResponseMessage(err);
   if (fromBody) return fromBody;
   if (err instanceof Error && err.message) {

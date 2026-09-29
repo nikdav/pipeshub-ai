@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import ProviderButton from './provider-button';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -19,7 +20,7 @@ export interface OAuthSignInButtonProps {
   /** Called with the provider access token on success. */
   onSuccess: (accessToken: string) => void;
   /** Called when the OAuth flow fails. */
-  onError: (message: string) => void;
+  onError: (message: LocalizedTextValue) => void;
   /** Render as accent-filled primary button. */
   primary?: boolean;
   /** Show loading state on the button. */
@@ -87,7 +88,7 @@ export default function OAuthSignInButton({
 
     if (!popup) {
       localStorage.removeItem('oauth_state');
-      onError('Sign-in popup was blocked. Please allow popups for this site.');
+      onError(localizedText('auth.oauth.popupError.popupBlocked'));
       return;
     }
 
@@ -110,7 +111,7 @@ export default function OAuthSignInButton({
       } else if (event.data?.type === 'OAUTH_ERROR') {
         cleanup();
         setIsLoading(false);
-        onError(event.data.error || 'OAuth sign-in failed. Please try again.');
+        onError(event.data.error || localizedText('auth.oauth.popupError.failed'));
       }
     };
 

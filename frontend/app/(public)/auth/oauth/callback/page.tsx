@@ -1,16 +1,24 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import { extractApiErrorMessage } from '@/lib/api/api-error';
 import { getApiBaseUrl } from '@/lib/utils/api-base-url';
+import { localizedText, resolveLocalizedText, type LocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
-async function readHttpErrorMessage(response: Response): Promise<string> {
+class LocalizedOAuthError extends Error {
+  constructor(readonly messageText: LocalizedText) {
+    super(messageText.key);
+  }
+}
+
+async function readHttpErrorMessage(response: Response): Promise<LocalizedTextValue> {
   const status = response.status;
   const text = await response.text();
   if (!text.trim()) {
-    return `Authentication failed (${status}).`;
+    return localizedText('auth.oauth.callback.authenticationFailed', { status });
   }
   try {
     const parsed: unknown = JSON.parse(text);
@@ -23,7 +31,7 @@ async function readHttpErrorMessage(response: Response): Promise<string> {
   if (trimmed.length > 500) {
     return `${trimmed.slice(0, 497)}…`;
   }
-  return trimmed || `Authentication failed (${status}).`;
+  return trimmed || localizedText('auth.oauth.callback.authenticationFailed', { status });
 }
 
 /**
@@ -45,7 +53,8 @@ async function readHttpErrorMessage(response: Response): Promise<string> {
  * localStorage by the opener.
  */
 export default function OAuthCallbackPage() {
-  const [error, setError] = useState('');
+  const { t, i18n } = useTranslation();
+  const [error, setError] = useState<LocalizedTextValue | ''>('');
   const hasExchanged = useRef(false);
 
   useEffect(() => {
@@ -61,8 +70,8 @@ export default function OAuthCallbackPage() {
         const oauthError = urlParams.get('error');
 
         if (oauthError) throw new Error(`OAuth error: ${oauthError}`);
-        if (!code) throw new Error('No authorization code received.');
-        if (!state) throw new Error('No state parameter received.');
+        if (!code) throw new LocalizedOAuthError(localizedText('auth.oauth.callback.noCode'));
+        if (!state) throw new LocalizedOAuthError(localizedText('auth.oauth.callback.noState'));
 
         // CSRF validation: compare received state with the value the opener
         // stored in localStorage before opening the popup.
@@ -70,7 +79,7 @@ export default function OAuthCallbackPage() {
         localStorage.removeItem('oauth_state');
 
         if (expectedState && state !== expectedState) {
-          throw new Error('Authentication response validation failed. Please try again.');
+          throw new LocalizedOAuthError(localizedText('auth.oauth.callback.validationFailed'));
         }
 
         let stateData: { email?: string; provider?: string };
@@ -83,12 +92,12 @@ export default function OAuthCallbackPage() {
           const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
           stateData = JSON.parse(atob(padded));
         } catch {
-          throw new Error('Invalid state parameter.');
+          throw new LocalizedOAuthError(localizedText('auth.oauth.callback.invalidState'));
         }
 
         const provider = stateData.provider?.trim();
         if (!provider) {
-          throw new Error('Invalid OAuth state: missing provider.');
+          throw new LocalizedOAuthError(localizedText('auth.oauth.callback.missingProvider'));
         }
 
         // Web: empty string → same-origin fetch. Electron: ServerUrlGuard + localStorage base.
@@ -109,7 +118,9 @@ export default function OAuthCallbackPage() {
         );
 
         if (!response.ok) {
-          throw new Error(await readHttpErrorMessage(response));
+          const errorMessage = await readHttpErrorMessage(response);
+          if (typeof errorMessage === 'string') throw new Error(errorMessage);
+          throw new LocalizedOAuthError(errorMessage);
         }
 
         const tokens = (await response.json()) as {
@@ -120,7 +131,7 @@ export default function OAuthCallbackPage() {
         const accessToken = tokens.access_token ?? tokens.accessToken;
 
         if (!accessToken) {
-          throw new Error('Authentication succeeded but no access token was returned.');
+          throw new LocalizedOAuthError(localizedText('auth.oauth.callback.noToken'));
         }
 
         if (window.opener) {
@@ -131,8 +142,12 @@ export default function OAuthCallbackPage() {
         }
         window.close();
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'OAuth authentication failed.';
+        const messageText = err instanceof LocalizedOAuthError
+          ? err.messageText
+          : undefined;
+        const message = messageText
+          ? resolveLocalizedText(messageText, i18n.t.bind(i18n))
+          : err instanceof Error ? err.message : i18n.t('auth.oauth.callback.failed');
 
         if (window.opener) {
           window.opener.postMessage(
@@ -143,7 +158,7 @@ export default function OAuthCallbackPage() {
           return;
         }
 
-        setError(message);
+        setError(messageText ?? message);
       }
     };
 
@@ -159,13 +174,13 @@ export default function OAuthCallbackPage() {
       >
         <Box style={{ maxWidth: 400, textAlign: 'center' }}>
           <Text color="red" size="3" weight="medium" style={{ display: 'block', marginBottom: 'var(--space-2)' }}>
-            Sign-in failed
+            {t('auth.oauth.callback.signInFailed')}
           </Text>
           <Text size="2" color="gray" style={{ display: 'block', marginBottom: 'var(--space-4)' }}>
-            {error}
+            {resolveLocalizedText(error, t)}
           </Text>
           <Text size="2" color="gray">
-            You can close this window and try again.
+            {t('auth.oauth.callback.closeAndRetry')}
           </Text>
         </Box>
       </Flex>
@@ -175,7 +190,7 @@ export default function OAuthCallbackPage() {
   return (
     <Flex align="center" justify="center" style={{ minHeight: '100vh' }}>
       <Text size="2" color="gray">
-        Processing sign-in…
+        {t('auth.common.signingIn')}
       </Text>
     </Flex>
   );

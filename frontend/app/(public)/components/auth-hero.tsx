@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Image from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
@@ -42,6 +43,7 @@ export interface AuthHeroProps {
  * Mirrors the Figma "Login Frame" (node 5005:4512) at 826×1024 reference size.
  */
 export default function AuthHero({ splitLayout }: AuthHeroProps) {
+  const { t } = useTranslation();
   if (!splitLayout) return null;
 
   return (
@@ -97,7 +99,7 @@ export default function AuthHero({ splitLayout }: AuthHeroProps) {
           fontFamily: 'ClashGrotesk, sans-serif',
         }}
       >
-        Explainable Enterprise Search for modern enterprises.
+        {t('auth.hero.tagline')}
       </Text>
 
       {/* ── Search pill ──────────────────────────────────────────── */}
@@ -148,7 +150,7 @@ export default function AuthHero({ splitLayout }: AuthHeroProps) {
               whiteSpace: 'nowrap',
             }}
           >
-            Search across all of your business apps
+            {t('auth.hero.description')}
           </Text>
         </Flex>
       </Box>

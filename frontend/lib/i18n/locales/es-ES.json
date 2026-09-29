@@ -13,6 +13,10 @@
       "newPasswordPlaceholder": "Introduzca su nueva contraseña",
       "confirmPasswordLabel": "Confirmar contraseña*",
       "confirmPasswordPlaceholder": "Confirme su contraseña"
+    },
+    "success": {
+      "title": "¡Tu contraseña ha sido cambiada!",
+      "description": "Su contraseña se ha actualizado correctamente. Ahora puede iniciar sesión en su espacio de trabajo Pipeshub con su nueva contraseña."
     }
   },
   "agents": {
@@ -189,7 +193,9 @@
       "baseUrlLabel": "URL base (opcional)",
       "baseUrlPlaceholder": "ej: http://localhost:3000/files",
       "saveSuccessFallback": "Configuración de almacenamiento guardada.",
-      "saveErrorFallback": "No se pudo guardar la configuración de almacenamiento."
+      "saveErrorFallback": "No se pudo guardar la configuración de almacenamiento.",
+      "s3HealthCheckFailedWithBase": "{{message}} ({{details}})",
+      "s3HealthCheckFailed": "Error en la comprobación de estado de S3 ({{details}})"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -226,7 +232,37 @@
     },
     "tour": {
       "dismiss": "Cerrar el recorrido",
-      "completedDescription": "Ya está todo listo. Si quiere saber más, consulte la <docs>documentación</docs>."
+      "completedDescription": "Ya está todo listo. Si quiere saber más, consulte la <docs>documentación</docs>.",
+      "stubs": {
+        "almostThereTitle": "¡Ya casi has llegado!",
+        "almostThereSubtitle": "Completa estas acciones para descubrir lo que puede hacer PipesHub.",
+        "connectFirstApp": "Conecta tu primera aplicación",
+        "createCollection": "Crear una colección",
+        "inviteTeamMembers": "Invitar a miembros del equipo",
+        "keepGoingTitle": "¡Sigue adelante!",
+        "keepGoingSubtitle": "¿Por qué no compartes la noticia con tu equipo?",
+        "completedTitle": "¡Vamos allá!"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "¿Qué tipo de trabajo haces?",
+      "subtitle": "Esto nos ayudará a personalizar tu experiencia en PipesHub.",
+      "roles": {
+        "softwareDeveloper": "Desarrollador de software",
+        "productManager": "Responsable de producto",
+        "marketer": "Profesional de marketing",
+        "designer": "Diseñador",
+        "projectManager": "Gerente de proyecto",
+        "operations": "Operaciones",
+        "itSupport": "Especialista en soporte TI",
+        "humanResources": "Recursos humanos",
+        "financeOfficer": "Responsable de finanzas",
+        "legal": "Asesoría jurídica",
+        "complianceOfficer": "Responsable de cumplimiento",
+        "salesRepresentative": "Representante de ventas",
+        "dataScientist": "Científico de datos",
+        "customerService": "Atención al cliente"
+      }
     }
   },
   "nav": {
@@ -4186,7 +4222,13 @@
       "orgEmailVerifiedTitle": "Organización verificada",
       "orgEmailVerifiedDescription": "Tu organización ya está activa. Inicia sesión para continuar.",
       "orgEmailVerifyFailedTitle": "Verificación fallida",
-      "orgEmailVerifyFailedDescription": "El enlace puede ser inválido o haber expirado. Por favor, regístrate nuevamente."
+      "orgEmailVerifyFailedDescription": "El enlace puede ser inválido o haber expirado. Por favor, regístrate nuevamente.",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "El aprovisionamiento JIT está desactivado para tu organización.",
+        "samlSsoDisabled": "El inicio de sesión único con SAML no está habilitado para tu organización.",
+        "samlAuthenticationFailed": "No se pudo completar la autenticación con SAML. Inténtalo de nuevo.",
+        "unexpectedSamlFailure": "Se produjo un error inesperado durante el inicio de sesión. Por favor inténtalo de nuevo"
+      }
     },
     "common": {
       "signIn": "Iniciar sesión",
@@ -4218,8 +4260,95 @@
       "oauthUnavailable": "El inicio de sesión OAuth no está disponible. Contacta a tu administrador.",
       "showPassword": "Mostrar contraseña",
       "hidePassword": "Ocultar contraseña",
+      "showOtp": "Mostrar código OTP",
+      "hideOtp": "Ocultar código OTP",
       "accountDisabled": "Su cuenta se ha deshabilitado.",
-      "tooManyIncorrectCredentials": "Ha introducido credenciales incorrectas demasiadas veces"
+      "tooManyIncorrectCredentials": "Ha introducido credenciales incorrectas demasiadas veces",
+      "orContinueWithProviders": "o continuar con",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "Correo electrónico OTP",
+      "errorFallback": "Algo salió mal. Por favor inténtalo de nuevo."
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "Error de validación de la respuesta de autenticación. Por favor inténtalo de nuevo.",
+        "failed": "Error al iniciar sesión en Google."
+      },
+      "microsoftCallback": {
+        "validationFailed": "Error de validación de la respuesta de autenticación. Por favor inténtalo de nuevo.",
+        "failed": "Error al iniciar sesión en Microsoft.",
+        "noCode": "No se recibió ningún código de autorización de Microsoft."
+      },
+      "callback": {
+        "authenticationFailed": "Error de autenticación ({{status}}).",
+        "noCode": "No se recibió ningún código de autorización.",
+        "noState": "No se recibió ningún parámetro de estado.",
+        "validationFailed": "Error de validación de la respuesta de autenticación. Por favor inténtalo de nuevo.",
+        "invalidState": "Parámetro de estado no válido.",
+        "missingProvider": "Estado de OAuth no válido: falta el proveedor.",
+        "noToken": "La autenticación se completó, pero no se recibió ningún token de acceso.",
+        "failed": "Error de autenticación OAuth.",
+        "signInFailed": "Error al iniciar sesión",
+        "closeAndRetry": "Puedes cerrar esta ventana y volver a intentarlo."
+      },
+      "googlePopupError": {
+        "popupBlocked": "La ventana emergente de inicio de sesión Google fue bloqueada. Permita ventanas emergentes para este sitio.",
+        "failed": "Error al iniciar sesión en Google. Por favor inténtalo de nuevo."
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "Error en el intercambio de tokens con Microsoft.",
+        "noIdToken": "No se recibió ningún token de identificación de Microsoft.",
+        "failed": "Error al iniciar sesión en Microsoft.",
+        "popupBlocked": "La ventana emergente fue bloqueada. Permita las ventanas emergentes para este sitio y vuelva a intentarlo.",
+        "startFailed": "No se pudo iniciar el inicio de sesión en Microsoft. Por favor inténtalo de nuevo."
+      },
+      "popupError": {
+        "popupBlocked": "La ventana emergente de inicio de sesión fue bloqueada. Permita ventanas emergentes para este sitio.",
+        "failed": "Error al iniciar sesión en OAuth. Por favor inténtalo de nuevo."
+      }
+    },
+    "hero": {
+      "tagline": "Búsqueda empresarial explicable para empresas modernas.",
+      "description": "Busca en todas tus aplicaciones de trabajo."
+    },
+    "emailStep": {
+      "genericError": "Algo salió mal. Por favor inténtalo de nuevo.",
+      "noAccount": "No se encontró ninguna cuenta con esa dirección de correo electrónico.",
+      "checking": "Verificando…"
+    },
+    "providers": {
+      "signInWithSso": "Iniciar sesión con SSO",
+      "continueWithGoogle": "Continuar con Google",
+      "continueWithMicrosoft": "Continuar con Microsoft",
+      "continueWithOAuth": "Continuar con OAuth",
+      "continueWithGitHub": "Continuar con GitHub",
+      "continueWithProvider": "Continuar con {{provider}}",
+      "connecting": "Conectando…"
+    },
+    "actionFeedback": {
+      "blockedUntil": "Inténtelo de nuevo después de {{date, datetime}}.",
+      "unexpectedResponse": "Respuesta inesperada. Por favor inténtalo de nuevo.",
+      "passwordSignInFailed": "Error al iniciar sesión. Por favor inténtalo de nuevo.",
+      "noPasswordSetTitle": "No se ha establecido ninguna contraseña para esta cuenta.",
+      "noPasswordSetDescription": "Usa «¿Has olvidado tu contraseña?» para crearla.",
+      "resetEmailSuccessDescription": "Si existe una cuenta con esta dirección de correo, se ha enviado un enlace para restablecer la contraseña.",
+      "resetEmailErrorTitle": "No se pudo solicitar el restablecimiento de contraseña",
+      "tryAgainLater": "Inténtelo de nuevo más tarde.",
+      "googleSignInFailed": "Error al iniciar sesión en Google. Por favor inténtalo de nuevo.",
+      "additionalVerificationTitle": "Se requiere verificación adicional",
+      "additionalVerificationDescription": "Complete el siguiente paso para continuar.",
+      "oauthSignInFailed": "Error al iniciar sesión en OAuth. Por favor inténtalo de nuevo.",
+      "otpSendSuccessTitle": "Revisa tu correo electrónico",
+      "otpSendSuccessDescription": "Si se puede iniciar sesión con un código usando esa dirección, se está enviando uno. Si no llega en unos minutos, revisa la carpeta de correo no deseado o inténtalo más tarde.",
+      "otpSendErrorTitle": "No se pudo enviar el código de verificación",
+      "verificationFailed": "La verificación falló. Por favor inténtalo de nuevo.",
+      "microsoftSignInFailed": "Error al iniciar sesión en Microsoft. Por favor inténtalo de nuevo.",
+      "contactAdministrator": "Contacta con tu administrador."
+    },
+    "emailVerification": {
+      "missingToken": "Al enlace de verificación le falta un token.",
+      "completing": "Completando la verificación por correo electrónico...",
+      "failed": "Error en la verificación del correo electrónico. Por favor inténtalo de nuevo."
     }
   },
   "healthGate": {
@@ -4403,6 +4532,19 @@
       "offDescription": "Han desaparecido de las respuestas, las búsquedas y los registros de todo el mundo, y las cuentas de ejemplo no pueden iniciar sesión. Vuelva a activarlos en Perfil → Datos de demostración.",
       "onTitle": "Datos de demostración reactivados para todos",
       "errorTitle": "No se han podido cambiar los datos de demostración para todos"
+    }
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "Completa tu perfil",
+      "description": "Indica tu nombre completo para continuar. Así tus compañeros podrán reconocerte en todos tus espacios de trabajo.",
+      "errors": {
+        "required": "El nombre completo es obligatorio.",
+        "minimumLength": "El nombre completo debe tener al menos 2 caracteres.",
+        "userUnavailable": "No se pudo identificar al usuario. Actualiza la página e inténtalo de nuevo.",
+        "saveFailed": "No se pudo guardar tu nombre. Inténtalo de nuevo."
+      },
+      "saveAndContinue": "Guardar y continuar"
     }
   },
   "keyboard": {

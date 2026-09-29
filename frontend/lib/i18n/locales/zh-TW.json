@@ -26,6 +26,10 @@
       "newPasswordPlaceholder": "請輸入新密碼",
       "confirmPasswordLabel": "確認密碼*",
       "confirmPasswordPlaceholder": "請再次輸入密碼"
+    },
+    "success": {
+      "title": "您的密碼已變更！",
+      "description": "密碼已成功更新。現在您可以使用新密碼登入 Pipeshub 工作區。"
     }
   },
   "agents": {
@@ -195,7 +199,9 @@
       "baseUrlLabel": "基礎 URL（選填）",
       "baseUrlPlaceholder": "例如：http://localhost:3000/files",
       "saveSuccessFallback": "儲存空間設定已儲存。",
-      "saveErrorFallback": "無法儲存儲存空間設定。"
+      "saveErrorFallback": "無法儲存儲存空間設定。",
+      "s3HealthCheckFailedWithBase": "{{message}}（{{details}}）",
+      "s3HealthCheckFailed": "S3 健康狀態檢查失敗（{{details}}）"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -232,7 +238,37 @@
     },
     "tour": {
       "dismiss": "關閉導覽",
-      "completedDescription": "一切都準備好了。若想瞭解更多，請參閱<docs>說明文件</docs>。"
+      "completedDescription": "一切都準備好了。若想瞭解更多，請參閱<docs>說明文件</docs>。",
+      "stubs": {
+        "almostThereTitle": "快完成了！",
+        "almostThereSubtitle": "完成下列操作，了解 Pipeshub 的功能",
+        "connectFirstApp": "連結您的第一個應用程式",
+        "createCollection": "建立集合",
+        "inviteTeamMembers": "邀請團隊成員",
+        "keepGoingTitle": "繼續加油！",
+        "keepGoingSubtitle": "也分享給您的團隊成員吧！",
+        "completedTitle": "開始使用吧！"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "您從事哪一類工作？",
+      "subtitle": "這有助於我們為您打造個人化的 Pipeshub 使用體驗。",
+      "roles": {
+        "softwareDeveloper": "軟體開發人員",
+        "productManager": "產品經理",
+        "marketer": "行銷人員",
+        "designer": "設計師",
+        "projectManager": "專案經理",
+        "operations": "營運人員",
+        "itSupport": "IT 支援專員",
+        "humanResources": "人力資源",
+        "financeOfficer": "財務專員",
+        "legal": "法務",
+        "complianceOfficer": "法遵專員",
+        "salesRepresentative": "業務代表",
+        "dataScientist": "資料科學家",
+        "customerService": "客戶服務"
+      }
     }
   },
   "nav": {
@@ -4155,7 +4191,13 @@
       "orgEmailVerifiedTitle": "組織已驗證",
       "orgEmailVerifiedDescription": "您的組織現已啟用。請登入以繼續。",
       "orgEmailVerifyFailedTitle": "驗證失敗",
-      "orgEmailVerifyFailedDescription": "連結可能無效或已過期。請重新註冊。"
+      "orgEmailVerifyFailedDescription": "連結可能無效或已過期。請重新註冊。",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "您的組織已停用 JIT 佈建",
+        "samlSsoDisabled": "您的組織尚未啟用 SAML SSO",
+        "samlAuthenticationFailed": "SAML 驗證失敗。請再試一次",
+        "unexpectedSamlFailure": "登入時發生未預期的錯誤。請再試一次。"
+      }
     },
     "common": {
       "signIn": "登入",
@@ -4187,8 +4229,95 @@
       "oauthUnavailable": "OAuth 登入目前無法使用。請聯絡您的管理員。",
       "showPassword": "顯示密碼",
       "hidePassword": "隱藏密碼",
+      "showOtp": "顯示驗證碼",
+      "hideOtp": "隱藏驗證碼",
       "accountDisabled": "您的帳戶已停用。",
-      "tooManyIncorrectCredentials": "您輸入錯誤憑證的次數過多"
+      "tooManyIncorrectCredentials": "您輸入錯誤憑證的次數過多",
+      "orContinueWithProviders": "或使用以下方式繼續",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "電子郵件 OTP",
+      "errorFallback": "發生錯誤。請再試一次。"
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "驗證回應驗證失敗。請再試一次。",
+        "failed": "Google 登入失敗。"
+      },
+      "microsoftCallback": {
+        "validationFailed": "驗證回應驗證失敗。請再試一次。",
+        "failed": "Microsoft 登入失敗。",
+        "noCode": "未收到 Microsoft 授權碼。"
+      },
+      "callback": {
+        "authenticationFailed": "驗證失敗（{{status}}）。",
+        "noCode": "未收到授權碼。",
+        "noState": "未收到 state 參數。",
+        "validationFailed": "驗證回應驗證失敗。請再試一次。",
+        "invalidState": "state 參數無效。",
+        "missingProvider": "OAuth state 無效：缺少 provider。",
+        "noToken": "驗證成功，但未傳回 access token。",
+        "failed": "OAuth 驗證失敗。",
+        "signInFailed": "登入失敗",
+        "closeAndRetry": "您可以關閉此視窗後再試一次。"
+      },
+      "googlePopupError": {
+        "popupBlocked": "Google 登入彈出視窗遭到封鎖。請允許此網站開啟彈出視窗。",
+        "failed": "Google 登入失敗。請再試一次。"
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "與 Microsoft 交換權杖失敗。",
+        "noIdToken": "未收到 Microsoft id token。",
+        "failed": "Microsoft 登入失敗。請再試一次。",
+        "popupBlocked": "彈出視窗遭到封鎖。請允許此網站開啟彈出視窗後再試一次。",
+        "startFailed": "無法啟動 Microsoft 登入。請再試一次。"
+      },
+      "popupError": {
+        "popupBlocked": "登入彈出視窗遭到封鎖。請允許此網站開啟彈出視窗。",
+        "failed": "OAuth 登入失敗。請再試一次。"
+      }
+    },
+    "hero": {
+      "tagline": "為現代企業打造可解釋的企業搜尋。",
+      "description": "搜尋所有商務應用程式"
+    },
+    "emailStep": {
+      "genericError": "發生錯誤。請再試一次。",
+      "noAccount": "找不到使用此電子郵件地址的帳戶。",
+      "checking": "正在檢查…"
+    },
+    "providers": {
+      "signInWithSso": "使用 SSO 登入",
+      "continueWithGoogle": "使用 Google 繼續",
+      "continueWithMicrosoft": "使用 Microsoft 繼續",
+      "continueWithOAuth": "使用 OAuth 繼續",
+      "continueWithGitHub": "使用 GitHub 繼續",
+      "continueWithProvider": "使用 {{provider}} 繼續",
+      "connecting": "正在連線…"
+    },
+    "actionFeedback": {
+      "blockedUntil": "請於 {{date, datetime}} 後再試一次。",
+      "unexpectedResponse": "收到非預期的回應。請再試一次。",
+      "passwordSignInFailed": "登入失敗。請再試一次。",
+      "noPasswordSetTitle": "此帳戶尚未設定密碼。",
+      "noPasswordSetDescription": "請使用下方的「忘記密碼」設定密碼。",
+      "resetEmailSuccessDescription": "如果此電子郵件地址有帳戶，密碼重設連結已寄出。",
+      "resetEmailErrorTitle": "無法提出密碼重設要求",
+      "tryAgainLater": "請稍後再試一次。",
+      "googleSignInFailed": "Google 登入失敗。請再試一次。",
+      "additionalVerificationTitle": "需要額外驗證",
+      "additionalVerificationDescription": "完成下一個步驟以繼續。",
+      "oauthSignInFailed": "OAuth 登入失敗。請再試一次。",
+      "otpSendSuccessTitle": "請檢查您的電子郵件",
+      "otpSendSuccessDescription": "如果此電子郵件可用驗證碼登入，系統正在寄送驗證碼。如果幾分鐘後仍未收到，請檢查垃圾郵件資料夾，或稍後再試一次。",
+      "otpSendErrorTitle": "無法傳送驗證碼",
+      "verificationFailed": "驗證失敗。請再試一次。",
+      "microsoftSignInFailed": "Microsoft 登入失敗。請再試一次。",
+      "contactAdministrator": "請聯絡管理員。"
+    },
+    "emailVerification": {
+      "missingToken": "驗證連結缺少權杖。",
+      "completing": "正在完成電子郵件驗證…",
+      "failed": "電子郵件驗證失敗。請再試一次。"
     }
   },
   "healthGate": {
@@ -4348,6 +4477,19 @@
       "offDescription": "它已從所有人的回覆、搜尋與記錄中移除，範例帳戶也無法登入。請在「個人資料 → 示範資料」中重新開啟。",
       "onTitle": "已為所有人重新開啟示範資料",
       "errorTitle": "無法為所有人變更示範資料"
+    }
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "完成您的個人檔案",
+      "description": "請設定您的全名以繼續。這能讓隊友在不同工作區中辨識您。",
+      "errors": {
+        "required": "必須填寫全名",
+        "minimumLength": "全名至少須有 2 個字元",
+        "userUnavailable": "無法辨識使用者。請重新整理頁面後再試一次。",
+        "saveFailed": "儲存姓名失敗。請再試一次。"
+      },
+      "saveAndContinue": "儲存並繼續"
     }
   },
   "keyboard": {

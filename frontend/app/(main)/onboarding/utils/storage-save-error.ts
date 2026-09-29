@@ -1,3 +1,5 @@
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
+
 interface ApiErrorBody {
   message?: string;
   error?: string | { message?: string };
@@ -14,7 +16,7 @@ interface ApiErrorBody {
  * Extracts a user-facing message from storage config save failures,
  * including per-capability S3 health-check details when present.
  */
-export function extractStorageSaveErrorMessage(data: unknown): string | null {
+export function extractStorageSaveErrorMessage(data: unknown): LocalizedTextValue | null {
   if (data == null || typeof data !== 'object') {
     return null;
   }
@@ -44,8 +46,11 @@ export function extractStorageSaveErrorMessage(data: unknown): string | null {
     .join('; ');
 
   if (baseMessage) {
-    return `${baseMessage} (${details})`;
+    return localizedText('onboarding.stepStorage.s3HealthCheckFailedWithBase', {
+      message: baseMessage,
+      details,
+    });
   }
 
-  return `S3 health check failed (${details})`;
+  return localizedText('onboarding.stepStorage.s3HealthCheckFailed', { details });
 }

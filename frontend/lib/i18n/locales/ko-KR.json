@@ -26,6 +26,10 @@
       "newPasswordPlaceholder": "새 비밀번호를 입력하세요",
       "confirmPasswordLabel": "비밀번호 확인*",
       "confirmPasswordPlaceholder": "비밀번호를 다시 입력하세요"
+    },
+    "success": {
+      "title": "비밀번호가 변경되었습니다!",
+      "description": "비밀번호가 성공적으로 업데이트되었습니다. 이제 새 비밀번호로 Pipeshub 워크스페이스에 로그인할 수 있습니다."
     }
   },
   "agents": {
@@ -195,7 +199,9 @@
       "baseUrlLabel": "기본 URL (선택 사항)",
       "baseUrlPlaceholder": "예: http://localhost:3000/files",
       "saveSuccessFallback": "스토리지 구성이 저장되었습니다.",
-      "saveErrorFallback": "스토리지 구성을 저장할 수 없습니다."
+      "saveErrorFallback": "스토리지 구성을 저장할 수 없습니다.",
+      "s3HealthCheckFailedWithBase": "{{message}} ({{details}})",
+      "s3HealthCheckFailed": "S3 상태 확인에 실패했습니다 ({{details}})"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -232,7 +238,37 @@
     },
     "tour": {
       "dismiss": "둘러보기 닫기",
-      "completedDescription": "이제 모두 준비되었습니다. 더 알아보려면 <docs>문서</docs>를 확인하세요."
+      "completedDescription": "이제 모두 준비되었습니다. 더 알아보려면 <docs>문서</docs>를 확인하세요.",
+      "stubs": {
+        "almostThereTitle": "거의 다 왔습니다!",
+        "almostThereSubtitle": "다음 작업을 완료하고 Pipeshub에서 할 수 있는 일을 확인해 보세요.",
+        "connectFirstApp": "첫 번째 앱 연결",
+        "createCollection": "컬렉션 만들기",
+        "inviteTeamMembers": "팀원 초대",
+        "keepGoingTitle": "계속 진행하세요!",
+        "keepGoingSubtitle": "팀원에게 소식을 공유해 보는 건 어떨까요?",
+        "completedTitle": "시작해 볼까요!"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "어떤 분야에서 일하시나요?",
+      "subtitle": "Pipeshub를 더 잘 맞춤화하는 데 도움이 됩니다.",
+      "roles": {
+        "softwareDeveloper": "소프트웨어 개발",
+        "productManager": "제품 관리",
+        "marketer": "마케팅",
+        "designer": "디자인",
+        "projectManager": "프로젝트 관리",
+        "operations": "운영",
+        "itSupport": "IT 지원 전문가",
+        "humanResources": "인사",
+        "financeOfficer": "재무",
+        "legal": "법률",
+        "complianceOfficer": "컴플라이언스",
+        "salesRepresentative": "영업",
+        "dataScientist": "데이터 과학",
+        "customerService": "고객 서비스"
+      }
     }
   },
   "nav": {
@@ -4155,7 +4191,13 @@
       "orgEmailVerifiedTitle": "조직이 인증되었습니다",
       "orgEmailVerifiedDescription": "조직이 이제 활성화되었습니다. 계속하려면 로그인하세요.",
       "orgEmailVerifyFailedTitle": "인증 실패",
-      "orgEmailVerifyFailedDescription": "링크가 유효하지 않거나 만료되었을 수 있습니다. 다시 가입해 주세요."
+      "orgEmailVerifyFailedDescription": "링크가 유효하지 않거나 만료되었을 수 있습니다. 다시 가입해 주세요.",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "조직에서 JIT 프로비저닝이 비활성화되어 있습니다.",
+        "samlSsoDisabled": "조직에서 SAML SSO가 활성화되어 있지 않습니다.",
+        "samlAuthenticationFailed": "SAML 인증에 실패했습니다. 다시 시도해 주세요.",
+        "unexpectedSamlFailure": "로그인 중 예상하지 못한 오류가 발생했습니다. 다시 시도해 주세요."
+      }
     },
     "common": {
       "signIn": "로그인",
@@ -4187,8 +4229,95 @@
       "oauthUnavailable": "현재 OAuth 로그인을 사용할 수 없습니다. 관리자에게 문의하세요.",
       "showPassword": "비밀번호 표시",
       "hidePassword": "비밀번호 숨기기",
+      "showOtp": "OTP 표시",
+      "hideOtp": "OTP 숨기기",
       "accountDisabled": "계정이 비활성화되었습니다.",
-      "tooManyIncorrectCredentials": "잘못된 자격 증명을 너무 여러 번 입력했습니다"
+      "tooManyIncorrectCredentials": "잘못된 자격 증명을 너무 여러 번 입력했습니다",
+      "orContinueWithProviders": "또는 다음 제공자로 계속",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "이메일 OTP",
+      "errorFallback": "문제가 발생했습니다. 다시 시도하세요."
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "인증 응답을 확인하지 못했습니다. 다시 시도해 주세요.",
+        "failed": "Google 로그인이 실패했습니다."
+      },
+      "microsoftCallback": {
+        "validationFailed": "인증 응답을 확인하지 못했습니다. 다시 시도해 주세요.",
+        "failed": "Microsoft 로그인이 실패했습니다.",
+        "noCode": "Microsoft에서 인증 코드를 받지 못했습니다."
+      },
+      "callback": {
+        "authenticationFailed": "인증에 실패했습니다 ({{status}}).",
+        "noCode": "인증 코드를 받지 못했습니다.",
+        "noState": "상태 매개변수를 받지 못했습니다.",
+        "validationFailed": "인증 응답을 확인하지 못했습니다. 다시 시도해 주세요.",
+        "invalidState": "잘못된 상태 매개변수입니다.",
+        "missingProvider": "잘못된 OAuth 상태입니다. 제공자가 없습니다.",
+        "noToken": "인증에 성공했지만 액세스 토큰이 반환되지 않았습니다.",
+        "failed": "OAuth 인증에 실패했습니다.",
+        "signInFailed": "로그인에 실패했습니다",
+        "closeAndRetry": "이 창을 닫고 다시 시도해도 됩니다."
+      },
+      "googlePopupError": {
+        "popupBlocked": "Google 로그인 팝업이 차단되었습니다. 이 사이트의 팝업을 허용해 주세요.",
+        "failed": "Google 로그인이 실패했습니다. 다시 시도해 주세요."
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "Microsoft와의 토큰 교환에 실패했습니다.",
+        "noIdToken": "Microsoft에서 ID 토큰을 받지 못했습니다.",
+        "failed": "Microsoft 로그인이 실패했습니다.",
+        "popupBlocked": "팝업이 차단되었습니다. 이 사이트의 팝업을 허용한 후 다시 시도해 주세요.",
+        "startFailed": "Microsoft 로그인을 시작하지 못했습니다. 다시 시도해 주세요."
+      },
+      "popupError": {
+        "popupBlocked": "로그인 팝업이 차단되었습니다. 이 사이트의 팝업을 허용해 주세요.",
+        "failed": "OAuth 로그인이 실패했습니다. 다시 시도해 주세요."
+      }
+    },
+    "hero": {
+      "tagline": "현대 기업을 위한 설명 가능한 엔터프라이즈 검색.",
+      "description": "모든 업무용 앱을 검색하세요."
+    },
+    "emailStep": {
+      "genericError": "문제가 발생했습니다. 다시 시도해 주세요.",
+      "noAccount": "해당 이메일 주소로 등록된 계정이 없습니다.",
+      "checking": "확인 중…"
+    },
+    "providers": {
+      "signInWithSso": "SSO로 로그인",
+      "continueWithGoogle": "Google로 계속",
+      "continueWithMicrosoft": "Microsoft로 계속",
+      "continueWithOAuth": "OAuth로 계속",
+      "continueWithGitHub": "GitHub로 계속",
+      "continueWithProvider": "{{provider}}로 계속",
+      "connecting": "연결 중…"
+    },
+    "actionFeedback": {
+      "blockedUntil": "{{date, datetime}} 이후에 다시 시도해 주세요.",
+      "unexpectedResponse": "예상하지 못한 응답입니다. 다시 시도해 주세요.",
+      "passwordSignInFailed": "로그인에 실패했습니다. 다시 시도해 주세요.",
+      "noPasswordSetTitle": "이 계정에는 비밀번호가 설정되어 있지 않습니다.",
+      "noPasswordSetDescription": "아래의 ‘비밀번호 찾기’를 사용해 비밀번호를 설정하세요.",
+      "resetEmailSuccessDescription": "해당 이메일 주소로 계정이 있으면 비밀번호 재설정 링크를 보냈습니다.",
+      "resetEmailErrorTitle": "비밀번호 재설정을 요청할 수 없습니다",
+      "tryAgainLater": "나중에 다시 시도해 주세요.",
+      "googleSignInFailed": "Google 로그인이 실패했습니다. 다시 시도해 주세요.",
+      "additionalVerificationTitle": "추가 확인이 필요합니다",
+      "additionalVerificationDescription": "계속하려면 다음 단계를 완료하세요.",
+      "oauthSignInFailed": "OAuth 로그인이 실패했습니다. 다시 시도해 주세요.",
+      "otpSendSuccessTitle": "이메일을 확인하세요",
+      "otpSendSuccessDescription": "이 이메일 주소로 코드 로그인이 가능하면 코드를 보내고 있습니다. 몇 분 안에 이메일이 오지 않으면 스팸 폴더를 확인하거나 나중에 다시 시도해 주세요.",
+      "otpSendErrorTitle": "인증 코드를 보내지 못했습니다",
+      "verificationFailed": "인증에 실패했습니다. 다시 시도해 주세요.",
+      "microsoftSignInFailed": "Microsoft 로그인이 실패했습니다. 다시 시도해 주세요.",
+      "contactAdministrator": "관리자에게 문의해 주세요."
+    },
+    "emailVerification": {
+      "missingToken": "인증 링크에 토큰이 없습니다.",
+      "completing": "이메일 확인을 완료하는 중…",
+      "failed": "이메일 확인에 실패했습니다. 다시 시도해 주세요."
     }
   },
   "healthGate": {
@@ -4348,6 +4477,19 @@
       "offDescription": "모든 사용자의 답변, 검색, 레코드에서 제외되었고 샘플 계정은 로그인할 수 없습니다. 프로필 → 데모 데이터에서 다시 켜세요.",
       "onTitle": "모두에 대해 데모 데이터를 다시 켰습니다",
       "errorTitle": "모두에 대한 데모 데이터를 변경하지 못했습니다"
+    }
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "프로필 완성",
+      "description": "계속하려면 전체 이름을 설정해 주세요. 팀원들이 여러 워크스페이스에서 사용자를 알아볼 수 있습니다.",
+      "errors": {
+        "required": "전체 이름을 입력해 주세요",
+        "minimumLength": "전체 이름은 최소 2자여야 합니다",
+        "userUnavailable": "사용자를 확인할 수 없습니다. 페이지를 새로고침한 후 다시 시도해 주세요.",
+        "saveFailed": "이름을 저장하지 못했습니다. 다시 시도해 주세요."
+      },
+      "saveAndContinue": "저장 후 계속"
     }
   },
   "keyboard": {

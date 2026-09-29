@@ -13,6 +13,10 @@
       "newPasswordPlaceholder": "Geben Sie Ihr neues Passwort ein",
       "confirmPasswordLabel": "Passwort bestätigen*",
       "confirmPasswordPlaceholder": "Passwort bestätigen"
+    },
+    "success": {
+      "title": "Ihr Passwort wurde geändert!",
+      "description": "Ihr Passwort wurde erfolgreich aktualisiert. Sie können sich jetzt mit Ihrem neuen Passwort bei Ihrem Pipeshub-Arbeitsbereich anmelden."
     }
   },
   "agents": {
@@ -182,7 +186,9 @@
       "baseUrlLabel": "Basis-URL (optional)",
       "baseUrlPlaceholder": "z.B.: http://localhost:3000/files",
       "saveSuccessFallback": "Speicherkonfiguration gespeichert.",
-      "saveErrorFallback": "Speicherkonfiguration konnte nicht gespeichert werden."
+      "saveErrorFallback": "Speicherkonfiguration konnte nicht gespeichert werden.",
+      "s3HealthCheckFailedWithBase": "{{message}} ({{details}})",
+      "s3HealthCheckFailed": "S3-Integritätsprüfung fehlgeschlagen ({{details}})"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -219,7 +225,37 @@
     },
     "tour": {
       "dismiss": "Tour schließen",
-      "completedDescription": "Die Einrichtung ist abgeschlossen. Weitere Informationen finden Sie in der <docs>Dokumentation</docs>."
+      "completedDescription": "Die Einrichtung ist abgeschlossen. Weitere Informationen finden Sie in der <docs>Dokumentation</docs>.",
+      "stubs": {
+        "almostThereTitle": "Fast geschafft!",
+        "almostThereSubtitle": "Führen Sie die folgenden Schritte aus, um zu erfahren, was Pipeshub für Sie tun kann.",
+        "connectFirstApp": "Verbinden Sie Ihre erste App",
+        "createCollection": "Erstellen Sie eine Sammlung",
+        "inviteTeamMembers": "Laden Sie Teammitglieder ein",
+        "keepGoingTitle": "Weiter geht's!",
+        "keepGoingSubtitle": "Wie wäre es, wenn Sie Ihren Teammitgliedern davon erzählen?",
+        "completedTitle": "Los geht's!"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "Welche Art von Arbeit üben Sie aus?",
+      "subtitle": "Das hilft uns, Ihr Pipeshub-Erlebnis zu personalisieren.",
+      "roles": {
+        "softwareDeveloper": "Softwareentwicklung",
+        "productManager": "Produktmanagement",
+        "marketer": "Marketing",
+        "designer": "Design",
+        "projectManager": "Projektmanagement",
+        "operations": "Operations",
+        "itSupport": "IT-Support",
+        "humanResources": "Personalwesen",
+        "financeOfficer": "Finanzwesen",
+        "legal": "Recht",
+        "complianceOfficer": "Compliance-Beauftragter",
+        "salesRepresentative": "Vertrieb",
+        "dataScientist": "Datenwissenschaft",
+        "customerService": "Kundenservice"
+      }
     }
   },
   "nav": {
@@ -4154,7 +4190,13 @@
       "orgEmailVerifiedTitle": "Organisation verifiziert",
       "orgEmailVerifiedDescription": "Ihre Organisation ist jetzt aktiv. Melden Sie sich an, um fortzufahren.",
       "orgEmailVerifyFailedTitle": "Verifizierung fehlgeschlagen",
-      "orgEmailVerifyFailedDescription": "Der Link ist möglicherweise ungültig oder abgelaufen. Bitte registrieren Sie sich erneut."
+      "orgEmailVerifyFailedDescription": "Der Link ist möglicherweise ungültig oder abgelaufen. Bitte registrieren Sie sich erneut.",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "Die JIT-Bereitstellung ist für Ihre Organisation deaktiviert.",
+        "samlSsoDisabled": "SAML-SSO ist für Ihre Organisation nicht aktiviert.",
+        "samlAuthenticationFailed": "Die SAML-Authentifizierung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "unexpectedSamlFailure": "Bei der Anmeldung ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      }
     },
     "common": {
       "signIn": "Anmelden",
@@ -4186,8 +4228,95 @@
       "oauthUnavailable": "OAuth-Anmeldung ist derzeit nicht verfügbar. Kontaktieren Sie Ihren Administrator.",
       "showPassword": "Passwort anzeigen",
       "hidePassword": "Passwort verbergen",
+      "showOtp": "OTP anzeigen",
+      "hideOtp": "OTP verbergen",
       "accountDisabled": "Ihr Konto wurde deaktiviert.",
-      "tooManyIncorrectCredentials": "Sie haben zu oft falsche Anmeldedaten eingegeben"
+      "tooManyIncorrectCredentials": "Sie haben zu oft falsche Anmeldedaten eingegeben",
+      "orContinueWithProviders": "oder mit einem dieser Anbieter fortfahren",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "E-Mail-OTP",
+      "errorFallback": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "Die Authentifizierungsantwort konnte nicht validiert werden. Bitte versuchen Sie es erneut.",
+        "failed": "Die Anmeldung mit Google ist fehlgeschlagen."
+      },
+      "microsoftCallback": {
+        "validationFailed": "Die Authentifizierungsantwort konnte nicht validiert werden. Bitte versuchen Sie es erneut.",
+        "failed": "Die Anmeldung mit Microsoft ist fehlgeschlagen.",
+        "noCode": "Von Microsoft wurde kein Autorisierungscode empfangen."
+      },
+      "callback": {
+        "authenticationFailed": "Die Authentifizierung ist fehlgeschlagen ({{status}}).",
+        "noCode": "Es wurde kein Autorisierungscode empfangen.",
+        "noState": "Es wurde kein Statusparameter empfangen.",
+        "validationFailed": "Die Authentifizierungsantwort konnte nicht validiert werden. Bitte versuchen Sie es erneut.",
+        "invalidState": "Ungültiger Statusparameter.",
+        "missingProvider": "Ungültiger OAuth-Status: Anbieter fehlt.",
+        "noToken": "Die Authentifizierung war erfolgreich, aber es wurde kein Zugriffstoken zurückgegeben.",
+        "failed": "OAuth-Authentifizierung fehlgeschlagen.",
+        "signInFailed": "Anmeldung fehlgeschlagen",
+        "closeAndRetry": "Sie können dieses Fenster schließen und es erneut versuchen."
+      },
+      "googlePopupError": {
+        "popupBlocked": "Das Google-Anmeldefenster wurde blockiert. Bitte erlauben Sie Pop-ups für diese Website.",
+        "failed": "Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "Der Token-Austausch mit Microsoft ist fehlgeschlagen.",
+        "noIdToken": "Von Microsoft wurde kein ID-Token empfangen.",
+        "failed": "Die Anmeldung mit Microsoft ist fehlgeschlagen.",
+        "popupBlocked": "Das Pop-up wurde blockiert. Bitte erlauben Sie Pop-ups für diese Website und versuchen Sie es erneut.",
+        "startFailed": "Die Microsoft-Anmeldung konnte nicht gestartet werden. Bitte versuchen Sie es erneut."
+      },
+      "popupError": {
+        "popupBlocked": "Das Anmelde-Pop-up wurde blockiert. Bitte erlauben Sie Pop-ups für diese Website.",
+        "failed": "Die OAuth-Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
+      }
+    },
+    "hero": {
+      "tagline": "Nachvollziehbare Unternehmenssuche für moderne Unternehmen.",
+      "description": "Durchsuchen Sie alle Ihre Business-Apps."
+    },
+    "emailStep": {
+      "genericError": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+      "noAccount": "Für diese E-Mail-Adresse wurde kein Konto gefunden.",
+      "checking": "Wird überprüft …"
+    },
+    "providers": {
+      "signInWithSso": "Mit SSO anmelden",
+      "continueWithGoogle": "Mit Google fortfahren",
+      "continueWithMicrosoft": "Mit Microsoft fortfahren",
+      "continueWithOAuth": "Mit OAuth fortfahren",
+      "continueWithGitHub": "Mit GitHub fortfahren",
+      "continueWithProvider": "Mit {{provider}} fortfahren",
+      "connecting": "Verbindung wird hergestellt …"
+    },
+    "actionFeedback": {
+      "blockedUntil": "Versuchen Sie es nach {{date, datetime}} erneut.",
+      "unexpectedResponse": "Unerwartete Antwort. Bitte versuchen Sie es erneut.",
+      "passwordSignInFailed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "noPasswordSetTitle": "Für dieses Konto ist kein Passwort festgelegt.",
+      "noPasswordSetDescription": "Verwenden Sie unten „Passwort vergessen“, um ein Passwort festzulegen.",
+      "resetEmailSuccessDescription": "Falls ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen des Passworts gesendet.",
+      "resetEmailErrorTitle": "Das Zurücksetzen des Passworts konnte nicht angefordert werden",
+      "tryAgainLater": "Bitte versuchen Sie es später erneut.",
+      "googleSignInFailed": "Die Anmeldung mit Google ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "additionalVerificationTitle": "Zusätzliche Überprüfung erforderlich",
+      "additionalVerificationDescription": "Führen Sie den nächsten Schritt aus, um fortzufahren.",
+      "oauthSignInFailed": "Die OAuth-Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "otpSendSuccessTitle": "Prüfen Sie Ihre E-Mails",
+      "otpSendSuccessDescription": "Falls Sie sich mit einem Code über diese E-Mail-Adresse anmelden können, wird gerade ein Code gesendet. Wenn in einigen Minuten nichts angekommen ist, prüfen Sie Ihren Spam-Ordner oder versuchen Sie es später erneut.",
+      "otpSendErrorTitle": "Der Bestätigungscode konnte nicht gesendet werden",
+      "verificationFailed": "Die Überprüfung ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "microsoftSignInFailed": "Die Anmeldung mit Microsoft ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "contactAdministrator": "Bitte wenden Sie sich an Ihre Administration."
+    },
+    "emailVerification": {
+      "missingToken": "Im Bestätigungslink fehlt ein Token.",
+      "completing": "E-Mail-Adresse wird bestätigt …",
+      "failed": "Die E-Mail-Bestätigung ist fehlgeschlagen. Bitte versuchen Sie es erneut."
     }
   },
   "healthGate": {
@@ -4368,6 +4497,19 @@
       "offDescription": "Sie sind aus den Antworten, der Suche und den Datensätzen aller verschwunden, und die Beispielkonten können sich nicht anmelden. Schalten Sie sie unter Profil → Demodaten wieder ein.",
       "onTitle": "Demodaten für alle wieder eingeschaltet",
       "errorTitle": "Die Demodaten konnten nicht für alle geändert werden"
+    }
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "Profil vervollständigen",
+      "description": "Bitte geben Sie Ihren vollständigen Namen ein, um fortzufahren. So können Ihre Teammitglieder Sie in allen Arbeitsbereichen erkennen.",
+      "errors": {
+        "required": "Der vollständige Name ist erforderlich",
+        "minimumLength": "Der vollständige Name muss mindestens 2 Zeichen lang sein",
+        "userUnavailable": "Benutzer konnte nicht ermittelt werden. Bitte aktualisieren Sie die Seite und versuchen Sie es erneut.",
+        "saveFailed": "Ihr Name konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+      },
+      "saveAndContinue": "Speichern und fortfahren"
     }
   },
   "keyboard": {

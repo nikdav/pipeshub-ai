@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   Flex,
@@ -33,8 +34,9 @@ export interface FullNameDialogProps {
  * before continuing. It cannot be dismissed without saving a valid name.
  */
 export function FullNameDialog({ open, onSuccess }: FullNameDialogProps) {
+  const { t } = useTranslation();
   const [fullName, setFullName] = useState('');
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [errorKey, setErrorKey] = useState<string | undefined>(undefined);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ── Shared dialog content style (matches the project-wide dialog pattern) ──
@@ -58,23 +60,23 @@ export function FullNameDialog({ open, onSuccess }: FullNameDialogProps) {
   const handleSubmit = async () => {
     const trimmed = fullName.trim();
     if (!trimmed) {
-      setError('Full name is required');
+      setErrorKey('profile.fullNameDialog.errors.required');
       return;
     }
     if (trimmed.length < 2) {
-      setError('Full name must be at least 2 characters');
+      setErrorKey('profile.fullNameDialog.errors.minimumLength');
       return;
     }
 
     setIsSubmitting(true);
-    setError(undefined);
+    setErrorKey(undefined);
 
     try {
       const userId = getUserIdFromToken();
       const email = getUserEmailFromToken();
 
       if (!userId) {
-        setError('Unable to identify user. Please refresh and try again.');
+        setErrorKey('profile.fullNameDialog.errors.userUnavailable');
         return;
       }
 
@@ -85,7 +87,7 @@ export function FullNameDialog({ open, onSuccess }: FullNameDialogProps) {
 
       onSuccess(trimmed);
     } catch {
-      setError('Failed to save your name. Please try again.');
+      setErrorKey('profile.fullNameDialog.errors.saveFailed');
     } finally {
       setIsSubmitting(false);
     }
@@ -120,41 +122,40 @@ export function FullNameDialog({ open, onSuccess }: FullNameDialogProps) {
 
       <Dialog.Content style={contentStyle}>
         <VisuallyHidden>
-          <Dialog.Title>Complete Your Profile</Dialog.Title>
+          <Dialog.Title>{t('profile.fullNameDialog.title')}</Dialog.Title>
         </VisuallyHidden>
 
         <Flex direction="column" gap="4">
           {/* Header */}
           <Flex direction="column" gap="1">
             <Text size="5" weight="bold" style={{ color: 'var(--gray-12)' }}>
-              Complete Your Profile
+              {t('profile.fullNameDialog.title')}
             </Text>
             <Text size="2" style={{ color: 'var(--gray-10)', lineHeight: '20px' }}>
-              Please set your full name to continue. This helps your teammates identify you across
-              workspaces.
+              {t('profile.fullNameDialog.description')}
             </Text>
           </Flex>
 
           {/* Full name input */}
           <Flex direction="column" gap="1">
             <Text size="2" weight="medium" style={{ color: 'var(--gray-12)' }}>
-              Full name
+              {t('workspace.profile.general.fullName')}
             </Text>
             <TextField.Root
-              placeholder="e.g. Jane Smith"
+              placeholder={t('workspace.profile.general.fullNamePlaceholder')}
               value={fullName}
               onChange={(e) => {
                 setFullName(e.target.value);
-                if (error) setError(undefined);
+                if (errorKey) setErrorKey(undefined);
               }}
               onKeyDown={handleKeyDown}
-              color={error ? 'red' : undefined}
+              color={errorKey ? 'red' : undefined}
               disabled={isSubmitting}
               autoFocus
             />
-            {error && (
+            {errorKey && (
               <Text size="1" style={{ color: 'var(--red-a11)' }}>
-                {error}
+                {t(errorKey)}
               </Text>
             )}
           </Flex>
@@ -172,10 +173,10 @@ export function FullNameDialog({ open, onSuccess }: FullNameDialogProps) {
               {isSubmitting ? (
                 <Flex align="center" gap="2">
                   <Spinner size="1" />
-                  <span>Saving…</span>
+                  <span>{t('onboarding.saving')}</span>
                 </Flex>
               ) : (
-                'Save & continue'
+                t('profile.fullNameDialog.saveAndContinue')
               )}
             </Button>
           </Flex>

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 // ===============================
 // PixelLoader
@@ -28,13 +29,14 @@ const COLOR_ACTIVE = 'var(--accent-9)';
 const COLOR_INACTIVE = 'rgba(255, 255, 255, 0.18)';
 
 export function PixelLoader({ percentage, width = 181 }: PixelLoaderProps) {
+  const { t } = useTranslation();
   const columnWidth = DOT_SIZE + DOT_GAP_H; // 3px per column unit
   const totalColumns = Math.floor(width / columnWidth);
   const filledColumns = Math.round((Math.min(100, Math.max(0, percentage)) / 100) * totalColumns);
 
   return (
     <div
-      aria-label={`Progress: ${Math.round(percentage)}%`}
+      aria-label={t('workspace.connectors.overview.progressPercent', { n: Math.round(percentage) })}
       role="progressbar"
       aria-valuenow={Math.round(percentage)}
       aria-valuemin={0}

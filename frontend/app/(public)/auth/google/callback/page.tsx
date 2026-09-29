@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Text } from '@radix-ui/themes';
 
 /**
@@ -14,6 +15,8 @@ import { Flex, Text } from '@radix-ui/themes';
  * for this message and forwards the id_token to the backend.
  */
 export default function GoogleCallbackPage() {
+  const { t, i18n } = useTranslation();
+
   useEffect(() => {
     // The id_token is in the fragment (hash), not query params —
     // Google's implicit flow never sends it to the server.
@@ -35,7 +38,7 @@ export default function GoogleCallbackPage() {
         window.opener.postMessage(
           {
             type: 'GOOGLE_AUTH_ERROR',
-            error: 'Authentication response validation failed. Please try again.',
+            error: i18n.t('auth.oauth.googleCallback.validationFailed'),
           },
           window.location.origin,
         );
@@ -53,18 +56,19 @@ export default function GoogleCallbackPage() {
       window.opener.postMessage(
         {
           type: 'GOOGLE_AUTH_ERROR',
-          error: errorDescription || error || 'Google sign-in failed.',
+          error: errorDescription || error || i18n.t('auth.oauth.googleCallback.failed'),
         },
         window.location.origin,
       );
     }
 
     window.close();
+  // Callback validation is deliberately one-shot; a language change must not repost tokens/errors.
   }, []);
 
   return (
     <Flex align="center" justify="center" style={{ height: '100vh' }}>
-      <Text size="2" color="gray">Completing sign-in…</Text>
+      <Text size="2" color="gray">{t('auth.common.signingIn')}</Text>
     </Flex>
   );
 }
