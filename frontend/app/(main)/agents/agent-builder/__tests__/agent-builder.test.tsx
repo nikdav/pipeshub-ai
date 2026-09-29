@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import '@/lib/__tests__/test-i18n';
+import { i18n } from '@/lib/i18n';
 import { useFeatureFlagsStore } from '@/lib/store/feature-flags-store';
 import { useToastStore } from '@/lib/store/toast-store';
 import type { AgentFormPayload } from '../types';
@@ -148,6 +149,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  void i18n.changeLanguage('en-US');
   vi.clearAllMocks();
 });
 
@@ -321,10 +323,15 @@ describe('building a new agent', () => {
   });
 
   it('tells the person when the builder could not load', async () => {
+    i18n.addResource('en-US', 'translation', 'agentBuilder.loadResourcesFailed', 'Failed to load builder resources');
+    i18n.addResource('de-DE', 'translation', 'agentBuilder.loadResourcesFailed', 'Builder-Ressourcen konnten nicht geladen werden');
     fetchAvailableLlms.mockRejectedValue(apiFailure(503));
     renderInTheme(<AgentBuilder agentKey={null} />);
 
     expect(await screen.findByText('Failed to load builder resources')).toBeTruthy();
+    await act(async () => { await i18n.changeLanguage('de-DE'); });
+    expect(screen.getByText('Builder-Ressourcen konnten nicht geladen werden')).toBeTruthy();
+    expect(fetchAvailableLlms).toHaveBeenCalledTimes(1);
   });
 });
 

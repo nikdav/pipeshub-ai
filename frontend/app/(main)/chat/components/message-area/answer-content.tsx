@@ -363,19 +363,31 @@ const CALLOUT_VARIANTS: Record<string, CalloutVariant> = {
 };
 
 function Callout({ type, children }: { type: string; children?: React.ReactNode }) {
+  const { t } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDark = appearance === 'dark';
   const key = type.toLowerCase();
   const v = CALLOUT_VARIANTS[key] ?? CALLOUT_VARIANTS._default;
   // For unknown types use the raw type string, capitalised (e.g. "DANGER" → "Danger")
-  const label = v.label || (type.charAt(0).toUpperCase() + type.slice(1).toLowerCase());
+  const childArray = React.Children.toArray(children);
+  const explicitTitle = childArray.find((child) =>
+    React.isValidElement(child) &&
+    (child.props as { className?: string }).className?.includes('markdown-alert-title'),
+  );
+  const explicitTitleText = explicitTitle ? extractNodeText(explicitTitle).trim() : '';
+  const usesDefaultTitle = !explicitTitleText || explicitTitleText.toLocaleLowerCase() === v.label.toLocaleLowerCase();
+  const label = explicitTitleText && !usesDefaultTitle
+    ? explicitTitleText
+    : v.label
+      ? t(`chat.callouts.${key}`, { defaultValue: v.label })
+      : type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
   const accent = isDark ? v.darkAccent : v.lightAccent;
   const bg     = isDark ? v.darkBg     : v.lightBg;
   const border = isDark ? v.darkBorder : v.lightBorder;
 
   // remark-gfm v4 injects a <p class="markdown-alert-title"> as the first child;
   // we render our own title row, so skip it.
-  const content = React.Children.toArray(children).filter((child) => {
+  const content = childArray.filter((child) => {
     if (!React.isValidElement(child)) return true;
     return !(child.props as { className?: string }).className?.includes('markdown-alert-title');
   });
@@ -421,6 +433,7 @@ const HEADING_STYLES: Record<number, React.CSSProperties> = {
 };
 
 function AnchorHeading({ level, children }: { level: 1 | 2 | 3 | 4 | 5 | 6; children?: React.ReactNode }) {
+  const { t } = useTranslation();
   const [showAnchor, setShowAnchor] = useState(false);
   const id = slugify(extractNodeText(children));
   const tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
@@ -437,7 +450,7 @@ function AnchorHeading({ level, children }: { level: 1 | 2 | 3 | 4 | 5 | 6; chil
       {id && (
         <a
           href={`#${id}`}
-          aria-label={`Link to section`}
+          aria-label={t('chat.linkToSection', { defaultValue: 'Link to section' })}
           style={{
             marginLeft: '8px',
             opacity: showAnchor ? 0.55 : 0,

@@ -56,7 +56,14 @@
     "refiningResponse": "उत्तर परिष्कृत हो रहा है…",
     "errorFallback": "एक त्रुटि हुई। कृपया पुनः प्रयास करें।",
     "copyCode": "कॉपी करें",
-    "copiedCode": "कॉपी हो गया"
+    "copiedCode": "कॉपी हो गया",
+    "status": {
+      "delegatingTo": "{{roleName}} को सौंपा जा रहा है…",
+      "toolActivity": "{{label}}…",
+      "starting": "शुरू हो रहा है…",
+      "executingTool": "टूल चलाया जा रहा है…"
+    },
+    "connectedWorking": "कनेक्ट हो गया है — आपके अनुरोध पर काम जारी है"
   },
   "uploadProgress": {
     "uploadFailedDefault": "अपलोड असफल",
@@ -645,7 +652,8 @@
       "open": "{{source}} खोलें",
       "openIn": "{{source}} में खोलें",
       "openInCollections": "कलेक्शन में खोलें",
-      "relevance": "प्रासंगिकता: {{percent}}%"
+      "relevance": "प्रासंगिकता: {{percent}}%",
+      "viewSource": "स्रोत देखें"
     },
     "results": "परिणाम",
     "greeting": "आज आप क्या खोजना चाहेंगे?",
@@ -688,7 +696,8 @@
       "browseWorkspaceMcp": "MCP सर्वर ब्राउज़ करें",
       "browseWorkspaceMcpAria": "कनेक्शन जोड़ने या प्रबंधित करने के लिए MCP सर्वर खोलें",
       "noActionMatches": "आपकी खोज से कोई क्रिया मेल नहीं खाती।",
-      "noMcpMatches": "आपकी खोज से कोई MCP सर्वर मेल नहीं खाता।"
+      "noMcpMatches": "आपकी खोज से कोई MCP सर्वर मेल नहीं खाता।",
+      "filtersAriaLabel": "संसाधन फ़िल्टर"
     },
     "projectResources": {
       "noConnectors": "इस प्रोजेक्ट के लिए कोई कनेक्टर सक्षम नहीं है।",
@@ -1053,7 +1062,8 @@
         "suggestPlanWork": "किसी काम की योजना बनाएँ",
         "suggestWriteInstructions": "प्रोजेक्ट के निर्देश लिखें",
         "suggestSummariseDocumentPrompt": "इस प्रोजेक्ट की फ़ाइलों में सबसे महत्वपूर्ण दस्तावेज़ का सारांश दें।",
-        "suggestPlanWorkPrompt": "इस प्रोजेक्ट के लिए किसी काम की योजना बनाने में मेरी मदद करें। इसे ठोस अगले चरणों में बाँटें।"
+        "suggestPlanWorkPrompt": "इस प्रोजेक्ट के लिए किसी काम की योजना बनाने में मेरी मदद करें। इसे ठोस अगले चरणों में बाँटें।",
+        "projectActions": "परियोजना की कार्रवाइयाँ"
       },
       "moveDialog": {
         "title": "प्रोजेक्ट में ले जाएँ",
@@ -1139,7 +1149,15 @@
       "closePreview": "बंद करें",
       "loadingPreview": "लोड हो रहा है…",
       "pasteMeta_one": "{{chars}} अक्षर · {{count}} पंक्ति",
-      "pasteMeta_other": "{{chars}} अक्षर · {{count}} पंक्तियाँ"
+      "pasteMeta_other": "{{chars}} अक्षर · {{count}} पंक्तियाँ",
+      "failedToAttach": "{{fileName}} संलग्न नहीं हो सका। {{reason}}",
+      "failedToAttachFallback": "{{fileName}} संलग्न नहीं हो सका। कृपया फिर प्रयास करें।",
+      "fileActionAria": {
+        "uploading": "{{name}} अपलोड हो रहा है",
+        "retry": "{{name}} को फिर से अपलोड करें",
+        "remove": "{{name}} हटाएँ"
+      },
+      "uploadMissingReference": "अपलोड से अटैचमेंट संदर्भ नहीं मिला।"
     },
     "voiceSttNotConfigured": "वॉइस इनपुट सक्षम करने के लिए एआई मॉडल सेटिंग्स में स्पीच-टू-टेक्स्ट (STT) मॉडल कॉन्फ़िगर करें।",
     "voiceSttLoading": "वाक् क्षमताओं की जाँच की जा रही है…",
@@ -1180,7 +1198,8 @@
       "loadingMcp": "MCP सर्वर लोड हो रहे हैं…",
       "noMcpServers": "कोई प्रमाणित MCP सर्वर नहीं मिला। वर्कस्पेस → MCP सर्वर में एक कनेक्ट करें।",
       "toolCount_one": "{{count}} टूल",
-      "toolCount_other": "{{count}} टूल"
+      "toolCount_other": "{{count}} टूल",
+      "filtersAriaLabel": "संसाधन फ़िल्टर"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "इस एजेंट पर कॉन्फ़िगर नहीं है",
@@ -1188,7 +1207,121 @@
       "webSearch": "वेब खोज"
     },
     "resizePanels": "चैट और पूर्वावलोकन पैनल का आकार बदलें",
-    "mobileProfileComingSoon": "मोबाइल पर प्रोफ़ाइल पेज जल्द ही आ रहा है।"
+    "mobileProfileComingSoon": "मोबाइल पर प्रोफ़ाइल पेज जल्द ही आ रहा है।",
+    "noModelConfigured": {
+      "title": "कोई AI मॉडल कॉन्फ़िगर नहीं है",
+      "memberDescription": "इस कार्यस्थल में अभी कोई AI मॉडल सेट नहीं है, इसलिए चैट उत्तर नहीं दे सकती। कार्यस्थल के व्यवस्थापक से Workspace → AI Models में मॉडल जोड़ने को कहें।",
+      "adminDescription": "इस कार्यस्थल में अभी कोई AI मॉडल सेट नहीं है, इसलिए चैट उत्तर नहीं दे सकती। AI Models में एक जोड़ें, फिर अपना संदेश दोबारा भेजें।",
+      "action": "AI Models खोलें"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "स्किल सूचीबद्ध किए जा रहे हैं",
+          "past": "स्किल सूचीबद्ध किए गए"
+        },
+        "search": {
+          "present": "स्किल खोजे जा रहे हैं",
+          "past": "स्किल खोजे गए"
+        },
+        "load": {
+          "present": "स्किल लोड हो रहा है",
+          "past": "स्किल लोड हो गया"
+        },
+        "loadResource": {
+          "present": "स्किल फ़ाइल लोड हो रही है",
+          "past": "स्किल फ़ाइल लोड हो गई"
+        },
+        "manage": {
+          "present": "स्किल प्रबंधित की जा रही है",
+          "past": "स्किल प्रबंधित की गई"
+        }
+      },
+      "usedTool": "टूल का उपयोग किया",
+      "usingTool": "{{toolName}} का उपयोग हो रहा है"
+    },
+    "unnamedArtifact": "आर्टिफ़ैक्ट",
+    "unnamedDownload": "डाउनलोड",
+    "searchFailed": "खोज विफल हुई",
+    "collectionRow": {
+      "folders_one": "{{count}} फ़ोल्डर",
+      "folders_other": "{{count}} फ़ोल्डर",
+      "files_one": "{{count}} फ़ाइल",
+      "files_other": "{{count}} फ़ाइलें"
+    },
+    "modelSelector": {
+      "providerByline": "{{provider}} द्वारा",
+      "multimodalBadge": "मल्टीमॉडल"
+    },
+    "agentActivity": {
+      "thinking": "सोच रहा है",
+      "arguments": "तर्क",
+      "resultError": "त्रुटि",
+      "resultBlocked": "अवरुद्ध",
+      "result": "परिणाम",
+      "subAgent": "सब-एजेंट",
+      "groupSkills_one": "{{count}} स्किल का उपयोग किया",
+      "groupSkills_other": "{{count}} स्किल का उपयोग किया",
+      "groupSearches_one": "{{count}} खोज में पड़ताल की",
+      "groupSearches_other": "{{count}} खोजों में पड़ताल की",
+      "groupTools_one": "{{count}} टूल चलाया",
+      "groupTools_other": "{{count}} टूल चलाए",
+      "summaryThought_one": "इस पर विचार किया",
+      "summaryThought_other": "{{count}} बार विचार किया",
+      "summaryTools_one": "{{count}} टूल का उपयोग किया",
+      "summaryTools_other": "{{count}} टूल का उपयोग किया",
+      "summaryDelegatedAgents_one": "{{count}} सब-एजेंट को सौंपा",
+      "summaryDelegatedAgents_other": "{{count}} सब-एजेंट को सौंपा",
+      "summaryWorked": "इस पर काम किया"
+    },
+    "callouts": {
+      "note": "नोट",
+      "tip": "सुझाव",
+      "important": "महत्वपूर्ण",
+      "warning": "चेतावनी",
+      "caution": "सावधानी",
+      "info": "जानकारी",
+      "success": "सफलता",
+      "danger": "खतरा",
+      "error": "त्रुटि",
+      "question": "प्रश्न",
+      "bug": "बग",
+      "example": "उदाहरण",
+      "abstract": "सार",
+      "summary": "सारांश",
+      "quote": "उद्धरण"
+    },
+    "linkToSection": "अनुभाग का लिंक",
+    "artifacts": {
+      "generated_one": "{{count}} आर्टिफ़ैक्ट बनाया गया",
+      "generated_other": "{{count}} आर्टिफ़ैक्ट बनाए गए",
+      "newerVersionAvailable": "नया संस्करण उपलब्ध है (v{{version}})",
+      "viewSource": "सोर्स कोड देखें",
+      "viewSourceTitle": "इस आर्टिफ़ैक्ट को बनाने वाला कोड देखें",
+      "loadingSource": "सोर्स कोड लोड हो रहा है…"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "प्रश्न {{number}}: {{question}}",
+      "readAloudOption": "विकल्प: {{option}}"
+    },
+    "confidenceTooltip": "सहायक के उत्तर का विश्वास स्तर",
+    "downloadTasks": {
+      "completeResults": "आप पूरे क्वेरी परिणाम डाउनलोड कर सकते हैं:"
+    },
+    "sourcesHeading_one": "स्रोत ({{count}}):",
+    "sourcesHeading_other": "स्रोत ({{count}}):",
+    "citationCount_one": "{{count}} उद्धरण",
+    "citationCount_other": "{{count}} उद्धरण",
+    "noCitationsAvailable": "कोई उद्धरण उपलब्ध नहीं है।",
+    "noSourcesAvailable": "कोई स्रोत उपलब्ध नहीं है।",
+    "recordDetailsUnavailable": "रिकॉर्ड का विवरण उपलब्ध नहीं है",
+    "syncedJustNow": "अभी-अभी सिंक हुआ",
+    "syncedRelativeTime": "{{relativeTime}} सिंक हुआ",
+    "processingStatus": "प्रोसेस हो रहा है…",
+    "noResultsForQuery": "{{query}} के लिए कोई परिणाम नहीं मिला",
+    "couldNotLoadConversations": "बातचीत लोड नहीं हो सकी",
+    "archiveConfirmation": "आर्काइव करने की पुष्टि",
+    "questionFallback": "प्रश्न"
   },
   "workspaceMenu": {
     "appearance": "अपियरेंस",
@@ -4346,7 +4479,8 @@
     "mcpServerWithToolCount_one": "{{count}} टूल वाला MCP सर्वर",
     "mcpServerWithToolCount_other": "{{count}} टूल वाला MCP सर्वर",
     "deprecatedToolsBanner_one": "इस एजेंट का {{count}} टूल अप्रचलित है। इसे हटाएँ: {{tools}}",
-    "deprecatedToolsBanner_other": "इस एजेंट के {{count}} टूल अप्रचलित हैं। उन्हें हटाएँ: {{tools}}"
+    "deprecatedToolsBanner_other": "इस एजेंट के {{count}} टूल अप्रचलित हैं। उन्हें हटाएँ: {{tools}}",
+    "loadResourcesFailed": "बिल्डर के संसाधन लोड नहीं हो सके"
   },
   "recordView": {
     "sections": {
@@ -4839,6 +4973,8 @@
     "team": "टीम",
     "teamsNoRoles": "टीमों की कोई भूमिकाएँ नहीं होतीं",
     "invite": "Pipeshub में आमंत्रित करें",
+    "shareConversation": "चैट साझा करें",
+    "memberNameUnknown": "अज्ञात सदस्य",
     "searchPlaceholder": "ईमेल, टीम या नाम (अल्पविराम से अलग करें)"
   },
   "demoData": {

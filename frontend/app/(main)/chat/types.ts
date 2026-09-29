@@ -1,6 +1,7 @@
 import type { CitationOrigin } from './components/message-area/response-tabs/citations';
 import type { CitationMaps } from './components/message-area/response-tabs/citations/types';
 import type { ThreadMessageLike } from '@assistant-ui/react';
+import type { LocalizedText } from '@/lib/i18n/localized-text';
 import { ACCEPTED_MIME_TYPES, SUPPORTED_FILE_TYPES } from './utils/attachment-file-types';
 
 // Chat types following project conventions
@@ -64,6 +65,8 @@ export interface ChatMessage {
   conversationId: string;
   role: 'user' | 'assistant';
   content: string;
+  /** Present only when content is an app-authored, runtime-localized fallback. */
+  messageText?: LocalizedText;
   createdAt: string;
   sources?: ChatSource[];
 }
@@ -414,6 +417,8 @@ export interface UploadedFile {
   ref?: AttachmentRef;
   /** User-facing message when status === 'error'. */
   errorMessage?: string;
+  /** Runtime-localized companion to the English compatibility snapshot in `errorMessage`. */
+  errorMessageText?: LocalizedText;
   /** Origin of this chip — see {@link UploadedFileSource}. */
   source?: UploadedFileSource;
   /** First-line excerpt shown on the chip, present only when `source === 'paste-text'`. */
@@ -572,6 +577,8 @@ export interface SSEArtifactEvent {
 export interface ChatArtifact {
   id: string;
   fileName: string;
+  /** Present only for a local missing-name fallback; preserve `fileName` as compatibility data. */
+  fileNameText?: LocalizedText;
   mimeType: string;
   sizeBytes: number;
   downloadUrl: string;
@@ -601,6 +608,8 @@ export interface SSEConnectedEvent {
 export interface SSEStatusEvent {
   status: string;
   message: string;
+  /** Present only for locally authored status copy; meaningful backend text stays plain. */
+  messageText?: LocalizedText;
 }
 
 export interface ChatCitation {
@@ -838,6 +847,8 @@ export interface StatusMessage {
   /** Mirrors SSE status when applicable (`connected`, `planning`, `executing`, …) */
   status: string;
   message: string;
+  /** Present only for locally authored status copy; rendered against the active locale. */
+  messageText?: LocalizedText;
   timestamp: string;
 }
 

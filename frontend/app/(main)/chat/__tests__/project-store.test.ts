@@ -40,6 +40,7 @@ vi.mock('@/lib/api', () => ({
 
 const { useChatStore, selectPendingForSidebar } = await import('../store');
 const { buildStreamChatRequestForSlot } = await import('../runtime');
+const { localizedText } = await import('@/lib/i18n/localized-text');
 
 const initialSettings = useChatStore.getState().settings;
 
@@ -57,6 +58,9 @@ function resetStore() {
     pendingConversations: {},
     projectScope: null,
     projectKnowledgeScope: null,
+    previewFile: null,
+    searchError: null,
+    searchErrorText: null,
     projectStreamTools: null,
     universalAgentToolCatalogFullNames: [],
     universalAgentStreamTools: null,
@@ -135,6 +139,48 @@ describe('projects slice — list actions', () => {
     expect(useChatStore.getState().activeProjectId).toBe('p1');
     useChatStore.getState().setActiveProjectId(null);
     expect(useChatStore.getState().activeProjectId).toBeNull();
+  });
+});
+
+describe('localized error metadata', () => {
+  it('clears search descriptors when the error clears or is replaced by plain sourced text', () => {
+    const descriptor = localizedText('chatStream.errorFallback');
+    useChatStore.getState().setSearchError('Search failed', descriptor);
+    expect(useChatStore.getState().searchErrorText).toEqual(descriptor);
+
+    useChatStore.getState().setSearchError('The search service rejected the request.');
+    expect(useChatStore.getState().searchError).toBe('The search service rejected the request.');
+    expect(useChatStore.getState().searchErrorText).toBeNull();
+
+    useChatStore.getState().setSearchError('Search failed', descriptor);
+    useChatStore.getState().setSearchError(null);
+    expect(useChatStore.getState().searchErrorText).toBeNull();
+  });
+
+  it('clears preview descriptors when the error is cleared or replaced with raw text', () => {
+    const descriptor = localizedText('chatStream.errorFallback');
+    useChatStore.getState().setPreviewFile({
+      id: 'r1', name: 'Report', url: '/record/r1', type: 'pdf',
+      error: 'Record details unavailable', errorText: descriptor,
+    });
+    expect(useChatStore.getState().previewFile?.errorText).toEqual(descriptor);
+
+    useChatStore.getState().setPreviewFile({
+      ...useChatStore.getState().previewFile!,
+      error: 'Provider returned an error.',
+    });
+    expect(useChatStore.getState().previewFile?.error).toBe('Provider returned an error.');
+    expect(useChatStore.getState().previewFile?.errorText).toBeUndefined();
+
+    useChatStore.getState().setPreviewFile({
+      ...useChatStore.getState().previewFile!,
+      error: 'Record details unavailable', errorText: descriptor,
+    });
+    useChatStore.getState().setPreviewFile({
+      ...useChatStore.getState().previewFile!,
+      error: undefined,
+    });
+    expect(useChatStore.getState().previewFile?.errorText).toBeUndefined();
   });
 });
 

@@ -1,7 +1,9 @@
 import React from 'react';
-import { describe, it, expect, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { beforeEach, describe, it, expect, afterEach, vi } from 'vitest';
+import { render, screen, fireEvent, cleanup, waitFor, act } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
+import i18next from 'i18next';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
 import {
   ExpandableUserQuery,
   QUESTION_CHAR_LIMIT,
@@ -11,9 +13,58 @@ import {
 afterEach(() => cleanup());
 
 const h = React.createElement;
+const englishLocalizedQuestion = `English localized question ${'detail '.repeat(40)}`;
+const germanLocalizedQuestion = `Deutsche lokalisierte Frage ${'Details '.repeat(40)}`;
 
-function renderQuery(props: Partial<React.ComponentProps<typeof ExpandableUserQuery>> & { question: string }) {
-  return render(h(Theme, null, h(ExpandableUserQuery, props)));
+const testI18n = i18next.createInstance();
+await testI18n.use(initReactI18next).init({
+  lng: 'en-US',
+  fallbackLng: false,
+  interpolation: { escapeValue: false },
+  resources: {
+    'en-US': {
+      translation: {
+        askUserQuestion: {
+          showMore: 'Show more',
+          showLess: 'Show less',
+          localizedQuestion: englishLocalizedQuestion,
+        },
+        chat: {
+          editQuery: 'Edit query',
+          copy: 'Copy',
+        },
+        chatStream: {
+          copiedCode: 'Copied',
+        },
+      },
+    },
+    'de-DE': {
+      translation: {
+        askUserQuestion: {
+          showMore: 'Mehr anzeigen',
+          showLess: 'Weniger anzeigen',
+          localizedQuestion: germanLocalizedQuestion,
+        },
+        chat: {
+          editQuery: 'Frage bearbeiten',
+          copy: 'Kopieren',
+        },
+        chatStream: {
+          copiedCode: 'Kopiert',
+        },
+      },
+    },
+  },
+});
+
+beforeEach(async () => { await testI18n.changeLanguage('en-US'); });
+
+function renderQuery(props: React.ComponentProps<typeof ExpandableUserQuery>) {
+  return render(
+    h(I18nextProvider, { i18n: testI18n },
+      h(Theme, null, h(ExpandableUserQuery, props)),
+    ),
+  );
 }
 
 function longQuestion(overBy = 20): string {
@@ -134,7 +185,31 @@ describe('ExpandableUserQuery', () => {
     expect(writeText).toHaveBeenCalledWith(q);
   });
 
-  it('shows copy beside edit in the expanded action row', () => {
+  it.each([false, true])('copies the localized question shown after a language switch (expanded=%s)', async (expanded) => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+    renderQuery({
+      question: 'Original user supplied content',
+      questionText: { key: 'askUserQuestion.localizedQuestion' },
+    });
+
+    if (expanded) fireEvent.click(screen.getByText('Show more'));
+    await act(async () => { await testI18n.changeLanguage('de-DE'); });
+
+    if (expanded) {
+      expect(screen.getByTestId('user-query-text').textContent).toBe(germanLocalizedQuestion);
+    } else {
+      expect(screen.getByTestId('user-query-heading').textContent)
+        .toContain(germanLocalizedQuestion.slice(0, QUESTION_CHAR_LIMIT).trimEnd());
+    }
+    fireEvent.click(screen.getByRole('button', { name: testI18n.t('chat.copy') }));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith(germanLocalizedQuestion));
+  });
+
+  it('retranslates expanded controls while preserving the original user question', async () => {
     const q = longQuestion();
     const { container } = renderQuery({
       question: q,
@@ -142,8 +217,11 @@ describe('ExpandableUserQuery', () => {
       onEdit: vi.fn(),
     });
     fireEvent.click(screen.getByText('Show more'));
+    await act(async () => { await testI18n.changeLanguage('de-DE'); });
+    expect(screen.getByText('Weniger anzeigen')).toBeTruthy();
+    expect(screen.getByTestId('user-query-text').textContent).toBe(q);
     const actions = container.querySelector('[data-testid="user-query-actions"]') as HTMLElement;
-    expect(actions.contains(screen.getByRole('button', { name: /copy/i }))).toBe(true);
-    expect(actions.contains(screen.getByRole('button', { name: /edit/i }))).toBe(true);
+    expect(actions.contains(screen.getByRole('button', { name: testI18n.t('chat.copy') }))).toBe(true);
+    expect(actions.contains(screen.getByRole('button', { name: testI18n.t('chat.editQuery') }))).toBe(true);
   });
 });

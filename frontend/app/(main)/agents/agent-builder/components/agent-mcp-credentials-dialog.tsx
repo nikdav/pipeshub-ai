@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { Badge, Box, Button, Callout, Dialog, Flex, IconButton, Separator, Text, TextField } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LoadingButton } from '@/app/components/ui/loading-button';
-import { isProcessedError } from '@/lib/api';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue, type TranslateText } from '@/lib/i18n/localized-text';
 import { McpServersApi } from '../../../workspace/mcp-servers/api';
 import {
   buildMultiEnvAuthPayload,
@@ -21,10 +22,6 @@ import {
   toolsetDialogPanelStyle,
   toolsetDialogPrimaryActionsStyle,
 } from './toolset-config-dialog-styles';
-
-function extractErrorDetail(e: unknown): string | undefined {
-  return isProcessedError(e) ? e.message : e instanceof Error ? e.message : undefined;
-}
 
 export interface McpCredentialsDialogProps {
   instance: McpMyServerEntry;
@@ -62,7 +59,7 @@ export function McpCredentialsDialog({
   const [saving, setSaving] = useState(false);
   const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
   const [removing, setRemoving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(instance.isAuthenticated);
 
   const verifyAuthenticated = useCallback(async (): Promise<boolean> => {
@@ -125,7 +122,7 @@ export function McpCredentialsDialog({
       await Promise.resolve(onSuccess()).catch(() => undefined);
       onClose();
     } catch (e) {
-      setError(extractErrorDetail(e) || t('agentBuilder.mcpAuthSaveError'));
+      setError(getUserFacingErrorText(e, localizedText('agentBuilder.mcpAuthSaveError')));
     } finally {
       setSaving(false);
     }
@@ -146,7 +143,7 @@ export function McpCredentialsDialog({
       await Promise.resolve(onSuccess()).catch(() => undefined);
       onClose();
     } catch (e) {
-      setError(extractErrorDetail(e) || t('agentBuilder.mcpAuthRemoveError'));
+      setError(getUserFacingErrorText(e, localizedText('agentBuilder.mcpAuthRemoveError')));
     } finally {
       setRemoving(false);
     }
@@ -159,7 +156,7 @@ export function McpCredentialsDialog({
         if (isAgentScoped) await McpServersApi.reauthenticateAgentInstance(agentKey!, instance._id);
         else await McpServersApi.reauthenticate(instance._id);
       } catch (e) {
-        setError(extractErrorDetail(e) || t('agentBuilder.mcpAuthSaveError'));
+        setError(getUserFacingErrorText(e, localizedText('agentBuilder.mcpAuthSaveError')));
         return;
       }
     }
@@ -231,7 +228,9 @@ export function McpCredentialsDialog({
 
             {error ? (
               <Callout.Root color="red" variant="surface" size="1" mb="3">
-                <Callout.Text style={{ flex: 1, minWidth: 0 }}>{error}</Callout.Text>
+                <Callout.Text style={{ flex: 1, minWidth: 0 }}>
+                  {resolveLocalizedText(error, t as TranslateText)}
+                </Callout.Text>
               </Callout.Root>
             ) : null}
 
@@ -270,7 +269,7 @@ export function McpCredentialsDialog({
                     <Box key={envKey}>
                       <Text size="2" weight="medium" mb="2" style={{ color: 'var(--slate-12)', display: 'block' }}>
                         {envKey}
-                        {!requiredEnv.includes(envKey) ? ' (optional)' : ''}
+                        {!requiredEnv.includes(envKey) ? ` (${t('agentBuilder.optional')})` : ''}
                       </Text>
                       <TextField.Root
                         size="2"

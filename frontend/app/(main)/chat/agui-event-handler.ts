@@ -21,6 +21,9 @@ import type {
 } from './types';
 import type { StreamMessageCallbacks } from './api';
 import { toolStatusLabel } from './utils/tool-display';
+import { toolStatusText } from './utils/tool-display';
+import { localizedText } from '@/lib/i18n/localized-text';
+import { StreamError } from '@/lib/api/stream-errors';
 
 /** Mutable counters the caller inspects after the stream ends (mirrors the
  * legacy dispatcher's local `receivedComplete`/`lastSSEError` bookkeeping). */
@@ -320,7 +323,11 @@ export function createAGUIEventHandler(
         const stepName = typeof data?.stepName === 'string' ? data.stepName : '';
         if (stepName.startsWith('sub_agent:')) {
           const roleName = stepName.slice('sub_agent:'.length);
-          callbacks.onStatus?.({ status: 'executing', message: `Delegating to ${roleName}...` });
+          callbacks.onStatus?.({
+            status: 'executing',
+            message: `Delegating to ${roleName}...`,
+            messageText: localizedText('chatStream.status.delegatingTo', { roleName }),
+          });
         }
         if (data) partsBuilder.handleStepStarted(data);
         break;
@@ -389,7 +396,11 @@ export function createAGUIEventHandler(
         // final answer (RUN_FINISHED follows) — TOOL_CALL_START clears it.
         const runId = typeof data?.runId === 'string' ? data.runId : undefined;
         if (partsBuilder.isRootRun(runId)) {
-          callbacks.onStatus?.({ status: 'calling_llm', message: 'Thinking...' });
+          callbacks.onStatus?.({
+            status: 'calling_llm',
+            message: 'Thinking...',
+            messageText: localizedText('chatStream.thinkingFallback'),
+          });
         }
         emitParts();
         break;
@@ -439,7 +450,13 @@ export function createAGUIEventHandler(
         // Status uses present-tense humanization only — `displayName` is past
         // tense for the timeline ("Ran code") and would make a long-running
         // tool look finished while the chat is still busy.
-        callbacks.onStatus?.({ status: 'executing', message: `${toolStatusLabel(toolCallName)}...` });
+        callbacks.onStatus?.({
+          status: 'executing',
+          message: `${toolStatusLabel(toolCallName)}...`,
+          messageText: localizedText('chatStream.status.toolActivity', {
+            label: toolStatusText(toolCallName),
+          }),
+        });
         // A tool call is about to run for the turn that was just streamed —
         // it was never the final answer, so settle it into the timeline
         // (already appended as a `text` part above) and stop showing it in
@@ -472,7 +489,11 @@ export function createAGUIEventHandler(
         // STATE_SNAPSHOT(calling_llm) / TEXT_MESSAGE_START arrives.
         const runId = typeof data?.runId === 'string' ? data.runId : undefined;
         if (partsBuilder.isRootRun(runId)) {
-          callbacks.onStatus?.({ status: 'calling_llm', message: 'Thinking...' });
+          callbacks.onStatus?.({
+            status: 'calling_llm',
+            message: 'Thinking...',
+            messageText: localizedText('chatStream.thinkingFallback'),
+          });
         }
         break;
       }
@@ -550,7 +571,11 @@ export function createAGUIEventHandler(
           emitParts();
           break;
         }
-        const message = typeof data?.message === 'string' ? data.message : 'Stream ended with an error';
+        const serverMessage = typeof data?.message === 'string' && data.message.length > 0
+          ? data.message
+          : undefined;
+        const hasServerMessage = serverMessage !== undefined;
+        const message = serverMessage ?? 'Stream ended with an error';
         // A Stop can surface as RUN_ERROR{code:'abort'} instead of a clean
         // RUN_FINISHED{status:'stopped'}; its raw message is no reply to show.
         // `receivedError` stays unset so `runChatStream` still ends the turn as
@@ -562,7 +587,9 @@ export function createAGUIEventHandler(
         }
         if (tracking) tracking.receivedError = true;
         console.warn('[Chat SSE/AGUI] RUN_ERROR:', message);
-        callbacks.onError?.(new Error(message));
+        callbacks.onError?.(hasServerMessage
+          ? new Error(message)
+          : new StreamError(message, undefined, localizedText('chatStream.errorFallback')));
         break;
       }
 
@@ -576,17 +603,22 @@ export function createAGUIEventHandler(
           break;
         }
         const status = typeof snapshot?.status === 'string' ? snapshot.status : '';
-        const STATUS_MESSAGES: Record<string, string> = {
-          starting: 'Starting...',
-          calling_llm: 'Thinking...',
-          running_tool: 'Executing tool...',
+        const STATUS_MESSAGES: Record<string, { message: string; messageText?: ReturnType<typeof localizedText> }> = {
+          starting: { message: 'Starting...', messageText: localizedText('chatStream.status.starting') },
+          calling_llm: { message: 'Thinking...', messageText: localizedText('chatStream.thinkingFallback') },
+          running_tool: { message: 'Executing tool...', messageText: localizedText('chatStream.status.executingTool') },
         };
-        let message = STATUS_MESSAGES[status];
-        if (message) {
+        let statusCopy = STATUS_MESSAGES[status];
+        if (statusCopy) {
           if (status === 'running_tool' && typeof snapshot?.current_tool === 'string') {
-            message = `${toolStatusLabel(snapshot.current_tool)}...`;
+            statusCopy = {
+              message: `${toolStatusLabel(snapshot.current_tool)}...`,
+              messageText: localizedText('chatStream.status.toolActivity', {
+                label: toolStatusText(snapshot.current_tool),
+              }),
+            };
           }
-          callbacks.onStatus?.({ status, message });
+          callbacks.onStatus?.({ status, ...statusCopy });
         }
         break;
       }

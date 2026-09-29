@@ -56,7 +56,14 @@
     "refiningResponse": "Antwort wird verfeinert…",
     "errorFallback": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
     "copyCode": "Kopieren",
-    "copiedCode": "Kopiert"
+    "copiedCode": "Kopiert",
+    "status": {
+      "delegatingTo": "Weiterleitung an {{roleName}} …",
+      "toolActivity": "{{label}} …",
+      "starting": "Wird gestartet …",
+      "executingTool": "Tool wird ausgeführt …"
+    },
+    "connectedWorking": "Verbunden – Ihre Anfrage wird bearbeitet"
   },
   "uploadProgress": {
     "uploadFailedDefault": "Upload fehlgeschlagen",
@@ -645,7 +652,8 @@
       "open": "{{source}} öffnen",
       "openIn": "In {{source}} öffnen",
       "openInCollections": "In Sammlungen öffnen",
-      "relevance": "Relevanz: {{percent}} %"
+      "relevance": "Relevanz: {{percent}} %",
+      "viewSource": "Quelle anzeigen"
     },
     "results": "Ergebnisse",
     "greeting": "Was möchten Sie heute erkunden?",
@@ -687,7 +695,8 @@
       "browseWorkspaceMcp": "MCP-Server durchsuchen",
       "browseWorkspaceMcpAria": "MCP-Server öffnen, um Verbindungen hinzuzufügen oder zu verwalten",
       "noActionMatches": "Keine Aktionen entsprechen Ihrer Suche.",
-      "noMcpMatches": "Keine MCP-Server entsprechen Ihrer Suche."
+      "noMcpMatches": "Keine MCP-Server entsprechen Ihrer Suche.",
+      "filtersAriaLabel": "Ressourcenfilter"
     },
     "projectResources": {
       "noConnectors": "Für dieses Projekt sind keine Konnektoren aktiviert.",
@@ -1050,7 +1059,8 @@
         "suggestPlanWork": "Eine Aufgabe planen",
         "suggestWriteInstructions": "Die Projektanweisungen schreiben",
         "suggestSummariseDocumentPrompt": "Fasse das wichtigste Dokument in den Dateien dieses Projekts zusammen.",
-        "suggestPlanWorkPrompt": "Hilf mir, eine Aufgabe für dieses Projekt zu planen. Unterteile sie in konkrete nächste Schritte."
+        "suggestPlanWorkPrompt": "Hilf mir, eine Aufgabe für dieses Projekt zu planen. Unterteile sie in konkrete nächste Schritte.",
+        "projectActions": "Projektaktionen"
       },
       "moveDialog": {
         "title": "In Projekt verschieben",
@@ -1096,7 +1106,15 @@
       "closePreview": "Schließen",
       "loadingPreview": "Wird geladen…",
       "pasteMeta_one": "{{chars}} Zeichen · {{count}} Zeile",
-      "pasteMeta_other": "{{chars}} Zeichen · {{count}} Zeilen"
+      "pasteMeta_other": "{{chars}} Zeichen · {{count}} Zeilen",
+      "failedToAttach": "{{fileName}} konnte nicht angehängt werden. {{reason}}",
+      "failedToAttachFallback": "{{fileName}} konnte nicht angehängt werden. Bitte versuchen Sie es erneut.",
+      "fileActionAria": {
+        "uploading": "{{name}} wird hochgeladen",
+        "retry": "Upload von {{name}} wiederholen",
+        "remove": "{{name}} entfernen"
+      },
+      "uploadMissingReference": "Der Upload hat keinen Anhangsverweis zurückgegeben."
     },
     "voiceSttNotConfigured": "Konfigurieren Sie in den KI-Modelleinstellungen ein Speech-to-Text-Modell (STT), um die Spracheingabe zu aktivieren.",
     "voiceSttLoading": "Sprachfunktionen werden geprüft…",
@@ -1137,7 +1155,8 @@
       "loadingMcp": "MCP-Server werden geladen…",
       "noMcpServers": "Keine authentifizierten MCP-Server gefunden. Verbinden Sie einen unter „Arbeitsbereich → MCP-Server“.",
       "toolCount_one": "{{count}} Tool",
-      "toolCount_other": "{{count}} Tools"
+      "toolCount_other": "{{count}} Tools",
+      "filtersAriaLabel": "Ressourcenfilter"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "Für diesen Agenten nicht konfiguriert",
@@ -1188,7 +1207,121 @@
     "sendMessage": "Nachricht senden",
     "demoHide": "Demodaten ausblenden",
     "demoRestrictedHint": "Nur für das Preiskomitee, deshalb erhalten Sie hier keine Antwort. So wirken Berechtigungen.",
-    "demoRestrictedHintSignIn": "Nur für das Preiskomitee, deshalb erhalten Sie hier keine Antwort. Melden Sie sich als {{email}} an, um die Antwort zu sehen."
+    "demoRestrictedHintSignIn": "Nur für das Preiskomitee, deshalb erhalten Sie hier keine Antwort. Melden Sie sich als {{email}} an, um die Antwort zu sehen.",
+    "noModelConfigured": {
+      "title": "Kein KI-Modell konfiguriert",
+      "memberDescription": "Für diesen Arbeitsbereich ist noch kein KI-Modell eingerichtet, daher kann der Chat keine Antworten geben. Bitten Sie die Administration Ihres Arbeitsbereichs, unter „Arbeitsbereich → KI-Modelle“ ein Modell hinzuzufügen.",
+      "adminDescription": "Für diesen Arbeitsbereich ist noch kein KI-Modell eingerichtet, daher kann der Chat keine Antworten geben. Fügen Sie unter „KI-Modelle“ ein Modell hinzu und senden Sie Ihre Nachricht erneut.",
+      "action": "KI-Modelle öffnen"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "Skills werden aufgelistet",
+          "past": "Skills aufgelistet"
+        },
+        "search": {
+          "present": "Skills werden gesucht",
+          "past": "Skills durchsucht"
+        },
+        "load": {
+          "present": "Skill wird geladen",
+          "past": "Skill geladen"
+        },
+        "loadResource": {
+          "present": "Skill-Datei wird geladen",
+          "past": "Skill-Datei geladen"
+        },
+        "manage": {
+          "present": "Skill wird verwaltet",
+          "past": "Skill verwaltet"
+        }
+      },
+      "usedTool": "Tool verwendet",
+      "usingTool": "{{toolName}} wird verwendet"
+    },
+    "unnamedArtifact": "Artefakt",
+    "unnamedDownload": "Download",
+    "searchFailed": "Suche fehlgeschlagen",
+    "collectionRow": {
+      "folders_one": "{{count}} Ordner",
+      "folders_other": "{{count}} Ordner",
+      "files_one": "{{count}} Datei",
+      "files_other": "{{count}} Dateien"
+    },
+    "modelSelector": {
+      "providerByline": "von {{provider}}",
+      "multimodalBadge": "Multimodal"
+    },
+    "agentActivity": {
+      "thinking": "Denkt nach",
+      "arguments": "Argumente",
+      "resultError": "Fehler",
+      "resultBlocked": "Blockiert",
+      "result": "Ergebnis",
+      "subAgent": "Sub-Agent",
+      "groupSkills_one": "{{count}} Skill verwendet",
+      "groupSkills_other": "{{count}} Skills verwendet",
+      "groupSearches_one": "{{count}} Suche untersucht",
+      "groupSearches_other": "{{count}} Suchen untersucht",
+      "groupTools_one": "{{count}} Tool ausgeführt",
+      "groupTools_other": "{{count}} Tools ausgeführt",
+      "summaryThought_one": "Darüber nachgedacht",
+      "summaryThought_other": "{{count}}-mal darüber nachgedacht",
+      "summaryTools_one": "{{count}} Tool verwendet",
+      "summaryTools_other": "{{count}} Tools verwendet",
+      "summaryDelegatedAgents_one": "An {{count}} Sub-Agenten delegiert",
+      "summaryDelegatedAgents_other": "An {{count}} Sub-Agenten delegiert",
+      "summaryWorked": "Daran gearbeitet"
+    },
+    "callouts": {
+      "note": "Hinweis",
+      "tip": "Tipp",
+      "important": "Wichtig",
+      "warning": "Warnung",
+      "caution": "Vorsicht",
+      "info": "Info",
+      "success": "Erfolg",
+      "danger": "Gefahr",
+      "error": "Fehler",
+      "question": "Frage",
+      "bug": "Fehler im Code",
+      "example": "Beispiel",
+      "abstract": "Kurzfassung",
+      "summary": "Zusammenfassung",
+      "quote": "Zitat"
+    },
+    "linkToSection": "Link zum Abschnitt",
+    "artifacts": {
+      "generated_one": "{{count}} Artefakt erstellt",
+      "generated_other": "{{count}} Artefakte erstellt",
+      "newerVersionAvailable": "Neuere Version verfügbar (v{{version}})",
+      "viewSource": "Quellcode anzeigen",
+      "viewSourceTitle": "Den Code anzeigen, mit dem dieses Artefakt erstellt wurde",
+      "loadingSource": "Quellcode wird geladen …"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "Frage {{number}}: {{question}}",
+      "readAloudOption": "Option: {{option}}"
+    },
+    "confidenceTooltip": "Konfidenzniveau der Antwort des Assistenten",
+    "downloadTasks": {
+      "completeResults": "Sie können die vollständigen Abfrageergebnisse herunterladen:"
+    },
+    "sourcesHeading_one": "Quelle ({{count}}):",
+    "sourcesHeading_other": "Quellen ({{count}}):",
+    "citationCount_one": "{{count}} Zitat",
+    "citationCount_other": "{{count}} Zitate",
+    "noCitationsAvailable": "Keine Zitate verfügbar.",
+    "noSourcesAvailable": "Keine Quellen verfügbar.",
+    "recordDetailsUnavailable": "Datensatzdetails nicht verfügbar",
+    "syncedJustNow": "Gerade synchronisiert",
+    "syncedRelativeTime": "Synchronisiert {{relativeTime}}",
+    "processingStatus": "Wird verarbeitet …",
+    "noResultsForQuery": "Keine Ergebnisse für {{query}} gefunden",
+    "couldNotLoadConversations": "Unterhaltungen konnten nicht geladen werden",
+    "archiveConfirmation": "Archivierung bestätigen",
+    "questionFallback": "Frage"
   },
   "workspaceMenu": {
     "appearance": "Darstellung",
@@ -4346,7 +4479,8 @@
     "mcpServerWithToolCount_other": "MCP-Server mit {{count}} Tools",
     "deprecatedToolsBanner_one": "{{count}} Tool dieses Agenten ist veraltet. Entfernen Sie es: {{tools}}",
     "deprecatedToolsBanner_other": "{{count}} Tools dieses Agenten sind veraltet. Entfernen Sie diese: {{tools}}",
-    "skillDisabled": "Dieser Skill ist deaktiviert und steht dem Agenten erst wieder zur Verfügung, wenn er erneut aktiviert wird."
+    "skillDisabled": "Dieser Skill ist deaktiviert und steht dem Agenten erst wieder zur Verfügung, wenn er erneut aktiviert wird.",
+    "loadResourcesFailed": "Fehler beim Laden der Builder-Ressourcen"
   },
   "recordView": {
     "sections": {
@@ -4839,6 +4973,8 @@
     "team": "Team",
     "teamsNoRoles": "Teams haben keine Rollen",
     "invite": "Zu PipesHub einladen",
+    "shareConversation": "Chat teilen",
+    "memberNameUnknown": "Unbekannt",
     "searchPlaceholder": "E-Mail-Adressen, Teams oder Namen (durch Kommas getrennt)"
   },
   "demoData": {

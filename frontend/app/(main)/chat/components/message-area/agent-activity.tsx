@@ -15,6 +15,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { PluggableList } from 'unified';
 import { Box, Flex, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ICON_SIZES } from '@/lib/constants/icon-sizes';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
@@ -23,10 +24,13 @@ import { parseArtifactMarkers, parseDownloadMarkers } from '../../utils/parse-do
 import type { CitationMaps, CitationCallbacks } from './response-tabs/citations';
 import { createMarkdownComponents } from './answer-content';
 import { processMarkdownContent } from '../../utils/process-markdown-content';
+import { i18n } from '@/lib/i18n';
+import { resolveLocalizedText, type TranslateText } from '@/lib/i18n/localized-text';
 import {
   extractToolsetLabel,
   isSkillTool,
   toolActivityLabel as toolActivityLabelUtil,
+  toolActivityText,
 } from '../../utils/tool-display';
 
 interface AgentActivityTimelineProps {
@@ -448,6 +452,8 @@ const LiveNarrationText = React.memo(LiveNarrationTextImpl);
  * rail's icon node (see the `showStatus` branch in `AgentActivityTimeline`)
  * so this only needs to render the shimmer text itself. */
 function StatusTimelineEntry({ status }: { status: StatusMessage }) {
+  const { t } = useTranslation();
+  const message = resolveLocalizedText(status.messageText, t as TranslateText, status.message);
   return (
     <Text
       size="1"
@@ -455,8 +461,8 @@ function StatusTimelineEntry({ status }: { status: StatusMessage }) {
       className="generating-shimmer"
       style={{ whiteSpace: 'normal', overflowWrap: 'anywhere', wordBreak: 'break-word', minWidth: 0 }}
     >
-      <span className="generating-shimmer-base">{status.message}</span>
-      <span className="generating-shimmer-overlay" aria-hidden="true">{status.message}</span>
+      <span className="generating-shimmer-base">{message}</span>
+      <span className="generating-shimmer-overlay" aria-hidden="true">{message}</span>
     </Text>
   );
 }
@@ -464,6 +470,7 @@ function StatusTimelineEntry({ status }: { status: StatusMessage }) {
 /** Collapsible chain-of-thought block — collapsed by default, same
  * disclosure pattern `AskUserQuestionCard` uses for its answers list. */
 export function ThinkingBlock({ content }: { content: string }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   if (!content.trim()) return null;
 
@@ -492,7 +499,7 @@ export function ThinkingBlock({ content }: { content: string }) {
         }}
       >
         <Text size="1" weight="medium" style={{ color: 'var(--slate-10)', flex: 1 }}>
-          Thinking
+          {t('chat.agentActivity.thinking', { defaultValue: 'Thinking' })}
         </Text>
         <MaterialIcon
           name={expanded ? 'expand_less' : 'expand_more'}
@@ -581,6 +588,7 @@ function ToolSummaryText({ content }: { content: string }) {
  * `getTimelineIcon`); nested usage inside an expanded `ToolCallGroup` has
  * no rail of its own, so it keeps its own inline icon (the default). */
 export function ToolCallCard({ part, showIcon = true }: { part: MessagePart; showIcon?: boolean }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const status = part.status ?? 'running';
   const toolsetLabel = extractToolsetLabel(part.toolName);
@@ -646,7 +654,7 @@ export function ToolCallCard({ part, showIcon = true }: { part: MessagePart; sho
             whiteSpace: 'nowrap',
           }}
         >
-          {toolActivityLabel(part)}
+          {resolveLocalizedText(toolActivityText(part.toolName, part.displayName), t as TranslateText)}
           {sourceInfo && (
             <span style={{ color: 'var(--slate-9)', fontWeight: 400 }}>
               {' · '}{sourceInfo}
@@ -671,7 +679,7 @@ export function ToolCallCard({ part, showIcon = true }: { part: MessagePart; sho
           {(part.argsSummary || part.args) && (
             <Box>
               <Text size="1" weight="medium" style={{ color: 'var(--slate-9)' }}>
-                Arguments
+                {t('chat.agentActivity.arguments', { defaultValue: 'Arguments' })}
               </Text>
               {part.argsSummary ? (
                 <ToolSummaryText content={part.argsSummary} />
@@ -699,7 +707,11 @@ export function ToolCallCard({ part, showIcon = true }: { part: MessagePart; sho
           {(part.resultSummary || (part.resultPreview && !isSkillTool(part.toolName))) && (
             <Box>
               <Text size="1" weight="medium" style={{ color: 'var(--slate-9)' }}>
-                {status === 'failed' ? 'Error' : status === 'blocked' ? 'Blocked' : 'Result'}
+                {status === 'failed'
+                  ? t('chat.agentActivity.resultError', { defaultValue: 'Error' })
+                  : status === 'blocked'
+                    ? t('chat.agentActivity.resultBlocked', { defaultValue: 'Blocked' })
+                    : t('chat.agentActivity.result', { defaultValue: 'Result' })}
               </Text>
               {part.resultSummary ? (
                 <ToolSummaryText content={part.resultSummary} />
@@ -728,6 +740,7 @@ export function ToolCallCard({ part, showIcon = true }: { part: MessagePart; sho
  * calls — e.g. "Explored 3 searches" or "Ran 2 tools". Expanding reveals the
  * individual `ToolCallCard`s (which stay collapsed themselves). */
 function ToolCallGroup({ parts }: { parts: MessagePart[] }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   // Skill-tool check takes precedence over the search heuristic — a burst
   // of `skill_search`/`load_skill` calls reads as "Used N skills", not
@@ -735,10 +748,10 @@ function ToolCallGroup({ parts }: { parts: MessagePart[] }) {
   const allSkills = parts.every((part) => isSkillTool(part.toolName));
   const allSearches = !allSkills && parts.every((part) => isSearchLike(part.toolName));
   const label = allSkills
-    ? `Used ${parts.length} skills`
+    ? t('chat.agentActivity.groupSkills', { count: parts.length, defaultValue: `Used ${parts.length} skills` })
     : allSearches
-      ? `Explored ${parts.length} searches`
-      : `Ran ${parts.length} tools`;
+      ? t('chat.agentActivity.groupSearches', { count: parts.length, defaultValue: `Explored ${parts.length} searches` })
+    : t('chat.agentActivity.groupTools', { count: parts.length, defaultValue: `Ran ${parts.length} tools` });
 
   const toolsetLabels = [...new Set(parts.map((p) => extractToolsetLabel(p.toolName)).filter(Boolean))] as string[];
   const groupToolsetLabel = toolsetLabels.length === 1 ? toolsetLabels[0] : undefined;
@@ -809,6 +822,7 @@ function ToolCallGroup({ parts }: { parts: MessagePart[] }) {
 /** A sub-agent's own nested timeline — collapsed by default so the running
  * indicator on the header is the primary signal; expand to see tool calls. */
 export function SubAgentGroup({ part, citationMaps, citationCallbacks }: { part: MessagePart; citationMaps?: CitationMaps; citationCallbacks?: CitationCallbacks }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const nested = part.parts ?? [];
   const status = part.status ?? 'completed';
@@ -838,7 +852,7 @@ export function SubAgentGroup({ part, citationMaps, citationCallbacks }: { part:
         }}
       >
         <Text size="1" weight="medium" style={{ color: 'var(--accent-11)', flex: 1 }}>
-          {part.roleName || 'Sub-agent'}
+          {part.roleName || t('chat.agentActivity.subAgent', { defaultValue: 'Sub-agent' })}
         </Text>
         <MaterialIcon
           name={expanded ? 'expand_less' : 'expand_more'}
@@ -859,16 +873,19 @@ export function SubAgentGroup({ part, citationMaps, citationCallbacks }: { part:
  * "Thought for a bit, used 3 tools". Counts are derived directly from the
  * transcript rather than tracked separately, so it never drifts from what's
  * actually rendered underneath. */
-export function buildActivitySummary(parts: MessagePart[]): string {
+export function buildActivitySummary(
+  parts: MessagePart[],
+  translate: TranslateText = i18n.t.bind(i18n) as TranslateText,
+): string {
   const toolCount = parts.filter((p) => p.type === 'tool_call').length;
   const thinkCount = parts.filter((p) => p.type === 'reasoning').length;
   const subAgentCount = parts.filter((p) => p.type === 'sub_agent').length;
 
   const segments: string[] = [];
-  if (thinkCount > 0) segments.push(thinkCount === 1 ? 'Thought about this' : `Thought ${thinkCount} times`);
-  if (toolCount > 0) segments.push(`Used ${toolCount} ${toolCount === 1 ? 'tool' : 'tools'}`);
-  if (subAgentCount > 0) segments.push(`Delegated to ${subAgentCount} sub-${subAgentCount === 1 ? 'agent' : 'agents'}`);
-  return segments.length > 0 ? segments.join(' · ') : 'Worked on this';
+  if (thinkCount > 0) segments.push(translate('chat.agentActivity.summaryThought', { count: thinkCount, defaultValue: thinkCount === 1 ? 'Thought about this' : `Thought ${thinkCount} times` }));
+  if (toolCount > 0) segments.push(translate('chat.agentActivity.summaryTools', { count: toolCount, defaultValue: `Used ${toolCount} ${toolCount === 1 ? 'tool' : 'tools'}` }));
+  if (subAgentCount > 0) segments.push(translate('chat.agentActivity.summaryDelegatedAgents', { count: subAgentCount, defaultValue: `Delegated to ${subAgentCount} sub-agent${subAgentCount === 1 ? '' : 's'}` }));
+  return segments.length > 0 ? segments.join(' · ') : translate('chat.agentActivity.summaryWorked', { defaultValue: 'Worked on this' });
 }
 
 /**
@@ -877,8 +894,9 @@ export function buildActivitySummary(parts: MessagePart[]): string {
  * historical messages. Never auto-collapses — the user toggles it.
  */
 export function CollapsibleActivitySection({ parts, isStreaming = false, children }: { parts: MessagePart[]; isStreaming?: boolean; children: React.ReactNode }) {
+  const { t } = useTranslation();
   const [collapsed, setCollapsed] = useState(!isStreaming);
-  const summary = useMemo(() => buildActivitySummary(parts), [parts]);
+  const summary = useMemo(() => buildActivitySummary(parts, t as TranslateText), [parts, t]);
 
   const handleToggle = useCallback(() => {
     setCollapsed((prev) => !prev);

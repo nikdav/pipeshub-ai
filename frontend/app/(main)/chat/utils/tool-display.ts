@@ -1,3 +1,5 @@
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
+
 /**
  * Shared tool name display utilities used by both streaming status messages
  * and the agent activity timeline.
@@ -14,12 +16,12 @@
  * must stay exact-name-keyed (no `{app}__` prefix on these built-ins) and
  * never assume `displayName` is present.
  */
-const SKILL_TOOL_LABELS: Record<string, { present: string; past: string }> = {
-  skills_list: { present: 'Listing skills', past: 'Listed skills' },
-  skill_search: { present: 'Searching skills', past: 'Searched skills' },
-  load_skill: { present: 'Loading skill', past: 'Loaded skill' },
-  load_skill_resource: { present: 'Loading skill file', past: 'Loaded skill file' },
-  skill_manage: { present: 'Managing skill', past: 'Managed skill' },
+const SKILL_TOOL_LABELS: Record<string, { present: string; past: string; key: string }> = {
+  skills_list: { present: 'Listing skills', past: 'Listed skills', key: 'list' },
+  skill_search: { present: 'Searching skills', past: 'Searched skills', key: 'search' },
+  load_skill: { present: 'Loading skill', past: 'Loaded skill', key: 'load' },
+  load_skill_resource: { present: 'Loading skill file', past: 'Loaded skill file', key: 'loadResource' },
+  skill_manage: { present: 'Managing skill', past: 'Managed skill', key: 'manage' },
 };
 
 /** True for the built-in skill tools — used to pick the skill icon/label
@@ -60,4 +62,23 @@ export function toolActivityLabel(toolName: string | undefined, displayName?: st
 export function toolStatusLabel(toolName: string, displayName?: string): string {
   if (displayName) return displayName;
   return SKILL_TOOL_LABELS[toolName]?.present ?? `Using ${humanizeToolName(toolName)}`;
+}
+
+/** Descriptor form for chat renderers that resolve against their active `t`. */
+export function toolActivityText(toolName: string | undefined, displayName?: string): LocalizedTextValue {
+  if (displayName) return displayName;
+  if (!toolName) return localizedText('chat.toolActivity.usedTool');
+  const skill = SKILL_TOOL_LABELS[toolName];
+  return skill
+    ? localizedText(`chat.toolActivity.skills.${skill.key}.past`)
+    : humanizeToolName(toolName);
+}
+
+/** Present-tense counterpart used for an in-progress stream status. */
+export function toolStatusText(toolName: string, displayName?: string): LocalizedTextValue {
+  if (displayName) return displayName;
+  const skill = SKILL_TOOL_LABELS[toolName];
+  return skill
+    ? localizedText(`chat.toolActivity.skills.${skill.key}.present`)
+    : localizedText('chat.toolActivity.usingTool', { toolName: humanizeToolName(toolName) });
 }

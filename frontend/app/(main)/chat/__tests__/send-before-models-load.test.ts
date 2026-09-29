@@ -4,6 +4,7 @@
  * rejects with a 400 and a "No AI model configured" toast).
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 // See reasoning-effort.test.ts: auth-store hydrates from localStorage at import.
 vi.mock('@/lib/store/auth-store', () => ({
@@ -85,6 +86,12 @@ describe('sending before the model list has loaded', () => {
 
     await send(slotId);
 
-    expect(toastWarning).toHaveBeenCalledWith('No AI model configured', expect.anything());
+    expect(toastWarning).toHaveBeenCalledWith(
+      localizedText('chat.noModelConfigured.title'),
+      {
+        description: localizedText('chat.noModelConfigured.memberDescription'),
+        duration: null,
+      },
+    );
   });
 });

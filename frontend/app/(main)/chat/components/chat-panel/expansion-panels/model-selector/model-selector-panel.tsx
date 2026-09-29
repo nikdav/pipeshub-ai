@@ -372,6 +372,7 @@ interface ModelItemProps {
 }
 
 function ModelItem({ model, isSelected, onSelect }: ModelItemProps) {
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
   // Provider always comes through from the API. If we don't have a curated
   // friendly name for it in PROVIDER_FRIENDLY_NAMES, fall back to splitting
@@ -417,7 +418,7 @@ function ModelItem({ model, isSelected, onSelect }: ModelItemProps) {
                 style={{ flexShrink: 0 }}
               />
               <Text size="1" style={{ color: 'var(--slate-10)' }}>
-                by {providerName}
+                {t('chat.modelSelector.providerByline', { provider: providerName, defaultValue: `by ${providerName}` })}
               </Text>
             </>
           )}
@@ -434,17 +435,17 @@ function ModelItem({ model, isSelected, onSelect }: ModelItemProps) {
         <Flex align="center" gap="1" wrap="wrap" style={{ marginTop: 'var(--space-1)' }}>
           {model.isDefault && (
             <Badge size="1" variant="outline" color="jade">
-              Default
+              {t('workspace.aiModels.roles.defaultBadge')}
             </Badge>
           )}
           {model.isReasoning && (
             <Badge size="1" variant="outline" color="violet">
-              Reasoning
+              {t('workspace.aiModels.capabilities.reasoning.badge')}
             </Badge>
           )}
           {model.isMultimodal && (
             <Badge size="1" variant="outline" color="blue">
-              Multimodal
+              {t('chat.modelSelector.multimodalBadge', { defaultValue: 'Multimodal' })}
             </Badge>
           )}
         </Flex>

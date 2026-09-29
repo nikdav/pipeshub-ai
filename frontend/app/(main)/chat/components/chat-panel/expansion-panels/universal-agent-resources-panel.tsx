@@ -71,6 +71,7 @@ function UniversalAgentFilterTablist({
   /** Tabs excluded entirely (not just disabled) — e.g. 'mcp' when ENABLE_MCP is off. */
   hiddenTabs?: TabValue[];
 }) {
+  const { t } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDark = appearance === 'dark';
 
@@ -124,7 +125,7 @@ function UniversalAgentFilterTablist({
   return (
     <div
       role="tablist"
-      aria-label="Universal agent filters"
+      aria-label={t('chat.universalAgent.filtersAriaLabel', { defaultValue: 'Resource filters' })}
       onKeyDown={onKeyDown}
       style={trackStyle}
     >
@@ -1056,7 +1057,6 @@ export function UniversalAgentResourcesPanel({
             <Text size="1" style={{ color: 'var(--gray-9)' }}>
               {t('chat.universalAgent.toolCount', {
                 count: selectedCount,
-                defaultValue: `{{count}} tools`,
               })}
             </Text>
           </Flex>

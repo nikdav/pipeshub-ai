@@ -69,7 +69,14 @@
     "refiningResponse": "正在优化回复…",
     "errorFallback": "发生错误。请重试。",
     "copyCode": "复制",
-    "copiedCode": "已复制"
+    "copiedCode": "已复制",
+    "status": {
+      "delegatingTo": "正在委派给 {{roleName}}…",
+      "toolActivity": "{{label}}…",
+      "starting": "正在启动…",
+      "executingTool": "正在执行工具…"
+    },
+    "connectedWorking": "已连接，正在处理你的请求"
   },
   "uploadProgress": {
     "uploadFailedDefault": "上传失败",
@@ -660,7 +667,8 @@
       "open": "打开 {{source}}",
       "openIn": "在 {{source}} 中打开",
       "openInCollections": "在集合中打开",
-      "relevance": "相关度：{{percent}}%"
+      "relevance": "相关度：{{percent}}%",
+      "viewSource": "查看来源"
     },
     "results": "结果",
     "greeting": "今天想探索什么？",
@@ -703,7 +711,8 @@
       "browseWorkspaceMcp": "浏览 MCP 服务器",
       "browseWorkspaceMcpAria": "打开 MCP 服务器以添加或管理连接",
       "noActionMatches": "没有与您的搜索匹配的操作。",
-      "noMcpMatches": "没有与您的搜索匹配的 MCP 服务器。"
+      "noMcpMatches": "没有与您的搜索匹配的 MCP 服务器。",
+      "filtersAriaLabel": "资源筛选条件"
     },
     "projectResources": {
       "noConnectors": "此项目未启用任何连接器。",
@@ -1068,7 +1077,8 @@
         "suggestPlanWork": "规划一项工作",
         "suggestWriteInstructions": "编写项目指令",
         "suggestSummariseDocumentPrompt": "请总结此项目文件中最重要的文档。",
-        "suggestPlanWorkPrompt": "请帮我为此项目规划一项工作，并将其拆分为具体的后续步骤。"
+        "suggestPlanWorkPrompt": "请帮我为此项目规划一项工作，并将其拆分为具体的后续步骤。",
+        "projectActions": "项目操作"
       },
       "moveDialog": {
         "title": "移至项目",
@@ -1153,7 +1163,15 @@
       "copyText": "复制",
       "closePreview": "关闭",
       "loadingPreview": "加载中…",
-      "pasteMeta_other": "{{chars}} 个字符 · {{count}} 行"
+      "pasteMeta_other": "{{chars}} 个字符 · {{count}} 行",
+      "uploadMissingReference": "上传结果中没有附件引用信息。",
+      "failedToAttach": "无法附加 {{fileName}}。{{reason}}",
+      "failedToAttachFallback": "无法附加 {{fileName}}。请重试。",
+      "fileActionAria": {
+        "uploading": "正在上传 {{name}}",
+        "retry": "重试上传 {{name}}",
+        "remove": "移除 {{name}}"
+      }
     },
     "voiceSttNotConfigured": "请在 AI 模型设置中配置语音转文字（STT）模型，以启用语音输入。",
     "voiceSttLoading": "正在检查语音功能…",
@@ -1193,7 +1211,8 @@
       "noActions": "未找到已认证的操作。请在工作区 → 操作中连接集成。",
       "loadingMcp": "正在加载 MCP 服务器…",
       "noMcpServers": "未找到已认证的 MCP 服务器。请在工作区 → MCP 服务器中连接一个。",
-      "toolCount_other": "{{count}} 个工具"
+      "toolCount_other": "{{count}} 个工具",
+      "filtersAriaLabel": "资源筛选条件"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "此智能体未配置",
@@ -1201,7 +1220,110 @@
       "webSearch": "网络搜索"
     },
     "resizePanels": "调整聊天和预览面板大小",
-    "mobileProfileComingSoon": "移动端个人资料页面即将推出。"
+    "mobileProfileComingSoon": "移动端个人资料页面即将推出。",
+    "noModelConfigured": {
+      "title": "尚未配置 AI 模型",
+      "memberDescription": "此工作区尚未设置 AI 模型，因此聊天无法回答问题。请联系工作区管理员，让其在“工作区 → AI 模型”中添加模型。",
+      "adminDescription": "此工作区尚未设置 AI 模型，因此聊天无法回答问题。请在“AI 模型”中添加模型，然后重新发送消息。",
+      "action": "打开 AI 模型"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "正在列出技能",
+          "past": "已列出技能"
+        },
+        "search": {
+          "present": "正在搜索技能",
+          "past": "已搜索技能"
+        },
+        "load": {
+          "present": "正在加载技能",
+          "past": "已加载技能"
+        },
+        "loadResource": {
+          "present": "正在加载技能文件",
+          "past": "已加载技能文件"
+        },
+        "manage": {
+          "present": "正在管理技能",
+          "past": "已管理技能"
+        }
+      },
+      "usedTool": "已使用工具",
+      "usingTool": "正在使用 {{toolName}}"
+    },
+    "unnamedArtifact": "未命名内容",
+    "unnamedDownload": "下载文件",
+    "searchFailed": "搜索失败",
+    "collectionRow": {
+      "folders_other": "{{count}} 个文件夹",
+      "files_other": "{{count}} 个文件"
+    },
+    "modelSelector": {
+      "providerByline": "由 {{provider}} 提供",
+      "multimodalBadge": "多模态"
+    },
+    "agentActivity": {
+      "thinking": "正在思考",
+      "arguments": "参数",
+      "resultError": "错误",
+      "resultBlocked": "已阻止",
+      "result": "结果",
+      "subAgent": "子智能体",
+      "groupSkills_other": "已使用 {{count}} 项技能",
+      "groupSearches_other": "已探索 {{count}} 次搜索",
+      "groupTools_other": "已运行 {{count}} 个工具",
+      "summaryThought_other": "思考了 {{count}} 次",
+      "summaryTools_other": "已使用 {{count}} 个工具",
+      "summaryDelegatedAgents_other": "已委派给 {{count}} 个子智能体",
+      "summaryWorked": "已处理"
+    },
+    "callouts": {
+      "note": "备注",
+      "tip": "提示",
+      "important": "重要",
+      "warning": "警告",
+      "caution": "注意",
+      "info": "信息",
+      "success": "成功",
+      "danger": "危险",
+      "error": "错误",
+      "question": "问题",
+      "bug": "缺陷",
+      "example": "示例",
+      "abstract": "摘要",
+      "summary": "总结",
+      "quote": "引用"
+    },
+    "linkToSection": "链接到此部分",
+    "artifacts": {
+      "generated_other": "已生成 {{count}} 个项目",
+      "newerVersionAvailable": "有较新版本可用（v{{version}}）",
+      "viewSource": "查看源代码",
+      "viewSourceTitle": "查看生成此项目的代码",
+      "loadingSource": "正在加载源代码…"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "问题 {{number}}：{{question}}",
+      "readAloudOption": "选项：{{option}}"
+    },
+    "confidenceTooltip": "助手回答的置信度",
+    "downloadTasks": {
+      "completeResults": "你可以下载完整的查询结果："
+    },
+    "sourcesHeading_other": "来源（{{count}}）：",
+    "citationCount_other": "{{count}} 条引用",
+    "noCitationsAvailable": "没有可用的引用。",
+    "noSourcesAvailable": "没有可用的来源。",
+    "recordDetailsUnavailable": "记录详情不可用",
+    "syncedJustNow": "刚刚同步",
+    "syncedRelativeTime": "已于 {{relativeTime}} 同步",
+    "processingStatus": "正在处理…",
+    "noResultsForQuery": "没有找到与 {{query}} 相关的结果",
+    "couldNotLoadConversations": "无法加载对话",
+    "archiveConfirmation": "归档确认",
+    "questionFallback": "问题"
   },
   "workspaceMenu": {
     "appearance": "外观",
@@ -4341,7 +4463,8 @@
     "toolsetOAuthServerError": "认证失败。请重试或联系您的管理员。",
     "attached": "已附加",
     "mcpServerWithToolCount_other": "包含 {{count}} 个工具的 MCP 服务器",
-    "deprecatedToolsBanner_other": "此智能体上有 {{count}} 个工具已弃用。请移除它们：{{tools}}"
+    "deprecatedToolsBanner_other": "此智能体上有 {{count}} 个工具已弃用。请移除它们：{{tools}}",
+    "loadResourcesFailed": "加载构建器资源失败"
   },
   "recordView": {
     "sections": {
@@ -4813,7 +4936,9 @@
     "team": "团队",
     "teamsNoRoles": "团队没有角色",
     "invite": "邀请加入 Pipeshub",
-    "searchPlaceholder": "电子邮件、团队或姓名（以逗号分隔）"
+    "searchPlaceholder": "电子邮件、团队或姓名（以逗号分隔）",
+    "shareConversation": "分享聊天",
+    "memberNameUnknown": "未知"
   },
   "demoData": {
     "badge": {

@@ -1,4 +1,5 @@
 import type { ChatArtifact } from '../types';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import { buildChatArtifact } from './build-chat-artifact';
 
 /**
@@ -9,12 +10,17 @@ import { buildChatArtifact } from './build-chat-artifact';
  */
 export function parseDownloadMarkers(content: string): {
   text: string;
-  tasks: Array<{ fileName: string; url: string }>;
+  tasks: Array<{ fileName: string; fileNameText?: LocalizedText; url: string }>;
 } {
   const tasks: Array<{ fileName: string; url: string }> = [];
   const regex = /::download_conversation_task\[([^\]]+)\]\(([^)]+)\)/g;
   const text = content.replace(regex, (_, fileName, url) => {
-    tasks.push({ fileName: fileName?.trim() || 'Download', url: (url ?? '').trim() });
+    const cleanName = fileName?.trim();
+    tasks.push({
+      fileName: cleanName || 'Download',
+      ...(!cleanName ? { fileNameText: localizedText('chat.unnamedDownload') } : {}),
+      url: (url ?? '').trim(),
+    });
     return '';
   });
   return { text: text.trimEnd(), tasks };
@@ -57,7 +63,8 @@ export function parseArtifactMarkers(content: string): {
   let text = content.replace(regex, (_, fileName, url, meta) => {
     const [mime = '', docId = '', recordId = '', rawType = '', rawVersion = ''] =
       String(meta).split('|');
-    const cleanName = String(fileName).trim() || 'artifact';
+    const rawName = String(fileName).trim();
+    const cleanName = rawName || 'artifact';
     const rawUrl = String(url).trim();
     // A `record:` placeholder is not a real URL at all — normalize it to ''
     // ("no direct URL") so every downstream consumer keeps using its
@@ -79,6 +86,7 @@ export function parseArtifactMarkers(content: string): {
       buildChatArtifact({
         id: cleanRecordId || cleanDocId || `artifact-${artifacts.length}-${cleanName}`,
         fileName: cleanName,
+        ...(!rawName ? { fileNameText: localizedText('chat.unnamedArtifact') } : {}),
         mimeType: cleanMime,
         downloadUrl: cleanUrl,
         artifactType: cleanType || undefined,

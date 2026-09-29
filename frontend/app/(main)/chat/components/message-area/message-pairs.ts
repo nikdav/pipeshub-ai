@@ -1,13 +1,16 @@
 import type { AppliedFilters, AskUserQuestionPayload, AttachmentRef, MessagePart } from '../../types';
 import type { ConfidenceLevel, ModelInfo } from '../../types';
 import type { CitationMaps } from './response-tabs/citations';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 
 export interface MessagePair {
   key: string;
   /** Backend _id of the bot_response message (used for regenerate) */
   messageId?: string;
   question: string;
+  questionText?: LocalizedText;
   answer: string;
+  answerText?: LocalizedText;
   citationMaps: CitationMaps;
   confidence?: ConfidenceLevel;
   isStreaming: boolean;
@@ -40,6 +43,7 @@ interface PairMessage {
 }
 
 type AssistantCustom = {
+  messageText?: LocalizedText;
   messageId?: string;
   citationMaps?: CitationMaps;
   confidence?: ConfidenceLevel;
@@ -133,7 +137,8 @@ export function buildMessagePairs(
 
       // Find preceding user message
       const prevMsg = i > 0 ? messages[i - 1] : null;
-      const question = prevMsg?.role === 'user'
+      const hasUserQuestion = prevMsg?.role === 'user';
+      const question = hasUserQuestion
         ? extractTextContent(prevMsg.content as MessageContent)
         : 'Question';
 
@@ -154,7 +159,9 @@ export function buildMessagePairs(
         key: msg.id ?? `asst-${i}`,
         messageId: metadata?.messageId,
         question,
+        questionText: hasUserQuestion ? undefined : localizedText('chat.questionFallback'),
         answer: isBeingRegenerated ? '' : content,
+        answerText: isBeingRegenerated ? undefined : metadata?.messageText,
         citationMaps: (isCurrentlyStreaming || isBeingRegenerated)
           ? emptyCitationMaps
           : (metadata?.citationMaps || emptyCitationMaps),

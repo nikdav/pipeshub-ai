@@ -69,7 +69,14 @@
     "refiningResponse": "正在潤飾回應…",
     "errorFallback": "發生錯誤。請再試一次。",
     "copyCode": "複製",
-    "copiedCode": "已複製"
+    "copiedCode": "已複製",
+    "status": {
+      "delegatingTo": "正在委派給 {{roleName}}…",
+      "toolActivity": "{{label}}…",
+      "starting": "正在開始…",
+      "executingTool": "正在執行工具…"
+    },
+    "connectedWorking": "已連線，正在處理您的要求"
   },
   "uploadProgress": {
     "uploadFailedDefault": "上傳失敗",
@@ -660,7 +667,8 @@
       "open": "開啟 {{source}}",
       "openIn": "在 {{source}} 中開啟",
       "openInCollections": "在集合中開啟",
-      "relevance": "相關度：{{percent}}%"
+      "relevance": "相關度：{{percent}}%",
+      "viewSource": "檢視來源"
     },
     "results": "結果",
     "greeting": "今天想探索什麼？",
@@ -703,7 +711,8 @@
       "browseWorkspaceMcp": "瀏覽 MCP 伺服器",
       "browseWorkspaceMcpAria": "開啟 MCP 伺服器以新增或管理連線",
       "noActionMatches": "沒有符合您搜尋的動作。",
-      "noMcpMatches": "沒有符合您搜尋的 MCP 伺服器。"
+      "noMcpMatches": "沒有符合您搜尋的 MCP 伺服器。",
+      "filtersAriaLabel": "資源篩選器"
     },
     "projectResources": {
       "noConnectors": "此專案未啟用任何連接器。",
@@ -1068,7 +1077,8 @@
         "suggestPlanWork": "規劃一項工作",
         "suggestWriteInstructions": "撰寫專案指令",
         "suggestSummariseDocumentPrompt": "請總結此專案檔案中最重要的文件。",
-        "suggestPlanWorkPrompt": "請幫我為此專案規劃一項工作，並將其拆分為具體的後續步驟。"
+        "suggestPlanWorkPrompt": "請幫我為此專案規劃一項工作，並將其拆分為具體的後續步驟。",
+        "projectActions": "專案操作"
       },
       "moveDialog": {
         "title": "移至專案",
@@ -1153,7 +1163,15 @@
       "copyText": "複製",
       "closePreview": "關閉",
       "loadingPreview": "載入中…",
-      "pasteMeta_other": "{{chars}} 個字元 · {{count}} 行"
+      "pasteMeta_other": "{{chars}} 個字元 · {{count}} 行",
+      "failedToAttach": "無法附加 {{fileName}}。{{reason}}",
+      "failedToAttachFallback": "無法附加 {{fileName}}。請再試一次。",
+      "fileActionAria": {
+        "uploading": "正在上傳 {{name}}",
+        "retry": "重新上傳 {{name}}",
+        "remove": "移除 {{name}}"
+      },
+      "uploadMissingReference": "上傳未傳回附件參照。"
     },
     "voiceSttNotConfigured": "請在「AI 模型」設定中設定語音轉文字（STT）模型，以啟用語音輸入。",
     "voiceSttLoading": "正在檢查語音功能…",
@@ -1193,7 +1211,8 @@
       "noActions": "找不到已驗證的動作。請至「工作區 → 動作」連接整合。",
       "loadingMcp": "正在載入 MCP 伺服器…",
       "noMcpServers": "找不到已驗證的 MCP 伺服器。請至「工作區 → MCP 伺服器」連接一個。",
-      "toolCount_other": "{{count}} 個工具"
+      "toolCount_other": "{{count}} 個工具",
+      "filtersAriaLabel": "資源篩選器"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "此代理程式未設定",
@@ -1201,7 +1220,110 @@
       "webSearch": "網路搜尋"
     },
     "resizePanels": "調整對話與預覽面板大小",
-    "mobileProfileComingSoon": "行動版個人資料頁面即將推出。"
+    "mobileProfileComingSoon": "行動版個人資料頁面即將推出。",
+    "noModelConfigured": {
+      "title": "尚未設定 AI 模型",
+      "memberDescription": "此工作區尚未設定 AI 模型，因此聊天無法回答。請洽工作區管理員，在「工作區 → AI 模型」中新增模型。",
+      "adminDescription": "此工作區尚未設定 AI 模型，因此聊天無法回答。請在「AI 模型」中新增模型，然後重新傳送訊息。",
+      "action": "開啟 AI 模型"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "正在列出技能",
+          "past": "已列出技能"
+        },
+        "search": {
+          "present": "正在搜尋技能",
+          "past": "已搜尋技能"
+        },
+        "load": {
+          "present": "正在載入技能",
+          "past": "已載入技能"
+        },
+        "loadResource": {
+          "present": "正在載入技能檔案",
+          "past": "已載入技能檔案"
+        },
+        "manage": {
+          "present": "正在管理技能",
+          "past": "已管理技能"
+        }
+      },
+      "usedTool": "已使用工具",
+      "usingTool": "正在使用 {{toolName}}"
+    },
+    "unnamedArtifact": "成品",
+    "unnamedDownload": "下載",
+    "searchFailed": "搜尋失敗",
+    "collectionRow": {
+      "folders_other": "{{count}} 個資料夾",
+      "files_other": "{{count}} 個檔案"
+    },
+    "modelSelector": {
+      "providerByline": "由 {{provider}} 提供",
+      "multimodalBadge": "多模態"
+    },
+    "agentActivity": {
+      "thinking": "思考中",
+      "arguments": "引數",
+      "resultError": "錯誤",
+      "resultBlocked": "已封鎖",
+      "result": "結果",
+      "subAgent": "子代理程式",
+      "groupSkills_other": "已使用 {{count}} 項技能",
+      "groupSearches_other": "已探索 {{count}} 次搜尋",
+      "groupTools_other": "已執行 {{count}} 個工具",
+      "summaryThought_other": "思考了 {{count}} 次",
+      "summaryTools_other": "已使用 {{count}} 個工具",
+      "summaryDelegatedAgents_other": "已委派給 {{count}} 個子代理程式",
+      "summaryWorked": "已處理此項目"
+    },
+    "callouts": {
+      "note": "注意",
+      "tip": "提示",
+      "important": "重要",
+      "warning": "警告",
+      "caution": "小心",
+      "info": "資訊",
+      "success": "成功",
+      "danger": "危險",
+      "error": "錯誤",
+      "question": "問題",
+      "bug": "錯誤回報",
+      "example": "範例",
+      "abstract": "摘要",
+      "summary": "摘要",
+      "quote": "引言"
+    },
+    "linkToSection": "前往章節連結",
+    "artifacts": {
+      "generated_other": "已產生 {{count}} 個成品",
+      "newerVersionAvailable": "有較新版本可用（v{{version}}）",
+      "viewSource": "檢視原始程式碼",
+      "viewSourceTitle": "檢視產生此成品的程式碼",
+      "loadingSource": "正在載入原始程式碼…"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "問題 {{number}}：{{question}}",
+      "readAloudOption": "選項：{{option}}"
+    },
+    "confidenceTooltip": "助理回覆的信心程度",
+    "downloadTasks": {
+      "completeResults": "您可以下載完整的查詢結果："
+    },
+    "sourcesHeading_other": "來源（{{count}}）：",
+    "citationCount_other": "{{count}} 個引用",
+    "noCitationsAvailable": "沒有可用的引用。",
+    "noSourcesAvailable": "沒有可用的來源。",
+    "recordDetailsUnavailable": "無法取得記錄詳細資料",
+    "syncedJustNow": "剛剛同步",
+    "syncedRelativeTime": "已同步 {{relativeTime}}",
+    "processingStatus": "處理中…",
+    "noResultsForQuery": "找不到符合 {{query}} 的結果",
+    "couldNotLoadConversations": "無法載入對話",
+    "archiveConfirmation": "封存確認",
+    "questionFallback": "問題"
   },
   "workspaceMenu": {
     "appearance": "外觀",
@@ -4341,7 +4463,8 @@
     "toolsetOAuthServerError": "驗證失敗。請重試或聯絡您的管理員。",
     "attached": "已附加",
     "mcpServerWithToolCount_other": "包含 {{count}} 個工具的 MCP 伺服器",
-    "deprecatedToolsBanner_other": "此代理程式上有 {{count}} 個工具已淘汰。請移除它們：{{tools}}"
+    "deprecatedToolsBanner_other": "此代理程式上有 {{count}} 個工具已淘汰。請移除它們：{{tools}}",
+    "loadResourcesFailed": "載入代理程式建置工具資源失敗"
   },
   "recordView": {
     "sections": {
@@ -4813,6 +4936,8 @@
     "team": "團隊",
     "teamsNoRoles": "團隊沒有角色",
     "invite": "邀請加入 Pipeshub",
+    "shareConversation": "分享聊天",
+    "memberNameUnknown": "未知成員",
     "searchPlaceholder": "電子郵件、團隊或名稱（以逗號分隔）"
   },
   "demoData": {

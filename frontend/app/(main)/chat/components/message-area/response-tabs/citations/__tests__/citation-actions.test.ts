@@ -6,7 +6,9 @@
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import { createInstance } from 'i18next';
 import { installMemoryStorage, jwtExpiringIn } from '@/lib/api/__tests__/sse-response';
+import es from '@/lib/i18n/locales/es-ES.json';
 import type { CitationApiResponse } from '@/chat/types';
 import type { CitationData, CitationMaps, StreamingCitationData } from '../types';
 
@@ -112,6 +114,7 @@ describe('small citation helpers', () => {
     vi.setSystemTime(new Date('2026-09-24T12:00:00Z'));
     const ago = (ms: number) => new Date(Date.now() - ms).toISOString();
     expect(formatSyncLabel(undefined)).toBeUndefined();
+    expect(formatSyncLabel('not a valid date')).toBeUndefined();
     expect(formatSyncLabel(ago(-5000))).toBe('Synced just now');
     expect(formatSyncLabel(ago(30_000))).toBe('Synced just now');
     expect(formatSyncLabel(ago(5 * 60_000))).toBe('Synced 5m ago');
@@ -120,6 +123,26 @@ describe('small citation helpers', () => {
     expect(formatSyncLabel(ago(65 * 86400_000))).toBe('Synced 2mo ago');
     expect(formatSyncLabel(ago(800 * 86400_000))).toBe('Synced 2y ago');
     vi.useRealTimers();
+  });
+
+  it('does not repeat the Spanish relative-time preposition', async () => {
+    const spanishI18n = createInstance();
+    await spanishI18n.init({
+      lng: 'es-ES',
+      resources: { 'es-ES': { translation: es } },
+      interpolation: { escapeValue: false },
+    });
+
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-09-24T12:00:00Z'));
+    try {
+      const ago = new Date(Date.now() - 5 * 60_000).toISOString();
+      expect(formatSyncLabel(ago, 'es-ES', spanishI18n.t.bind(spanishI18n))).toBe(
+        'Sincronizado hace 5 min'
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

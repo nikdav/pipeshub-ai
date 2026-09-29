@@ -50,7 +50,7 @@ export function ReferenceCard({
   citationCount,
   reason,
 }: ReferenceCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isSourcesTab = currentTab === 'sources';
   const isCitationsTab = currentTab === 'citation';
   const isMobile = useIsMobile();
@@ -94,7 +94,9 @@ export function ReferenceCard({
   const showPreview =
     citation.recordType?.toUpperCase() === 'FILE' &&
     citation.connector?.toUpperCase() !== 'WEB';
-  const syncLabel = isSourcesTab ? formatSyncLabel(citation.updatedAt) : undefined;
+  const syncLabel = isSourcesTab
+    ? formatSyncLabel(citation.updatedAt, i18n.resolvedLanguage ?? i18n.language, t)
+    : undefined;
   const hasLocationBadges =
     isCitationsTab && (citation.pageNum?.length || citation.blockNum?.length);
 
@@ -269,7 +271,10 @@ export function ReferenceCard({
                   borderRadius: 'var(--radius-2)',
                 }}
               >
-                {citationCount} {citationCount === 1 ? 'Citation' : 'Citations'}
+                {t('chat.citationCount', {
+                  count: citationCount,
+                  defaultValue: `${citationCount} Citation${citationCount === 1 ? '' : 's'}`,
+                })}
               </Badge>
             )}
             {hasLocationBadges && (

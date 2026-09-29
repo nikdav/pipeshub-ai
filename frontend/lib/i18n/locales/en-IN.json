@@ -56,7 +56,14 @@
     "refiningResponse": "Refining response…",
     "errorFallback": "An error occurred. Please try again.",
     "copyCode": "Copy",
-    "copiedCode": "Copied"
+    "copiedCode": "Copied",
+    "status": {
+      "delegatingTo": "Delegating to {{roleName}}...",
+      "toolActivity": "{{label}}...",
+      "starting": "Starting...",
+      "executingTool": "Executing tool..."
+    },
+    "connectedWorking": "Connected - working on your request"
   },
   "uploadProgress": {
     "uploadFailedDefault": "Upload failed",
@@ -645,7 +652,8 @@
       "open": "Open {{source}}",
       "openIn": "Open in {{source}}",
       "openInCollections": "Open in Collections",
-      "relevance": "Relevance: {{percent}}%"
+      "relevance": "Relevance: {{percent}}%",
+      "viewSource": "View source"
     },
     "results": "Results",
     "greeting": "What do you want to explore today?",
@@ -688,7 +696,8 @@
       "browseWorkspaceMcp": "Browse MCP servers",
       "browseWorkspaceMcpAria": "Open MCP servers to add or manage connections",
       "noActionMatches": "No actions match your search.",
-      "noMcpMatches": "No MCP servers match your search."
+      "noMcpMatches": "No MCP servers match your search.",
+      "filtersAriaLabel": "Resource filters"
     },
     "projectResources": {
       "noConnectors": "No connectors enabled for this project.",
@@ -1092,7 +1101,8 @@
         "suggestPlanWork": "Plan a piece of work",
         "suggestWriteInstructions": "Write the project instructions",
         "suggestSummariseDocumentPrompt": "Summarize the most important document in this project's files.",
-        "suggestPlanWorkPrompt": "Help me plan a piece of work for this project. Break it down into concrete next steps."
+        "suggestPlanWorkPrompt": "Help me plan a piece of work for this project. Break it down into concrete next steps.",
+        "projectActions": "Project actions"
       },
       "moveDialog": {
         "title": "Move to project",
@@ -1139,7 +1149,15 @@
       "closePreview": "Close",
       "loadingPreview": "Loading…",
       "pasteMeta_one": "{{chars}} chars · {{count}} line",
-      "pasteMeta_other": "{{chars}} chars · {{count}} lines"
+      "pasteMeta_other": "{{chars}} chars · {{count}} lines",
+      "failedToAttach": "Couldn't attach {{fileName}}. {{reason}}",
+      "failedToAttachFallback": "Couldn't attach {{fileName}}. Please try again.",
+      "fileActionAria": {
+        "uploading": "Uploading {{name}}",
+        "retry": "Retry uploading {{name}}",
+        "remove": "Remove {{name}}"
+      },
+      "uploadMissingReference": "The upload did not return an attachment reference."
     },
     "voiceSttNotConfigured": "Configure a Speech-to-Text (STT) model in AI Models settings to enable voice input.",
     "voiceSttLoading": "Checking speech capabilities…",
@@ -1180,7 +1198,8 @@
       "loadingMcp": "Loading MCP servers…",
       "noMcpServers": "No authenticated MCP servers found. Connect one in Workspace → MCP Servers.",
       "toolCount_one": "{{count}} tool",
-      "toolCount_other": "{{count}} tools"
+      "toolCount_other": "{{count}} tools",
+      "filtersAriaLabel": "Resource filters"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "Not configured on this agent",
@@ -1188,7 +1207,121 @@
       "webSearch": "Web Search"
     },
     "resizePanels": "Resize chat and preview panels",
-    "mobileProfileComingSoon": "Profile page on mobile is coming soon."
+    "mobileProfileComingSoon": "Profile page on mobile is coming soon.",
+    "noModelConfigured": {
+      "title": "No AI model configured",
+      "memberDescription": "This workspace has no AI model set up yet, so chat can't answer. Ask a workspace admin to add one in Workspace → AI Models.",
+      "adminDescription": "This workspace has no AI model set up yet, so chat can't answer. Add one in AI Models, then send your message again.",
+      "action": "Open AI Models"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "Listing skills",
+          "past": "Listed skills"
+        },
+        "search": {
+          "present": "Searching skills",
+          "past": "Searched skills"
+        },
+        "load": {
+          "present": "Loading skill",
+          "past": "Loaded skill"
+        },
+        "loadResource": {
+          "present": "Loading skill file",
+          "past": "Loaded skill file"
+        },
+        "manage": {
+          "present": "Managing skill",
+          "past": "Managed skill"
+        }
+      },
+      "usedTool": "Used a tool",
+      "usingTool": "Using {{toolName}}"
+    },
+    "unnamedArtifact": "artifact",
+    "searchFailed": "Search failed",
+    "collectionRow": {
+      "folders_one": "{{count}} folder",
+      "folders_other": "{{count}} folders",
+      "files_one": "{{count}} file",
+      "files_other": "{{count}} files"
+    },
+    "modelSelector": {
+      "providerByline": "by {{provider}}",
+      "multimodalBadge": "Multimodal"
+    },
+    "agentActivity": {
+      "thinking": "Thinking",
+      "arguments": "Arguments",
+      "resultError": "Error",
+      "resultBlocked": "Blocked",
+      "result": "Result",
+      "subAgent": "Sub-agent",
+      "groupSkills_one": "Used {{count}} skill",
+      "groupSkills_other": "Used {{count}} skills",
+      "groupSearches_one": "Explored {{count}} search",
+      "groupSearches_other": "Explored {{count}} searches",
+      "groupTools_one": "Ran {{count}} tool",
+      "groupTools_other": "Ran {{count}} tools",
+      "summaryThought_one": "Thought about this",
+      "summaryThought_other": "Thought {{count}} times",
+      "summaryTools_one": "Used {{count}} tool",
+      "summaryTools_other": "Used {{count}} tools",
+      "summaryDelegatedAgents_one": "Delegated to {{count}} sub-agent",
+      "summaryDelegatedAgents_other": "Delegated to {{count}} sub-agents",
+      "summaryWorked": "Worked on this"
+    },
+    "callouts": {
+      "note": "Note",
+      "tip": "Tip",
+      "important": "Important",
+      "warning": "Warning",
+      "caution": "Caution",
+      "info": "Info",
+      "success": "Success",
+      "danger": "Danger",
+      "error": "Error",
+      "question": "Question",
+      "bug": "Bug",
+      "example": "Example",
+      "abstract": "Abstract",
+      "summary": "Summary",
+      "quote": "Quote"
+    },
+    "linkToSection": "Link to section",
+    "artifacts": {
+      "generated_one": "{{count}} artifact generated",
+      "generated_other": "{{count}} artifacts generated",
+      "newerVersionAvailable": "Newer version available (v{{version}})",
+      "viewSource": "View source code",
+      "viewSourceTitle": "View the code that generated this artifact",
+      "loadingSource": "Loading source code…"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "Question {{number}}: {{question}}",
+      "readAloudOption": "Option: {{option}}"
+    },
+    "confidenceTooltip": "Confidence level of assistant's response",
+    "downloadTasks": {
+      "completeResults": "You can download the complete query results:"
+    },
+    "sourcesHeading_one": "Source ({{count}}):",
+    "sourcesHeading_other": "Sources ({{count}}):",
+    "citationCount_one": "{{count}} Citation",
+    "citationCount_other": "{{count}} Citations",
+    "noCitationsAvailable": "No citations available.",
+    "noSourcesAvailable": "No sources available.",
+    "recordDetailsUnavailable": "Record details unavailable",
+    "syncedJustNow": "Synced just now",
+    "syncedRelativeTime": "Synced {{relativeTime}}",
+    "processingStatus": "Processing...",
+    "noResultsForQuery": "No results found for {{query}}",
+    "couldNotLoadConversations": "Could not load conversations",
+    "archiveConfirmation": "Archive Confirmation",
+    "questionFallback": "Question",
+    "unnamedDownload": "Download"
   },
   "workspaceMenu": {
     "appearance": "Appearance",
@@ -4346,7 +4479,8 @@
     "mcpServerWithToolCount_one": "MCP server with {{count}} tool",
     "mcpServerWithToolCount_other": "MCP server with {{count}} tools",
     "deprecatedToolsBanner_one": "{{count}} tool on this agent is deprecated. Remove it: {{tools}}",
-    "deprecatedToolsBanner_other": "{{count}} tools on this agent are deprecated. Remove them: {{tools}}"
+    "deprecatedToolsBanner_other": "{{count}} tools on this agent are deprecated. Remove them: {{tools}}",
+    "loadResourcesFailed": "Failed to load builder resources"
   },
   "recordView": {
     "sections": {
@@ -4879,6 +5013,8 @@
     "team": "Team",
     "teamsNoRoles": "Teams do not have roles",
     "invite": "Invite to Pipeshub",
+    "shareConversation": "Share Chat",
+    "memberNameUnknown": "Unknown",
     "searchPlaceholder": "Emails, teams or names (separated by commas)"
   },
   "profile": {

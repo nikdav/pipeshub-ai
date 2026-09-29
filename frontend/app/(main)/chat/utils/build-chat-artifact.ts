@@ -1,4 +1,5 @@
 import type { ChatArtifact } from '../types';
+import type { LocalizedText } from '@/lib/i18n/localized-text';
 
 /** Fallback mime→artifact-type mapping, used when a producer doesn't supply
  * an explicit `artifactType` (older persisted `::artifact` markers with no
@@ -33,6 +34,7 @@ export interface ChatArtifactInput {
    * supplies the LAST-RESORT random fallback when the caller has none. */
   id?: string;
   fileName: string;
+  fileNameText?: LocalizedText;
   mimeType?: string;
   sizeBytes?: number;
   downloadUrl?: string;
@@ -54,6 +56,7 @@ export function buildChatArtifact(input: ChatArtifactInput): ChatArtifact {
   return {
     id: input.id || `artifact-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     fileName: input.fileName,
+    fileNameText: input.fileNameText,
     mimeType,
     sizeBytes: input.sizeBytes ?? 0,
     downloadUrl: input.downloadUrl ?? '',

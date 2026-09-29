@@ -57,7 +57,14 @@
     "refiningResponse": "Refinando la respuesta…",
     "errorFallback": "Se ha producido un error. Inténtelo de nuevo.",
     "copyCode": "Copiar",
-    "copiedCode": "Copiado"
+    "copiedCode": "Copiado",
+    "status": {
+      "delegatingTo": "Delegando a {{roleName}}...",
+      "toolActivity": "{{label}}...",
+      "starting": "Iniciando…",
+      "executingTool": "Ejecutando herramienta…"
+    },
+    "connectedWorking": "Conectado; trabajando en tu solicitud"
   },
   "uploadProgress": {
     "uploadFailedDefault": "Error al subir",
@@ -655,7 +662,8 @@
       "open": "Abrir {{source}}",
       "openIn": "Abrir en {{source}}",
       "openInCollections": "Abrir en Colecciones",
-      "relevance": "Relevancia: {{percent}} %"
+      "relevance": "Relevancia: {{percent}} %",
+      "viewSource": "Ver fuente"
     },
     "results": "Resultados",
     "greeting": "¿Qué quieres explorar hoy?",
@@ -698,7 +706,8 @@
       "browseWorkspaceMcp": "Explorar servidores MCP",
       "browseWorkspaceMcpAria": "Abrir los servidores MCP para añadir o gestionar conexiones",
       "noActionMatches": "Ninguna acción coincide con su búsqueda.",
-      "noMcpMatches": "Ningún servidor MCP coincide con su búsqueda."
+      "noMcpMatches": "Ningún servidor MCP coincide con su búsqueda.",
+      "filtersAriaLabel": "Filtros de recursos"
     },
     "projectResources": {
       "noConnectors": "No hay conectores habilitados para este proyecto.",
@@ -1069,7 +1078,8 @@
         "filesStatusCount_many": "{{count}} de archivos",
         "filesStatusCountWithSize_many": "{{count}} de archivos · {{size}}",
         "connectorsStatusCount_many": "{{count}} de conectados",
-        "toolsStatusCount_many": "{{count}} de activados"
+        "toolsStatusCount_many": "{{count}} de activados",
+        "projectActions": "Acciones del proyecto"
       },
       "moveDialog": {
         "title": "Mover a proyecto",
@@ -1156,7 +1166,15 @@
       "loadingPreview": "Cargando…",
       "pasteMeta_one": "{{chars}} caracteres · {{count}} línea",
       "pasteMeta_other": "{{chars}} caracteres · {{count}} líneas",
-      "pasteMeta_many": "{{chars}} caracteres · {{count}} líneas"
+      "pasteMeta_many": "{{chars}} caracteres · {{count}} líneas",
+      "failedToAttach": "No se pudo adjuntar {{fileName}}. {{reason}}",
+      "failedToAttachFallback": "No se pudo adjuntar {{fileName}}. Inténtalo de nuevo.",
+      "fileActionAria": {
+        "uploading": "Subiendo {{name}}",
+        "retry": "Volver a subir {{name}}",
+        "remove": "Eliminar {{name}}"
+      },
+      "uploadMissingReference": "La subida no devolvió una referencia al archivo adjunto."
     },
     "voiceSttNotConfigured": "Configure un modelo de voz a texto (STT) en los ajustes de Modelos de IA para habilitar la entrada por voz.",
     "voiceSttLoading": "Comprobando las funciones de voz…",
@@ -1198,7 +1216,8 @@
       "noMcpServers": "No se han encontrado servidores MCP autenticados. Conecte uno en Espacio de trabajo → Servidores MCP.",
       "toolCount_one": "{{count}} herramienta",
       "toolCount_other": "{{count}} herramientas",
-      "toolCount_many": "{{count}} herramientas"
+      "toolCount_many": "{{count}} herramientas",
+      "filtersAriaLabel": "Filtros de recursos"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "No configurado en este agente",
@@ -1206,7 +1225,132 @@
       "webSearch": "Búsqueda web"
     },
     "resizePanels": "Redimensionar los paneles de chat y vista previa",
-    "mobileProfileComingSoon": "La página de perfil en móvil estará disponible próximamente."
+    "mobileProfileComingSoon": "La página de perfil en móvil estará disponible próximamente.",
+    "noModelConfigured": {
+      "title": "No hay ningún modelo de IA configurado",
+      "memberDescription": "Este espacio de trabajo aún no tiene un modelo de IA configurado, así que el chat no puede responder. Pide a un administrador del espacio de trabajo que añada uno en Espacio de trabajo → Modelos de IA.",
+      "adminDescription": "Este espacio de trabajo aún no tiene un modelo de IA configurado, así que el chat no puede responder. Añade uno en Modelos de IA y vuelve a enviar el mensaje.",
+      "action": "Abrir Modelos de IA"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "Consultando las skills",
+          "past": "Consultó las skills"
+        },
+        "search": {
+          "present": "Buscando skills",
+          "past": "Buscó skills"
+        },
+        "load": {
+          "present": "Cargando skill",
+          "past": "Skill cargada"
+        },
+        "loadResource": {
+          "present": "Cargando archivo de la skill",
+          "past": "Archivo de la skill cargado"
+        },
+        "manage": {
+          "present": "Gestionando skills",
+          "past": "Gestionó skills"
+        }
+      },
+      "usedTool": "Usó una herramienta",
+      "usingTool": "Usando {{toolName}}"
+    },
+    "unnamedArtifact": "artefacto",
+    "unnamedDownload": "Descarga",
+    "searchFailed": "La búsqueda falló",
+    "collectionRow": {
+      "folders_one": "{{count}} carpeta",
+      "folders_other": "{{count}} carpetas",
+      "files_one": "{{count}} archivo",
+      "files_other": "{{count}} archivos",
+      "folders_many": "{{count}} carpetas",
+      "files_many": "{{count}} archivos"
+    },
+    "modelSelector": {
+      "providerByline": "por {{provider}}",
+      "multimodalBadge": "Multimodal"
+    },
+    "agentActivity": {
+      "thinking": "Pensando",
+      "arguments": "Argumentos",
+      "resultError": "Error",
+      "resultBlocked": "Bloqueado",
+      "result": "Resultado",
+      "subAgent": "Subagente",
+      "groupSkills_one": "Usó {{count}} skill",
+      "groupSkills_other": "Usó {{count}} skills",
+      "groupSearches_one": "Exploró {{count}} búsqueda",
+      "groupSearches_other": "Exploró {{count}} búsquedas",
+      "groupTools_one": "Ejecutó {{count}} herramienta",
+      "groupTools_other": "Ejecutó {{count}} herramientas",
+      "summaryThought_one": "Reflexionó sobre esto",
+      "summaryThought_other": "Reflexionó {{count}} veces",
+      "summaryTools_one": "Usó {{count}} herramienta",
+      "summaryTools_other": "Usó {{count}} herramientas",
+      "summaryDelegatedAgents_one": "Delegó en {{count}} subagente",
+      "summaryDelegatedAgents_other": "Delegó en {{count}} subagentes",
+      "summaryWorked": "Trabajó en esto",
+      "groupSkills_many": "Usó {{count}} skills",
+      "groupSearches_many": "Exploró {{count}} búsquedas",
+      "groupTools_many": "Ejecutó {{count}} herramientas",
+      "summaryThought_many": "Reflexionó {{count}} veces",
+      "summaryTools_many": "Usó {{count}} herramientas",
+      "summaryDelegatedAgents_many": "Delegó en {{count}} subagentes"
+    },
+    "callouts": {
+      "note": "Nota",
+      "tip": "Consejo",
+      "important": "Importante",
+      "warning": "Advertencia",
+      "caution": "Precaución",
+      "info": "Información",
+      "success": "Éxito",
+      "danger": "Peligro",
+      "error": "Error",
+      "question": "Pregunta",
+      "bug": "Problema",
+      "example": "Ejemplo",
+      "abstract": "Descripción",
+      "summary": "Resumen",
+      "quote": "Cita"
+    },
+    "linkToSection": "Enlace a la sección",
+    "artifacts": {
+      "generated_one": "Se generó {{count}} artefacto",
+      "generated_other": "Se generaron {{count}} artefactos",
+      "newerVersionAvailable": "Versión más nueva disponible (v{{version}})",
+      "viewSource": "Ver código fuente",
+      "viewSourceTitle": "Ver el código que generó este artefacto",
+      "loadingSource": "Cargando código fuente…",
+      "generated_many": "Se generaron {{count}} artefactos"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "Pregunta {{number}}: {{question}}",
+      "readAloudOption": "Opción: {{option}}"
+    },
+    "confidenceTooltip": "Nivel de confianza de la respuesta del asistente.",
+    "downloadTasks": {
+      "completeResults": "Puede descargar los resultados completos de la consulta:"
+    },
+    "sourcesHeading_one": "Fuente ({{count}}):",
+    "sourcesHeading_other": "Fuentes ({{count}}):",
+    "citationCount_one": "{{count}} cita",
+    "citationCount_other": "{{count}} citas",
+    "noCitationsAvailable": "No hay citas disponibles.",
+    "noSourcesAvailable": "No hay fuentes disponibles.",
+    "recordDetailsUnavailable": "Los detalles del registro no están disponibles",
+    "syncedJustNow": "Sincronizado hace un momento",
+    "syncedRelativeTime": "Sincronizado {{relativeTime}}",
+    "processingStatus": "Procesando...",
+    "noResultsForQuery": "No se han encontrado resultados para {{query}}",
+    "couldNotLoadConversations": "No se pudieron cargar las conversaciones",
+    "archiveConfirmation": "Confirmar el archivado",
+    "questionFallback": "Pregunta",
+    "sourcesHeading_many": "Fuentes ({{count}}):",
+    "citationCount_many": "{{count}} citas"
   },
   "workspaceMenu": {
     "appearance": "Apariencia",
@@ -4384,7 +4528,8 @@
     "deprecatedToolsBanner_one": "{{count}} herramienta de este agente está obsoleta. Quítela: {{tools}}",
     "deprecatedToolsBanner_other": "{{count}} herramientas de este agente están obsoletas. Quítelas: {{tools}}",
     "mcpServerWithToolCount_many": "Servidor MCP con {{count}} de herramientas",
-    "deprecatedToolsBanner_many": "{{count}} de herramientas de este agente están obsoletas. Quítelas: {{tools}}"
+    "deprecatedToolsBanner_many": "{{count}} de herramientas de este agente están obsoletas. Quítelas: {{tools}}",
+    "loadResourcesFailed": "No se pudieron cargar los recursos del constructor"
   },
   "recordView": {
     "sections": {
@@ -4880,6 +5025,8 @@
     "teamsNoRoles": "Los equipos no tienen roles",
     "invite": "Invitar a Pipeshub",
     "memberCount_many": "{{count}} de miembros",
+    "shareConversation": "Compartir chat",
+    "memberNameUnknown": "Desconocido",
     "searchPlaceholder": "Correos electrónicos, equipos o nombres (separados por comas)"
   },
   "demoData": {

@@ -14,6 +14,7 @@ import {
 } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LoadingButton } from '@/app/components/ui/loading-button';
+import { resolveLocalizedText, type LocalizedTextValue, type TranslateText } from '@/lib/i18n/localized-text';
 
 const LIST: React.CSSProperties = {
   margin: 0,
@@ -97,7 +98,7 @@ export interface ServiceAccountConfirmDialogProps {
   open: boolean;
   agentName: string;
   creating: boolean;
-  error: string | null;
+  error: LocalizedTextValue | null;
   isConverting?: boolean;
   hideOrgAccess?: boolean;
   onClose: () => void;
@@ -310,7 +311,7 @@ export function ServiceAccountConfirmDialog({
                   <MaterialIcon name="error" size={16} />
                 </Callout.Icon>
                 <Callout.Text size="2" style={{ flex: 1, minWidth: 0, lineHeight: 1.45 }}>
-                  {error}
+                  {resolveLocalizedText(error, t as TranslateText)}
                 </Callout.Text>
               </Callout.Root>
             ) : null}

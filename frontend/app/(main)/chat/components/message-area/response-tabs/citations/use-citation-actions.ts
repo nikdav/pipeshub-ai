@@ -6,6 +6,7 @@ import { useChatStore } from '@/chat/store';
 import { KnowledgeBaseApi } from '@/knowledge-base/api';
 import type { CitationData, CitationCallbacks, CitationOrigin, CitationMaps } from './types';
 import type { PreviewCitation } from '@/app/components/file-preview/types';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import {
   isPresentationFile,
   isDocxFile,
@@ -124,7 +125,9 @@ export function useCitationActions(): CitationCallbacks {
         const recordDetails = await KnowledgeBaseApi.getRecordDetails(citation.recordId);
         const record = recordDetails?.record;
         if (!record) {
-          throw new Error('Record details unavailable');
+          throw Object.assign(new Error('Record details unavailable'), {
+            messageText: localizedText('chat.recordDetailsUnavailable'),
+          });
         }
         if (record.previewRenderable === false) {
           setPreviewFile({
@@ -205,6 +208,9 @@ export function useCitationActions(): CitationCallbacks {
           url: '',
           type: citation.mimeType || '',
           error: error instanceof Error ? error.message : 'Failed to load file',
+          errorText:
+            getLocalizedErrorText(error) ??
+            (error instanceof Error ? undefined : localizedText('chat.attachments.previewLoadFailed')),
           isLoading: false,
         });
       }
@@ -216,4 +222,12 @@ export function useCitationActions(): CitationCallbacks {
     () => ({ onPreview, onOpenInCollection }),
     [onPreview, onOpenInCollection]
   );
+}
+
+function getLocalizedErrorText(error: unknown): LocalizedText | undefined {
+  if (!error || typeof error !== 'object' || !('messageText' in error)) return undefined;
+  const messageText = (error as { messageText?: unknown }).messageText;
+  return messageText && typeof messageText === 'object' && 'key' in messageText
+    ? messageText as LocalizedText
+    : undefined;
 }

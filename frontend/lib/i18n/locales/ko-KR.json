@@ -69,7 +69,14 @@
     "refiningResponse": "응답을 다듬는 중…",
     "errorFallback": "오류가 발생했습니다. 다시 시도해 주세요.",
     "copyCode": "복사",
-    "copiedCode": "복사됨"
+    "copiedCode": "복사됨",
+    "status": {
+      "delegatingTo": "{{roleName}}에게 위임 중…",
+      "toolActivity": "{{label}}…",
+      "starting": "시작 중…",
+      "executingTool": "도구 실행 중…"
+    },
+    "connectedWorking": "연결됨 - 요청을 처리하고 있습니다"
   },
   "uploadProgress": {
     "uploadFailedDefault": "업로드 실패",
@@ -660,7 +667,8 @@
       "open": "{{source}} 열기",
       "openIn": "{{source}}에서 열기",
       "openInCollections": "컬렉션에서 열기",
-      "relevance": "관련도: {{percent}}%"
+      "relevance": "관련도: {{percent}}%",
+      "viewSource": "소스 보기"
     },
     "results": "결과",
     "greeting": "오늘은 무엇을 탐색해 볼까요?",
@@ -703,7 +711,8 @@
       "browseWorkspaceMcp": "MCP 서버 살펴보기",
       "browseWorkspaceMcpAria": "연결을 추가하거나 관리하려면 MCP 서버를 여세요",
       "noActionMatches": "검색과 일치하는 작업이 없습니다.",
-      "noMcpMatches": "검색과 일치하는 MCP 서버가 없습니다."
+      "noMcpMatches": "검색과 일치하는 MCP 서버가 없습니다.",
+      "filtersAriaLabel": "리소스 필터"
     },
     "projectResources": {
       "noConnectors": "이 프로젝트에 활성화된 커넥터가 없습니다.",
@@ -1068,7 +1077,8 @@
         "suggestPlanWork": "작업 계획 세우기",
         "suggestWriteInstructions": "프로젝트 지침 작성하기",
         "suggestSummariseDocumentPrompt": "이 프로젝트의 파일 중 가장 중요한 문서를 요약해 주세요.",
-        "suggestPlanWorkPrompt": "이 프로젝트의 작업 계획을 세울 수 있게 도와주세요. 구체적인 다음 단계로 나눠 주세요."
+        "suggestPlanWorkPrompt": "이 프로젝트의 작업 계획을 세울 수 있게 도와주세요. 구체적인 다음 단계로 나눠 주세요.",
+        "projectActions": "프로젝트 작업"
       },
       "moveDialog": {
         "title": "프로젝트로 이동",
@@ -1153,7 +1163,15 @@
       "copyText": "복사",
       "closePreview": "닫기",
       "loadingPreview": "불러오는 중…",
-      "pasteMeta_other": "{{chars}}자 · {{count}}줄"
+      "pasteMeta_other": "{{chars}}자 · {{count}}줄",
+      "failedToAttach": "{{fileName}}을(를) 첨부하지 못했습니다. {{reason}}",
+      "failedToAttachFallback": "{{fileName}}을(를) 첨부하지 못했습니다. 다시 시도해 주세요.",
+      "fileActionAria": {
+        "uploading": "{{name}} 업로드 중",
+        "retry": "{{name}} 업로드 재시도",
+        "remove": "{{name}} 삭제"
+      },
+      "uploadMissingReference": "업로드에서 첨부 파일 참조를 반환하지 않았습니다."
     },
     "voiceSttNotConfigured": "음성 입력을 사용하려면 AI 모델 설정에서 음성 인식(STT) 모델을 구성하세요.",
     "voiceSttLoading": "음성 기능을 확인하는 중…",
@@ -1193,7 +1211,8 @@
       "noActions": "인증된 작업을 찾을 수 없습니다. 워크스페이스 → 작업에서 통합을 연결하세요.",
       "loadingMcp": "MCP 서버를 불러오는 중…",
       "noMcpServers": "인증된 MCP 서버를 찾을 수 없습니다. 워크스페이스 → MCP 서버에서 연결하세요.",
-      "toolCount_other": "도구 {{count}}개"
+      "toolCount_other": "도구 {{count}}개",
+      "filtersAriaLabel": "리소스 필터"
     },
     "agentCapabilities": {
       "notConfiguredOnAgent": "이 에이전트에 구성되지 않음",
@@ -1201,7 +1220,110 @@
       "webSearch": "웹 검색"
     },
     "resizePanels": "채팅 및 미리보기 패널 크기 조정",
-    "mobileProfileComingSoon": "모바일 프로필 페이지는 곧 제공됩니다."
+    "mobileProfileComingSoon": "모바일 프로필 페이지는 곧 제공됩니다.",
+    "noModelConfigured": {
+      "title": "AI 모델이 구성되지 않았습니다",
+      "memberDescription": "이 워크스페이스에는 아직 AI 모델이 설정되지 않아 채팅에서 답변할 수 없습니다. 워크스페이스 관리자에게 ‘워크스페이스 → AI 모델’에서 모델을 추가해 달라고 요청하세요.",
+      "adminDescription": "이 워크스페이스에는 아직 AI 모델이 설정되지 않아 채팅에서 답변할 수 없습니다. ‘AI 모델’에서 모델을 추가한 후 메시지를 다시 보내세요.",
+      "action": "AI 모델 열기"
+    },
+    "toolActivity": {
+      "skills": {
+        "list": {
+          "present": "스킬 목록을 불러오는 중",
+          "past": "스킬 목록을 불러왔습니다"
+        },
+        "search": {
+          "present": "스킬을 검색하는 중",
+          "past": "스킬을 검색했습니다"
+        },
+        "load": {
+          "present": "스킬을 불러오는 중",
+          "past": "스킬을 불러왔습니다"
+        },
+        "loadResource": {
+          "present": "스킬 파일을 불러오는 중",
+          "past": "스킬 파일을 불러왔습니다"
+        },
+        "manage": {
+          "present": "스킬을 관리하는 중",
+          "past": "스킬을 관리했습니다"
+        }
+      },
+      "usedTool": "도구 사용함",
+      "usingTool": "{{toolName}} 사용 중"
+    },
+    "unnamedArtifact": "아티팩트",
+    "unnamedDownload": "다운로드",
+    "searchFailed": "검색에 실패했습니다",
+    "collectionRow": {
+      "folders_other": "{{count}}개 폴더",
+      "files_other": "{{count}}개 파일"
+    },
+    "modelSelector": {
+      "providerByline": "{{provider}} 제공",
+      "multimodalBadge": "멀티모달"
+    },
+    "agentActivity": {
+      "thinking": "생각 중",
+      "arguments": "인수",
+      "resultError": "오류",
+      "resultBlocked": "차단됨",
+      "result": "결과",
+      "subAgent": "하위 에이전트",
+      "groupSkills_other": "{{count}}개의 스킬 사용",
+      "groupSearches_other": "{{count}}건의 검색 살펴봄",
+      "groupTools_other": "{{count}}개의 도구 실행",
+      "summaryThought_other": "{{count}}번 생각함",
+      "summaryTools_other": "{{count}}개의 도구 사용",
+      "summaryDelegatedAgents_other": "{{count}}개의 하위 에이전트에게 위임",
+      "summaryWorked": "이 작업을 진행했습니다"
+    },
+    "callouts": {
+      "note": "참고",
+      "tip": "팁",
+      "important": "중요",
+      "warning": "경고",
+      "caution": "주의",
+      "info": "정보",
+      "success": "성공",
+      "danger": "위험",
+      "error": "오류",
+      "question": "질문",
+      "bug": "버그",
+      "example": "예시",
+      "abstract": "요약",
+      "summary": "요약",
+      "quote": "인용"
+    },
+    "linkToSection": "섹션으로 이동",
+    "artifacts": {
+      "generated_other": "{{count}}개의 아티팩트 생성됨",
+      "newerVersionAvailable": "새 버전을 사용할 수 있습니다(v{{version}})",
+      "viewSource": "소스 코드 보기",
+      "viewSourceTitle": "이 아티팩트를 생성한 코드 보기",
+      "loadingSource": "소스 코드 불러오는 중…"
+    },
+    "askUserQuestion": {
+      "readAloudQuestion": "질문 {{number}}: {{question}}",
+      "readAloudOption": "선택지: {{option}}"
+    },
+    "confidenceTooltip": "어시스턴트 응답의 신뢰도",
+    "downloadTasks": {
+      "completeResults": "전체 쿼리 결과를 다운로드할 수 있습니다:"
+    },
+    "sourcesHeading_other": "출처({{count}}개):",
+    "citationCount_other": "인용({{count}}개)",
+    "noCitationsAvailable": "사용할 수 있는 인용이 없습니다.",
+    "noSourcesAvailable": "사용할 수 있는 출처가 없습니다.",
+    "recordDetailsUnavailable": "레코드 세부정보를 사용할 수 없습니다",
+    "syncedJustNow": "방금 동기화됨",
+    "syncedRelativeTime": "{{relativeTime}} 동기화됨",
+    "processingStatus": "처리 중...",
+    "noResultsForQuery": "{{query}}에 대한 결과를 찾을 수 없습니다",
+    "couldNotLoadConversations": "대화를 불러오지 못했습니다",
+    "archiveConfirmation": "보관 확인",
+    "questionFallback": "질문"
   },
   "workspaceMenu": {
     "appearance": "화면 모드",
@@ -4341,7 +4463,8 @@
     "toolsetOAuthServerError": "인증에 실패했습니다. 다시 시도하거나 관리자에게 문의하세요.",
     "attached": "연결됨",
     "mcpServerWithToolCount_other": "도구 {{count}}개가 있는 MCP 서버",
-    "deprecatedToolsBanner_other": "이 에이전트의 도구 {{count}}개가 더 이상 사용되지 않습니다. 제거하세요: {{tools}}"
+    "deprecatedToolsBanner_other": "이 에이전트의 도구 {{count}}개가 더 이상 사용되지 않습니다. 제거하세요: {{tools}}",
+    "loadResourcesFailed": "빌더 리소스를 불러오지 못했습니다"
   },
   "recordView": {
     "sections": {
@@ -4813,6 +4936,8 @@
     "team": "팀",
     "teamsNoRoles": "팀에는 역할이 없습니다",
     "invite": "Pipeshub에 초대",
+    "shareConversation": "채팅 공유",
+    "memberNameUnknown": "알 수 없음",
     "searchPlaceholder": "이메일, 팀 또는 이름(쉼표로 구분)"
   },
   "demoData": {

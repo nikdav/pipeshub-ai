@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import {
   AgentsApi,
   buildToolsCatalogFromToolsets,
@@ -179,7 +180,7 @@ export function useAgentBuilderData(editingAgentKey: string | null) {
   const [mcpServers, setMcpServers] = useState<McpMyServerEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadedAgent, setLoadedAgent] = useState<AgentDetail | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
 
   const toolsetsSearchRef = useRef('');
   const staticResourcesLoadedRef = useRef(false);
@@ -301,7 +302,7 @@ export function useAgentBuilderData(editingAgentKey: string | null) {
       } catch (e) {
         if (!cancelled) {
           console.error(e);
-          setError('Failed to load builder resources');
+          setError(localizedText('agentBuilder.loadResourcesFailed'));
         }
       } finally {
         if (!cancelled) {

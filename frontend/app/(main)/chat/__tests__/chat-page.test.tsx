@@ -4,6 +4,7 @@ import { render, screen, fireEvent, cleanup, waitFor, act } from '@testing-libra
 import { Theme } from '@radix-ui/themes';
 
 import '@/lib/__tests__/test-i18n';
+import { i18n } from '@/lib/i18n';
 import { localizedText } from '@/lib/i18n/localized-text';
 import type { ConversationMessage } from '../types';
 
@@ -95,13 +96,19 @@ vi.mock('@/chat/utils/fetch-models-for-context', () => ({
 }));
 
 vi.mock('@/app/components/file-preview', () => ({
-  FilePreviewInlinePanel: ({ file, onClose }: { file: { name: string }; onClose: () => void }) => (
+  FilePreviewInlinePanel: ({ file, error, onClose }: { file: { name: string }; error?: string; onClose: () => void }) => (
     <aside aria-label="Preview panel">
       {file.name}
+      {error && <span data-testid="preview-error">{error}</span>}
       <button type="button" onClick={onClose}>Close preview</button>
     </aside>
   ),
-  FilePreviewFullscreen: ({ file }: { file: { name: string } }) => <div aria-label="Fullscreen preview">{file.name}</div>,
+  FilePreviewFullscreen: ({ file, error }: { file: { name: string }; error?: string }) => (
+    <div aria-label="Fullscreen preview">
+      {file.name}
+      {error && <span data-testid="preview-error">{error}</span>}
+    </div>
+  ),
 }));
 
 const getSharedMembers = vi.fn();
@@ -352,6 +359,24 @@ describe('Chat page — opening a conversation', () => {
     expect(screen.getByRole('textbox', { name: 'Message composer' })).toBeTruthy();
   });
 
+  it('does not refetch conversation history when the active language changes', async () => {
+    const previousLanguage = i18n.language;
+    fetchConversation.mockResolvedValue(conversationDetail());
+
+    try {
+      await i18n.changeLanguage('en-US');
+      renderPage('conversationId=conv-1');
+      expect(await screen.findByText('You get 25 days a year.')).toBeTruthy();
+      expect(fetchConversation).toHaveBeenCalledTimes(1);
+
+      await act(async () => i18n.changeLanguage('de-DE'));
+      expect(screen.getByText('You get 25 days a year.')).toBeTruthy();
+      expect(fetchConversation).toHaveBeenCalledTimes(1);
+    } finally {
+      await i18n.changeLanguage(previousLanguage);
+    }
+  });
+
   it('restores the collections the last question was scoped to', async () => {
     fetchConversation.mockResolvedValue(
       conversationDetail({
@@ -432,7 +457,7 @@ describe('Chat page — opening a conversation', () => {
 
     await waitFor(() => expect(toastError).toHaveBeenCalledTimes(1));
     expect(toastError).toHaveBeenCalledWith(
-      "We couldn't open this conversation. Refresh the page to try again.",
+      localizedText('chat.toasts.loadConversationFailed'),
     );
     expect(screen.queryByRole('status')).toBeNull();
   });
@@ -547,8 +572,13 @@ describe('Chat page — agent chats', () => {
     expect(await screen.findByText('Priya Shah')).toBeTruthy();
     expect(getUsersByIds).toHaveBeenCalledWith(['creator-1']);
     expect(toastError).toHaveBeenCalledWith(
-      'This agent has tools that are no longer available. Open the Agent Builder to remove them.',
-      expect.objectContaining({ action: expect.objectContaining({ label: 'Open Agent Builder' }) }),
+      localizedText('chat.toasts.deprecatedTools'),
+      expect.objectContaining({
+        action: expect.objectContaining({
+          label: 'Open Agent Builder',
+          labelText: localizedText('chat.toasts.openAgentBuilder'),
+        }),
+      }),
     );
     const { action } = toastError.mock.calls[0][1] as { action: { onClick: () => void } };
     action.onClick();
@@ -598,7 +628,7 @@ describe('Chat page — projects and previews', () => {
 
     renderPage('projectId=p-1');
 
-    await waitFor(() => expect(toastError).toHaveBeenCalledWith('Failed to load this project'));
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith(localizedText('chat.projects.workspace.failedToLoad')));
   });
 
   it('ignores the project in the address bar when projects are turned off', () => {
@@ -632,5 +662,28 @@ describe('Chat page — projects and previews', () => {
       } as Partial<ReturnType<typeof useChatStore.getState>>),
     );
     expect(screen.getByLabelText('Fullscreen preview').textContent).toBe('handbook.pdf');
+  });
+
+  it('resolves stored preview error descriptors when the active language changes', async () => {
+    const previousLanguage = i18n.language;
+    i18n.addResource('en-US', 'translation', 'chat.preview.testError', 'Preview unavailable');
+    i18n.addResource('de-DE', 'translation', 'chat.preview.testError', 'Vorschau nicht verfügbar');
+    try {
+      await i18n.changeLanguage('en-US');
+      act(() => useChatStore.setState({
+        previewFile: {
+          id: 'f1', name: 'handbook.pdf', url: '', type: 'application/pdf', size: 1,
+          error: 'Preview unavailable', errorText: localizedText('chat.preview.testError'),
+        },
+        previewMode: 'sidebar',
+      } as Partial<ReturnType<typeof useChatStore.getState>>));
+      renderPage();
+      expect(screen.getByTestId('preview-error').textContent).toBe('Preview unavailable');
+
+      await act(async () => i18n.changeLanguage('de-DE'));
+      expect(screen.getByTestId('preview-error').textContent).toBe('Vorschau nicht verfügbar');
+    } finally {
+      await i18n.changeLanguage(previousLanguage);
+    }
   });
 });
