@@ -67,6 +67,8 @@ raw = {p: blob(SOURCE, p) for p in changed if p in file_set}
 assign = {p: owner(p) for p in changed if not catalog(p)}
 assign['frontend/app/(main)/chat/sidebar/chat-section-header.tsx'] = 2
 assign['frontend/app/components/__tests__/shared-ui-i18n.test.tsx'] = 2
+for filename in ['agent-toolset-credentials-dialog.tsx', 'user-toolset-config-dialog.tsx', 'toolset-agent-auth-helpers.ts']:
+    assign['frontend/app/(main)/agents/agent-builder/components/'+filename] = 5
 
 aliases = [('@/chat/', 'frontend/app/(main)/chat/'),
            ('@/knowledge-base/', 'frontend/app/(main)/knowledge-base/'),
@@ -93,6 +95,28 @@ for _ in range(len(assign)):
             if dependency in assign and assign[p] < assign[dependency]:
                 assign[p] = assign[dependency]; adjusted = True
     if not adjusted: break
+
+# These mocks must tolerate the shared i18n import from the first stage onward.
+for filename in ['demo-data-components.test.tsx', 'demo-switch.test.tsx']:
+    assign['frontend/app/(main)/workspace/connectors/demo-data/__tests__/'+filename] = 1
+overview_test = 'frontend/app/(main)/workspace/connectors/components/instance-panel/__tests__/overview-tab.test.tsx'
+assign[overview_test] = 7
+chat_test = 'frontend/app/(main)/chat/__tests__/chat-page.test.tsx'
+
+def replace_once(value, old, new):
+    assert value.count(old) == 1, old
+    return value.replace(old, new, 1)
+
+# Split existing hunks that belong to different layers, not temporary code.
+early_chat = blob(BASE, chat_test).decode()
+early_chat = replace_once(early_chat, "import '@/lib/__tests__/test-i18n';",
+    "import '@/lib/__tests__/test-i18n';\nimport { localizedText } from '@/lib/i18n/localized-text';")
+early_chat = replace_once(early_chat, "expect(toastError.mock.calls[0][0]).toBe('Server Error');",
+    "expect(toastError.mock.calls[0][0]).toEqual(localizedText('common.errors.toast.serverTitle'));")
+early_overview = replace_once(blob(BASE, overview_test).decode(),
+    '  runConnectorResync: (...args: unknown[]) => runConnectorResync(...args),',
+    '  runConnectorResync: (...args: unknown[]) => runConnectorResync(...args),\n  getConnectorActionErrorText: () => undefined,')
+early_files = {1: {chat_test: early_chat.encode()}, 5: {overview_test: early_overview.encode()}}
 
 def flat(obj, path=()):
     if isinstance(obj, dict):
@@ -164,6 +188,10 @@ env.update({'GIT_AUTHOR_NAME':'Niklas','GIT_AUTHOR_EMAIL':'55577205+nikdav@users
 previous=BASE
 stages=[]
 for stage, (name,title) in enumerate(zip(NAMES,TITLES),1):
+    for p, contents in early_files.get(stage, {}).items():
+        target = worktree/p
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(contents)
     selected=sorted(p for p,n in assign.items() if n==stage)
     for p in selected:
         target=worktree/p
@@ -190,13 +218,15 @@ for stage, (name,title) in enumerate(zip(NAMES,TITLES),1):
     item={'stage':stage,'name':name,'branch':f'split/i18n-{stage:02d}-{name}',
           'base':previous,'sha':commit,'tree':tree,'files':actual,'stats':dict(stats),
           'whitespace_exit':whitespace.returncode,'whitespace_output':whitespace.stdout.decode()}
+    (OUT/f'{stage:02d}-{name}.patch').write_bytes(git('diff','--binary',previous,commit))
     stages.append(item)
     print('STAGE',json.dumps(item),flush=True)
     previous=commit
 assert text('rev-parse',SOURCE+'^{tree}').strip() == stages[-1]['tree'], 'Final tree is not byte-identical to the source'
 assert not text('diff','--name-only',SOURCE,previous)
 report={'source':SOURCE,'base':BASE,'upstream_checked':UPSTREAM,'file_count':len(changed),
-        'assignments':assign,'key_owners':key_owners,'stages':stages,'final_tree_equal':True}
+        'assignments':assign,'partial_file_steps':{str(k):list(v) for k,v in early_files.items()},
+        'key_owners':key_owners,'stages':stages,'final_tree_equal':True}
 (OUT/'split-manifest.json').write_text(json.dumps(report,indent=2)+'\n')
 candidate='verify/i18n-split-candidate-'+os.environ.get('GITHUB_RUN_ID','local')
 refs=[candidate,'archive/i18n-before-split-20260929']
@@ -206,6 +236,7 @@ for ref in refs:
         raise RuntimeError('Remote ref exists; refusing to overwrite: '+ref)
 git('push','--atomic','origin',previous+':refs/heads/'+candidate,SOURCE+':refs/heads/'+refs[1])
 assert text('ls-remote','--heads','origin',candidate).split()[0]==previous
+git('bundle','create',str(OUT/'i18n-split.bundle'),BASE+'..HEAD',cwd=worktree)
 print('FINAL_TREE_EQUAL',stages[-1]['tree'],flush=True)
 print('CANDIDATE',candidate,previous,flush=True)
 matrix={'include':[{'name':'source','sha':SOURCE},{'name':'base','sha':BASE}]+[{'name':f'{s["stage"]:02d}-{s["name"]}','sha':s['sha']} for s in stages]}
