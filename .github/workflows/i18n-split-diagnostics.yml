@@ -1,0 +1,54 @@
+name: Fork-only split diagnostics
+on:
+  push:
+    branches: ['verify/i18n-split-20260929']
+    paths: ['.github/workflows/i18n-split-diagnostics.yml']
+permissions:
+  contents: read
+jobs:
+  diagnostics:
+    if: github.repository == 'nikdav/pipeshub-ai'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Preserve exact files and split patches for independent inspection
+        shell: python
+        run: |
+          import subprocess, pathlib, zipfile, json, os
+          def git(*args,check=True):
+            p=subprocess.run(['git',*args],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            if check and p.returncode: raise RuntimeError(p.stderr.decode())
+            return p.stdout if check else p
+          source='84b9b95da4e2ba4285c6b3b8b6ceb0af7897eaea'
+          base='7753f9f7c725077a142e5751f48c2686c7321f75'
+          upstream='9a0488639d80bf9fcbd643035857ada8cf5363dd'
+          stages=['21e84313fb1269886288e9e35b48cac63a4b11ca','8b406ebd0809c2e47f9f053f54d8209f99c03873','6632597991e0f216ebd52c0aa87a3341175daa65','81845c7feca0b5a4ea5011ed98dfc7cf620ca4cb','5a3997c017890a421ae565eeaee12049ced37a8a','2bc388c41dda1a7e564ec96bef82307d641c3bc1','7752a7bbfcf02e4af6e35261924870ac1a41da42']
+          git('fetch','--no-tags','https://github.com/pipeshub-ai/pipeshub-ai.git',upstream)
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'split-diagnostics';out.mkdir()
+          changes=git('diff','--name-only',base,source).decode().splitlines()
+          with zipfile.ZipFile(out/'source-reference.zip','w',zipfile.ZIP_DEFLATED) as z:
+            for label,ref in [('source',source),('base',base),('upstream',upstream)]:
+              paths=git('ls-tree','-r','--name-only',ref,'--','frontend/').decode().splitlines()
+              for p in paths:
+                if label!='source' and p not in changes: continue
+                if not p.endswith(('.ts','.tsx','.mjs','.cjs','.json','.md')): continue
+                z.writestr(label+'/'+p,git('show',ref+':'+p))
+          parent=base
+          for i,sha in enumerate(stages,1):
+            (out/f'{i:02d}.patch').write_bytes(git('diff','--binary',parent,sha))
+            parent=sha
+          p=git('merge-tree','--write-tree','--name-only',upstream,source,check=False)
+          (out/'upstream-integration.txt').write_bytes(p.stdout+p.stderr)
+          report={'source':source,'base':base,'upstream':upstream,'merge_exit_code':p.returncode,
+                  'final_tree_equal':git('rev-parse',source+'^{tree}')==git('rev-parse',stages[-1]+'^{tree}')}
+          (out/'diagnostics.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: i18n-split-diagnostics
+          path: ${{ runner.temp }}/split-diagnostics
+          retention-days: 30
