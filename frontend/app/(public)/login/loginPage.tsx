@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Flex } from '@radix-ui/themes';
-import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/config';
 import { toast } from '@/lib/store/toast-store';
 import { GuestGuard } from '@/app/components/ui/guest-guard';
@@ -14,6 +13,7 @@ import FormPanel from '../components/form-panel';
 import { SingleProvider, MultipleProviders } from '../forms';
 import { AuthApi, type AuthMethod } from '../api';
 import { getOrgExists } from '@/lib/api/org-exists-public';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 // --- Auth step state machine --------------------------------------------------
 
@@ -32,23 +32,23 @@ type AuthStep =
 
 /** Backend SAML error codes → short user-facing descriptions. */
 const SAML_ERROR_DESCRIPTIONS: Record<string, string> = {
-  jit_Disabled: 'JIT provisioning is disabled for your organisation',
-  jit_disabled: 'JIT provisioning is disabled for your organisation',
-  Saml_sso_disabled: 'SAML SSO is not enabled for your organisation',
-  saml_sso_disabled: 'SAML SSO is not enabled for your organisation',
-  auth_failed: 'SAML authentication failed. Please try again',
-  unknown: 'An unexpected error occurred during sign-in. Please try again',
+  jit_Disabled: 'jitProvisioningDisabled',
+  jit_disabled: 'jitProvisioningDisabled',
+  Saml_sso_disabled: 'samlSsoDisabled',
+  saml_sso_disabled: 'samlSsoDisabled',
+  auth_failed: 'samlAuthenticationFailed',
+  unknown: 'unexpectedSamlFailure',
 };
 
-function getSamlErrorDescription(code: string): string {
-  return SAML_ERROR_DESCRIPTIONS[code] ?? code.replace(/_/g, ' ');
+function getSamlErrorDescription(code: string): LocalizedTextValue {
+  const key = SAML_ERROR_DESCRIPTIONS[code];
+  return key ? localizedText(`auth.login.samlErrorDescriptions.${key}`) : code;
 }
 
 export default function LoginPage() {
   const router = useRouter();
   const splitLayout = useAuthWideLayout();
   const isHydrated = useAuthStore((s) => s.isHydrated);
-  const { t } = useTranslation();
   const [step, setStep] = useState<AuthStep>({ type: 'loading' });
 
   // Prevents the initAuth call from running twice in React Strict Mode
@@ -66,13 +66,18 @@ export default function LoginPage() {
     if (emailVerify === 'success' || emailVerify === 'error') {
       emailVerifyHandledRef.current = true;
       if (emailVerify === 'success') {
-        toast.success(t('auth.login.emailVerifiedTitle'), {
-          description: t('auth.login.emailVerifiedDescription'),
+        toast.success(localizedText('auth.login.emailVerifiedTitle'), {
+          description: localizedText('auth.login.emailVerifiedDescription'),
         });
       } else {
         const detail = params.get('email_verify_msg');
-        toast.error(t('auth.login.emailVerifyFailedTitle'), {
-          description: detail?.trim() || t('auth.login.emailVerifyFailedDescription'),
+        const messageKey = params.get('email_verify_key');
+        const emailVerifyFallback = messageKey === 'auth.emailVerification.missingToken' ||
+          messageKey === 'auth.emailVerification.failed'
+          ? messageKey
+          : 'auth.login.emailVerifyFailedDescription';
+        toast.error(localizedText('auth.login.emailVerifyFailedTitle'), {
+          description: detail?.trim() || localizedText(emailVerifyFallback),
         });
       }
       router.replace('/login');
@@ -89,7 +94,7 @@ export default function LoginPage() {
     const samlErrorCode = params.get('saml_error');
     if (samlErrorCode) {
       samlErrorHandledRef.current = true;
-      toast.error(t('auth.login.samlErrorTitle'), {
+      toast.error(localizedText('auth.login.samlErrorTitle'), {
         description: getSamlErrorDescription(samlErrorCode),
       });
       router.replace('/login');
@@ -98,8 +103,8 @@ export default function LoginPage() {
 
     if (params.get('error') === 'saml_sso') {
       samlErrorHandledRef.current = true;
-      toast.error(t('auth.login.samlSignInFailedTitle'), {
-        description: t('auth.login.samlSignInFailedDescription'),
+      toast.error(localizedText('auth.login.samlSignInFailedTitle'), {
+        description: localizedText('auth.login.samlSignInFailedDescription'),
       });
       router.replace('/login');
     }

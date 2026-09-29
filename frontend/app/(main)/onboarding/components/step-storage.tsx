@@ -9,6 +9,7 @@ import { useOnboardingStore } from '../store';
 import { getStorageConfig, saveStorageConfig } from '../api';
 import { extractApiErrorMessage } from '@/lib/api/api-error';
 import { extractStorageSaveErrorMessage } from '../utils/storage-save-error';
+import { resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { resolveS3Credentials } from '../utils/s3-credentials';
 import { toast } from '@/lib/store/toast-store';
 import type { StorageFormData, StorageProviderType, OnboardingStepId } from '../types';
@@ -49,7 +50,7 @@ export function StepStorage({
   const [showSecret, setShowSecret] = useState(false);
   const [showAccountKey, setShowAccountKey] = useState(false);
   const [loadingConfig, setLoadingConfig] = useState(true);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<LocalizedTextValue | null>(null);
   const isDirtyRef = useRef(false);
 
   // Mark step as pre-completed only for local storage (S3 requires successful save + health check).
@@ -209,7 +210,7 @@ export function StepStorage({
 
         {saveError && (
           <Text size="2" style={{ color: 'var(--red-11)' }}>
-            {saveError}
+            {resolveLocalizedText(saveError, t)}
           </Text>
         )}
 

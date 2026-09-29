@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import { Flex } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import { isValidEmail } from '@/lib/utils/validators';
 import AuthTitleSection from '../components/auth-title-section';
 import { EmailField } from './form-components';
 import { AuthApi, type AuthInitResponse } from '../api';
 import { LoadingButton } from '@/app/components/ui/loading-button';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -27,8 +29,9 @@ export interface EmailStepProps {
  */
 export default function EmailStep({ onNext, initialEmail = '' }: EmailStepProps) {
   const [email, setEmail] = useState(initialEmail);
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<LocalizedTextValue | ''>('');
 
   const handleContinue = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +39,7 @@ export default function EmailStep({ onNext, initialEmail = '' }: EmailStepProps)
     if (!trimmed || loading) return;
 
     if (!isValidEmail(trimmed)) {
-      setError('Please enter a valid email address.');
+      setError(localizedText('auth.common.emailInvalid'));
       return;
     }
 
@@ -54,18 +57,14 @@ export default function EmailStep({ onNext, initialEmail = '' }: EmailStepProps)
     } catch (err: unknown) {
       type HttpErr = { response?: { data?: { message?: string }; status?: number }; message?: string };
       const e = err as HttpErr;
-      const msg =
-        e?.response?.data?.message ||
-        e?.message ||
-        'Something went wrong. Please try again.';
+      const msg = e?.response?.data?.message || e?.message;
+      const noAccount = e?.response?.status === 404 ||
+        msg?.toLowerCase().includes('not found') ||
+        msg?.toLowerCase().includes('no account');
 
-      setError(
-        e?.response?.status === 404 ||
-          msg.toLowerCase().includes('not found') ||
-          msg.toLowerCase().includes('no account')
-          ? 'No account found with that email address.'
-          : msg,
-      );
+      setError(noAccount
+        ? localizedText('auth.emailStep.noAccount')
+        : msg || localizedText('auth.emailStep.genericError'));
     } finally {
       setLoading(false);
     }
@@ -83,7 +82,7 @@ export default function EmailStep({ onNext, initialEmail = '' }: EmailStepProps)
               setEmail(v);
               setError('');
             }}
-            error={error}
+            error={resolveLocalizedText(error, t)}
             autoFocus
           />
 
@@ -92,7 +91,7 @@ export default function EmailStep({ onNext, initialEmail = '' }: EmailStepProps)
             size="3"
             disabled={!email.trim()}
             loading={loading}
-            loadingLabel="Checking…"
+            loadingLabel={t('auth.emailStep.checking')}
             style={{
               width: '100%',
               backgroundColor: email.trim() ? 'var(--accent-9)' : undefined,
@@ -100,7 +99,7 @@ export default function EmailStep({ onNext, initialEmail = '' }: EmailStepProps)
               fontWeight: 500,
             }}
           >
-            Continue
+            {t('common.continue')}
           </LoadingButton>
         </Flex>
       </form>

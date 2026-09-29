@@ -182,13 +182,13 @@ export function StepEmbeddingModel({
     async (modelType: string, modelKey: string) => {
       try {
         await AIModelsApi.setDefault(modelType, modelKey);
-        toast.success('Default model updated');
+        toast.success(t('onboarding.stepAiModel.setDefaultSuccess'));
         loadModels();
       } catch {
-        toast.error('Failed to set default model');
+        toast.error(t('onboarding.stepAiModel.setDefaultError'));
       }
     },
-    [loadModels]
+    [loadModels, t]
   );
 
   const openDeleteDialog = useCallback((modelType: string, modelKey: string, modelName: string) => {
@@ -256,10 +256,14 @@ export function StepEmbeddingModel({
             size="1"
             style={{ color: 'var(--gray-9)', marginBottom: '4px', letterSpacing: '0.02em' }}
           >
-            System Configuration
+            {t('onboarding.systemConfig')}
           </Text>
           <Text as="div" size="4" weight="bold" style={{ color: 'var(--gray-12)' }}>
-            Step {systemStepIndex}/{totalSystemSteps}: Configure Embedding Model*
+            {t('onboarding.stepHeading', {
+              current: systemStepIndex,
+              total: totalSystemSteps,
+              name: `${t('onboarding.steps.embeddingModel.title')}*`,
+            })}
           </Text>
         </Box>
 

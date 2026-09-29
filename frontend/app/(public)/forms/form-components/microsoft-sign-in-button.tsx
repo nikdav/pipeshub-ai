@@ -2,6 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ProviderButton from './provider-button';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
+
+class LocalizedAuthError extends Error {
+  constructor(readonly messageText: ReturnType<typeof localizedText>) {
+    super(messageText.key);
+  }
+}
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -16,7 +23,7 @@ export interface MicrosoftSignInButtonProps {
    */
   onSuccess: (credentials: { accessToken: string; idToken: string }) => void;
   /** Called when the popup flow fails (excluding user-cancelled events). */
-  onError: (message: string) => void;
+  onError: (message: LocalizedTextValue) => void;
   /** True while parent is calling the authenticate API (keeps button busy after token exchange). */
   authLoading?: boolean;
   /** Render as accent-filled primary button instead of outline. */
@@ -78,10 +85,9 @@ async function exchangeCodeForTokens(params: {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
-    throw new Error(
-      (error as { error_description?: string }).error_description ||
-        'Token exchange with Microsoft failed.',
-    );
+    const errorDescription = (error as { error_description?: string }).error_description;
+    if (errorDescription) throw new Error(errorDescription);
+    throw new LocalizedAuthError(localizedText('auth.oauth.microsoftPopupError.tokenExchangeFailed'));
   }
 
   const data = (await response.json()) as {
@@ -156,7 +162,7 @@ export default function MicrosoftSignInButton({
           });
 
           if (!tokens.idToken) {
-            throw new Error('No id token received from Microsoft.');
+            throw new LocalizedAuthError(localizedText('auth.oauth.microsoftPopupError.noIdToken'));
           }
 
           onSuccess(tokens);
@@ -165,12 +171,16 @@ export default function MicrosoftSignInButton({
         } catch (err) {
           resetFlow();
           onError(
-            err instanceof Error ? err.message : 'Token exchange failed.',
+            err instanceof LocalizedAuthError
+              ? err.messageText
+              : err instanceof Error
+                ? err.message
+                : localizedText('auth.oauth.microsoftPopupError.tokenExchangeFailed'),
           );
         }
       } else if (event.data?.type === 'MICROSOFT_AUTH_ERROR') {
         resetFlow();
-        onError(event.data.error || 'Microsoft sign-in failed.');
+          onError(event.data.error || localizedText('auth.oauth.microsoftPopupError.failed'));
       }
     };
 
@@ -226,7 +236,7 @@ export default function MicrosoftSignInButton({
       if (!popup) {
         resetFlow();
         onError(
-          'Popup was blocked. Please allow popups for this site and try again.',
+          localizedText('auth.oauth.microsoftPopupError.popupBlocked'),
         );
         return;
       }
@@ -254,7 +264,7 @@ export default function MicrosoftSignInButton({
       }, 500);
     } catch {
       resetFlow();
-      onError('Failed to start Microsoft sign-in. Please try again.');
+      onError(localizedText('auth.oauth.microsoftPopupError.startFailed'));
     }
   };
 

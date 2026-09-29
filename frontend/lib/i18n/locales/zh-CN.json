@@ -26,6 +26,10 @@
       "newPasswordPlaceholder": "请输入新密码",
       "confirmPasswordLabel": "确认密码*",
       "confirmPasswordPlaceholder": "请再次输入密码"
+    },
+    "success": {
+      "title": "密码已更改！",
+      "description": "密码已成功更新。现在可以使用新密码登录 Pipeshub 工作区。"
     }
   },
   "agents": {
@@ -195,7 +199,9 @@
       "baseUrlLabel": "基础 URL（可选）",
       "baseUrlPlaceholder": "例如：http://localhost:3000/files",
       "saveSuccessFallback": "存储配置已保存。",
-      "saveErrorFallback": "无法保存存储配置。"
+      "saveErrorFallback": "无法保存存储配置。",
+      "s3HealthCheckFailedWithBase": "{{message}}（{{details}}）",
+      "s3HealthCheckFailed": "S3 健康检查失败（{{details}}）"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -232,7 +238,37 @@
     },
     "tour": {
       "dismiss": "关闭导览",
-      "completedDescription": "一切就绪。如需了解更多，请查看<docs>文档</docs>。"
+      "completedDescription": "一切就绪。如需了解更多，请查看<docs>文档</docs>。",
+      "stubs": {
+        "almostThereTitle": "快要完成了！",
+        "almostThereSubtitle": "完成以下操作，了解 Pipeshub 能为你做什么",
+        "connectFirstApp": "连接你的第一个应用",
+        "createCollection": "创建集合",
+        "inviteTeamMembers": "邀请团队成员",
+        "keepGoingTitle": "继续加油！",
+        "keepGoingSubtitle": "要不要邀请团队成员一起来体验？",
+        "completedTitle": "开始吧！"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "你从事哪类工作？",
+      "subtitle": "这将帮助我们为你提供个性化的 Pipeshub 使用体验",
+      "roles": {
+        "softwareDeveloper": "软件开发人员",
+        "productManager": "产品经理",
+        "marketer": "市场营销人员",
+        "designer": "设计师",
+        "projectManager": "项目经理",
+        "operations": "运营人员",
+        "itSupport": "IT 支持专员",
+        "humanResources": "人力资源专员",
+        "financeOfficer": "财务专员",
+        "legal": "法律事务人员",
+        "complianceOfficer": "合规专员",
+        "salesRepresentative": "销售代表",
+        "dataScientist": "数据科学家",
+        "customerService": "客户服务人员"
+      }
     }
   },
   "nav": {
@@ -4155,7 +4191,13 @@
       "orgEmailVerifiedTitle": "组织已验证",
       "orgEmailVerifiedDescription": "您的组织现已激活。请登录以继续。",
       "orgEmailVerifyFailedTitle": "验证失败",
-      "orgEmailVerifyFailedDescription": "链接可能无效或已过期。请重新注册。"
+      "orgEmailVerifyFailedDescription": "链接可能无效或已过期。请重新注册。",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "你的组织已停用 JIT 预配",
+        "samlSsoDisabled": "你的组织尚未启用 SAML SSO",
+        "samlAuthenticationFailed": "SAML 身份验证失败。请重试。",
+        "unexpectedSamlFailure": "登录期间发生意外错误。请重试。"
+      }
     },
     "common": {
       "signIn": "登录",
@@ -4187,8 +4229,95 @@
       "oauthUnavailable": "OAuth 登录目前不可用。请联系您的管理员。",
       "showPassword": "显示密码",
       "hidePassword": "隐藏密码",
+      "showOtp": "显示验证码",
+      "hideOtp": "隐藏验证码",
       "accountDisabled": "您的账号已被停用。",
-      "tooManyIncorrectCredentials": "您输入错误凭据的次数过多"
+      "tooManyIncorrectCredentials": "您输入错误凭据的次数过多",
+      "errorFallback": "发生错误。请重试。",
+      "orContinueWithProviders": "或使用以下提供方继续",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "电子邮件 OTP"
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "身份验证响应验证失败。请重试。",
+        "failed": "Google 登录失败。"
+      },
+      "microsoftCallback": {
+        "validationFailed": "身份验证响应验证失败。请重试。",
+        "failed": "Microsoft 登录失败。",
+        "noCode": "未收到 Microsoft 授权码。"
+      },
+      "callback": {
+        "authenticationFailed": "身份验证失败（{{status}}）。",
+        "noCode": "未收到授权码。",
+        "noState": "未收到 state 参数。",
+        "validationFailed": "身份验证响应验证失败。请重试。",
+        "invalidState": "state 参数无效。",
+        "missingProvider": "OAuth 状态无效：缺少提供方。",
+        "noToken": "身份验证成功，但未返回访问令牌。",
+        "failed": "OAuth 身份验证失败。",
+        "signInFailed": "登录失败",
+        "closeAndRetry": "你可以关闭此窗口后重试。"
+      },
+      "googlePopupError": {
+        "popupBlocked": "Google 登录弹出窗口已被拦截。请允许此网站打开弹出窗口。",
+        "failed": "Google 登录失败。请重试。"
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "与 Microsoft 交换令牌失败。",
+        "noIdToken": "未收到 Microsoft ID 令牌。",
+        "failed": "Microsoft 登录失败。",
+        "popupBlocked": "弹出窗口已被拦截。请允许此网站打开弹出窗口后重试。",
+        "startFailed": "启动 Microsoft 登录失败。请重试。"
+      },
+      "popupError": {
+        "popupBlocked": "登录弹出窗口已被拦截。请允许此网站打开弹出窗口。",
+        "failed": "OAuth 登录失败。请重试。"
+      }
+    },
+    "hero": {
+      "tagline": "为现代企业提供可解释的企业搜索。",
+      "description": "搜索所有业务应用中的内容"
+    },
+    "emailStep": {
+      "genericError": "发生错误。请重试。",
+      "noAccount": "找不到使用此电子邮件地址的账号。",
+      "checking": "正在检查…"
+    },
+    "providers": {
+      "signInWithSso": "使用 SSO 登录",
+      "continueWithGoogle": "使用 Google 继续",
+      "continueWithMicrosoft": "使用 Microsoft 继续",
+      "continueWithOAuth": "使用 OAuth 继续",
+      "continueWithGitHub": "使用 GitHub 继续",
+      "continueWithProvider": "使用 {{provider}} 继续",
+      "connecting": "正在连接…"
+    },
+    "actionFeedback": {
+      "blockedUntil": "请在 {{date, datetime}} 后重试。",
+      "unexpectedResponse": "响应异常。请重试。",
+      "passwordSignInFailed": "登录失败。请重试。",
+      "noPasswordSetTitle": "此账号尚未设置密码。",
+      "noPasswordSetDescription": "请使用下方的“忘记密码”来设置密码。",
+      "resetEmailSuccessDescription": "如果此电子邮件地址对应的账号存在，我们已发送密码重置链接。",
+      "resetEmailErrorTitle": "无法请求重置密码",
+      "tryAgainLater": "请稍后重试。",
+      "googleSignInFailed": "Google 登录失败。请重试。",
+      "additionalVerificationTitle": "需要额外验证",
+      "additionalVerificationDescription": "请完成下一步以继续。",
+      "oauthSignInFailed": "OAuth 登录失败。请重试。",
+      "otpSendSuccessTitle": "请检查电子邮件",
+      "otpSendSuccessDescription": "如果此电子邮件地址可以使用验证码登录，我们会发送验证码。如果几分钟后仍未收到，请检查垃圾邮件文件夹或稍后重试。",
+      "otpSendErrorTitle": "无法发送验证码",
+      "verificationFailed": "验证失败。请重试。",
+      "microsoftSignInFailed": "Microsoft 登录失败。请重试。",
+      "contactAdministrator": "请联系管理员。"
+    },
+    "emailVerification": {
+      "missingToken": "验证链接缺少令牌。",
+      "completing": "正在完成电子邮件验证…",
+      "failed": "电子邮件验证失败。请重试。"
     }
   },
   "healthGate": {
@@ -4371,5 +4500,18 @@
     "apply": "应用",
     "previousMonth": "上个月",
     "nextMonth": "下个月"
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "完善个人资料",
+      "description": "请设置你的姓名以继续。这有助于队友在不同工作区中识别你。",
+      "errors": {
+        "required": "姓名为必填项",
+        "minimumLength": "姓名至少需要 2 个字符",
+        "userUnavailable": "无法识别用户。请刷新后重试。",
+        "saveFailed": "保存姓名失败。请重试。"
+      },
+      "saveAndContinue": "保存并继续"
+    }
   }
 }

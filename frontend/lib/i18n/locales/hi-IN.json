@@ -13,6 +13,10 @@
       "newPasswordPlaceholder": "अपना नया पासवर्ड दर्ज करें",
       "confirmPasswordLabel": "पासवर्ड की पुष्टि करें*",
       "confirmPasswordPlaceholder": "अपने पासवर्ड की पुष्टि करें"
+    },
+    "success": {
+      "title": "आपका पासवर्ड बदल दिया गया है!",
+      "description": "आपका पासवर्ड सफलतापूर्वक अपडेट हो गया है। अब आप नए पासवर्ड से अपने Pipeshub कार्यस्थल में साइन इन कर सकते हैं।"
     }
   },
   "agents": {
@@ -182,7 +186,9 @@
       "baseUrlLabel": "बेस URL (वैकल्पिक)",
       "baseUrlPlaceholder": "जैसे: http://localhost:3000/files",
       "saveSuccessFallback": "स्टोरेज कॉन्फ़िगरेशन सहेजा गया।",
-      "saveErrorFallback": "स्टोरेज कॉन्फ़िगरेशन सहेजा नहीं जा सका।"
+      "saveErrorFallback": "स्टोरेज कॉन्फ़िगरेशन सहेजा नहीं जा सका।",
+      "s3HealthCheckFailedWithBase": "{{message}} ({{details}})",
+      "s3HealthCheckFailed": "S3 स्वास्थ्य जाँच विफल हुई ({{details}})"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -219,7 +225,37 @@
     },
     "tour": {
       "dismiss": "टूर बंद करें",
-      "completedDescription": "अब सब तैयार है। अधिक जानने के लिए <docs>दस्तावेज़ीकरण</docs> देखें।"
+      "completedDescription": "अब सब तैयार है। अधिक जानने के लिए <docs>दस्तावेज़ीकरण</docs> देखें।",
+      "stubs": {
+        "almostThereTitle": "बस पूरा होने ही वाला है!",
+        "almostThereSubtitle": "Pipeshub क्या कर सकता है, यह जानने के लिए ये कार्रवाइयाँ पूरी करें।",
+        "connectFirstApp": "अपना पहला ऐप कनेक्ट करें",
+        "createCollection": "एक संग्रह बनाएँ",
+        "inviteTeamMembers": "टीम के सदस्यों को आमंत्रित करें",
+        "keepGoingTitle": "आगे बढ़ते रहें!",
+        "keepGoingSubtitle": "अपने टीम के सदस्यों को भी इसके बारे में बताइए।",
+        "completedTitle": "चलिए शुरू करें!"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "आप किस तरह का काम करते हैं?",
+      "subtitle": "इससे हम Pipeshub पर आपके अनुभव को आपकी ज़रूरत के अनुसार बना सकेंगे।",
+      "roles": {
+        "softwareDeveloper": "सॉफ़्टवेयर डेवलपर",
+        "productManager": "प्रोडक्ट मैनेजर",
+        "marketer": "मार्केटिंग विशेषज्ञ",
+        "designer": "डिज़ाइनर",
+        "projectManager": "प्रोजेक्ट मैनेजर",
+        "operations": "ऑपरेशंस",
+        "itSupport": "IT सहायता विशेषज्ञ",
+        "humanResources": "मानव संसाधन",
+        "financeOfficer": "वित्त अधिकारी",
+        "legal": "कानूनी विभाग",
+        "complianceOfficer": "अनुपालन अधिकारी",
+        "salesRepresentative": "बिक्री प्रतिनिधि",
+        "dataScientist": "डेटा वैज्ञानिक",
+        "customerService": "ग्राहक सेवा"
+      }
     }
   },
   "nav": {
@@ -4154,7 +4190,13 @@
       "orgEmailVerifiedTitle": "संगठन सत्यापित",
       "orgEmailVerifiedDescription": "आपका संगठन अब सक्रिय है। जारी रखने के लिए साइन इन करें।",
       "orgEmailVerifyFailedTitle": "सत्यापन विफल",
-      "orgEmailVerifyFailedDescription": "लिंक अमान्य या समयाप्त हो सकता है। कृपया पुनः साइन अप करें।"
+      "orgEmailVerifyFailedDescription": "लिंक अमान्य या समयाप्त हो सकता है। कृपया पुनः साइन अप करें।",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "आपके संगठन के लिए JIT प्रावधान बंद है",
+        "samlSsoDisabled": "आपके संगठन के लिए SAML SSO सक्षम नहीं है",
+        "samlAuthenticationFailed": "SAML प्रमाणीकरण विफल हुआ। कृपया फिर प्रयास करें",
+        "unexpectedSamlFailure": "साइन इन के दौरान अनपेक्षित त्रुटि हुई। कृपया फिर प्रयास करें"
+      }
     },
     "common": {
       "signIn": "साइन इन",
@@ -4186,8 +4228,95 @@
       "oauthUnavailable": "OAuth साइन-इन अभी उपलब्ध नहीं। अपने प्रशासक से संपर्क करें।",
       "showPassword": "पासवर्ड दिखाएं",
       "hidePassword": "पासवर्ड छुपाएं",
+      "showOtp": "OTP दिखाएँ",
+      "hideOtp": "OTP छिपाएँ",
       "accountDisabled": "आपका खाता अक्षम कर दिया गया है।",
-      "tooManyIncorrectCredentials": "आपने बहुत बार ग़लत क्रेडेंशियल दर्ज किए हैं"
+      "tooManyIncorrectCredentials": "आपने बहुत बार ग़लत क्रेडेंशियल दर्ज किए हैं",
+      "orContinueWithProviders": "या इसके ज़रिए जारी रखें",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "ईमेल OTP",
+      "errorFallback": "कुछ गड़बड़ हुई। कृपया फिर प्रयास करें।"
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "प्रमाणीकरण प्रतिक्रिया का सत्यापन विफल हुआ। कृपया फिर प्रयास करें।",
+        "failed": "Google से साइन इन विफल हुआ।"
+      },
+      "microsoftCallback": {
+        "validationFailed": "प्रमाणीकरण प्रतिक्रिया का सत्यापन विफल हुआ। कृपया फिर प्रयास करें।",
+        "failed": "Microsoft से साइन इन विफल हुआ।",
+        "noCode": "Microsoft से प्राधिकरण कोड नहीं मिला।"
+      },
+      "callback": {
+        "authenticationFailed": "प्रमाणीकरण विफल हुआ ({{status}})।",
+        "noCode": "प्राधिकरण कोड नहीं मिला।",
+        "noState": "State पैरामीटर नहीं मिला।",
+        "validationFailed": "प्रमाणीकरण प्रतिक्रिया का सत्यापन विफल हुआ। कृपया फिर प्रयास करें।",
+        "invalidState": "अमान्य state पैरामीटर।",
+        "missingProvider": "अमान्य OAuth state: provider नहीं मिला।",
+        "noToken": "प्रमाणीकरण सफल रहा, लेकिन access token नहीं मिला।",
+        "failed": "OAuth प्रमाणीकरण विफल हुआ।",
+        "signInFailed": "साइन इन विफल हुआ",
+        "closeAndRetry": "आप यह विंडो बंद करके फिर प्रयास कर सकते हैं।"
+      },
+      "googlePopupError": {
+        "popupBlocked": "Google साइन-इन पॉपअप ब्लॉक हो गया। कृपया इस साइट के लिए पॉपअप की अनुमति दें।",
+        "failed": "Google से साइन इन विफल हुआ। कृपया फिर प्रयास करें।"
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "Microsoft के साथ टोकन का आदान-प्रदान विफल हुआ।",
+        "noIdToken": "Microsoft से id token नहीं मिला।",
+        "failed": "Microsoft से साइन इन विफल हुआ। कृपया फिर प्रयास करें।",
+        "popupBlocked": "पॉपअप ब्लॉक हो गया। कृपया इस साइट के लिए पॉपअप की अनुमति दें और फिर प्रयास करें।",
+        "startFailed": "Microsoft साइन-इन शुरू नहीं हो सका। कृपया फिर प्रयास करें।"
+      },
+      "popupError": {
+        "popupBlocked": "साइन-इन पॉपअप ब्लॉक हो गया। कृपया इस साइट के लिए पॉपअप की अनुमति दें।",
+        "failed": "OAuth से साइन इन विफल हुआ। कृपया फिर प्रयास करें।"
+      }
+    },
+    "hero": {
+      "tagline": "आधुनिक उद्यमों के लिए समझने योग्य एंटरप्राइज़ खोज।",
+      "description": "अपने सभी व्यावसायिक ऐप्स में खोजें"
+    },
+    "emailStep": {
+      "genericError": "कुछ गड़बड़ हुई। कृपया फिर प्रयास करें।",
+      "noAccount": "इस ईमेल पते से कोई खाता नहीं मिला।",
+      "checking": "जाँच हो रही है…"
+    },
+    "providers": {
+      "signInWithSso": "SSO से साइन इन करें",
+      "continueWithGoogle": "Google के साथ जारी रखें",
+      "continueWithMicrosoft": "Microsoft के साथ जारी रखें",
+      "continueWithOAuth": "OAuth के साथ जारी रखें",
+      "continueWithGitHub": "GitHub के साथ जारी रखें",
+      "continueWithProvider": "{{provider}} के साथ जारी रखें",
+      "connecting": "कनेक्ट हो रहा है…"
+    },
+    "actionFeedback": {
+      "blockedUntil": "{{date, datetime}} के बाद फिर प्रयास करें।",
+      "unexpectedResponse": "अनपेक्षित प्रतिक्रिया मिली। कृपया फिर प्रयास करें।",
+      "passwordSignInFailed": "साइन इन विफल हुआ। कृपया फिर प्रयास करें।",
+      "noPasswordSetTitle": "इस खाते के लिए पासवर्ड सेट नहीं है।",
+      "noPasswordSetDescription": "पासवर्ड सेट करने के लिए नीचे “पासवर्ड भूल गए” चुनें।",
+      "resetEmailSuccessDescription": "यदि इस ईमेल का कोई खाता है, तो पासवर्ड रीसेट लिंक भेज दिया गया है।",
+      "resetEmailErrorTitle": "पासवर्ड रीसेट का अनुरोध नहीं किया जा सका",
+      "tryAgainLater": "कृपया कुछ देर बाद फिर प्रयास करें।",
+      "googleSignInFailed": "Google से साइन इन विफल हुआ। कृपया फिर प्रयास करें।",
+      "additionalVerificationTitle": "अतिरिक्त सत्यापन आवश्यक है",
+      "additionalVerificationDescription": "जारी रखने के लिए अगला चरण पूरा करें।",
+      "oauthSignInFailed": "OAuth से साइन इन विफल हुआ। कृपया फिर प्रयास करें।",
+      "otpSendSuccessTitle": "अपना ईमेल देखें",
+      "otpSendSuccessDescription": "यदि इस ईमेल से कोड द्वारा साइन इन किया जा सकता है, तो कोड भेजा जा रहा है। कुछ मिनटों में ईमेल न आए, तो स्पैम फ़ोल्डर देखें या बाद में फिर प्रयास करें।",
+      "otpSendErrorTitle": "सत्यापन कोड नहीं भेजा जा सका",
+      "verificationFailed": "सत्यापन विफल हुआ। कृपया फिर प्रयास करें।",
+      "microsoftSignInFailed": "Microsoft से साइन इन विफल हुआ। कृपया फिर प्रयास करें।",
+      "contactAdministrator": "कृपया अपने व्यवस्थापक से संपर्क करें।"
+    },
+    "emailVerification": {
+      "missingToken": "सत्यापन लिंक में टोकन नहीं है।",
+      "completing": "ईमेल सत्यापन पूरा हो रहा है…",
+      "failed": "ईमेल सत्यापन विफल हुआ। कृपया फिर प्रयास करें।"
     }
   },
   "healthGate": {
@@ -4368,6 +4497,19 @@
       "offDescription": "यह सभी के उत्तरों, खोज और रिकॉर्ड से हट गया है, और नमूना खाते साइन इन नहीं कर सकते। इसे प्रोफ़ाइल → डेमो डेटा में वापस चालू करें।",
       "onTitle": "डेमो डेटा सभी के लिए वापस चालू किया गया",
       "errorTitle": "सभी के लिए डेमो डेटा बदला नहीं जा सका"
+    }
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "अपनी प्रोफ़ाइल पूरी करें",
+      "description": "जारी रखने के लिए अपना पूरा नाम दर्ज करें। इससे आपकी टीम के सदस्य आपको अलग-अलग कार्यस्थलों में पहचान सकेंगे।",
+      "errors": {
+        "required": "पूरा नाम आवश्यक है",
+        "minimumLength": "पूरा नाम कम से कम 2 अक्षरों का होना चाहिए",
+        "userUnavailable": "उपयोगकर्ता की पहचान नहीं हो सकी। कृपया पेज रीफ़्रेश करके फिर प्रयास करें।",
+        "saveFailed": "आपका नाम सहेजा नहीं जा सका। कृपया फिर प्रयास करें।"
+      },
+      "saveAndContinue": "सहेजें और जारी रखें"
     }
   },
   "keyboard": {

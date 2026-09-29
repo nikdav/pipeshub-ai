@@ -266,7 +266,7 @@ export function ToolsetOAuthCallbackClient() {
               }}
             >
               <MaterialIcon name="close" size={16} color="var(--gray-11)" />
-              Close
+              {t('agentBuilder.toolsetOAuthCloseWindow')}
             </span>
           </Button>
         </Flex>

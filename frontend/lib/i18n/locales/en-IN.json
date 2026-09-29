@@ -13,6 +13,10 @@
       "newPasswordPlaceholder": "Enter your new password",
       "confirmPasswordLabel": "Confirm Password*",
       "confirmPasswordPlaceholder": "Confirm your password"
+    },
+    "success": {
+      "title": "Your password has been changed!",
+      "description": "Your password has been successfully updated. You can now sign in to your Pipeshub workspace with your new password."
     }
   },
   "agents": {
@@ -182,7 +186,9 @@
       "baseUrlLabel": "Base URL (optional)",
       "baseUrlPlaceholder": "eg: http://localhost:3000/files",
       "saveSuccessFallback": "Storage configuration saved.",
-      "saveErrorFallback": "Could not save storage configuration."
+      "saveErrorFallback": "Could not save storage configuration.",
+      "s3HealthCheckFailedWithBase": "{{message}} ({{details}})",
+      "s3HealthCheckFailed": "S3 health check failed ({{details}})"
     },
     "stepSmtp": {
       "stepName": "SMTP",
@@ -219,7 +225,37 @@
     },
     "tour": {
       "dismiss": "Dismiss tour",
-      "completedDescription": "You're all set now. If you want to know more check out <docs>documentation</docs>."
+      "completedDescription": "You're all set now. If you want to know more check out <docs>documentation</docs>.",
+      "stubs": {
+        "almostThereTitle": "You're Almost There!",
+        "almostThereSubtitle": "Finish the following actions to know what Pipeshub can do",
+        "connectFirstApp": "Connect your first app",
+        "createCollection": "Create a collection",
+        "inviteTeamMembers": "Invite Team Members",
+        "keepGoingTitle": "Keep going!",
+        "keepGoingSubtitle": "How about sharing the word with your team members?",
+        "completedTitle": "Let's go!"
+      }
+    },
+    "userBackgroundSurvey": {
+      "title": "What kind of work do you do?",
+      "subtitle": "This will help us personalise your Pipeshub experience",
+      "roles": {
+        "softwareDeveloper": "Software Developer",
+        "productManager": "Product Manager",
+        "marketer": "Marketer",
+        "designer": "Designer",
+        "projectManager": "Project Manager",
+        "operations": "Operations",
+        "itSupport": "IT Support Specialist",
+        "humanResources": "Human Resources",
+        "financeOfficer": "Finance Officer",
+        "legal": "Legal",
+        "complianceOfficer": "Compliance Officer",
+        "salesRepresentative": "Sales Representative",
+        "dataScientist": "Data Scientist",
+        "customerService": "Customer Service"
+      }
     }
   },
   "nav": {
@@ -4154,7 +4190,13 @@
       "orgEmailVerifiedTitle": "Organisation verified",
       "orgEmailVerifiedDescription": "Your organisation is now active. Sign in to continue.",
       "orgEmailVerifyFailedTitle": "Verification failed",
-      "orgEmailVerifyFailedDescription": "The link may be invalid or expired. Please sign up again."
+      "orgEmailVerifyFailedDescription": "The link may be invalid or expired. Please sign up again.",
+      "samlErrorDescriptions": {
+        "jitProvisioningDisabled": "JIT provisioning is disabled for your organisation",
+        "samlSsoDisabled": "SAML SSO is not enabled for your organisation",
+        "samlAuthenticationFailed": "SAML authentication failed. Please try again",
+        "unexpectedSamlFailure": "An unexpected error occurred during sign-in. Please try again"
+      }
     },
     "common": {
       "signIn": "Sign In",
@@ -4186,8 +4228,95 @@
       "oauthUnavailable": "OAuth sign-in is currently unavailable. Contact your administrator.",
       "showPassword": "Show password",
       "hidePassword": "Hide password",
+      "showOtp": "Show OTP",
+      "hideOtp": "Hide OTP",
       "accountDisabled": "Your account has been disabled.",
-      "tooManyIncorrectCredentials": "You have entered incorrect credentials too many times"
+      "tooManyIncorrectCredentials": "You have entered incorrect credentials too many times",
+      "orContinueWithProviders": "or continue with",
+      "otpLabel": "OTP",
+      "emailOtpLabel": "Email OTP",
+      "errorFallback": "Something went wrong. Please try again."
+    },
+    "oauth": {
+      "googleCallback": {
+        "validationFailed": "Authentication response validation failed. Please try again.",
+        "failed": "Google sign-in failed."
+      },
+      "microsoftCallback": {
+        "validationFailed": "Authentication response validation failed. Please try again.",
+        "failed": "Microsoft sign-in failed.",
+        "noCode": "No authorization code received from Microsoft."
+      },
+      "callback": {
+        "authenticationFailed": "Authentication failed ({{status}}).",
+        "noCode": "No authorization code received.",
+        "noState": "No state parameter received.",
+        "validationFailed": "Authentication response validation failed. Please try again.",
+        "invalidState": "Invalid state parameter.",
+        "missingProvider": "Invalid OAuth state: missing provider.",
+        "noToken": "Authentication succeeded but no access token was returned.",
+        "failed": "OAuth authentication failed.",
+        "signInFailed": "Sign-in failed",
+        "closeAndRetry": "You can close this window and try again."
+      },
+      "googlePopupError": {
+        "popupBlocked": "Google sign-in popup was blocked. Please allow popups for this site.",
+        "failed": "Google sign-in failed. Please try again."
+      },
+      "microsoftPopupError": {
+        "tokenExchangeFailed": "Token exchange with Microsoft failed.",
+        "noIdToken": "No id token received from Microsoft.",
+        "failed": "Microsoft sign-in failed.",
+        "popupBlocked": "Popup was blocked. Please allow popups for this site and try again.",
+        "startFailed": "Failed to start Microsoft sign-in. Please try again."
+      },
+      "popupError": {
+        "popupBlocked": "Sign-in popup was blocked. Please allow popups for this site.",
+        "failed": "OAuth sign-in failed. Please try again."
+      }
+    },
+    "hero": {
+      "tagline": "Explainable Enterprise Search for modern enterprises.",
+      "description": "Search across all of your business apps"
+    },
+    "emailStep": {
+      "genericError": "Something went wrong. Please try again.",
+      "noAccount": "No account found with that email address.",
+      "checking": "Checking…"
+    },
+    "providers": {
+      "signInWithSso": "Sign in with SSO",
+      "continueWithGoogle": "Continue with Google",
+      "continueWithMicrosoft": "Continue with Microsoft",
+      "continueWithOAuth": "Continue with OAuth",
+      "continueWithGitHub": "Continue with GitHub",
+      "continueWithProvider": "Continue with {{provider}}",
+      "connecting": "Connecting…"
+    },
+    "actionFeedback": {
+      "blockedUntil": "Try again after {{date, datetime}}.",
+      "unexpectedResponse": "Unexpected response. Please try again.",
+      "passwordSignInFailed": "Sign in failed. Please try again.",
+      "noPasswordSetTitle": "No password set for this account.",
+      "noPasswordSetDescription": "Use Forgot Password below to set up your password.",
+      "resetEmailSuccessDescription": "If an account exists for this email, a password reset link has been sent.",
+      "resetEmailErrorTitle": "Could not request password reset",
+      "tryAgainLater": "Please try again later.",
+      "googleSignInFailed": "Google sign-in failed. Please try again.",
+      "additionalVerificationTitle": "Additional verification required",
+      "additionalVerificationDescription": "Complete the next step to continue.",
+      "oauthSignInFailed": "OAuth sign-in failed. Please try again.",
+      "otpSendSuccessTitle": "Check your email",
+      "otpSendSuccessDescription": "If that email can sign in with a code, one is being sent. If nothing arrives in a few minutes, check your spam folder or try again later.",
+      "otpSendErrorTitle": "Could not send verification code",
+      "verificationFailed": "Verification failed. Please try again.",
+      "microsoftSignInFailed": "Microsoft sign-in failed. Please try again.",
+      "contactAdministrator": "Please contact your administrator."
+    },
+    "emailVerification": {
+      "missingToken": "Verification link is missing a token.",
+      "completing": "Completing email verification…",
+      "failed": "Email verification failed. Please try again."
     }
   },
   "healthGate": {
@@ -4369,6 +4498,19 @@
     "teamsNoRoles": "Teams do not have roles",
     "invite": "Invite to Pipeshub",
     "searchPlaceholder": "Emails, teams or names (separated by commas)"
+  },
+  "profile": {
+    "fullNameDialog": {
+      "title": "Complete Your Profile",
+      "description": "Please set your full name to continue. This helps your teammates identify you across workspaces.",
+      "errors": {
+        "required": "Full name is required",
+        "minimumLength": "Full name must be at least 2 characters",
+        "userUnavailable": "Unable to identify user. Please refresh and try again.",
+        "saveFailed": "Failed to save your name. Please try again."
+      },
+      "saveAndContinue": "Save & continue"
+    }
   },
   "keyboard": {
     "modifier": {

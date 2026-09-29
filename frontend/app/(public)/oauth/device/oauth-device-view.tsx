@@ -12,6 +12,7 @@ import { useAuthStore } from '@/config';
 import { LoadingScreen } from '@/app/components/ui/auth-guard';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
 import { LoadingButton } from '@/app/components/ui/loading-button';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 const OAUTH_DEVICE_PATH = '/oauth/device';
 const VERIFY_API = '/api/v1/oauth2/device/verify';
@@ -29,7 +30,7 @@ interface ConsentData {
   user: { email: string; name?: string };
 }
 
-function errorMessageFromUnknown(err: unknown): string {
+function errorMessageFromUnknown(err: unknown): LocalizedTextValue {
   if (axios.isAxiosError(err)) {
     const data = err.response?.data;
     if (
@@ -43,10 +44,11 @@ function errorMessageFromUnknown(err: unknown): string {
     }
     const fromBody = extractApiErrorMessage(data);
     if (fromBody) return fromBody;
-    return processError(err).message;
+    const processed = processError(err);
+    return processed.messageText ?? processed.message;
   }
   if (err instanceof Error) return err.message;
-  return 'An error occurred';
+  return localizedText('message.error');
 }
 
 export function OAuthDeviceView() {
@@ -60,7 +62,7 @@ export function OAuthDeviceView() {
   const [userCode, setUserCode] = useState(initialCode);
   const [loading, setLoading] = useState(Boolean(initialCode));
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<LocalizedTextValue | ''>('');
   const [consentData, setConsentData] = useState<ConsentData | null>(null);
   const [done, setDone] = useState<'granted' | 'denied' | null>(null);
 
@@ -91,7 +93,7 @@ export function OAuthDeviceView() {
       if (data.requiresConsent && data.consentData) {
         setConsentData(data.consentData);
       } else {
-        setError(t('oauthConsent.noData'));
+        setError(localizedText('oauthConsent.noData'));
       }
     } catch (err) {
       setError(errorMessageFromUnknown(err));
@@ -198,7 +200,7 @@ export function OAuthDeviceView() {
           />
           {error ? (
             <Text as="p" size="2" color="red" mt="2">
-              {error}
+              {resolveLocalizedText(error, t)}
             </Text>
           ) : null}
           <Button
@@ -244,7 +246,7 @@ export function OAuthDeviceView() {
         </Box>
         {error ? (
           <Text as="p" size="2" color="red" mt="2">
-            {error}
+            {resolveLocalizedText(error, t)}
           </Text>
         ) : null}
         <Flex gap="3" mt="4">
