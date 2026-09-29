@@ -3,70 +3,81 @@ name: Fork-only i18n split verification
 on:
   push:
     branches: ['verify/i18n-split-20260929']
-    paths: ['.github/workflows/i18n-split-verification.yml']
+    paths:
+      - '.github/workflows/i18n-split-verification.yml'
+      - '.github/i18n-split.py'
+      - '.github/i18n-split-check.py'
 
 permissions:
   contents: read
 
 jobs:
-  inspect:
+  prepare:
     if: github.repository == 'nikdav/pipeshub-ai'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    outputs:
+      matrix: ${{ steps.split.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build and preserve exact candidate commits in fork only
+        id: split
+        env:
+          SPLIT_OUTPUT: ${{ runner.temp }}/i18n-split-output
+        run: python .github/i18n-split.py
+      - name: Preserve split manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-split-manifest
+          path: ${{ runner.temp }}/i18n-split-output/split-manifest.json
+          if-no-files-found: error
+          retention-days: 30
+
+  verify:
+    needs: prepare
+    if: github.repository == 'nikdav/pipeshub-ai'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      max-parallel: 9
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    name: Verify ${{ matrix.name }}
     env:
-      SOURCE: 84b9b95da4e2ba4285c6b3b8b6ceb0af7897eaea
-      UPSTREAM: 9a0488639d80bf9fcbd643035857ada8cf5363dd
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       NEXT_TELEMETRY_DISABLED: '1'
+      SPLIT_NAME: ${{ matrix.name }}
+      SPLIT_SHA: ${{ matrix.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Inspect exact source and current upstream without changing any branch
-        shell: bash
+      - name: Select exact product tree without verification tooling
         run: |
-          set -euo pipefail
-          git fetch --no-tags https://github.com/pipeshub-ai/pipeshub-ai.git "$UPSTREAM"
-          BASE=$(git merge-base "$SOURCE" "$UPSTREAM")
-          echo "SOURCE=$SOURCE UPSTREAM=$UPSTREAM BASE=$BASE"
-          git diff --stat "$BASE" "$SOURCE"
-          echo '--- NUMSTAT ---'
-          git diff --numstat "$BASE" "$SOURCE"
-          echo '--- UPSTREAM INTEGRATION CHECK ---'
-          git merge-tree --write-tree "$UPSTREAM" "$SOURCE" || test "$?" = 1
-          echo '--- PACKAGE DIFF ---'
-          git diff "$BASE" "$SOURCE" -- frontend/package.json frontend/package-lock.json frontend/tsconfig.json frontend/vitest.config.ts
-          git checkout --detach "$SOURCE"
+          cp .github/i18n-split-check.py "$RUNNER_TEMP/i18n-split-check.py"
+          git checkout --detach "$SPLIT_SHA"
+          test "$(git rev-parse HEAD)" = "$SPLIT_SHA"
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install exact frontend dependencies
+      - name: Install locked frontend dependencies
         working-directory: frontend
         run: npm ci --no-audit --no-fund
-      - name: Run original-branch baseline checks independently
-        working-directory: frontend
-        shell: bash
-        run: |
-          mkdir -p "$RUNNER_TEMP/i18n-baseline"
-          overall=0
-          for check in i18n:check i18n:keys test:i18n typecheck test:unit lint build; do
-            echo "::group::Baseline $check"
-            set +e
-            timeout 180 npm run "$check" > "$RUNNER_TEMP/i18n-baseline/${check//:/-}.log" 2>&1
-            result=$?
-            set -e
-            tail -100 "$RUNNER_TEMP/i18n-baseline/${check//:/-}.log"
-            echo "BASELINE_RESULT $check $result"
-            echo "::endgroup::"
-            test "$result" = 0 || overall=1
-          done
-          exit "$overall"
-      - name: Preserve actual logs
+      - name: Execute all checks and record actual results
+        run: python "$RUNNER_TEMP/i18n-split-check.py"
+      - name: Preserve complete verification logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: i18n-split-baseline
-          path: ${{ runner.temp }}/i18n-baseline
-          if-no-files-found: ignore
-          retention-days: 7
+          name: i18n-split-check-${{ matrix.name }}
+          path: ${{ runner.temp }}/split-check-${{ matrix.name }}
+          if-no-files-found: error
+          retention-days: 30
