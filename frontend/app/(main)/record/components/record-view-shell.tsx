@@ -20,6 +20,8 @@ import { resolveWebUrl } from '@/app/components/file-preview/resolve-web-url';
 import { withCurrentOrgId } from '@/lib/navigation';
 import type { PaginationControls } from '@/app/components/file-preview/types';
 import { KnowledgeBaseApi } from '@/app/(main)/knowledge-base/api';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import {
   canShowReindexMenu,
   getReindexNodeFromHubItem,
@@ -42,15 +44,6 @@ interface RecordViewShellProps {
 
 function isStreamableRecordType(recordType: string): boolean {
   return recordType === 'FILE' || recordType === 'ARTIFACT';
-}
-
-function getErrorMessage(e: unknown, fallback: string): string {
-  if (e instanceof Error && e.message.trim()) return e.message.trim();
-  if (e && typeof e === 'object' && 'message' in e) {
-    const msg = (e as { message?: unknown }).message;
-    if (typeof msg === 'string' && msg.trim()) return msg.trim();
-  }
-  return fallback;
 }
 
 /** Returns a Material icon name matching the record type. */
@@ -81,8 +74,8 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
   const [fileBlob, setFileBlob] = useState<Blob | undefined>(undefined);
   const [fileType, setFileType] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
+  const [previewError, setPreviewError] = useState<LocalizedTextValue | null>(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState<number | null>(null);
@@ -168,11 +161,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
                 setFileUrl(nextUrl);
                 setFileBlob(undefined);
               }
-              setPreviewError(
-                t('recordView.previewConversionFailed', {
-                  defaultValue: 'Preview conversion failed. You can still download the file.',
-                }),
-              );
+              setPreviewError(localizedText('recordView.previewConversionFailed'));
               setIsLoading(false);
               return;
             }
@@ -202,13 +191,13 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
         } catch (streamErr) {
           if (cancelled) return;
           setPreviewError(
-            getErrorMessage(streamErr, t('recordView.previewUnavailable')),
+            getUserFacingErrorText(streamErr, localizedText('recordView.previewUnavailable')),
           );
           setIsLoading(false);
         }
       } catch (e) {
         if (cancelled) return;
-        setError(getErrorMessage(e, t('recordView.loadFailed')));
+        setError(getUserFacingErrorText(e, localizedText('recordView.loadFailed')));
         setIsLoading(false);
       }
     })();
@@ -216,7 +205,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
     return () => {
       cancelled = true;
     };
-  }, [recordId, revokeBlobUrl, t]);
+  }, [recordId, revokeBlobUrl]);
 
   useEffect(() => () => revokeBlobUrl(), [revokeBlobUrl]);
 
@@ -270,7 +259,12 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
   const hasError = !isLoading && !!error;
   const hasPreviewError = !isLoading && !!previewError;
   const hasDownloadableFile = Boolean(fileUrl || fileBlob);
-  const headerTitle = recordDetails?.record.recordName || fileName || t('recordView.loading');
+  const errorText = error && resolveLocalizedText(error, t);
+  const previewErrorText = previewError && resolveLocalizedText(previewError, t);
+  const displayName = recordDetails
+    ? recordDetails.record.recordName || recordDetails.record.fileRecord?.name || t('itemType.record')
+    : fileName;
+  const headerTitle = displayName || t('recordView.loading');
   const handleFullscreenToggle = async () => {
     const el = previewHostRef.current;
     if (!el) return;
@@ -498,7 +492,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
               <Flex direction="column" align="center" justify="center" gap="3" style={{ padding: 'var(--space-6)' }}>
                 <MaterialIcon name="error_outline" size={48} color="var(--red-9)" />
                 <Text size="3" weight="medium" color="red">
-                  {error}
+                  {errorText}
                 </Text>
               </Flex>
             ) : hasPreviewError ? (
@@ -512,14 +506,14 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
                 <MaterialIcon name="error_outline" size={48} color="var(--amber-9)" />
                 <Flex direction="column" align="center" gap="1" style={{ maxWidth: '360px', textAlign: 'center' }}>
                   <Text size="3" weight="medium" style={{ color: 'var(--gray-12)' }}>
-                    {fileName}
+                    {displayName}
                   </Text>
                   <Text size="2" style={{ color: 'var(--gray-9)' }}>
-                    {previewError}
+                    {previewErrorText}
                   </Text>
                 </Flex>
                 {hasDownloadableFile && (
-                  <Button variant="solid" color="jade" size="3" onClick={handleDownload}>
+                  <Button variant="solid" color="jade" size="3" onClick={handleDownload} aria-label={t('recordView.download')}>
                     <MaterialIcon name="download" size={18} />
                     {t('recordView.download')}
                   </Button>
@@ -575,7 +569,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
                       WebkitBoxOrient: 'vertical',
                     }}
                   >
-                    {fileName}
+                    {displayName}
                   </Text>
                   <Box
                     style={{
@@ -586,7 +580,11 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
                     }}
                   >
                     <Text size="1" weight="medium" style={{ color: 'var(--gray-10)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      {recordDetails?.record.recordType ?? ''}
+                      {recordDetails
+                        ? t(`recordView.labels.recordTypes.${recordDetails.record.recordType}`, {
+                            defaultValue: recordDetails.record.recordType,
+                          })
+                        : ''}
                     </Text>
                   </Box>
                 </Flex>
@@ -656,7 +654,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
                       onClick={handlePrevPage}
                       disabled={currentPage === 1}
                       style={{ width: 28, height: 28, padding: 0 }}
-                      aria-label="Previous page"
+                      aria-label={t('common.previous')}
                     >
                       <MaterialIcon name="chevron_left" size={ICON_SIZES.SECONDARY} />
                     </IconButton>
@@ -679,7 +677,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
                       onClick={handleNextPage}
                       disabled={totalPages === null || currentPage === totalPages}
                       style={{ width: 28, height: 28, padding: 0 }}
-                      aria-label="Next page"
+                      aria-label={t('common.next')}
                     >
                       <MaterialIcon name="chevron_right" size={ICON_SIZES.SECONDARY} />
                     </IconButton>
@@ -689,7 +687,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
               ) : null}
 
               <Tooltip content={t('recordView.download')}>
-                <Button variant="outline" color="gray" size="2" onClick={handleDownload}>
+                <Button variant="outline" color="gray" size="2" onClick={handleDownload} aria-label={t('recordView.download')}>
                   <MaterialIcon name="download" size={18} />
                 </Button>
               </Tooltip>
@@ -743,7 +741,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
           ) : hasError ? (
             <Flex align="center" justify="center" style={{ flex: 1, padding: 'var(--space-4)' }}>
               <Text size="2" color="gray" style={{ textAlign: 'center' }}>
-                {error}
+                {errorText}
               </Text>
             </Flex>
           ) : null}
@@ -791,7 +789,7 @@ export function RecordViewShell({ recordId }: RecordViewShellProps) {
         open={isDeleteOpen}
         onOpenChange={setIsDeleteOpen}
         onConfirm={handleDeleteConfirm}
-        itemName={fileName}
+        itemName={displayName}
         itemType="record"
         isDeleting={isDeleting}
       />

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { Spinner } from '@/app/components/ui/spinner';
@@ -27,6 +28,7 @@ export function VersionSwitcher({
   onVersionChange,
   isSwitching = false,
 }: VersionSwitcherProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const canSwitch = latestVersion > 1;
@@ -71,8 +73,10 @@ export function VersionSwitcher({
         role={canSwitch ? 'button' : undefined}
         aria-haspopup={canSwitch ? 'listbox' : undefined}
         aria-expanded={canSwitch ? open : undefined}
-        aria-label={canSwitch ? `Version ${version}, switch version` : `Version ${version}`}
-        title={canSwitch ? 'Switch version' : undefined}
+        aria-label={canSwitch
+          ? t('filePreview.switchVersion.switchLabel', { version })
+          : t('filePreview.switchVersion.versionLabel', { version })}
+        title={canSwitch ? t('filePreview.switchVersion.switchTitle') : undefined}
         style={{
           cursor: canSwitch && !isSwitching ? 'pointer' : 'default',
           color: 'var(--accent-11)',
@@ -135,8 +139,8 @@ export function VersionSwitcher({
                 }}
               >
                 <Text size="2" style={{ color: 'var(--slate-12)', whiteSpace: 'nowrap' }}>
-                  Version {v}
-                  {v === latestVersion ? ' (latest)' : ''}
+                  {t('filePreview.switchVersion.optionLabel', { version: v })}
+                  {v === latestVersion ? ` (${t('filePreview.switchVersion.latest')})` : ''}
                 </Text>
                 {isCurrent && <MaterialIcon name="check" size={16} color="var(--accent-11)" />}
               </Flex>

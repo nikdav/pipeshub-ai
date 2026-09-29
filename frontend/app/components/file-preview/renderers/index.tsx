@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import { isLegacyWordDocFile } from '../utils';
 import type { FilePreviewRendererProps } from '../types';
 
@@ -17,6 +18,7 @@ export { DocxRenderer } from './docx-renderer';
 
 // Fallback renderer for unsupported Office documents (e.g. legacy Word .doc when not converted to PDF)
 export function DocumentPreview({ fileUrl, fileName, fileBlob }: FilePreviewRendererProps) {
+  const { t } = useTranslation();
   const [blobUrl, setBlobUrl] = useState('');
 
   useEffect(() => {
@@ -60,8 +62,8 @@ export function DocumentPreview({ fileUrl, fileName, fileBlob }: FilePreviewRend
       </Text>
       <Text size="2" color="gray" style={{ textAlign: 'center', maxWidth: '400px' }}>
         {isLegacyDoc
-          ? 'This file is in legacy Word (.doc) format. In-browser preview is not supported here; download it to open in Word, or save a copy as .docx to preview in Pipeshub.'
-          : 'Preview not available for this document type. Please download to view.'}
+          ? t('filePreview.unsupportedDocument.legacyDoc')
+          : t('filePreview.unsupportedDocument.documentType')}
       </Text>
       {downloadHref && downloadHref.trim() !== '' && (
         <a
@@ -90,7 +92,7 @@ export function DocumentPreview({ fileUrl, fileName, fileBlob }: FilePreviewRend
           <span className="material-icons-outlined" style={{ fontSize: '18px' }}>
             download
           </span>
-          Download File
+          {t('action.download')}
         </a>
       )}
     </Flex>
@@ -98,6 +100,7 @@ export function DocumentPreview({ fileUrl, fileName, fileBlob }: FilePreviewRend
 }
 
 export function UnknownPreview({ fileName, fileUrl, fileBlob, webUrl, previewRenderable }: FilePreviewRendererProps) {
+  const { t } = useTranslation();
   const [blobUrl, setBlobUrl] = useState('');
 
   useEffect(() => {
@@ -151,7 +154,7 @@ export function UnknownPreview({ fileName, fileUrl, fileBlob, webUrl, previewRen
         {fileName}
       </Text>
       <Text size="2" color="gray" style={{ textAlign: 'center', maxWidth: '400px' }}>
-        Preview not available for this file type
+        {t('filePreview.unsupportedDocument.fileType')}
       </Text>
       <Flex gap="3">
         {previewRenderable !== false && downloadHref && downloadHref.trim() !== '' && (
@@ -169,7 +172,7 @@ export function UnknownPreview({ fileName, fileUrl, fileBlob, webUrl, previewRen
             <span className="material-icons-outlined" style={{ fontSize: '18px' }}>
               download
             </span>
-            Download File
+            {t('action.download')}
           </a>
         )}
         {webUrl && webUrl.trim() !== '' && (
@@ -188,7 +191,7 @@ export function UnknownPreview({ fileName, fileUrl, fileBlob, webUrl, previewRen
             <span className="material-icons-outlined" style={{ fontSize: '18px' }}>
               open_in_new
             </span>
-            Open in Browser
+            {t('filePreview.unsupportedDocument.openInBrowser')}
           </a>
         )}
       </Flex>

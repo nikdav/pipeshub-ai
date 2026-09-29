@@ -1,7 +1,7 @@
 import React, { useSyncExternalStore } from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
-import '@/lib/__tests__/test-i18n';
+import testI18n from '@/lib/__tests__/test-i18n';
 import { useToastStore } from '@/lib/store/toast-store';
 import { useUploadStore } from '@/lib/store/upload-store';
 import { useAuthStore } from '@/lib/store/auth-store';
@@ -312,7 +312,7 @@ describe('Knowledge base page — collections list', () => {
     fireEvent.click(screen.getByRole('button', { name: /Create Collection/ }));
 
     const dialog = await screen.findByRole('dialog');
-    typeInto(within(dialog).getByPlaceholderText('eg: Engineering'), '  Handbook  ');
+    typeInto(within(dialog).getByPlaceholderText('Enter title'), '  Handbook  ');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Create' }));
 
     await waitFor(() => expect(api.kb.createKnowledgeBase).toHaveBeenCalledWith('Handbook', ''));
@@ -382,7 +382,7 @@ describe('Knowledge base page — inside a collection', () => {
 
     await chooseFromNewMenu('New Folder');
     const dialog = await screen.findByRole('dialog');
-    typeInto(within(dialog).getByPlaceholderText('eg: Engineering'), 'Roadmaps');
+    typeInto(within(dialog).getByPlaceholderText('Enter title'), 'Roadmaps');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Create' }));
 
     await waitFor(() => expect(api.kb.createFolder).toHaveBeenCalledWith('kb-eng', 'Roadmaps', '', null));
@@ -508,7 +508,7 @@ describe('Knowledge base page — failures the user must be able to recover from
 
     await chooseFromNewMenu('New Folder');
     const dialog = await screen.findByRole('dialog');
-    typeInto(within(dialog).getByPlaceholderText('eg: Engineering'), 'Roadmaps');
+    typeInto(within(dialog).getByPlaceholderText('Enter title'), 'Roadmaps');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Create' }));
 
     await waitFor(() =>
@@ -828,7 +828,7 @@ describe('Knowledge base page — failures the user must be able to recover from
 
     act(() => useKnowledgeBaseStore.setState({ pendingSidebarAction: { type: 'create-collection' } }));
     const dialog = await screen.findByRole('dialog');
-    typeInto(within(dialog).getByPlaceholderText('eg: Engineering'), 'Handbook');
+    typeInto(within(dialog).getByPlaceholderText('Enter title'), 'Handbook');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Create' }));
     await waitFor(() => expect(sidebarIds().sort()).toEqual(['kb-eng', 'kb-new']));
 
@@ -902,6 +902,34 @@ describe('Knowledge base page — working with files', () => {
     );
   });
 
+  it('retranslates a preview error when the language changes without repeating the request', async () => {
+    testI18n.addResource('en-US', 'translation', 'filePreview.openFailedFallback', "We couldn't open a preview of this file. Try downloading it instead, or try again in a moment.");
+    testI18n.addResource('fr-FR', 'translation', 'filePreview.openFailedFallback', 'Impossible d’ouvrir cet aperçu. Réessayez.');
+    await testI18n.changeLanguage('en-US');
+    await openEngineering();
+    api.kb.getRecordDetails.mockRejectedValue(new Error('Request failed with status code 500'));
+
+    fireEvent.click(row('spec.pdf'));
+
+    const preview = screen.getByRole('region', { name: 'File preview' });
+    expect((await within(preview).findByRole('alert')).textContent).toBe(
+      "We couldn't open a preview of this file. Try downloading it instead, or try again in a moment.",
+    );
+    const detailsCalls = api.kb.getRecordDetails.mock.calls.length;
+    const streamCalls = api.kb.streamRecord.mock.calls.length;
+
+    await act(async () => {
+      await testI18n.changeLanguage('fr-FR');
+    });
+
+    expect(within(preview).getByRole('alert').textContent).toBe('Impossible d’ouvrir cet aperçu. Réessayez.');
+    expect(api.kb.getRecordDetails).toHaveBeenCalledTimes(detailsCalls);
+    expect(api.kb.streamRecord).toHaveBeenCalledTimes(streamCalls);
+    await act(async () => {
+      await testI18n.changeLanguage('en-US');
+    });
+  });
+
   it('downloads a file from its menu', async () => {
     await openEngineering();
     api.kb.streamDownloadRecord.mockResolvedValue(undefined);
@@ -941,7 +969,7 @@ describe('Knowledge base page — working with files', () => {
     await chooseRowAction('notes.txt', 'Retry indexing');
 
     await waitFor(() =>
-      expect(toastTexts()).toContain("We couldn't start reindexing. Please try again in a moment."),
+      expect(toastTexts()).toContain("Failed to start reindexing. Please try again in a moment."),
     );
     const failed = useToastStore.getState().toasts.find((t) => t.variant === 'error');
     act(() => failed?.action?.onClick());
@@ -1008,13 +1036,17 @@ describe('Knowledge base page — working with files', () => {
     });
     openAt('/knowledge-base?nodeType=app&nodeId=kb-eng');
     await screen.findByRole('row', { name: 'spec.pdf' });
-    expect(screen.getByText('Showing 1-50 of 120 Items')).toBeTruthy();
+    expect(screen.getByText('Showing 1-50 of 120 items')).toBeTruthy();
 
     fireEvent.click(screen.getByText('Next'));
 
     expect(await screen.findByRole('row', { name: 'notes.txt' })).toBeTruthy();
-    expect(screen.getByText('Showing 51-100 of 120 Items')).toBeTruthy();
+    expect(screen.getByText('Showing 51-100 of 120 items')).toBeTruthy();
     expect(currentUrl()).toContain('page=2');
+
+    fireEvent.click(screen.getAllByRole('radio')[0]);
+    expect(await screen.findByRole('gridcell', { name: 'notes.txt' })).toBeTruthy();
+    expect(screen.getByText('Showing 51-100 of 120 items')).toBeTruthy();
   });
 });
 
@@ -1023,7 +1055,7 @@ describe('Knowledge base page — selecting several items', () => {
     await openEngineering();
     fireEvent.click(within(row('spec.pdf')).getByRole('checkbox'));
     fireEvent.click(within(row('notes.txt')).getByRole('checkbox'));
-    expect(await screen.findByText('2 Items Selected')).toBeTruthy();
+    expect(await screen.findByText('2 selected')).toBeTruthy();
   }
 
   it('deletes the selected files after confirmation', async () => {
@@ -1033,7 +1065,7 @@ describe('Knowledge base page — selecting several items', () => {
       { status: 'fulfilled', value: {} },
     ]);
 
-    const bar = screen.getByText('2 Items Selected').parentElement!;
+    const bar = screen.getByText('2 selected').parentElement!;
     fireEvent.click(within(bar).getByRole('button', { name: /Delete/ }));
     const dialog = await screen.findByRole('dialog');
     typeInto(within(dialog).getByRole('textbox'), 'DELETE');
@@ -1055,19 +1087,19 @@ describe('Knowledge base page — selecting several items', () => {
       { status: 'rejected', reason: new Error('x') },
     ]);
 
-    const bar = screen.getByText('2 Items Selected').parentElement!;
-    fireEvent.click(within(bar).getByRole('button', { name: /Re-index/ }));
+    const bar = screen.getByText('2 selected').parentElement!;
+    fireEvent.click(within(bar).getByRole('button', { name: /Reindex/ }));
 
-    await waitFor(() => expect(toastTexts()).toContain('Reindexed 1 items, 1 failed'));
+    await waitFor(() => expect(toastTexts()).toContain('Reindexed 1 item; 1 failed.'));
   });
 
   it('clears the selection', async () => {
     await selectSpecAndNotes();
 
-    const bar = screen.getByText('2 Items Selected').parentElement!;
+    const bar = screen.getByText('2 selected').parentElement!;
     fireEvent.click(within(bar).getByRole('checkbox'));
 
-    await waitFor(() => expect(screen.queryByText('2 Items Selected')).toBeNull());
+    await waitFor(() => expect(screen.queryByText('2 selected')).toBeNull());
   });
 });
 
@@ -1173,7 +1205,7 @@ describe('Knowledge base page — folders and sharing', () => {
 
     await chooseFromNewMenu('New Folder');
     const dialog = await screen.findByRole('dialog');
-    typeInto(within(dialog).getByPlaceholderText('eg: Engineering'), 'Icons');
+    typeInto(within(dialog).getByPlaceholderText('Enter title'), 'Icons');
     fireEvent.click(within(dialog).getByRole('button', { name: 'Create' }));
 
     await waitFor(() => expect(api.kb.createFolder).toHaveBeenCalledWith('kb-eng', 'Icons', '', 'folder-designs'));
@@ -1360,7 +1392,7 @@ describe('Knowledge base sidebar — folders stay usable after the collection li
 
     await waitFor(() =>
       expect(toastTexts()).toContain(
-        "Couldn't update the list — The folder was renamed, but the list didn't refresh. Refresh the page to see the latest list.",
+        "Couldn't update the list — The Folder was renamed, but the list didn't refresh. Refresh the page to see the latest list.",
       ),
     );
     expect(toastTexts()).toContain('Folder renamed successfully');

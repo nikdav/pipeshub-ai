@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text } from '@radix-ui/themes';
 import { useThemeAppearance } from '@/app/components/theme-provider';
 import type { PreviewCitation } from '../types';
@@ -14,6 +15,7 @@ interface ImageRendererProps {
 }
 
 export function ImageRenderer({ fileUrl, fileName, citations, activeCitationId, onHighlightClick }: ImageRendererProps) {
+  const { t } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDark = appearance === 'dark';
   const [error, setError] = useState(false);
@@ -51,7 +53,7 @@ export function ImageRenderer({ fileUrl, fileName, citations, activeCitationId, 
           image
         </span>
         <Text size="3" weight="medium" color="gray">
-          Image file URL not available
+          {t('filePreview.imageLoadFailed.noUrl')}
         </Text>
       </Flex>
     );
@@ -64,10 +66,10 @@ export function ImageRenderer({ fileUrl, fileName, citations, activeCitationId, 
           broken_image
         </span>
         <Text size="3" weight="medium" color="red">
-          Failed to load image
+          {t('filePreview.imageLoadFailed.failed')}
         </Text>
         <Text size="2" color="gray">
-          The image file could not be displayed
+          {t('filePreview.imageLoadFailed.couldNotDisplay')}
         </Text>
       </Flex>
     );
@@ -110,7 +112,7 @@ export function ImageRenderer({ fileUrl, fileName, citations, activeCitationId, 
             }}
           >
             <Text size="2" color="gray">
-              Loading image...
+              {t('filePreview.imageLoadFailed.loading')}
             </Text>
           </Flex>
         )}
@@ -138,7 +140,7 @@ export function ImageRenderer({ fileUrl, fileName, citations, activeCitationId, 
               key={overlay.id}
               role="button"
               tabIndex={0}
-              aria-label={`Go to citation ${overlay.id}`}
+              aria-label={t('filePreview.imageLoadFailed.goToCitation', { id: overlay.id })}
               onClick={() => onHighlightClick?.(overlay.id)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {

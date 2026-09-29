@@ -3,6 +3,7 @@
 import { Box, Flex, Text, IconButton, Dialog, VisuallyHidden } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { FolderIcon } from '@/app/components/ui';
+import { useTranslation } from 'react-i18next';
 import type { KnowledgeHubApiResponse } from '../../types';
 import { isKbCollectionsHubApp } from '../../utils/all-records-transformer';
 
@@ -46,31 +47,47 @@ function DetailRow({ label, value }: DetailRowProps) {
   );
 }
 
-function formatNodeType(nodeType: string, node?: { connector?: string; subType?: string } | null): string {
+function formatNodeType(
+  nodeType: string,
+  t: (key: string) => string,
+  node?: { connector?: string; subType?: string } | null,
+): string {
   switch (nodeType) {
-    case 'kb': return 'Collection';
-    case 'folder': return 'Folder';
-    case 'recordGroup': return 'Record Group';
-    case 'app': return node && isKbCollectionsHubApp(node) ? 'Collection' : 'Connector';
+    case 'kb': return t('knowledgeBase.folderDetails.collection');
+    case 'folder': return t('knowledgeBase.folderDetails.folder');
+    case 'recordGroup': return t('knowledgeBase.folderDetails.recordGroup');
+    case 'app': return node && isKbCollectionsHubApp(node)
+      ? t('knowledgeBase.folderDetails.collection')
+      : t('knowledgeBase.folderDetails.connector');
     default: return nodeType;
   }
 }
 
-function formatTimestamp(timestamp: number | undefined): string | undefined {
+function formatTimestamp(timestamp: number | undefined, locale: string): string | undefined {
   if (!timestamp) return undefined;
-  const date = new Date(timestamp);
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  return `${pad(date.getMonth() + 1)}/${pad(date.getDate())}/${date.getFullYear()}, ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  return new Intl.DateTimeFormat(locale, {
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).format(new Date(timestamp));
 }
 
 export function FolderDetailsSidebar({ open, onOpenChange, tableData }: FolderDetailsSidebarProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
   const currentNode = tableData?.currentNode;
   const breadcrumbs = tableData?.breadcrumbs;
   const permissions = tableData?.permissions;
   const counts = tableData?.counts;
 
   const originName = breadcrumbs && breadcrumbs.length > 0 ? breadcrumbs[0].name : undefined;
-  const totalItems = counts?.total != null ? counts.total.toString() : undefined;
+  const totalItems = counts?.total != null
+    ? new Intl.NumberFormat(locale).format(counts.total)
+    : undefined;
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -98,7 +115,7 @@ export function FolderDetailsSidebar({ open, onOpenChange, tableData }: FolderDe
         }}
       >
         <VisuallyHidden>
-          <Dialog.Title>{currentNode?.name || 'Folder Details'}</Dialog.Title>
+          <Dialog.Title>{currentNode?.name || t('knowledgeBase.folderDetails.title')}</Dialog.Title>
         </VisuallyHidden>
 
         {/* Header */}
@@ -124,7 +141,7 @@ export function FolderDetailsSidebar({ open, onOpenChange, tableData }: FolderDe
                 color: 'var(--slate-12)',
               }}
             >
-              {currentNode?.name || 'Folder'}
+              {currentNode?.name || t('knowledgeBase.folderDetails.folder')}
             </Text>
           </Flex>
 
@@ -159,7 +176,7 @@ export function FolderDetailsSidebar({ open, onOpenChange, tableData }: FolderDe
               }}
             >
               <Text size="2" style={{ color: 'var(--olive-a11)' }}>
-                No folder details available
+                {t('knowledgeBase.folderDetails.empty')}
               </Text>
             </Flex>
           ) : (
@@ -167,19 +184,19 @@ export function FolderDetailsSidebar({ open, onOpenChange, tableData }: FolderDe
               {/* Metadata Section */}
               <Flex direction="column" gap="2">
                 <Text size="3" weight="medium" style={{ color: 'var(--slate-12)' }}>
-                  Metadata
+                  {t('knowledgeBase.folderDetails.metadata')}
                 </Text>
 
                 <Flex direction="column" gap="2">
-                  <DetailRow label="Name" value={currentNode.name} />
-                  <DetailRow label="Record Type" value={formatNodeType(currentNode.nodeType, currentNode)} />
-                  <DetailRow label="Origin" value={originName} />
-                  <DetailRow label="Indexing Status" value={currentNode.indexingStatus} />
-                  <DetailRow label="Total items" value={totalItems} />
-                  <DetailRow label="Version" value={currentNode.version?.toString()} />
-                  <DetailRow label="Created At" value={formatTimestamp(currentNode.createdAt)} />
-                  <DetailRow label="Updated At" value={formatTimestamp(currentNode.updatedAt)} />
-                  <DetailRow label="Permissions" value={permissions?.role} />
+                  <DetailRow label={t('form.name')} value={currentNode.name} />
+                  <DetailRow label={t('knowledgeBase.folderDetails.recordType')} value={formatNodeType(currentNode.nodeType, t, currentNode)} />
+                  <DetailRow label={t('knowledgeBase.folderDetails.origin')} value={originName} />
+                  <DetailRow label={t('knowledgeBase.folderDetails.indexingStatus')} value={currentNode.indexingStatus} />
+                  <DetailRow label={t('knowledgeBase.folderDetails.totalItems')} value={totalItems} />
+                  <DetailRow label={t('knowledgeBase.folderDetails.version')} value={currentNode.version?.toString()} />
+                  <DetailRow label={t('knowledgeBase.folderDetails.createdAt')} value={formatTimestamp(currentNode.createdAt, locale)} />
+                  <DetailRow label={t('knowledgeBase.folderDetails.updatedAt')} value={formatTimestamp(currentNode.updatedAt, locale)} />
+                  <DetailRow label={t('knowledgeBase.folderDetails.permissions')} value={permissions?.role} />
                 </Flex>
               </Flex>
             </Flex>

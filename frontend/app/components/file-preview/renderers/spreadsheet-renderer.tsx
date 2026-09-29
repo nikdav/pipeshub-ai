@@ -2,6 +2,8 @@
 
 import React, { useEffect, useMemo, useRef, useCallback, useReducer, memo } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import * as XLSX from 'xlsx';
 import { useThemeAppearance } from '@/app/components/theme-provider';
 import type { PreviewCitation } from '../types';
@@ -53,7 +55,7 @@ interface WorkbookData {
 // ─── State Management ───────────────────────────────────────────────
 type ViewerState = {
   loading: boolean;
-  error: string | null;
+  error: LocalizedText | null;
   workbookData: WorkbookData | null;
   selectedSheet: string;
   availableSheets: string[];
@@ -64,7 +66,7 @@ type ViewerState = {
 
 type ViewerAction =
   | { type: 'SET_LOADING'; loading: boolean }
-  | { type: 'SET_ERROR'; error: string | null }
+  | { type: 'SET_ERROR'; error: LocalizedText | null }
   | { type: 'SET_WORKBOOK_DATA'; data: WorkbookData; sheets: string[] }
   | { type: 'SET_SELECTED_SHEET'; sheet: string }
   | { type: 'SET_HIGHLIGHT'; row: number | null; citationId: string | null; pulse: boolean }
@@ -191,7 +193,7 @@ function processWorkbook(workbook: XLSX.WorkBook): { data: WorkbookData; sheets:
     for (const colIndex of visibleColumns) {
       const addr = XLSX.utils.encode_cell({ r: headerRowIndex, c: colIndex });
       const cell = worksheet[addr];
-      headers.push(cell?.w || cell?.v?.toString() || `Column ${colIndex + 1}`);
+      headers.push(cell?.w || cell?.v?.toString() || '');
     }
 
     // Count total visible data rows (excl. header and hidden rows) before capping.
@@ -249,12 +251,14 @@ const TableCellMemo = memo(function TableCellMemo({
   isHeaderRow,
   highlighted,
   isDark,
+  emptyLabel,
 }: {
   value: unknown;
   colIndex: number;
   isHeaderRow: boolean;
   highlighted: boolean;
   isDark: boolean;
+  emptyLabel: string;
 }) {
   const text = formatCellValue(value);
 
@@ -285,7 +289,7 @@ const TableCellMemo = memo(function TableCellMemo({
         fontFamily: "'Manrope', sans-serif",
       }}
     >
-      {text || (isHeaderRow ? <span style={{ color: isDark ? '#666' : 'var(--olive-8)', fontStyle: 'italic' }}>(Empty)</span> : '')}
+      {text || (isHeaderRow ? <span style={{ color: isDark ? '#666' : 'var(--olive-8)', fontStyle: 'italic' }}>{emptyLabel}</span> : '')}
     </td>
   );
 });
@@ -303,6 +307,7 @@ interface SpreadsheetRendererProps {
 }
 
 export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, activeCitationId, onHighlightClick }: SpreadsheetRendererProps) {
+  const { t, i18n } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDark = appearance === 'dark';
   const [state, dispatch] = useReducer(viewerReducer, INITIAL_STATE);
@@ -332,7 +337,7 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
   // ── Load & process file ─────────────────────────────────────────
   useEffect(() => {
     if (!fileUrl || fileUrl.trim() === '') {
-      dispatch({ type: 'SET_ERROR', error: 'File URL not available' });
+      dispatch({ type: 'SET_ERROR', error: localizedText('filePreview.spreadsheet.noUrl') });
       return;
     }
 
@@ -342,7 +347,7 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
       try {
         dispatch({ type: 'SET_LOADING', loading: true });
         const response = await fetch(fileUrl);
-        if (!response.ok) throw new Error('Failed to fetch spreadsheet');
+        if (!response.ok) throw new Error('FETCH_FAILED');
         const arrayBuffer = await response.arrayBuffer();
         if (cancelled) return;
 
@@ -354,7 +359,12 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
       } catch (err) {
         if (!cancelled) {
           console.error('Error loading spreadsheet:', err);
-          dispatch({ type: 'SET_ERROR', error: err instanceof Error ? err.message : 'Failed to load spreadsheet' });
+          dispatch({
+            type: 'SET_ERROR',
+            error: localizedText(err instanceof Error && err.message === 'FETCH_FAILED'
+              ? 'filePreview.spreadsheet.fetchFailed'
+              : 'filePreview.spreadsheet.loadFailed'),
+          });
         }
       }
     };
@@ -594,7 +604,7 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
   if (state.loading) {
     return (
       <Flex align="center" justify="center" style={{ height: '100%', padding: 'var(--space-6)' }}>
-        <Text size="2" color="gray">Loading spreadsheet...</Text>
+        <Text size="2" color="gray">{t('filePreview.spreadsheet.loading')}</Text>
       </Flex>
     );
   }
@@ -604,7 +614,9 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
     return (
       <Flex direction="column" align="center" justify="center" gap="3" style={{ height: '100%', padding: 'var(--space-6)' }}>
         <span className="material-icons-outlined" style={{ fontSize: '48px', color: 'var(--red-9)' }}>error_outline</span>
-        <Text size="3" weight="medium" color="red">{state.error || 'Failed to load spreadsheet'}</Text>
+        <Text size="3" weight="medium" color="red">
+          {state.error ? resolveLocalizedText(state.error, t) : t('filePreview.spreadsheet.loadFailed')}
+        </Text>
       </Flex>
     );
   }
@@ -617,7 +629,7 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
           style={{ flex: 1, backgroundColor: isDark ? '#1e2125' : 'white', borderRadius: 'var(--radius-3)', border: `1px solid ${isDark ? '#404448' : 'var(--olive-6)'}`, margin: 'var(--space-4)' }}
         >
           <span className="material-icons-outlined" style={{ fontSize: '48px', color: 'var(--olive-8)' }}>table_chart</span>
-          <Text size="2" color="gray">This sheet is empty</Text>
+          <Text size="2" color="gray">{t('filePreview.spreadsheet.emptySheet')}</Text>
         </Flex>
         {state.availableSheets.length > 1 && (
           <SheetTabs sheets={state.availableSheets} selected={state.selectedSheet} onSelect={handleSheetSelect} isDark={isDark} />
@@ -691,7 +703,7 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
               >
                 #
               </th>
-              {currentSheetData.headers.map((_header, index) => (
+              {currentSheetData.headers.map((header, index) => (
                 <th
                   key={index}
                   style={{
@@ -770,6 +782,7 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
                       isHeaderRow={isHeaderRow}
                       highlighted={isHighlighted}
                       isDark={isDark}
+                      emptyLabel={t('filePreview.spreadsheet.emptyCell')}
                     />
                   ))}
                 </tr>
@@ -792,7 +805,11 @@ export function SpreadsheetRenderer({ fileUrl, fileName, fileType, citations, ac
         >
           <span className="material-icons-outlined" style={{ fontSize: '16px', color: 'var(--olive-9)' }}>info</span>
           <Text size="1" color="gray">
-            Showing first {displayedDataRows.toLocaleString()} of {totalDataRows.toLocaleString()} rows. Download to view all data.
+            {t('filePreview.spreadsheet.showingRows', {
+              count: totalDataRows,
+              shown: new Intl.NumberFormat(i18n.resolvedLanguage || i18n.language).format(displayedDataRows),
+              total: new Intl.NumberFormat(i18n.resolvedLanguage || i18n.language).format(totalDataRows),
+            })}
           </Text>
         </Flex>
       )}

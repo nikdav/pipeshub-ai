@@ -124,7 +124,8 @@
       "httpFallback": "The upload didn't go through. Please try again, and if it keeps failing, contact your admin.",
       "stalled": "PipesHub stopped responding before this upload finished. Please upload these files again.",
       "incomplete": "Upload did not complete"
-    }
+    },
+    "fileExceedsSizeLimit": "This file is larger than the {{maxFileSizeMB}} MB limit. Make it smaller or split it, then upload it again."
   },
   "onboarding": {
     "skipEmbeddingDefault": "Skip",
@@ -400,7 +401,14 @@
     "willBeDeleted": "will be deleted",
     "willBeReindexed": "will be reindexed",
     "reindexConfirm": "Reindex this {{type}}?",
-    "reindexDescription": "This will update the search index for this {{type}} and its contents."
+    "reindexDescription": "This will update the search index for this {{type}} and its contents.",
+    "bulkDeleteQuestion_one": "Delete {{itemCount}} item?",
+    "bulkDeleteQuestion_other": "Delete {{itemCount}} items?",
+    "bulkDeleteAction_one": "Delete {{itemCount}} Item",
+    "bulkDeleteAction_other": "Delete {{itemCount}} Items",
+    "bulkDeleteWarning": "This action cannot be undone. All selected items will be permanently deleted.",
+    "deleteItemDescription": "{{itemType}} will be deleted",
+    "deleteItemFromCollectionDescription": "{{itemType}} will be deleted from the collection"
   },
   "table": {
     "fileName": "File Name",
@@ -543,6 +551,7 @@
         "busyRetry_other": "PipesHub is busy right now. Please try again in {{count}} seconds."
       }
     },
+    "unknown": "Unknown",
     "connectorIconAlt": "{{type}} icon",
     "submit": "Submit"
   },
@@ -626,7 +635,11 @@
     "searchEmptyHint": "Couldn't find what you are searching for. Try searching for something else.",
     "adjustFiltersHint": "Select a different source or adjust your filters",
     "addFromCollectionsHint": "You can add your company files or folders from the Collections",
-    "addFilesHint": "Add your files or folders"
+    "addFilesHint": "Add your files or folders",
+    "pagination": {
+      "showing": "Showing {{start}}-{{end}} of {{total}} items",
+      "perPage": "{{limit}} per page"
+    }
   },
   "connectorTypes": {
     "slack": "Slack",
@@ -4158,7 +4171,82 @@
     "resizeCitations": "Resize citations panel",
     "resizePreview": "Resize file preview panel",
     "viewCitations": "View Citations",
-    "openNamedInSource": "Open {{name}} in source"
+    "openNamedInSource": "Open {{name}} in source",
+    "openFailedFallback": "We couldn't open a preview of this file. Try downloading it instead, or try again in a moment.",
+    "dialogDescription": "Preview pane for {{name}}. Document content, file details and related citations are shown here.",
+    "documentLoadFailed": {
+      "loading": "Loading document...",
+      "fileUnavailable": "File data not available",
+      "fetchFailed": "Failed to fetch document",
+      "emptyServerFile": "Received an empty file from the server.",
+      "emptyDocument": "Document is empty.",
+      "renderFailed": "Unable to render this document.",
+      "loadFailed": "Failed to load document"
+    },
+    "htmlLoadFailed": {
+      "loading": "Loading HTML...",
+      "noUrl": "File URL not available",
+      "fetchFailed": "Failed to fetch file content",
+      "loadFailed": "Failed to load file"
+    },
+    "imageLoadFailed": {
+      "noUrl": "Image file URL not available",
+      "failed": "Failed to load image",
+      "couldNotDisplay": "The image file could not be displayed",
+      "loading": "Loading image...",
+      "goToCitation": "Go to citation {{id}}"
+    },
+    "mediaUnavailable": {
+      "videoSourceUnavailable": "Video file URL not available",
+      "audioSourceUnavailable": "Audio file URL not available",
+      "videoUnsupported": "Your browser does not support video playback.",
+      "audioUnsupported": "Your browser does not support audio playback."
+    },
+    "pdfLoadFailed": {
+      "noUrl": "PDF file URL not available",
+      "unableToLoadPreview": "Unable to load preview for {{fileName}}",
+      "loading": "Loading PDF...",
+      "loadFailed": "Failed to load PDF file"
+    },
+    "unsupportedDocument": {
+      "legacyDoc": "This file is in legacy Word (.doc) format. In-browser preview is not supported here; download it to open in Word, or save a copy as .docx to preview in Pipeshub.",
+      "documentType": "Preview not available for this document type. Please download to view.",
+      "fileType": "Preview not available for this file type",
+      "openInBrowser": "Open in Browser"
+    },
+    "markdownLoadFailed": {
+      "loading": "Loading markdown...",
+      "noUrl": "File URL not available",
+      "fetchFailed": "Failed to fetch markdown content",
+      "loadFailed": "Failed to load file"
+    },
+    "spreadsheet": {
+      "emptyCell": "(Empty)",
+      "loading": "Loading spreadsheet...",
+      "noUrl": "File URL not available",
+      "fetchFailed": "Failed to fetch spreadsheet",
+      "loadFailed": "Failed to load spreadsheet",
+      "emptySheet": "This sheet is empty",
+      "showingRows_one": "Showing first {{shown}} of {{total}} row. Download to view all data.",
+      "showingRows_other": "Showing first {{shown}} of {{total}} rows. Download to view all data."
+    },
+    "switchVersion": {
+      "switchLabel": "Version {{version}}, switch version",
+      "versionLabel": "Version {{version}}",
+      "switchTitle": "Switch version",
+      "optionLabel": "Version {{version}}",
+      "latest": "latest"
+    },
+    "tabs": {
+      "preview": "Preview",
+      "fileDetails": "File Details"
+    },
+    "textLoadFailed": {
+      "loading": "Loading file...",
+      "noUrl": "File URL not available",
+      "fetchFailed": "Failed to fetch file content",
+      "loadFailed": "Failed to load file"
+    }
   },
   "agentBuilder": {
     "goBack": "Go back",
@@ -4592,7 +4680,8 @@
       }
     },
     "previewConversionFailed": "Preview conversion failed. You can still download the file.",
-    "missingRecordId": "Missing record id"
+    "missingRecordId": "Missing record id",
+    "chatAttachment": "Chat Attachment"
   },
   "oauthConsent": {
     "loading": "Loading authorization request…",
@@ -4932,6 +5021,13 @@
       "reindexFailedError": "Failed to reindex failed records",
       "manualIndexStart": "Indexing manual-indexing records…",
       "manualIndexError": "Failed to start manual indexing"
+    },
+    "toast": {
+      "renameFailed": "Failed to rename",
+      "folderRenamed": "Folder renamed successfully",
+      "collectionRenamed": "Collection renamed successfully",
+      "renameRefreshWarningTitle": "Couldn't update the list",
+      "renameRefreshWarningDescription": "The {{kind}} was renamed, but the list didn't refresh. Refresh the page to see the latest list."
     }
   },
   "reindexScope": {
@@ -5037,6 +5133,119 @@
         "authenticationFailed": "Authentication failed. Please try again or contact your administrator.",
         "rejected": "The server rejected the OAuth authentication."
       }
+    }
+  },
+  "knowledgeBase": {
+    "accessRevoked": "You no longer have access to this collection",
+    "bulkDeleteFailed": "Bulk delete failed",
+    "bulkDeleteFallback": "Failed to delete the selected items. Please try again.",
+    "bulkDeletePartial_one": "Deleted {{successCount}} item; {{failCount}} failed.",
+    "bulkDeletePartial_other": "Deleted {{successCount}} items; {{failCount}} failed.",
+    "bulkDeleteProgress_one": "Deleting {{count}} item…",
+    "bulkDeleteProgress_other": "Deleting {{count}} items…",
+    "bulkDeleteSuccess_one": "Successfully deleted {{count}} item",
+    "bulkDeleteSuccess_other": "Successfully deleted {{count}} items",
+    "bulkReindexFailed": "Bulk reindex failed",
+    "bulkReindexFallback": "Failed to reindex the selected items. Please try again.",
+    "bulkReindexPartial_one": "Reindexed {{successCount}} item; {{failCount}} failed.",
+    "bulkReindexPartial_other": "Reindexed {{successCount}} items; {{failCount}} failed.",
+    "bulkReindexProgress_one": "Reindexing {{count}} item…",
+    "bulkReindexProgress_other": "Reindexing {{count}} items…",
+    "bulkReindexSuccess_one": "Successfully reindexed {{count}} item",
+    "bulkReindexSuccess_other": "Successfully reindexed {{count}} items",
+    "collectionsLoadFailedTitle": "Failed to load Collections",
+    "createFolderFailed": "Failed to create folder",
+    "createFolderFallback": "We couldn't create it. Check the name and try again.",
+    "createFolderSuccess": "Folder created successfully",
+    "createFolderSuccessDescription": "\"{{name}}\" has been created",
+    "deleteFailed": "Failed to delete {{kind}}",
+    "deleteFailedTitle": "Delete failed",
+    "deleteFallback": "Failed to delete. Please try again.",
+    "deleteRefreshFailed": "Couldn't update the list",
+    "deleteRefreshFailedDescription": "The {{kind}} was deleted, but the list didn't refresh. Refresh the page to see the latest list.",
+    "deleteSuccess": "\"{{name}}\" deleted successfully",
+    "deleteSuccessDescription": "The {{kind}} has been deleted.",
+    "deleteSuccessTitle": "Deleted successfully",
+    "downloadFailed": "Failed to download",
+    "downloadFallback": "We couldn't download the file. Check your connection and try again.",
+    "errors": {
+      "folderCollectionIdRequired": "Collection ID is required to update this folder."
+    },
+    "folderDetails": {
+      "collection": "Collection",
+      "connector": "Connector",
+      "createdAt": "Created At",
+      "empty": "No folder details available",
+      "folder": "Folder",
+      "indexingStatus": "Indexing Status",
+      "metadata": "Metadata",
+      "origin": "Origin",
+      "permissions": "Permissions",
+      "recordGroup": "Record Group",
+      "recordType": "Record Type",
+      "title": "Folder Details",
+      "totalItems": "Total items",
+      "updatedAt": "Updated At",
+      "version": "Version"
+    },
+    "loadCollectionsFallback": "We couldn't load your collections. Check your connection, then select Retry.",
+    "loadItemsFailed": "Failed to load items. Please try again.",
+    "loadMoreConnectorsFailed": "Could not load more connectors",
+    "loadMoreFailedDescription": "Please try again or refresh the page.",
+    "loadMoreItemsFailed": "Could not load more items",
+    "loadRecordsFailed": "Failed to load records",
+    "moveFailed": "Failed to move item",
+    "moveFallback": "We couldn't move it. Please try again in a moment.",
+    "moveSuccess": "Item moved successfully",
+    "moveSuccessDescription": "\"{{name}}\" has been moved",
+    "reindex": {
+      "toast": {
+        "indexing": "Indexing…",
+        "reindexing": "Re-indexing…",
+        "queuedIndexing": "Successfully queued for indexing",
+        "queuedReindexing": "Successfully queued for reindexing"
+      }
+    },
+    "reindexFallback": "Failed to start reindexing. Please try again in a moment.",
+    "renameFailed": "Failed to rename",
+    "renameFallback": "We couldn't rename it. Please try again in a moment.",
+    "renameSuccess": "Renamed successfully",
+    "renameSuccessDescription": "Renamed to \"{{name}}\"",
+    "replaceFailed": "Failed to replace file",
+    "replaceFallback": "We couldn't replace the file. Please try again in a moment.",
+    "replaceFile": {
+      "allowedFileType": "You can only upload {{fileType}} files ({{extension}}) to replace this file",
+      "currentFile": "Current file",
+      "maxSize": "You can upload files up to the limit of {{maxFileSizeMB}} MB",
+      "name": "Name",
+      "supports": "Supports: Only {{fileType}}",
+      "title": "Replace File",
+      "upload": "Upload"
+    },
+    "replaceSuccess": "File replaced successfully",
+    "replaceSuccessDescription": "\"{{oldName}}\" has been replaced with \"{{newName}}\"",
+    "sidebarLoadFailedAppSectionsDescription": "Could not load app sections. Please refresh the page.",
+    "sidebarLoadFailedCollectionsDescription": "Could not load collections. Please refresh the page.",
+    "sidebarLoadFailedTitle": "Failed to load sidebar",
+    "upload": {
+      "addFiles": "Add files",
+      "addFolder": "Add a folder",
+      "collapseFolder": "Collapse folder",
+      "documentation": "Documentation",
+      "expandFolder": "Expand folder",
+      "fileCount_one": "{{count}} file",
+      "fileCount_other": "{{count}} files",
+      "fileLimitDescription": "Up to {{maxFileSizeMB}} MB per file; type and size are validated on upload",
+      "folderCount_one": "{{count}} folder",
+      "folderCount_other": "{{count}} folders",
+      "folderLimitDescription": "Each file is validated on upload (max {{maxFileSizeMB}} MB per file)",
+      "moreBelow": "More below",
+      "or": "OR",
+      "removeNamedItem": "Remove {{name}}",
+      "title": "Upload Data",
+      "upload": "Upload",
+      "uploadFiles": "Upload files",
+      "uploadFolders": "Upload folders"
     }
   },
   "keyboard": {

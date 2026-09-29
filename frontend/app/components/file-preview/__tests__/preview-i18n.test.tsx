@@ -1,0 +1,93 @@
+import React from 'react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { Theme } from '@radix-ui/themes';
+import { createInstance, type Resource } from 'i18next';
+import { I18nextProvider, initReactI18next } from 'react-i18next';
+import * as XLSX from 'xlsx';
+import { locales } from '@/lib/i18n/locales';
+import { SpreadsheetRenderer } from '../renderers/spreadsheet-renderer';
+import { TextRenderer } from '../renderers/text-renderer';
+
+vi.mock('@/app/components/theme-provider', () => ({
+  useThemeAppearance: () => ({ appearance: 'light' }),
+}));
+
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+
+async function translations() {
+  const i18n = createInstance();
+  await i18n.use(initReactI18next).init({
+    lng: 'en-US',
+    fallbackLng: 'en-US',
+    resources: Object.fromEntries(
+      Object.entries(locales).map(([language, catalogue]) => [language, { translation: catalogue }]),
+    ) as Resource,
+    interpolation: { escapeValue: false },
+  });
+  return i18n;
+}
+
+describe('preview language changes', () => {
+  it('retranslates a stored renderer fallback without fetching the document again', async () => {
+    const i18n = await translations();
+    const fetchMock = vi.fn().mockResolvedValue({ ok: false });
+    vi.stubGlobal('fetch', fetchMock);
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    render(
+      <I18nextProvider i18n={i18n}>
+        <Theme><TextRenderer fileUrl="/report.txt" fileName="report.txt" /></Theme>
+      </I18nextProvider>,
+    );
+
+    expect(await screen.findByText('Failed to fetch file content')).toBeTruthy();
+    await act(async () => { await i18n.changeLanguage('de-DE'); });
+
+    expect(screen.getByText('Dateiinhalt konnte nicht abgerufen werden')).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the selected sheet, workbook values, and single fetch across a language change', async () => {
+    const i18n = await translations();
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.aoa_to_sheet([['Heading', null], ['First sheet content', 'Second column content']]),
+      'First sheet',
+    );
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.aoa_to_sheet([['User heading'], ['User supplied value']]),
+      'Second sheet',
+    );
+    const bytes = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' }) as ArrayBuffer;
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      arrayBuffer: async () => bytes,
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(
+      <I18nextProvider i18n={i18n}>
+        <Theme>
+          <SpreadsheetRenderer fileUrl="/workbook.xlsx" fileName="workbook.xlsx" />
+        </Theme>
+      </I18nextProvider>,
+    );
+
+    expect(await screen.findByText('First sheet content')).toBeTruthy();
+    expect(screen.getByText('(Empty)')).toBeTruthy();
+    expect(screen.queryByText('Column 2')).toBeNull();
+    fireEvent.click(screen.getByText('Second sheet'));
+    expect(await screen.findByText('User supplied value')).toBeTruthy();
+    await act(async () => { await i18n.changeLanguage('de-DE'); });
+
+    expect(screen.getByText('User heading')).toBeTruthy();
+    expect(screen.getByText('User supplied value')).toBeTruthy();
+    fireEvent.click(screen.getByText('First sheet'));
+    expect(screen.getByText('(Leer)')).toBeTruthy();
+    expect(screen.queryByText('Spalte 2')).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});

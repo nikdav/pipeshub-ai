@@ -4,7 +4,8 @@ import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties } fr
 import { Box, Flex, Tabs, Text, Tooltip } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '@/lib/utils/formatters';
-import { formatFileSize } from '@/app/components/file-preview/utils';
+import { getIndexingStatusLabel } from '@/lib/utils/indexing-status-label';
+import { formatLocalizedBytes } from '@/lib/i18n/localized-text';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ConnectorIcon, resolveConnectorType } from '@/app/components/ui/ConnectorIcon';
 import type { RecordDetailsResponse } from '@/app/(main)/knowledge-base/types';
@@ -83,9 +84,9 @@ function permissionLabel(
   }
 }
 
-function formatTimestamp(ts: number | undefined | null): string | undefined {
+function formatTimestamp(ts: number | undefined | null, locale: string): string | undefined {
   if (ts === undefined || ts === null || Number.isNaN(ts)) return undefined;
-  return formatDate(ts);
+  return formatDate(ts, locale);
 }
 
 function readString(obj: Record<string, unknown> | null | undefined, key: string): string | undefined {
@@ -142,7 +143,8 @@ function indexingStatusColors(status: string | undefined): IndexingStatusColors 
 }
 
 function IndexingStatusChip({ status }: { status: string | undefined }) {
-  const label = humanizeIndexingStatus(status);
+  const { t } = useTranslation();
+  const label = getIndexingStatusLabel(status, t) ?? humanizeIndexingStatus(status);
   const { bg, text, border } = indexingStatusColors(status);
   return (
     <Box
@@ -190,11 +192,26 @@ function formatDisplayType(
   return translated === key ? record.recordType : translated;
 }
 
-function formatFileSizeDisplay(record: RecordDetailsResponse['record']): string | undefined {
+function formatFileSizeDisplay(
+  record: RecordDetailsResponse['record'],
+  locale: string,
+  t: (key: string) => string,
+): string | undefined {
   if (record.recordType !== 'FILE') return undefined;
   const raw = record.sizeInBytes ?? record.fileRecord?.sizeInBytes;
   if (raw === undefined || raw === null || Number.isNaN(raw) || raw < 0) return undefined;
-  return formatFileSize(raw);
+  return formatLocalizedBytes(raw, locale, {
+    base: 1024,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    units: [
+      t('units.bytes'),
+      t('units.kb'),
+      t('units.mb'),
+      t('units.gb'),
+      t('units.tb'),
+    ],
+  });
 }
 
 function primaryDocumentLabel(
@@ -363,14 +380,17 @@ const RECORD_METADATA_TAB_CONTENT_STYLE: CSSProperties = {
 };
 
 export function RecordMetadataPanel({ recordDetails }: RecordMetadataPanelProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
   const { record, knowledgeBase, folder, permissions, metadata } = recordDetails;
 
   const createdDate = formatTimestamp(
     record.sourceCreatedAtTimestamp ?? record.createdAtTimestamp,
+    locale,
   );
   const updatedDate = formatTimestamp(
     record.sourceLastModifiedTimestamp ?? record.updatedAtTimestamp,
+    locale,
   );
 
   const showReasonHint = shouldShowIndexingReasonTooltip(record.indexingStatus, record.reason);
@@ -381,7 +401,7 @@ export function RecordMetadataPanel({ recordDetails }: RecordMetadataPanelProps)
       ? `${record.connectorId.slice(0, 8)}…`
       : record.connectorId;
 
-  const fileSizeDisplay = formatFileSizeDisplay(record);
+  const fileSizeDisplay = formatFileSizeDisplay(record, locale, t);
   const typeDisplay = formatDisplayType(record, t);
   const primaryLabel = primaryDocumentLabel(record, t);
   const primaryValue = primaryDocumentValue(record);
@@ -555,7 +575,7 @@ export function RecordMetadataPanel({ recordDetails }: RecordMetadataPanelProps)
                   <Flex align="center" gap="2" style={{ minWidth: 0, flex: 1 }}>
                     <MaterialIcon name="attach_file" size={20} color="var(--accent-9)" />
                     <Text size="2" style={{ color: 'var(--olive-12)' }}>
-                      Chat Attachment
+                      {t('recordView.chatAttachment')}
                     </Text>
                   </Flex>
                 ) : (

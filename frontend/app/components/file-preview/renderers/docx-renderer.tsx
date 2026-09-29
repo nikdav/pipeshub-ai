@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import { Box, Flex, Text } from '@radix-ui/themes';
 import type { PreviewCitation } from '../types';
 import { useTextHighlighter } from '../use-text-highlighter';
@@ -43,8 +45,9 @@ const DOCX_PREVIEW_OPTIONS = {
 };
 
 export function DocxRenderer({ fileUrl, fileName: _fileName, fileBlob, citations, activeCitationId, onHighlightClick }: DocxRendererProps) {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedText | null>(null);
   const [documentReady, setDocumentReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const activeCitationIdRef = useRef<string | null | undefined>(activeCitationId);
@@ -64,7 +67,7 @@ export function DocxRenderer({ fileUrl, fileName: _fileName, fileBlob, citations
     const hasUrl = !!fileUrl && fileUrl.trim() !== '';
 
     if (!hasBlob && !hasUrl) {
-      setError('File data not available');
+      setError(localizedText('filePreview.documentLoadFailed.fileUnavailable'));
       setIsLoading(false);
       return;
     }
@@ -82,17 +85,17 @@ export function DocxRenderer({ fileUrl, fileName: _fileName, fileBlob, citations
         let arrayBuffer: ArrayBuffer;
         if (hasBlob) {
           if (fileBlob.size === 0) {
-            throw new Error('Received an empty file from the server.');
+            throw new Error('EMPTY_SERVER_FILE');
           }
           arrayBuffer = await fileBlob.arrayBuffer();
         } else {
           const response = await fetch(fileUrl);
-          if (!response.ok) throw new Error('Failed to fetch document');
+          if (!response.ok) throw new Error('FETCH_FAILED');
           arrayBuffer = await response.arrayBuffer();
         }
 
         if (!arrayBuffer || arrayBuffer.byteLength === 0) {
-          throw new Error('Document is empty.');
+          throw new Error('EMPTY_DOCUMENT');
         }
 
         if (cancelled || !containerRef.current) return;
@@ -114,9 +117,7 @@ export function DocxRenderer({ fileUrl, fileName: _fileName, fileBlob, citations
         const container = containerRef.current;
         const renderedNodes = container.childElementCount;
         if (renderedNodes === 0) {
-          throw new Error(
-            'Unable to render this document. It may not be a valid .docx file (legacy .doc files are not supported).'
-          );
+          throw new Error('RENDER_FAILED');
         }
 
         // Add IDs to elements for highlight targeting
@@ -135,7 +136,16 @@ export function DocxRenderer({ fileUrl, fileName: _fileName, fileBlob, citations
       } catch (err) {
         if (!cancelled) {
           console.error('Error loading docx file:', err);
-          setError(err instanceof Error ? err.message : 'Failed to load document');
+          const key = err instanceof Error && err.message === 'EMPTY_SERVER_FILE'
+            ? 'filePreview.documentLoadFailed.emptyServerFile'
+            : err instanceof Error && err.message === 'FETCH_FAILED'
+              ? 'filePreview.documentLoadFailed.fetchFailed'
+              : err instanceof Error && err.message === 'EMPTY_DOCUMENT'
+                ? 'filePreview.documentLoadFailed.emptyDocument'
+                : err instanceof Error && err.message === 'RENDER_FAILED'
+                  ? 'filePreview.documentLoadFailed.renderFailed'
+                  : 'filePreview.documentLoadFailed.loadFailed';
+          setError(localizedText(key));
         }
       } finally {
         if (!cancelled) setIsLoading(false);
@@ -296,7 +306,7 @@ export function DocxRenderer({ fileUrl, fileName: _fileName, fileBlob, citations
             padding: 'var(--space-6)',
           }}
         >
-          <Text size="2" color="gray">Loading document...</Text>
+          <Text size="2" color="gray">{t('filePreview.documentLoadFailed.loading')}</Text>
         </Flex>
       )}
 
@@ -317,7 +327,7 @@ export function DocxRenderer({ fileUrl, fileName: _fileName, fileBlob, citations
           <span className="material-icons-outlined" style={{ fontSize: '48px', color: 'var(--red-9)' }}>
             error_outline
           </span>
-          <Text size="3" weight="medium" color="red">{error}</Text>
+          <Text size="3" weight="medium" color="red">{resolveLocalizedText(error, t)}</Text>
         </Flex>
       )}
     </Box>

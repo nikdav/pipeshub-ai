@@ -84,9 +84,8 @@ import { kbSessionToken } from './utils/kb-session';
 import './utils/sidebar-session';
 import {
   getPrimaryReindexMenuLabelKey,
-  getReindexLoadingTitle,
   getReindexNodeFromHubItem,
-  getReindexSuccessTitle,
+  getReindexToastKind,
   needsReindexScopeModal,
   requiresForceReindexConfirmation,
   supportsBulkReindex,
@@ -109,7 +108,8 @@ import {
   resolvePreviewMimeAfterStream,
 } from '@/app/components/file-preview/utils';
 import { useDebouncedSearch } from './hooks/use-debounced-search';
-import { ErrorType, getUserFacingErrorMessage, isProcessedError } from '@/lib/api/api-error';
+import { ErrorType, getUserFacingErrorText, isProcessedError } from '@/lib/api/api-error';
+import { localizedText, type LocalizedTextValue, resolveLocalizedText } from '@/lib/i18n/localized-text';
 import { useUserPermission } from '@/config';
 
 function KnowledgeBasePageContent() {
@@ -480,7 +480,7 @@ function KnowledgeBasePageContent() {
     type: string;
     size?: number;
     isLoading?: boolean;
-    error?: string;
+    error?: LocalizedTextValue;
     recordDetails?: RecordDetailsResponse;
     webUrl?: string;
     previewRenderable?: boolean;
@@ -514,8 +514,8 @@ function KnowledgeBasePageContent() {
         await loadRootAppListFirstPage();
       } catch (error) {
         console.error('Error fetching app nodes:', error);
-        toast.error('Failed to load sidebar', {
-          description: 'Could not load app sections. Please refresh the page.',
+        toast.error(localizedText('knowledgeBase.sidebarLoadFailedTitle'), {
+          description: localizedText('knowledgeBase.sidebarLoadFailedAppSectionsDescription'),
         });
       } finally {
         setLoadingFlatCollections(false);
@@ -528,8 +528,8 @@ function KnowledgeBasePageContent() {
         await loadRootAppListFirstPage();
       } catch (error) {
         console.error('Error fetching KB app nodes:', error);
-        toast.error('Failed to load Collections', {
-          description: 'Could not load collections. Please refresh the page.',
+        toast.error(localizedText('knowledgeBase.collectionsLoadFailedTitle'), {
+          description: localizedText('knowledgeBase.sidebarLoadFailedCollectionsDescription'),
         });
         setAppNodes([]);
         setAppRootListPagination(null);
@@ -606,7 +606,7 @@ function KnowledgeBasePageContent() {
     } catch (error) {
       if (!stillSignedIn()) return;
       console.error('Error fetching all records:', error);
-      setAllRecordsTableError('Failed to load records');
+      setAllRecordsTableError(localizedText('knowledgeBase.loadRecordsFailed'));
     } finally {
       if (stillSignedIn()) setIsLoadingAllRecordsTable(false);
     }
@@ -686,18 +686,21 @@ function KnowledgeBasePageContent() {
     // Transform items with source display info
     const transformed = items.map((item) => ({
       ...item,
-      ...getSourceDisplay(item, kbLookup),
+      ...getSourceDisplay(item, kbLookup, {
+        collection: t('filter.collection'),
+        connector: t('filter.connector'),
+      }),
     }));
 
     // Apply client-side filters (size, date) since API may not support them
     return applyClientSideFilters(transformed, allRecordsFilter);
-  }, [isAllRecordsMode, allRecordsTableData, appNodes, appChildrenCache, allRecordsFilter]);
+  }, [isAllRecordsMode, allRecordsTableData, appNodes, appChildrenCache, allRecordsFilter, t]);
 
   // Shared 403 handler: clears stale table state, notifies user, refreshes the
   // sidebar tree, and navigates away from the now-inaccessible collection.
   const handleAccessRevoked = useCallback(async () => {
     clearTableData();
-    toast.error('You no longer have access to this collection');
+    toast.error(localizedText('knowledgeBase.accessRevoked'));
     await refreshKbTree();
     router.push('/knowledge-base');
   }, [clearTableData, refreshKbTree, router]);
@@ -844,7 +847,7 @@ function KnowledgeBasePageContent() {
           }
         } else {
           console.error('Failed to fetch table data:', error);
-          setTableDataError('Failed to load items. Please try again.');
+          setTableDataError(localizedText('knowledgeBase.loadItemsFailed'));
           setTableData(null);
         }
       } finally {
@@ -934,10 +937,7 @@ function KnowledgeBasePageContent() {
     } catch (error: unknown) {
       if (!stillSignedIn()) return;
       setTableDataError(
-        getUserFacingErrorMessage(
-          error,
-          "We couldn't load your collections. Check your connection, then select Retry.",
-        ),
+        getUserFacingErrorText(error, localizedText('knowledgeBase.loadCollectionsFallback')),
       );
     } finally {
       if (stillSignedIn()) setIsLoadingTableData(false);
@@ -1415,8 +1415,8 @@ function KnowledgeBasePageContent() {
           );
 
           // Show success toast
-          toast.success('Folder created successfully', {
-            description: `"${name.trim()}" has been created`,
+          toast.success(localizedText('knowledgeBase.createFolderSuccess'), {
+            description: localizedText('knowledgeBase.createFolderSuccessDescription', { name: name.trim() }),
           });
 
           // Close dialog and reset
@@ -1455,10 +1455,10 @@ function KnowledgeBasePageContent() {
         console.error('Failed to create folder:', error);
         setIsCreatingFolder(false);
 
-        toast.error('Failed to create folder', {
-          description: getUserFacingErrorMessage(
+        toast.error(localizedText('knowledgeBase.createFolderFailed'), {
+          description: getUserFacingErrorText(
             error,
-            "We couldn't create it. Check the name and try again.",
+            localizedText('knowledgeBase.createFolderFallback'),
           ),
         });
         // Keep dialog open so user can retry
@@ -1585,6 +1585,7 @@ function KnowledgeBasePageContent() {
           entry.storeId,
           `This file is larger than the ${maxFileSizeMB} MB limit. Make it smaller or split it, then upload it again.`,
           [FileRejectionReason.EXCEEDS_SIZE_LIMIT],
+          [localizedText('uploadProgress.fileExceedsSizeLimit', { maxFileSizeMB })],
         );
       }
 
@@ -1890,9 +1891,7 @@ function KnowledgeBasePageContent() {
       return;
     }
     shareAdapter.getSharedMembers().then((members) => {
-      setSharedMembers(
-        members.map((m) => ({ id: m.id, name: m.name, avatarUrl: m.avatarUrl, type: m.type }))
-      );
+      setSharedMembers(members);
     }).catch(async (error) => {
       setSharedMembers([]);
       // ProcessedError from apiClient interceptor has statusCode (not response.status)
@@ -1903,12 +1902,9 @@ function KnowledgeBasePageContent() {
     });
   }, [canManageSelectedKbSharing, handleAccessRevoked, shareAdapter]);
 
-  const getPreviewErrorMessage = useCallback(
-    (err: unknown): string =>
-      getUserFacingErrorMessage(
-        err,
-        "We couldn't open a preview of this file. Try downloading it instead, or try again in a moment.",
-      ),
+  const getPreviewErrorText = useCallback(
+    (err: unknown): LocalizedTextValue =>
+      getUserFacingErrorText(err, localizedText('filePreview.openFailedFallback')),
     [],
   );
 
@@ -2007,11 +2003,11 @@ function KnowledgeBasePageContent() {
         });
 
       } catch (error) {
-        const errorMessage = getPreviewErrorMessage(error);
-        console.error('Failed to load file preview:', { error, message: errorMessage });
+        const errorText = getPreviewErrorText(error);
+        console.error('Failed to load file preview:', { error, message: errorText });
         setPreviewFile(prev => prev ? {
           ...prev,
-          error: errorMessage,
+          error: errorText,
           isLoading: false,
         } : null);
       }
@@ -2099,16 +2095,16 @@ function KnowledgeBasePageContent() {
         });
 
       } catch (error) {
-        const errorMessage = getPreviewErrorMessage(error);
-        console.error('Failed to load file preview:', { error, message: errorMessage });
+        const errorText = getPreviewErrorText(error);
+        console.error('Failed to load file preview:', { error, message: errorText });
         setPreviewFile(prev => prev ? {
           ...prev,
-          error: errorMessage,
+          error: errorText,
           isLoading: false,
         } : null);
       }
     }
-  }, [getPreviewErrorMessage]);
+  }, [getPreviewErrorText]);
 
   // Handle item click (navigate into folder or open file)
   const handleItemClick = useCallback(
@@ -2195,14 +2191,14 @@ function KnowledgeBasePageContent() {
         }
       }
 
-      toast.success('Renamed successfully', {
-        description: `Renamed to "${newName}"`,
+      toast.success(localizedText('knowledgeBase.renameSuccess'), {
+        description: localizedText('knowledgeBase.renameSuccessDescription', { name: newName }),
       });
 
       await refreshData();
     } catch (error: unknown) {
-      toast.error('Failed to rename', {
-        description: getUserFacingErrorMessage(error, "We couldn't rename it. Please try again in a moment."),
+      toast.error(localizedText('knowledgeBase.renameFailed'), {
+        description: getUserFacingErrorText(error, localizedText('knowledgeBase.renameFallback')),
       });
       throw error;
     }
@@ -2232,14 +2228,14 @@ function KnowledgeBasePageContent() {
         });
       }
 
-      toast.success('Renamed successfully', {
-        description: `Renamed to "${newName}"`,
+      toast.success(localizedText('knowledgeBase.renameSuccess'), {
+        description: localizedText('knowledgeBase.renameSuccessDescription', { name: newName }),
       });
 
       await refreshData();
     } catch (error: unknown) {
-      toast.error('Failed to rename', {
-        description: getUserFacingErrorMessage(error, "We couldn't rename it. Please try again in a moment."),
+      toast.error(localizedText('knowledgeBase.renameFailed'), {
+        description: getUserFacingErrorText(error, localizedText('knowledgeBase.renameFallback')),
       });
       throw error;
     }
@@ -2274,7 +2270,12 @@ function KnowledgeBasePageContent() {
         subType: hubItem.subType,
       });
 
-      const toastId = toast.loading(getReindexLoadingTitle(reindexNode, depth, statusFilters), {
+      const toastKind = getReindexToastKind(reindexNode, depth, statusFilters);
+      const toastId = toast.loading(localizedText(
+        toastKind === 'indexing'
+          ? 'knowledgeBase.reindex.toast.indexing'
+          : 'knowledgeBase.reindex.toast.reindexing',
+      ), {
         icon: 'lap_timer',
       });
 
@@ -2291,14 +2292,18 @@ function KnowledgeBasePageContent() {
 
         toast.update(toastId, {
           variant: 'success',
-          title: getReindexSuccessTitle(reindexNode, depth, statusFilters),
+          title: localizedText(
+            toastKind === 'indexing'
+              ? 'knowledgeBase.reindex.toast.queuedIndexing'
+              : 'knowledgeBase.reindex.toast.queuedReindexing',
+          ),
         });
 
         await refreshData();
       } catch (error: unknown) {
-        const errorMessage = getUserFacingErrorMessage(
+        const errorMessage = getUserFacingErrorText(
           error,
-          "We couldn't start reindexing. Please try again in a moment.",
+          localizedText('knowledgeBase.reindexFallback'),
         );
 
         toast.update(toastId, {
@@ -2306,6 +2311,7 @@ function KnowledgeBasePageContent() {
           title: errorMessage,
           action: {
             label: 'Try Again',
+            labelText: localizedText('action.tryAgain'),
             icon: 'refresh',
             onClick: () => {
               toast.dismiss(toastId);
@@ -2492,8 +2498,8 @@ function KnowledgeBasePageContent() {
         );
 
         // Show success toast
-        toast.success('Item moved successfully', {
-          description: `"${itemToMove.name}" has been moved`,
+        toast.success(localizedText('knowledgeBase.moveSuccess'), {
+          description: localizedText('knowledgeBase.moveSuccessDescription', { name: itemToMove.name }),
         });
 
         // Close dialog and reset
@@ -2506,8 +2512,8 @@ function KnowledgeBasePageContent() {
       } catch (error: unknown) {
         console.error('Failed to move item:', error);
 
-        toast.error('Failed to move item', {
-          description: getUserFacingErrorMessage(error, "We couldn't move it. Please try again in a moment."),
+        toast.error(localizedText('knowledgeBase.moveFailed'), {
+          description: getUserFacingErrorText(error, localizedText('knowledgeBase.moveFallback')),
         });
       } finally {
         setIsMoving(false);
@@ -2539,8 +2545,11 @@ function KnowledgeBasePageContent() {
         );
 
         // Show success toast
-        toast.success('File replaced successfully', {
-          description: `"${item.name}" has been replaced with "${newFile.name}"`,
+        toast.success(localizedText('knowledgeBase.replaceSuccess'), {
+          description: localizedText('knowledgeBase.replaceSuccessDescription', {
+            oldName: item.name,
+            newName: newFile.name,
+          }),
         });
 
         // Close dialog
@@ -2552,10 +2561,10 @@ function KnowledgeBasePageContent() {
       } catch (error: unknown) {
         console.error('Failed to replace file:', error);
 
-        toast.error('Failed to replace file', {
-          description: getUserFacingErrorMessage(
+        toast.error(localizedText('knowledgeBase.replaceFailed'), {
+          description: getUserFacingErrorText(
             error,
-            "We couldn't replace the file. Please try again in a moment.",
+            localizedText('knowledgeBase.replaceFallback'),
           ),
         });
       } finally {
@@ -2570,10 +2579,10 @@ function KnowledgeBasePageContent() {
     try {
       await KnowledgeBaseApi.streamDownloadRecord(item.id, item.name);
     } catch (error: unknown) {
-      toast.error('Failed to download', {
-        description: getUserFacingErrorMessage(
+      toast.error(localizedText('knowledgeBase.downloadFailed'), {
+        description: getUserFacingErrorText(
           error,
-          "We couldn't download the file. Check your connection and try again.",
+          localizedText('knowledgeBase.downloadFallback'),
         ),
       });
     }
@@ -2614,6 +2623,9 @@ function KnowledgeBasePageContent() {
     const deletedNodeType = itemToDelete.nodeType;
     const kind =
       deletedNodeType === 'folder' ? 'folder' : deletedNodeType === 'record' ? 'file' : 'collection';
+    const localizedKind = localizedText(
+      kind === 'folder' ? 'itemType.folder' : kind === 'file' ? 'itemType.file' : 'itemType.collection',
+    );
     setIsDeleting(true);
     try {
       await KnowledgeBaseApi.deleteNode({
@@ -2622,20 +2634,22 @@ function KnowledgeBasePageContent() {
         rootKbId: itemToDelete.rootKbId,
       });
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } }; message?: string };
-      toast.error(err?.response?.data?.message || `Failed to delete ${kind}`);
+      toast.error(getUserFacingErrorText(
+        error,
+        localizedText('knowledgeBase.deleteFailed', { kind: localizedKind }),
+      ));
       setIsDeleting(false);
       return;
     }
-    toast.success(`"${itemToDelete.name}" deleted successfully`);
+    toast.success(localizedText('knowledgeBase.deleteSuccess', { name: itemToDelete.name }));
     setIsDeleteDialogOpen(false);
     setItemToDelete(null);
     try {
       await refreshDataAfterDelete([deletedId]);
     } catch (error: unknown) {
       console.error('Failed to refresh after delete:', error);
-      toast.warning("Couldn't update the list", {
-        description: `The ${kind} was deleted, but the list didn't refresh. Refresh the page to see the latest list.`,
+      toast.warning(localizedText('knowledgeBase.deleteRefreshFailed'), {
+        description: localizedText('knowledgeBase.deleteRefreshFailedDescription', { kind: localizedKind }),
       });
     } finally {
       setIsDeleting(false);
@@ -2727,22 +2741,22 @@ function KnowledgeBasePageContent() {
     // Show "Results" when actively searching
     const activeSearchQuery = isAllRecordsMode ? allRecordsSearchQuery : searchQuery;
     if (activeSearchQuery && activeSearchQuery.trim()) {
-      return 'Results';
+      return t('chat.results');
     }
 
     if (isAllRecordsMode) {
       if (allRecordsSidebarSelection.type === 'all') {
-        return 'All';
+        return t('nav.all');
       } else if (allRecordsSidebarSelection.type === 'collection') {
         return allRecordsSidebarSelection.name;
       } else if (allRecordsSidebarSelection.type === 'connector') {
         return allRecordsSidebarSelection.itemName || allRecordsSidebarSelection.connectorType;
       } else if (allRecordsSidebarSelection.type === 'explorer') {
-        return allRecordsTableData?.currentNode?.name || 'All Records';
+        return allRecordsTableData?.currentNode?.name || t('nav.allRecords');
       }
-      return 'All';
+      return t('nav.all');
     }
-    return tableData?.currentNode?.name || 'Collections';
+    return tableData?.currentNode?.name || t('nav.collections');
   }, [
     isAllRecordsMode,
     allRecordsSidebarSelection,
@@ -2750,18 +2764,19 @@ function KnowledgeBasePageContent() {
     allRecordsSearchQuery,
     searchQuery,
     allRecordsTableData?.currentNode?.name,
+    t,
   ]);
 
   // All Records mode: Prepend "All Records" root breadcrumb
   const allRecordsBreadcrumbs = useMemo<Breadcrumb[]>(() => {
     const rootCrumb: Breadcrumb = {
       id: 'all-records-root',
-      name: 'All Records',
+      name: t('nav.allRecords'),
       nodeType: 'all-records',
     };
     const apiBreadcrumbs = allRecordsTableData?.breadcrumbs || [];
     return [rootCrumb, ...apiBreadcrumbs];
-  }, [allRecordsTableData?.breadcrumbs]);
+  }, [allRecordsTableData?.breadcrumbs, t]);
 
   return (
     <Flex style={{ height: '100%', width: '100%' }}>
@@ -2818,7 +2833,7 @@ function KnowledgeBasePageContent() {
                 value={isAllRecordsMode ? allRecordsSearchQuery : searchQuery}
                 onChange={handleSearchChange}
                 onClose={handleSearchClose}
-                placeholder="eg: Sales Docs"
+                placeholder={t('kb.searchPlaceholder')}
               />
             )}
 
@@ -3023,7 +3038,7 @@ function KnowledgeBasePageContent() {
             previewRenderable: previewFile.previewRenderable,
           }}
           isLoading={previewFile.isLoading}
-          error={previewFile.error}
+          error={previewFile.error ? resolveLocalizedText(previewFile.error, t) : undefined}
           recordDetails={previewFile.recordDetails}
           onToggleFullscreen={() => setPreviewMode('fullscreen')}
           onOpenChange={(open) => {
@@ -3053,7 +3068,7 @@ function KnowledgeBasePageContent() {
             previewRenderable: previewFile.previewRenderable,
           }}
           isLoading={previewFile.isLoading}
-          error={previewFile.error}
+          error={previewFile.error ? resolveLocalizedText(previewFile.error, t) : undefined}
           recordDetails={previewFile.recordDetails}
           onExitFullscreen={() => setPreviewMode('sidebar')}
           onClose={() => {
@@ -3091,14 +3106,7 @@ function KnowledgeBasePageContent() {
           onShareSuccess={() => {
             // Re-fetch permissions to update avatar stack
             shareAdapter.getSharedMembers().then((members) => {
-              setSharedMembers(
-                members.map((m) => ({
-                  id: m.id,
-                  name: m.name,
-                  avatarUrl: m.avatarUrl,
-                  type: m.type,
-                }))
-              );
+              setSharedMembers(members);
             }).catch(() => {
               // Access may have been revoked — clear stale members silently
               setSharedMembers([]);

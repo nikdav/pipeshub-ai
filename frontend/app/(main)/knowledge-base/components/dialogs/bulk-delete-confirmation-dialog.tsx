@@ -62,15 +62,15 @@ export function BulkDeleteConfirmationDialog({
         }}
       >
         <VisuallyHidden>
-          <Dialog.Title>Delete Confirmation</Dialog.Title>
+          <Dialog.Title>{t('dialog.deleteConfirmation')}</Dialog.Title>
         </VisuallyHidden>
         <Flex direction="column" gap="4">
           <Flex direction="column" gap="1">
             <Text size="5" weight="bold">
-              Delete {itemCount} {itemCount === 1 ? 'item' : 'items'}?
+              {t('dialog.bulkDeleteQuestion', { count: itemCount, itemCount })}
             </Text>
             <Text size="2" style={{ color: 'var(--slate-11)' }}>
-              This action cannot be undone. All selected items will be permanently deleted.
+              {t('dialog.bulkDeleteWarning')}
             </Text>
           </Flex>
 
@@ -104,7 +104,7 @@ export function BulkDeleteConfirmationDialog({
               loading={isDeleting}
               loadingLabel={t('action.deleting')}
             >
-              {`Delete ${itemCount} ${itemCount === 1 ? 'Item' : 'Items'}`}
+              {t('dialog.bulkDeleteAction', { count: itemCount, itemCount })}
             </LoadingButton>
           </Flex>
         </Flex>

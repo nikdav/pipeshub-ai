@@ -2,6 +2,8 @@ import React from 'react';
 import { vi } from 'vitest';
 import { act, render, screen, within } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
+import { I18nextProvider } from 'react-i18next';
+import testI18n from '@/lib/__tests__/test-i18n';
 import type { KnowledgeHubApiResponse, KnowledgeHubNode, NodePermissions } from '../types';
 
 export const OWNER_PERMISSIONS: NodePermissions = {
@@ -126,7 +128,11 @@ export function createNavigation() {
 }
 
 export function renderInTheme(ui: React.ReactElement) {
-  return render(<Theme>{ui}</Theme>);
+  return render(
+    <I18nextProvider i18n={testI18n}>
+      <Theme>{ui}</Theme>
+    </I18nextProvider>,
+  );
 }
 
 export function row(name: string) {

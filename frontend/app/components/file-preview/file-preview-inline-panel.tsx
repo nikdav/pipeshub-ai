@@ -91,8 +91,14 @@ export function FilePreviewInlinePanel({
     usePdfZoom(file.id, file.url, initialPage);
 
   const tabs = useMemo(
-    () => getTabsForSource(source, { hideFileDetails }),
-    [source, hideFileDetails],
+    () => getTabsForSource(source, {
+      hideFileDetails,
+      labels: {
+        preview: t('filePreview.tabs.preview'),
+        fileDetails: t('filePreview.tabs.fileDetails'),
+      },
+    }),
+    [source, hideFileDetails, t],
   );
 
   const paginationVisibility = shouldShowPagination(
@@ -461,6 +467,7 @@ export function FilePreviewInlinePanel({
                   onClick={handlePrevPage}
                   disabled={currentPage === 1}
                   style={{ width: '24px', height: '24px', padding: 0 }}
+                  aria-label={t('common.previous')}
                 >
                   <MaterialIcon name="chevron_left" size={ICON_SIZES.SECONDARY} />
                 </IconButton>
@@ -485,6 +492,7 @@ export function FilePreviewInlinePanel({
                   onClick={handleNextPage}
                   disabled={totalPages === null || currentPage === totalPages}
                   style={{ width: '24px', height: '24px', padding: 0 }}
+                  aria-label={t('common.next')}
                 >
                   <MaterialIcon name="chevron_right" size={ICON_SIZES.SECONDARY} />
                 </IconButton>

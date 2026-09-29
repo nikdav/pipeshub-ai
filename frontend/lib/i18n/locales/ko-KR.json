@@ -10,6 +10,13 @@
       "reindexFailedError": "실패한 레코드의 다시 인덱싱에 실패했습니다",
       "manualIndexStart": "수동 인덱싱 레코드를 인덱싱하는 중…",
       "manualIndexError": "수동 인덱싱 시작에 실패했습니다"
+    },
+    "toast": {
+      "renameFailed": "이름을 바꾸지 못했습니다",
+      "folderRenamed": "폴더 이름을 변경했습니다",
+      "collectionRenamed": "컬렉션 이름을 변경했습니다",
+      "renameRefreshWarningTitle": "목록을 업데이트하지 못했습니다",
+      "renameRefreshWarningDescription": "{{kind}} 이름을 변경했지만 목록이 새로고침되지 않았습니다. 최신 목록을 보려면 페이지를 새로고침하세요."
     }
   },
   "resetPassword": {
@@ -137,7 +144,8 @@
       "httpFallback": "업로드가 완료되지 않았습니다. 다시 시도하고, 계속 실패하면 관리자에게 문의하세요.",
       "stalled": "이 파일 업로드가 완료되기 전에 PipesHub의 응답이 중단되었습니다. 파일을 다시 업로드하세요.",
       "incomplete": "업로드가 완료되지 않았습니다"
-    }
+    },
+    "fileExceedsSizeLimit": "이 파일은 {{maxFileSizeMB}}MB 제한보다 큽니다. 파일 크기를 줄이거나 나눈 다음 다시 업로드하세요."
   },
   "onboarding": {
     "skipEmbeddingDefault": "건너뛰기",
@@ -412,7 +420,12 @@
     "willBeDeleted": "이(가) 삭제됩니다",
     "willBeReindexed": "이(가) 다시 인덱싱됩니다",
     "reindexConfirm": "이 {{type}}을(를) 다시 인덱싱하시겠습니까?",
-    "reindexDescription": "이 작업은 이 {{type}} 및 그 내용의 검색 인덱스를 업데이트합니다."
+    "reindexDescription": "이 작업은 이 {{type}} 및 그 내용의 검색 인덱스를 업데이트합니다.",
+    "bulkDeleteQuestion_other": "{{itemCount}}개 항목 삭제",
+    "bulkDeleteAction_other": "{{itemCount}}개 항목 삭제",
+    "bulkDeleteWarning": "이 작업은 취소할 수 없습니다. 선택한 모든 항목이 영구적으로 삭제됩니다.",
+    "deleteItemDescription": "{{itemType}} 항목이 삭제됩니다",
+    "deleteItemFromCollectionDescription": "{{itemType}} 항목이 컬렉션에서 삭제됩니다"
   },
   "table": {
     "fileName": "파일 이름",
@@ -553,6 +566,7 @@
         "busyRetry_other": "PipesHub가 현재 바쁩니다. {{count}}초 후 다시 시도하세요."
       }
     },
+    "unknown": "알 수 없음",
     "connectorIconAlt": "{{type}} 아이콘",
     "submit": "제출"
   },
@@ -641,7 +655,11 @@
     "searchEmptyHint": "찾으시는 항목이 없습니다. 다른 검색어로 시도해 보세요.",
     "adjustFiltersHint": "다른 소스를 선택하거나 필터를 조정하세요",
     "addFromCollectionsHint": "컬렉션에서 회사 파일이나 폴더를 추가할 수 있습니다",
-    "addFilesHint": "파일이나 폴더를 추가하세요"
+    "addFilesHint": "파일이나 폴더를 추가하세요",
+    "pagination": {
+      "showing": "{{total}}개 중 {{start}}–{{end}}개 표시",
+      "perPage": "페이지당 {{limit}}개"
+    }
   },
   "connectorTypes": {
     "slack": "Slack",
@@ -4144,7 +4162,81 @@
     "resizeCitations": "인용 패널 크기 조정",
     "resizePreview": "파일 미리보기 패널 크기 조정",
     "viewCitations": "인용 보기",
-    "openNamedInSource": "{{name}}을(를) 원본에서 열기"
+    "openNamedInSource": "{{name}}을(를) 원본에서 열기",
+    "openFailedFallback": "이 파일의 미리보기를 열지 못했습니다. 대신 다운로드하거나 잠시 후 다시 시도하세요.",
+    "dialogDescription": "{{name}}의 미리보기 창입니다. 여기에서 문서 내용, 파일 세부정보 및 관련 인용을 확인할 수 있습니다.",
+    "documentLoadFailed": {
+      "loading": "문서를 불러오는 중...",
+      "fileUnavailable": "파일 데이터를 사용할 수 없습니다",
+      "fetchFailed": "문서를 가져오지 못했습니다",
+      "emptyServerFile": "서버에서 빈 파일을 받았습니다.",
+      "emptyDocument": "문서가 비어 있습니다.",
+      "renderFailed": "문서를 표시할 수 없습니다.",
+      "loadFailed": "문서를 불러오지 못했습니다"
+    },
+    "htmlLoadFailed": {
+      "loading": "HTML을 불러오는 중...",
+      "noUrl": "파일 URL을 사용할 수 없습니다",
+      "fetchFailed": "파일 콘텐츠를 가져오지 못했습니다",
+      "loadFailed": "파일을 불러오지 못했습니다"
+    },
+    "imageLoadFailed": {
+      "noUrl": "이미지 파일 URL을 사용할 수 없습니다",
+      "failed": "이미지를 불러오지 못했습니다",
+      "couldNotDisplay": "이미지 파일을 표시할 수 없습니다",
+      "loading": "이미지를 불러오는 중...",
+      "goToCitation": "인용 {{id}}(으)로 이동"
+    },
+    "mediaUnavailable": {
+      "videoSourceUnavailable": "동영상 파일 URL을 사용할 수 없습니다",
+      "audioSourceUnavailable": "오디오 파일 URL을 사용할 수 없습니다",
+      "videoUnsupported": "브라우저에서 동영상 재생을 지원하지 않습니다.",
+      "audioUnsupported": "브라우저에서 오디오 재생을 지원하지 않습니다."
+    },
+    "pdfLoadFailed": {
+      "noUrl": "PDF 파일 URL을 사용할 수 없습니다",
+      "unableToLoadPreview": "{{fileName}}의 미리보기를 불러올 수 없습니다",
+      "loading": "PDF를 불러오는 중...",
+      "loadFailed": "PDF 파일을 불러오지 못했습니다"
+    },
+    "unsupportedDocument": {
+      "legacyDoc": "이 파일은 이전 Word(.doc) 형식입니다. 여기에서는 브라우저 미리보기를 지원하지 않습니다. Word에서 열려면 다운로드하거나, .docx 사본으로 저장해 Pipeshub에서 미리보기를 확인하세요.",
+      "documentType": "이 문서 형식은 미리보기를 사용할 수 없습니다. 보려면 다운로드하세요.",
+      "fileType": "이 파일 형식은 미리보기를 사용할 수 없습니다",
+      "openInBrowser": "브라우저에서 열기"
+    },
+    "markdownLoadFailed": {
+      "loading": "마크다운을 불러오는 중...",
+      "noUrl": "파일 URL을 사용할 수 없습니다",
+      "fetchFailed": "마크다운 콘텐츠를 가져오지 못했습니다",
+      "loadFailed": "파일을 불러오지 못했습니다"
+    },
+    "spreadsheet": {
+      "emptyCell": "(비어 있음)",
+      "loading": "스프레드시트를 불러오는 중...",
+      "noUrl": "파일 URL을 사용할 수 없습니다",
+      "fetchFailed": "스프레드시트를 가져오지 못했습니다",
+      "loadFailed": "스프레드시트를 불러오지 못했습니다",
+      "emptySheet": "이 시트는 비어 있습니다",
+      "showingRows_other": "전체 데이터를 보려면 다운로드하세요. {{total}}개 행 중 처음 {{shown}}개 표시"
+    },
+    "switchVersion": {
+      "switchLabel": "버전 {{version}}, 버전 전환",
+      "versionLabel": "버전 {{version}}",
+      "switchTitle": "버전 전환",
+      "optionLabel": "버전 {{version}}",
+      "latest": "최신"
+    },
+    "tabs": {
+      "preview": "미리보기",
+      "fileDetails": "파일 세부정보"
+    },
+    "textLoadFailed": {
+      "loading": "파일을 불러오는 중...",
+      "noUrl": "파일 URL을 사용할 수 없습니다",
+      "fetchFailed": "파일 콘텐츠를 가져오지 못했습니다",
+      "loadFailed": "파일을 불러오지 못했습니다"
+    }
   },
   "agentBuilder": {
     "goBack": "뒤로 가기",
@@ -4576,7 +4668,8 @@
       }
     },
     "previewConversionFailed": "미리보기 변환에 실패했습니다. 파일은 계속 다운로드할 수 있습니다.",
-    "missingRecordId": "레코드 ID 없음"
+    "missingRecordId": "레코드 ID 없음",
+    "chatAttachment": "채팅 첨부 파일"
   },
   "oauthConsent": {
     "loading": "승인 요청을 불러오는 중…",
@@ -5000,6 +5093,111 @@
         "authenticationFailed": "인증에 실패했습니다. 다시 시도하거나 관리자에게 문의해 주세요.",
         "rejected": "서버에서 OAuth 인증을 거부했습니다."
       }
+    }
+  },
+  "knowledgeBase": {
+    "accessRevoked": "이 컬렉션에 더 이상 액세스할 수 없습니다",
+    "bulkDeleteFailed": "항목을 일괄 삭제하지 못했습니다",
+    "bulkDeleteFallback": "선택한 항목을 삭제하지 못했습니다. 다시 시도하세요.",
+    "bulkDeletePartial_other": "{{successCount}}개 항목 삭제됨, {{failCount}}개 실패",
+    "bulkDeleteProgress_other": "{{count}}개 항목 삭제 중…",
+    "bulkDeleteSuccess_other": "{{count}}개 항목을 삭제했습니다",
+    "bulkReindexFailed": "선택 항목을 일괄 색인하지 못했습니다",
+    "bulkReindexFallback": "선택한 항목의 색인을 다시 생성하지 못했습니다. 다시 시도하세요.",
+    "bulkReindexPartial_other": "{{successCount}}개 항목의 색인 재생성, {{failCount}}개 실패",
+    "bulkReindexProgress_other": "{{count}}개 항목의 색인을 다시 생성하는 중…",
+    "bulkReindexSuccess_other": "{{count}}개 항목의 색인을 다시 생성했습니다",
+    "collectionsLoadFailedTitle": "컬렉션을 불러오지 못했습니다",
+    "createFolderFailed": "폴더를 만들지 못했습니다",
+    "createFolderFallback": "폴더를 만들지 못했습니다. 이름을 확인한 후 다시 시도하세요.",
+    "createFolderSuccess": "폴더를 만들었습니다",
+    "createFolderSuccessDescription": "\"{{name}}\"을(를) 만들었습니다",
+    "deleteFailed": "{{kind}}을(를) 삭제하지 못했습니다",
+    "deleteFailedTitle": "삭제 실패",
+    "deleteFallback": "삭제하지 못했습니다. 다시 시도하세요.",
+    "deleteRefreshFailed": "목록을 업데이트하지 못했습니다",
+    "deleteRefreshFailedDescription": "{{kind}}을(를) 삭제했지만 목록이 새로고침되지 않았습니다. 최신 목록을 보려면 페이지를 새로고침하세요.",
+    "deleteSuccess": "\"{{name}}\"을(를) 삭제했습니다",
+    "deleteSuccessDescription": "{{kind}}을(를) 삭제했습니다.",
+    "deleteSuccessTitle": "삭제했습니다",
+    "downloadFailed": "다운로드하지 못했습니다",
+    "downloadFallback": "파일을 다운로드하지 못했습니다. 연결을 확인하고 다시 시도하세요.",
+    "errors": {
+      "folderCollectionIdRequired": "이 폴더를 업데이트하려면 컬렉션 ID가 필요합니다."
+    },
+    "folderDetails": {
+      "collection": "컬렉션",
+      "connector": "커넥터",
+      "createdAt": "생성 날짜",
+      "empty": "사용할 수 있는 폴더 세부정보가 없습니다",
+      "folder": "폴더",
+      "indexingStatus": "색인 생성 상태",
+      "metadata": "메타데이터",
+      "origin": "출처",
+      "permissions": "권한",
+      "recordGroup": "레코드 그룹",
+      "recordType": "레코드 유형",
+      "title": "폴더 세부정보",
+      "totalItems": "전체 항목 수",
+      "updatedAt": "업데이트 날짜",
+      "version": "버전"
+    },
+    "loadCollectionsFallback": "컬렉션을 불러오지 못했습니다. 연결 상태를 확인한 후 다시 시도하세요.",
+    "loadItemsFailed": "항목을 불러오지 못했습니다. 다시 시도하세요.",
+    "loadMoreConnectorsFailed": "커넥터를 더 불러오지 못했습니다",
+    "loadMoreFailedDescription": "다시 시도하거나 페이지를 새로고침하세요.",
+    "loadMoreItemsFailed": "항목을 더 불러오지 못했습니다",
+    "loadRecordsFailed": "레코드를 불러오지 못했습니다",
+    "moveFailed": "항목을 이동하지 못했습니다",
+    "moveFallback": "항목을 이동하지 못했습니다. 잠시 후 다시 시도하세요.",
+    "moveSuccess": "항목을 이동했습니다",
+    "moveSuccessDescription": "\"{{name}}\"을(를) 이동했습니다",
+    "reindex": {
+      "toast": {
+        "indexing": "색인 생성 중…",
+        "reindexing": "색인을 다시 생성하는 중…",
+        "queuedIndexing": "색인 생성 대기열에 추가했습니다",
+        "queuedReindexing": "색인 재생성 대기열에 추가했습니다"
+      }
+    },
+    "reindexFallback": "색인 재생성을 시작하지 못했습니다. 잠시 후 다시 시도하세요.",
+    "renameFailed": "이름을 바꾸지 못했습니다",
+    "renameFallback": "이름을 바꾸지 못했습니다. 잠시 후 다시 시도하세요.",
+    "renameSuccess": "이름을 변경했습니다",
+    "renameSuccessDescription": "\"{{name}}\"(으)로 이름을 변경했습니다",
+    "replaceFailed": "파일을 바꾸지 못했습니다",
+    "replaceFallback": "파일을 바꾸지 못했습니다. 잠시 후 다시 시도하세요.",
+    "replaceFile": {
+      "allowedFileType": "이 파일을 바꾸려면 {{fileType}} 형식의 파일({{extension}})만 업로드할 수 있습니다",
+      "currentFile": "현재 파일",
+      "maxSize": "최대 {{maxFileSizeMB}}MB까지 파일을 업로드할 수 있습니다",
+      "name": "이름",
+      "supports": "지원 형식: {{fileType}}만",
+      "title": "파일 바꾸기",
+      "upload": "업로드"
+    },
+    "replaceSuccess": "파일을 바꿨습니다",
+    "replaceSuccessDescription": "\"{{oldName}}\" 파일을 \"{{newName}}\" 파일로 바꿨습니다",
+    "sidebarLoadFailedAppSectionsDescription": "앱 섹션을 불러오지 못했습니다. 페이지를 새로고침하세요.",
+    "sidebarLoadFailedCollectionsDescription": "컬렉션을 불러오지 못했습니다. 페이지를 새로고침하세요.",
+    "sidebarLoadFailedTitle": "사이드바를 불러오지 못했습니다",
+    "upload": {
+      "addFiles": "파일 추가",
+      "addFolder": "폴더 추가",
+      "collapseFolder": "폴더 접기",
+      "documentation": "문서",
+      "expandFolder": "폴더 펼치기",
+      "fileCount_other": "{{count}}개 파일",
+      "fileLimitDescription": "파일당 최대 {{maxFileSizeMB}}MB까지 업로드할 수 있습니다. 업로드할 때 파일 형식과 크기를 확인합니다.",
+      "folderCount_other": "{{count}}개 폴더",
+      "folderLimitDescription": "파일은 업로드할 때마다 확인됩니다(파일당 최대 {{maxFileSizeMB}}MB).",
+      "moreBelow": "아래에 더 있음",
+      "or": "또는",
+      "removeNamedItem": "{{name}} 삭제",
+      "title": "데이터 업로드",
+      "upload": "업로드",
+      "uploadFiles": "파일 업로드",
+      "uploadFolders": "폴더 업로드"
     }
   },
   "keyboard": {

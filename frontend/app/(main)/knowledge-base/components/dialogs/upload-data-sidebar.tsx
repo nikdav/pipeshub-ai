@@ -6,6 +6,19 @@ import { LoadingButton } from '@/app/components/ui/loading-button';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { FileIcon } from '@/app/components/ui/file-icon';
 import { useUploadLimits } from '@/lib/hooks/use-upload-limits';
+import { useTranslation } from 'react-i18next';
+import { formatLocalizedBytes } from '@/lib/i18n/localized-text';
+
+function useUploadBytesFormatter() {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
+  return useCallback(
+    (bytes: number) => formatLocalizedBytes(bytes, locale, {
+      units: [t('units.bytes'), t('units.kb'), t('units.mb')],
+    }),
+    [locale, t],
+  );
+}
 
 function createUploadItemId(prefix: 'file' | 'folder'): string {
   const cryptoApi = typeof globalThis !== 'undefined' ? globalThis.crypto : undefined;
@@ -61,6 +74,7 @@ interface DropZoneProps {
 }
 
 function DropZone({ type, onDrop, isEmpty, compact = false }: DropZoneProps) {
+  const { t } = useTranslation();
   const [isDragOver, setIsDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -233,7 +247,7 @@ function DropZone({ type, onDrop, isEmpty, compact = false }: DropZoneProps) {
           variant="solid"
           size="1"
           onClick={handleClick}
-          aria-label={type === 'file' ? 'Add files' : 'Add a folder'}
+          aria-label={type === 'file' ? t('knowledgeBase.upload.addFiles') : t('knowledgeBase.upload.addFolder')}
           data-testid={`upload-add-${type}-compact`}
           style={{
             cursor: 'pointer',
@@ -291,10 +305,10 @@ function DropZone({ type, onDrop, isEmpty, compact = false }: DropZoneProps) {
         {isEmpty && (
           <>
             <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-              Upload
+              {t('knowledgeBase.upload.upload')}
             </Text>
             <Text size="1" weight="light" style={{ color: 'var(--slate-12)' }}>
-              {type === 'file' ? 'Add files' : 'Add a folder'}
+              {type === 'file' ? t('knowledgeBase.upload.addFiles') : t('knowledgeBase.upload.addFolder')}
             </Text>
           </>
         )}
@@ -314,6 +328,7 @@ interface ScrollableListProps {
 }
 
 function ScrollableList({ children }: ScrollableListProps) {
+  const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [showTopFade, setShowTopFade] = useState(false);
   const [showBottomFade, setShowBottomFade] = useState(false);
@@ -419,7 +434,7 @@ function ScrollableList({ children }: ScrollableListProps) {
                 border: '1px solid var(--olive-5)',
               }}
             >
-              More below
+              {t('knowledgeBase.upload.moreBelow')}
             </Text>
           </Flex>
         </>
@@ -434,7 +449,10 @@ interface UploadedItemProps {
 }
 
 function UploadedItem({ item, onRemove }: UploadedItemProps) {
+  const { t } = useTranslation();
+  const formatBytes = useUploadBytesFormatter();
   const [isHovered, setIsHovered] = useState(false);
+  const fileCount = item.filesWithPaths?.length ?? item.files?.length ?? 0;
 
   return (
     <Flex
@@ -485,7 +503,7 @@ function UploadedItem({ item, onRemove }: UploadedItemProps) {
           </Text>
           <Text size="1" style={{ color: 'var(--slate-9)' }}>
             {item.type === 'folder'
-              ? `${item.filesWithPaths?.length ?? 0} files`
+              ? t('knowledgeBase.upload.fileCount', { count: fileCount })
               : formatBytes(item.size)}
           </Text>
         </Flex>
@@ -496,7 +514,7 @@ function UploadedItem({ item, onRemove }: UploadedItemProps) {
         size="1"
         onClick={() => onRemove(item.id)}
         data-testid="upload-selected-file-remove"
-        aria-label={`Remove ${item.name}`}
+        aria-label={t('knowledgeBase.upload.removeNamedItem', { name: item.name })}
         style={{ opacity: isHovered ? 1 : 0.5 }}
       >
         <MaterialIcon name="close" size={16} color="var(--slate-11)" />
@@ -580,6 +598,8 @@ interface FolderTreeRowProps {
 }
 
 function FolderTreeRow({ node, depth, onRemovePath }: FolderTreeRowProps) {
+  const { t } = useTranslation();
+  const formatBytes = useUploadBytesFormatter();
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(true);
   const isFolder = node.kind === 'folder';
@@ -621,7 +641,7 @@ function FolderTreeRow({ node, depth, onRemovePath }: FolderTreeRowProps) {
                 pointerEvents: hasChildren ? 'auto' : 'none',
                 flexShrink: 0,
               }}
-              aria-label={isExpanded ? 'Collapse folder' : 'Expand folder'}
+              aria-label={isExpanded ? t('knowledgeBase.upload.collapseFolder') : t('knowledgeBase.upload.expandFolder')}
             >
               <MaterialIcon
                 name={isExpanded ? 'expand_more' : 'chevron_right'}
@@ -662,7 +682,7 @@ function FolderTreeRow({ node, depth, onRemovePath }: FolderTreeRowProps) {
           onClick={() => onRemovePath(node.path)}
           data-testid="upload-folder-tree-remove"
           style={{ opacity: isHovered ? 1 : 0.45, flexShrink: 0 }}
-          aria-label={`Remove ${node.name}`}
+          aria-label={t('knowledgeBase.upload.removeNamedItem', { name: node.name })}
         >
           <MaterialIcon name="close" size={16} color="var(--slate-11)" />
         </IconButton>
@@ -687,6 +707,8 @@ interface UploadedFolderItemProps {
 }
 
 function UploadedFolderItem({ item, onRemoveFolder, onRemovePath }: UploadedFolderItemProps) {
+  const { t } = useTranslation();
+  const formatBytes = useUploadBytesFormatter();
   const tree = buildFolderTree(item.name, item.filesWithPaths ?? []);
   const fileCount = item.filesWithPaths?.length ?? 0;
 
@@ -711,7 +733,7 @@ function UploadedFolderItem({ item, onRemoveFolder, onRemovePath }: UploadedFold
         }}
       >
         <Text size="1" style={{ color: 'var(--slate-9)', paddingLeft: 'var(--space-2)' }}>
-          {fileCount} {fileCount === 1 ? 'file' : 'files'} · {formatBytes(item.size)}
+          {t('knowledgeBase.upload.fileCount', { count: fileCount })} · {formatBytes(item.size)}
         </Text>
       </Flex>
       <FolderTreeRow
@@ -729,12 +751,6 @@ function UploadedFolderItem({ item, onRemoveFolder, onRemovePath }: UploadedFold
   );
 }
 
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 export interface UploadDataSidebarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -748,9 +764,12 @@ export function UploadDataSidebar({
   onSave,
   isSaving = false,
 }: UploadDataSidebarProps) {
+  const { t, i18n } = useTranslation();
   const [fileItems, setFileItems] = useState<UploadFileItem[]>([]);
   const [folderItems, setFolderItems] = useState<UploadFileItem[]>([]);
   const { maxFileSizeMB } = useUploadLimits();
+  const locale = i18n.resolvedLanguage || i18n.language;
+  const formattedMaxFileSizeMB = new Intl.NumberFormat(locale).format(maxFileSizeMB);
 
   const handleAddFiles = useCallback((items: UploadFileItem[]) => {
     setFileItems((prev) => [...prev, ...items]);
@@ -842,7 +861,7 @@ export function UploadDataSidebar({
         }}
       >
         <VisuallyHidden>
-          <Dialog.Title>Upload Data</Dialog.Title>
+          <Dialog.Title>{t('knowledgeBase.upload.title')}</Dialog.Title>
         </VisuallyHidden>
         {/* Header */}
         <Flex
@@ -861,7 +880,7 @@ export function UploadDataSidebar({
           <Flex align="center" gap="2">
             <MaterialIcon name="file_upload" size={24} color="var(--slate-12)" />
             <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-              Upload Data
+              {t('knowledgeBase.upload.title')}
             </Text>
           </Flex>
           <Flex align="center" gap="3">
@@ -872,7 +891,7 @@ export function UploadDataSidebar({
               onClick={() => window.open('https://docs.pipeshub.com', '_blank')}
             >
               <MaterialIcon name="open_in_new" size={14} color="var(--slate-11)" />
-              Documentation
+              {t('knowledgeBase.upload.documentation')}
             </Button>
             <IconButton
               variant="ghost"
@@ -918,10 +937,10 @@ export function UploadDataSidebar({
             <Flex align="start" justify="between" gap="2">
               <Flex direction="column" gap="1">
                 <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-                  Upload Files
+                  {t('knowledgeBase.upload.uploadFiles')}
                 </Text>
                 <Text size="1" style={{ color: 'var(--slate-9)' }}>
-                  Up to {maxFileSizeMB} MB per file; type and size are validated on upload
+                  {t('knowledgeBase.upload.fileLimitDescription', { maxFileSizeMB: formattedMaxFileSizeMB })}
                 </Text>
               </Flex>
               {fileItems.length > 0 && (
@@ -938,7 +957,7 @@ export function UploadDataSidebar({
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {fileItems.length} {fileItems.length === 1 ? 'file' : 'files'}
+                    {t('knowledgeBase.upload.fileCount', { count: fileItems.length })}
                   </Text>
                 </Flex>
               )}
@@ -965,7 +984,7 @@ export function UploadDataSidebar({
           <Flex align="center" gap="3">
             <Box style={{ flex: 1, height: '1px', backgroundColor: 'var(--slate-6)' }} />
             <Text size="1" style={{ color: 'var(--slate-9)' }}>
-              OR
+              {t('knowledgeBase.upload.or')}
             </Text>
             <Box style={{ flex: 1, height: '1px', backgroundColor: 'var(--slate-6)' }} />
           </Flex>
@@ -988,10 +1007,10 @@ export function UploadDataSidebar({
             <Flex align="start" justify="between" gap="2">
               <Flex direction="column" gap="1">
                 <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
-                  Upload Folders
+                  {t('knowledgeBase.upload.uploadFolders')}
                 </Text>
                 <Text size="1" style={{ color: 'var(--slate-9)' }}>
-                  Each file is validated on upload (max {maxFileSizeMB} MB per file)
+                  {t('knowledgeBase.upload.folderLimitDescription', { maxFileSizeMB: formattedMaxFileSizeMB })}
                 </Text>
               </Flex>
               {folderItems.length > 0 && (
@@ -1008,7 +1027,7 @@ export function UploadDataSidebar({
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {folderItems.length} {folderItems.length === 1 ? 'folder' : 'folders'}
+                    {t('knowledgeBase.upload.folderCount', { count: folderItems.length })}
                   </Text>
                 </Flex>
               )}
@@ -1059,7 +1078,7 @@ export function UploadDataSidebar({
             data-testid="upload-sidebar-cancel"
             onClick={() => handleOpenChange(false)}
           >
-            Cancel
+            {t('action.cancel')}
           </Button>
           <LoadingButton
             variant="solid"
@@ -1069,7 +1088,7 @@ export function UploadDataSidebar({
             disabled={!hasItems}
             loading={isSaving}
           >
-            Save
+            {t('action.save')}
           </LoadingButton>
         </Flex>
       </Dialog.Content>

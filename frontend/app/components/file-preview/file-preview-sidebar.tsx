@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react';
 import { Dialog, VisuallyHidden } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 import { FilePreviewMobile } from './file-preview-mobile';
 import { FilePreviewInlinePanel } from './file-preview-inline-panel';
@@ -39,6 +40,7 @@ export function FilePreviewSidebar({
   hideFileDetails,
   showDownload,
 }: FilePreviewProps) {
+  const { t } = useTranslation();
   const isMobile = useIsMobile();
   const hasCitations = citations && citations.length > 0;
 
@@ -135,8 +137,7 @@ export function FilePreviewSidebar({
         <VisuallyHidden>
           <Dialog.Title>{file.name}</Dialog.Title>
           <Dialog.Description>
-            Preview pane for {file.name}. Document content, file details and related citations are
-            shown here.
+            {t('filePreview.dialogDescription', { name: file.name })}
           </Dialog.Description>
         </VisuallyHidden>
 

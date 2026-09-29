@@ -10,6 +10,13 @@
       "reindexFailedError": "重新索引失败的记录时出错",
       "manualIndexStart": "正在索引手动索引记录…",
       "manualIndexError": "启动手动索引失败"
+    },
+    "toast": {
+      "renameFailed": "重命名失败",
+      "folderRenamed": "文件夹已成功重命名",
+      "collectionRenamed": "集合已成功重命名",
+      "renameRefreshWarningTitle": "无法更新列表",
+      "renameRefreshWarningDescription": "{{kind}} 已重命名，但列表未能刷新。请刷新页面以查看最新列表。"
     }
   },
   "resetPassword": {
@@ -137,7 +144,8 @@
       "httpFallback": "上传未成功。请重试；如果仍然失败，请联系管理员。",
       "stalled": "PipesHub 在上传完成前停止响应。请重新上传这些文件。",
       "incomplete": "上传未完成"
-    }
+    },
+    "fileExceedsSizeLimit": "此文件超过 {{maxFileSizeMB}} MB 的大小限制。请缩小文件或将其拆分，然后重新上传。"
   },
   "onboarding": {
     "skipEmbeddingDefault": "跳过",
@@ -412,7 +420,12 @@
     "willBeDeleted": "将被删除",
     "willBeReindexed": "将被重新索引",
     "reindexConfirm": "重新索引此{{type}}？",
-    "reindexDescription": "这将更新此{{type}}及其内容的搜索索引。"
+    "reindexDescription": "这将更新此{{type}}及其内容的搜索索引。",
+    "bulkDeleteQuestion_other": "确定要删除 {{itemCount}} 个项目吗？",
+    "bulkDeleteAction_other": "删除 {{itemCount}} 个项目",
+    "bulkDeleteWarning": "此操作无法撤销。所有选中的项目都将被永久删除。",
+    "deleteItemDescription": "将删除 {{itemType}}",
+    "deleteItemFromCollectionDescription": "将从集合中删除 {{itemType}}"
   },
   "table": {
     "fileName": "文件名",
@@ -553,6 +566,7 @@
         "busyRetry_other": "PipesHub 当前繁忙。请在 {{count}} 秒后重试。"
       }
     },
+    "unknown": "未知",
     "connectorIconAlt": "{{type}} 图标",
     "submit": "提交"
   },
@@ -641,7 +655,11 @@
     "searchEmptyHint": "未找到您要查找的内容。请尝试搜索其他内容。",
     "adjustFiltersHint": "请选择其他来源或调整筛选条件",
     "addFromCollectionsHint": "您可以从合集中添加公司的文件或文件夹",
-    "addFilesHint": "添加您的文件或文件夹"
+    "addFilesHint": "添加您的文件或文件夹",
+    "pagination": {
+      "showing": "正在显示 {{total}} 个项目中的 {{start}}–{{end}} 项",
+      "perPage": "每页 {{limit}} 项"
+    }
   },
   "connectorTypes": {
     "slack": "Slack",
@@ -4144,7 +4162,81 @@
     "resizeCitations": "调整引用面板大小",
     "resizePreview": "调整文件预览面板大小",
     "viewCitations": "查看引用",
-    "openNamedInSource": "在来源中打开 {{name}}"
+    "openNamedInSource": "在来源中打开 {{name}}",
+    "openFailedFallback": "无法打开此文件的预览。请尝试下载，或稍后重试。",
+    "dialogDescription": "{{name}} 的预览面板。此处会显示文档内容、文件详情和相关引用。",
+    "documentLoadFailed": {
+      "loading": "正在加载文档…",
+      "fileUnavailable": "文件数据不可用",
+      "fetchFailed": "获取文档失败",
+      "emptyServerFile": "从服务器收到的文件为空。",
+      "emptyDocument": "文档为空。",
+      "renderFailed": "无法呈现此文档。",
+      "loadFailed": "加载文档失败"
+    },
+    "htmlLoadFailed": {
+      "loading": "正在加载 HTML…",
+      "noUrl": "文件 URL 不可用",
+      "fetchFailed": "获取文件内容失败",
+      "loadFailed": "加载文件失败"
+    },
+    "imageLoadFailed": {
+      "noUrl": "图片文件 URL 不可用",
+      "failed": "加载图片失败",
+      "couldNotDisplay": "无法显示图片文件",
+      "loading": "正在加载图片…",
+      "goToCitation": "转到引用 {{id}}"
+    },
+    "mediaUnavailable": {
+      "videoSourceUnavailable": "视频文件 URL 不可用",
+      "audioSourceUnavailable": "音频文件 URL 不可用",
+      "videoUnsupported": "你的浏览器不支持播放视频。",
+      "audioUnsupported": "你的浏览器不支持播放音频。"
+    },
+    "pdfLoadFailed": {
+      "noUrl": "PDF 文件 URL 不可用",
+      "unableToLoadPreview": "无法加载 {{fileName}} 的预览",
+      "loading": "正在加载 PDF…",
+      "loadFailed": "加载 PDF 文件失败"
+    },
+    "unsupportedDocument": {
+      "legacyDoc": "此文件采用旧版 Word（.doc）格式，无法在此处的浏览器中预览。请下载后用 Word 打开，或另存为 .docx 文件以在 Pipeshub 中预览。",
+      "documentType": "无法预览此文档类型。请下载后查看。",
+      "fileType": "无法预览此文件类型",
+      "openInBrowser": "在浏览器中打开"
+    },
+    "markdownLoadFailed": {
+      "loading": "正在加载 Markdown…",
+      "noUrl": "文件 URL 不可用",
+      "fetchFailed": "获取 Markdown 内容失败",
+      "loadFailed": "加载文件失败"
+    },
+    "spreadsheet": {
+      "emptyCell": "（空）",
+      "loading": "正在加载电子表格…",
+      "noUrl": "文件 URL 不可用",
+      "fetchFailed": "获取电子表格失败",
+      "loadFailed": "加载电子表格失败",
+      "emptySheet": "此工作表为空",
+      "showingRows_other": "正在显示共 {{total}} 行中的前 {{shown}} 行。下载即可查看所有数据。"
+    },
+    "switchVersion": {
+      "switchLabel": "版本 {{version}}，切换版本",
+      "versionLabel": "版本 {{version}}",
+      "switchTitle": "切换版本",
+      "optionLabel": "版本 {{version}}",
+      "latest": "最新版本"
+    },
+    "tabs": {
+      "preview": "预览",
+      "fileDetails": "文件详情"
+    },
+    "textLoadFailed": {
+      "loading": "正在加载文件…",
+      "noUrl": "文件 URL 不可用",
+      "fetchFailed": "获取文件内容失败",
+      "loadFailed": "加载文件失败"
+    }
   },
   "agentBuilder": {
     "goBack": "返回",
@@ -4576,7 +4668,8 @@
       }
     },
     "previewConversionFailed": "预览转换失败。您仍然可以下载该文件。",
-    "missingRecordId": "缺少记录 ID"
+    "missingRecordId": "缺少记录 ID",
+    "chatAttachment": "聊天附件"
   },
   "oauthConsent": {
     "loading": "正在加载授权请求…",
@@ -4978,6 +5071,111 @@
       "offDescription": "它已从所有人的回答、搜索和记录中移除，示例账号也无法登录。请在个人资料 → 演示数据中重新开启。",
       "onTitle": "已为所有人重新开启演示数据",
       "errorTitle": "无法为所有人更改演示数据"
+    }
+  },
+  "knowledgeBase": {
+    "accessRevoked": "你已无法访问此集合",
+    "bulkDeleteFailed": "批量删除失败",
+    "bulkDeleteFallback": "删除所选项目失败。请重试。",
+    "bulkDeletePartial_other": "已删除 {{successCount}} 个项目；{{failCount}} 个失败。",
+    "bulkDeleteProgress_other": "正在删除 {{count}} 个项目…",
+    "bulkDeleteSuccess_other": "已成功删除 {{count}} 个项目",
+    "bulkReindexFailed": "批量重新索引失败",
+    "bulkReindexFallback": "重新索引所选项目失败。请重试。",
+    "bulkReindexPartial_other": "已重新索引 {{successCount}} 个项目；{{failCount}} 个失败。",
+    "bulkReindexProgress_other": "正在重新索引 {{count}} 个项目…",
+    "bulkReindexSuccess_other": "已成功重新索引 {{count}} 个项目",
+    "collectionsLoadFailedTitle": "加载集合失败",
+    "createFolderFailed": "创建文件夹失败",
+    "createFolderFallback": "无法创建文件夹。请检查名称并重试。",
+    "createFolderSuccess": "文件夹已成功创建",
+    "createFolderSuccessDescription": "已创建“{{name}}”",
+    "deleteFailed": "删除 {{kind}} 失败",
+    "deleteFailedTitle": "删除失败",
+    "deleteFallback": "删除失败。请重试。",
+    "deleteRefreshFailed": "无法更新列表",
+    "deleteRefreshFailedDescription": "{{kind}} 已删除，但列表未能刷新。请刷新页面以查看最新列表。",
+    "deleteSuccess": "已成功删除“{{name}}”",
+    "deleteSuccessDescription": "已删除 {{kind}}。",
+    "deleteSuccessTitle": "已成功删除",
+    "downloadFailed": "下载失败",
+    "downloadFallback": "无法下载文件。请检查网络连接并重试。",
+    "errors": {
+      "folderCollectionIdRequired": "更新此文件夹需要集合 ID。"
+    },
+    "folderDetails": {
+      "collection": "集合",
+      "connector": "连接器",
+      "createdAt": "创建时间",
+      "empty": "没有可用的文件夹详情",
+      "folder": "文件夹",
+      "indexingStatus": "索引状态",
+      "metadata": "元数据",
+      "origin": "来源",
+      "permissions": "权限",
+      "recordGroup": "记录组",
+      "recordType": "记录类型",
+      "title": "文件夹详情",
+      "totalItems": "项目总数",
+      "updatedAt": "更新时间",
+      "version": "版本"
+    },
+    "loadCollectionsFallback": "无法加载你的集合。请检查网络连接，然后选择“重试”。",
+    "loadItemsFailed": "加载项目失败。请重试。",
+    "loadMoreConnectorsFailed": "无法加载更多连接器",
+    "loadMoreFailedDescription": "请重试或刷新页面。",
+    "loadMoreItemsFailed": "无法加载更多项目",
+    "loadRecordsFailed": "加载记录失败",
+    "moveFailed": "移动项目失败",
+    "moveFallback": "无法移动项目。请稍后重试。",
+    "moveSuccess": "项目已成功移动",
+    "moveSuccessDescription": "已移动“{{name}}”",
+    "reindex": {
+      "toast": {
+        "indexing": "正在建立索引…",
+        "reindexing": "正在重新建立索引…",
+        "queuedIndexing": "已成功加入索引队列",
+        "queuedReindexing": "已成功加入重新索引队列"
+      }
+    },
+    "reindexFallback": "启动重新索引失败。请稍后重试。",
+    "renameFailed": "重命名失败",
+    "renameFallback": "无法重命名。请稍后重试。",
+    "renameSuccess": "已成功重命名",
+    "renameSuccessDescription": "已重命名为“{{name}}”",
+    "replaceFailed": "替换文件失败",
+    "replaceFallback": "无法替换文件。请稍后重试。",
+    "replaceFile": {
+      "allowedFileType": "只能上传 {{fileType}} 文件（{{extension}}）来替换此文件",
+      "currentFile": "当前文件",
+      "maxSize": "你可以上传不超过 {{maxFileSizeMB}} MB 的文件",
+      "name": "名称",
+      "supports": "支持的格式：仅 {{fileType}}",
+      "title": "替换文件",
+      "upload": "上传"
+    },
+    "replaceSuccess": "文件已成功替换",
+    "replaceSuccessDescription": "已将“{{oldName}}”替换为“{{newName}}”",
+    "sidebarLoadFailedAppSectionsDescription": "无法加载应用分区。请刷新页面。",
+    "sidebarLoadFailedCollectionsDescription": "无法加载集合。请刷新页面。",
+    "sidebarLoadFailedTitle": "加载侧边栏失败",
+    "upload": {
+      "addFiles": "添加文件",
+      "addFolder": "添加文件夹",
+      "collapseFolder": "折叠文件夹",
+      "documentation": "文档",
+      "expandFolder": "展开文件夹",
+      "fileCount_other": "{{count}} 个文件",
+      "fileLimitDescription": "每个文件最大 {{maxFileSizeMB}} MB；上传时会验证文件类型和大小",
+      "folderCount_other": "{{count}} 个文件夹",
+      "folderLimitDescription": "上传时会验证每个文件（每个文件最大 {{maxFileSizeMB}} MB）",
+      "moreBelow": "下方还有更多内容",
+      "or": "或",
+      "removeNamedItem": "移除 {{name}}",
+      "title": "上传数据",
+      "upload": "上传",
+      "uploadFiles": "上传文件",
+      "uploadFolders": "上传文件夹"
     }
   },
   "keyboard": {

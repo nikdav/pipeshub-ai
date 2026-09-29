@@ -81,12 +81,15 @@ export function getFileType(fileName: string, _mimeType?: string): FileType {
  */
 export function getTabsForSource(
   _source: FilePreviewSource,
-  options: { hideFileDetails?: boolean } = {}
+  options: {
+    hideFileDetails?: boolean;
+    labels: { preview: string; fileDetails: string };
+  },
 ): TabConfig[] {
   const { hideFileDetails = false } = options;
   return [
-    { id: 'preview', label: 'Preview', visible: true },
-    { id: 'file-details', label: 'File Details', visible: !hideFileDetails },
+    { id: 'preview', label: options.labels.preview, visible: true },
+    { id: 'file-details', label: options.labels.fileDetails, visible: !hideFileDetails },
   ];
 }
 
