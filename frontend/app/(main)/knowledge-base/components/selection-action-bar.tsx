@@ -4,6 +4,7 @@ import { Flex, Text, Button, Checkbox, Separator } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { PermissionLockIcon } from '@/config';
 import type { PageViewMode } from '../types';
+import { useTranslation } from 'react-i18next';
 
 interface SelectionActionBarProps {
   selectedCount: number;
@@ -24,6 +25,7 @@ export function SelectionActionBar({
   deletePermissionDenied,
   pageViewMode = 'collections',
 }: SelectionActionBarProps) {
+  const { t } = useTranslation();
   if (selectedCount === 0) return null;
 
   return (
@@ -62,7 +64,7 @@ export function SelectionActionBar({
 
       {/* Selection count text */}
       <Text size="2" weight="medium" style={{ color: 'var(--slate-12)', whiteSpace: 'nowrap', fontStyle: 'normal' }}>
-        {selectedCount} {selectedCount === 1 ? 'Item' : 'Items'} Selected
+        {t('table.selected', { count: selectedCount, selectedCount })}
       </Text>
 
       {/* Divider */}
@@ -102,7 +104,7 @@ export function SelectionActionBar({
         }}
       >
         <MaterialIcon name="refresh" size={16} />
-        Re-index
+        {t('action.reindex')}
       </Button>
 
       {/* Delete button - hidden only in all-records mode */}
@@ -123,7 +125,7 @@ export function SelectionActionBar({
           }}
         >
           <MaterialIcon name="delete" size={16} />
-          Delete
+          {t('action.delete')}
           {deletePermissionDenied && <PermissionLockIcon />}
         </Button>
       )}

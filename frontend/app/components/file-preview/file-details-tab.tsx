@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Flex, Text, Box } from '@radix-ui/themes';
 import { formatDate } from '@/lib/utils/formatters';
+import { getIndexingStatusLabel } from '@/lib/utils/indexing-status-label';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import type { RecordDetailsResponse } from '@/app/(main)/knowledge-base/types';
 
@@ -108,7 +109,7 @@ function LinkRow({ label, href }: LinkRowProps) {
 }
 
 export function FileDetailsTab({ recordDetails }: FileDetailsTabProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   if (!recordDetails) {
     return (
       <Flex
@@ -137,12 +138,27 @@ export function FileDetailsTab({ recordDetails }: FileDetailsTabProps) {
   // Extract topic names
   const _topics = metadata.topics.map(t => t.name).filter(Boolean);
   
+  const locale = i18n.resolvedLanguage || i18n.language;
+  const originLabel = record.origin === 'CONNECTOR'
+    ? t('recordView.labels.originConnector')
+    : record.origin === 'UPLOAD'
+      ? t('recordView.labels.originUpload')
+      : record.origin;
+  const relationship = permissions?.[0]?.relationship;
+  const permissionLabel = relationship === 'READER'
+    ? t('recordView.permissionReader')
+    : relationship === 'WRITER'
+      ? t('recordView.permissionWriter')
+      : relationship === 'OWNER' || !relationship
+        ? t('recordView.permissionOwner')
+        : relationship;
+
   // Format timestamps to date strings
   const createdDate = record.createdAtTimestamp 
-    ? formatDate(new Date(record.createdAtTimestamp).toISOString()) 
+    ? formatDate(new Date(record.createdAtTimestamp).toISOString(), locale)
     : undefined;
   const updatedDate = record.updatedAtTimestamp 
-    ? formatDate(new Date(record.updatedAtTimestamp).toISOString()) 
+    ? formatDate(new Date(record.updatedAtTimestamp).toISOString(), locale)
     : undefined;
 
   return (
@@ -168,13 +184,13 @@ export function FileDetailsTab({ recordDetails }: FileDetailsTabProps) {
           <DetailRow label={t('recordView.labels.name')} value={record.recordName} />
           <DetailRow label={t('recordView.labels.recordId')} value={record.id} />
           <DetailRow label={t('recordView.labels.recordType')} value={t(`recordView.labels.recordTypes.${record.recordType}`, { defaultValue: record.recordType })} />
-          <DetailRow label={t('recordView.labels.origin')} value={record.origin} />
-          <DetailRow label={t('recordView.labels.indexingStatus')} value={record.indexingStatus} />
+          <DetailRow label={t('recordView.labels.origin')} value={originLabel} />
+          <DetailRow label={t('recordView.labels.indexingStatus')} value={getIndexingStatusLabel(record.indexingStatus, t) ?? record.indexingStatus} />
           <DetailRow label={t('recordView.labels.version')} value={record.version?.toString()} />
           <DetailRow label={t('recordView.labels.createdAt')} value={createdDate} />
           <DetailRow label={t('recordView.labels.updatedAt')} value={updatedDate} />
           <DetailRow label={t('recordView.labels.collection')} value={knowledgeBase?.name} />
-          <DetailRow label={t('recordView.labels.permissions')} value={permissions?.[0]?.relationship || t('recordView.permissionOwner')} />
+          <DetailRow label={t('recordView.labels.permissions')} value={permissionLabel} />
         </Flex>
       </Flex>
 

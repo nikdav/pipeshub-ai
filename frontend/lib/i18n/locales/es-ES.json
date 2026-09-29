@@ -131,7 +131,8 @@
       "httpFallback": "No se pudo completar la subida. Inténtalo de nuevo y, si sigue fallando, contacta con tu administrador.",
       "stalled": "PipesHub dejó de responder antes de completar la subida. Vuelve a subir estos archivos.",
       "incomplete": "La carga no se completó"
-    }
+    },
+    "fileExceedsSizeLimit": "Este archivo supera el límite de {{maxFileSizeMB}} MB. Reduce su tamaño o divídelo y vuelve a subirlo."
   },
   "onboarding": {
     "skipEmbeddingDefault": "Omitir",
@@ -408,7 +409,16 @@
     "willBeDeleted": "será eliminado",
     "willBeReindexed": "será reindexado",
     "reindexConfirm": "¿Reindexar este {{type}}?",
-    "reindexDescription": "Esto actualizará el índice de búsqueda para este {{type}} y su contenido."
+    "reindexDescription": "Esto actualizará el índice de búsqueda para este {{type}} y su contenido.",
+    "bulkDeleteQuestion_one": "¿Eliminar {{itemCount}} elemento?",
+    "bulkDeleteQuestion_other": "¿Eliminar {{itemCount}} elementos?",
+    "bulkDeleteAction_one": "Eliminar {{itemCount}} elemento",
+    "bulkDeleteAction_other": "Eliminar {{itemCount}} elementos",
+    "bulkDeleteWarning": "Esta acción no se puede deshacer. Todos los elementos seleccionados se eliminarán permanentemente.",
+    "deleteItemDescription": "Se eliminará {{itemType}}.",
+    "deleteItemFromCollectionDescription": "{{itemType}} se eliminará de la colección.",
+    "bulkDeleteQuestion_many": "¿Eliminar {{itemCount}} elementos?",
+    "bulkDeleteAction_many": "Eliminar {{itemCount}} elementos"
   },
   "table": {
     "fileName": "Nombre de archivo",
@@ -553,6 +563,7 @@
         "busyRetry_many": "PipesHub está ocupado en este momento. Inténtelo de nuevo en {{count}} segundos."
       }
     },
+    "unknown": "Desconocido",
     "connectorIconAlt": "Icono {{type}}",
     "submit": "Enviar"
   },
@@ -636,7 +647,11 @@
     "searchEmptyHint": "No se ha encontrado lo que busca. Pruebe a buscar otra cosa.",
     "adjustFiltersHint": "Seleccione otra fuente o ajuste los filtros",
     "addFromCollectionsHint": "Puede añadir los archivos o las carpetas de su empresa desde Colecciones",
-    "addFilesHint": "Añada sus archivos o carpetas"
+    "addFilesHint": "Añada sus archivos o carpetas",
+    "pagination": {
+      "showing": "Se muestran {{start}}-{{end}} de {{total}} elementos",
+      "perPage": "{{limit}} por página"
+    }
   },
   "connectorTypes": {
     "slack": "Slack",
@@ -4205,7 +4220,83 @@
     "resizeCitations": "Redimensionar el panel de citas",
     "resizePreview": "Redimensionar el panel de vista previa",
     "viewCitations": "Ver las citas",
-    "openNamedInSource": "Abrir {{name}} en el origen"
+    "openNamedInSource": "Abrir {{name}} en el origen",
+    "openFailedFallback": "No pudimos abrir una vista previa de este archivo. Intente descargarlo en su lugar o vuelva a intentarlo en un momento.",
+    "dialogDescription": "Panel de vista previa de {{name}}. Aquí se muestran el contenido del documento, los detalles del archivo y las citas relacionadas.",
+    "documentLoadFailed": {
+      "loading": "Cargando documento...",
+      "fileUnavailable": "Los datos del archivo no están disponibles.",
+      "fetchFailed": "No se pudo recuperar el documento",
+      "emptyServerFile": "El servidor devolvió un archivo vacío.",
+      "emptyDocument": "El documento está vacío.",
+      "renderFailed": "No se pudo mostrar este documento.",
+      "loadFailed": "No se pudo cargar el documento"
+    },
+    "htmlLoadFailed": {
+      "loading": "Cargando HTML...",
+      "noUrl": "La URL del archivo no está disponible.",
+      "fetchFailed": "No se pudo recuperar el contenido del archivo",
+      "loadFailed": "No se pudo cargar el archivo"
+    },
+    "imageLoadFailed": {
+      "noUrl": "La URL del archivo de imagen no está disponible.",
+      "failed": "No se pudo cargar la imagen",
+      "couldNotDisplay": "No se pudo mostrar la imagen.",
+      "loading": "Cargando imagen...",
+      "goToCitation": "Ir a la cita {{id}}"
+    },
+    "mediaUnavailable": {
+      "videoSourceUnavailable": "La URL del archivo de vídeo no está disponible.",
+      "audioSourceUnavailable": "La URL del archivo de audio no está disponible.",
+      "videoUnsupported": "Su navegador no admite la reproducción de vídeo.",
+      "audioUnsupported": "Su navegador no admite la reproducción de audio."
+    },
+    "pdfLoadFailed": {
+      "noUrl": "La URL del archivo PDF no está disponible.",
+      "unableToLoadPreview": "No se puede cargar la vista previa de {{fileName}}",
+      "loading": "Cargando PDF...",
+      "loadFailed": "No se pudo cargar el archivo PDF"
+    },
+    "unsupportedDocument": {
+      "legacyDoc": "Este archivo está en el formato antiguo de Word (.doc). No se puede previsualizar en el navegador; descárgalo para abrirlo en Word o guárdalo como .docx para previsualizarlo en PipesHub.",
+      "documentType": "No hay vista previa para este tipo de documento. Descárgalo para verlo.",
+      "fileType": "Vista previa no disponible para este tipo de archivo",
+      "openInBrowser": "Abrir en el navegador"
+    },
+    "markdownLoadFailed": {
+      "loading": "Cargando archivo Markdown…",
+      "noUrl": "La URL del archivo no está disponible.",
+      "fetchFailed": "No se pudo obtener el contenido Markdown.",
+      "loadFailed": "No se pudo cargar el archivo"
+    },
+    "spreadsheet": {
+      "emptyCell": "(Vacía)",
+      "loading": "Cargando hoja de cálculo...",
+      "noUrl": "La URL del archivo no está disponible.",
+      "fetchFailed": "No se pudo recuperar la hoja de cálculo",
+      "loadFailed": "No se pudo cargar la hoja de cálculo",
+      "emptySheet": "Esta hoja está vacía.",
+      "showingRows_one": "Se muestra la primera fila ({{shown}} de {{total}}). Descarga el archivo para ver todos los datos.",
+      "showingRows_other": "Se muestran las primeras filas ({{shown}} de {{total}}). Descarga el archivo para ver todos los datos.",
+      "showingRows_many": "Se muestran las primeras filas ({{shown}} de {{total}}). Descarga el archivo para ver todos los datos."
+    },
+    "switchVersion": {
+      "switchLabel": "Versión {{version}}; cambiar a otra versión",
+      "versionLabel": "Versión {{version}}",
+      "switchTitle": "Cambiar versión",
+      "optionLabel": "Versión {{version}}",
+      "latest": "la más reciente"
+    },
+    "tabs": {
+      "preview": "Vista previa",
+      "fileDetails": "Detalles del archivo"
+    },
+    "textLoadFailed": {
+      "loading": "Cargando archivo...",
+      "noUrl": "La URL del archivo no está disponible.",
+      "fetchFailed": "No se pudo obtener el contenido del archivo.",
+      "loadFailed": "No se pudo cargar el archivo"
+    }
   },
   "agentBuilder": {
     "goBack": "Volver",
@@ -4641,7 +4732,8 @@
       }
     },
     "previewConversionFailed": "La conversión de la vista previa ha fallado. Aun así puede descargar el archivo.",
-    "missingRecordId": "Falta el id del registro"
+    "missingRecordId": "Falta el id del registro",
+    "chatAttachment": "Adjunto de chat"
   },
   "oauthConsent": {
     "loading": "Cargando solicitud de autorización…",
@@ -4943,6 +5035,13 @@
       "reindexFailedError": "No se han podido reindexar los registros fallidos",
       "manualIndexStart": "Indexando los registros de indexación manual…",
       "manualIndexError": "No se ha podido iniciar la indexación manual"
+    },
+    "toast": {
+      "renameFailed": "No se pudo cambiar el nombre",
+      "folderRenamed": "Se cambió el nombre de la carpeta.",
+      "collectionRenamed": "Se cambió el nombre de la colección.",
+      "renameRefreshWarningTitle": "No se pudo actualizar la lista",
+      "renameRefreshWarningDescription": "Se cambió el nombre de {{kind}}, pero no se actualizó la lista. Actualiza la página para ver los últimos cambios."
     }
   },
   "reindexScope": {
@@ -5090,6 +5189,127 @@
         "rejected": "El servidor rechazó la autenticación OAuth."
       }
     }
+  },
+  "knowledgeBase": {
+    "accessRevoked": "Ya no tienes acceso a esta colección.",
+    "bulkDeleteFailed": "No se pudieron eliminar los elementos seleccionados.",
+    "bulkDeleteFallback": "No se pudieron eliminar los elementos seleccionados. Por favor inténtalo de nuevo.",
+    "bulkDeletePartial_one": "Se eliminó {{successCount}} elemento; no se pudieron eliminar {{failCount}}.",
+    "bulkDeletePartial_other": "Se eliminaron {{successCount}} elementos; no se pudieron eliminar {{failCount}}.",
+    "bulkDeleteProgress_one": "Eliminando {{count}} elemento…",
+    "bulkDeleteProgress_other": "Eliminando {{count}} elementos…",
+    "bulkDeleteSuccess_one": "Se eliminó {{count}} elemento.",
+    "bulkDeleteSuccess_other": "Se eliminaron {{count}} elementos.",
+    "bulkReindexFailed": "Falló la reindexación masiva",
+    "bulkReindexFallback": "No se pudieron reindexar los elementos seleccionados. Por favor inténtalo de nuevo.",
+    "bulkReindexPartial_one": "Se reindexó {{successCount}} elemento; no se pudieron reindexar {{failCount}}.",
+    "bulkReindexPartial_other": "Se reindexaron {{successCount}} elementos; no se pudieron reindexar {{failCount}}.",
+    "bulkReindexProgress_one": "Reindexando {{count}} elemento…",
+    "bulkReindexProgress_other": "Reindexando {{count}} elementos…",
+    "bulkReindexSuccess_one": "Se reindexó {{count}} elemento.",
+    "bulkReindexSuccess_other": "Se reindexaron {{count}} elementos.",
+    "collectionsLoadFailedTitle": "No se pudieron cargar las colecciones",
+    "createFolderFailed": "No se pudo crear la carpeta",
+    "createFolderFallback": "No se pudo crear la carpeta. Revisa el nombre e inténtalo de nuevo.",
+    "createFolderSuccess": "Carpeta creada correctamente.",
+    "createFolderSuccessDescription": "Se creó «{{name}}».",
+    "deleteFailed": "No se pudo eliminar {{kind}}",
+    "deleteFailedTitle": "Error al eliminar",
+    "deleteFallback": "No se pudo eliminar. Por favor inténtalo de nuevo.",
+    "deleteRefreshFailed": "No se pudo actualizar la lista",
+    "deleteRefreshFailedDescription": "Se eliminó {{kind}}, pero la lista no se actualizó. Actualiza la página para ver la lista más reciente.",
+    "deleteSuccess": "\"{{name}}\" eliminado correctamente",
+    "deleteSuccessDescription": "Se eliminó {{kind}}.",
+    "deleteSuccessTitle": "Eliminado correctamente",
+    "downloadFailed": "No se pudo descargar",
+    "downloadFallback": "No se pudo descargar el archivo. Comprueba tu conexión e inténtalo de nuevo.",
+    "errors": {
+      "folderCollectionIdRequired": "Se necesita el ID de la colección para actualizar esta carpeta."
+    },
+    "folderDetails": {
+      "collection": "Colección",
+      "connector": "Conector",
+      "createdAt": "Creado el",
+      "empty": "No hay detalles de la carpeta disponibles.",
+      "folder": "Carpeta",
+      "indexingStatus": "Estado de indexación",
+      "metadata": "Metadatos",
+      "origin": "Origen",
+      "permissions": "Permisos",
+      "recordGroup": "Grupo de registros",
+      "recordType": "Tipo de registro",
+      "title": "Detalles de la carpeta",
+      "totalItems": "Total de elementos",
+      "updatedAt": "Actualizado el",
+      "version": "Versión"
+    },
+    "loadCollectionsFallback": "No se pudieron cargar tus colecciones. Comprueba tu conexión e inténtalo de nuevo.",
+    "loadItemsFailed": "No se pudieron cargar los elementos. Inténtalo de nuevo.",
+    "loadMoreConnectorsFailed": "No se pudieron cargar más conectores",
+    "loadMoreFailedDescription": "Inténtelo de nuevo o actualice la página.",
+    "loadMoreItemsFailed": "No se pudieron cargar más elementos.",
+    "loadRecordsFailed": "No se pudieron cargar los registros",
+    "moveFailed": "No se pudo mover el elemento.",
+    "moveFallback": "No se pudo mover el elemento. Inténtalo de nuevo dentro de un momento.",
+    "moveSuccess": "Elemento movido correctamente.",
+    "moveSuccessDescription": "Se movió «{{name}}».",
+    "reindex": {
+      "toast": {
+        "indexing": "Indexación…",
+        "reindexing": "Reindexando…",
+        "queuedIndexing": "Se añadió a la cola para indexarlo.",
+        "queuedReindexing": "Se añadió a la cola para reindexarlo."
+      }
+    },
+    "reindexFallback": "No se pudo iniciar la reindexación. Inténtelo de nuevo en un momento.",
+    "renameFailed": "No se pudo cambiar el nombre",
+    "renameFallback": "No pudimos cambiarle el nombre. Inténtelo de nuevo en un momento.",
+    "renameSuccess": "Nombre cambiado correctamente.",
+    "renameSuccessDescription": "Se cambió el nombre a «{{name}}».",
+    "replaceFailed": "No se pudo reemplazar el archivo",
+    "replaceFallback": "No pudimos reemplazar el archivo. Inténtelo de nuevo en un momento.",
+    "replaceFile": {
+      "allowedFileType": "Solo puedes subir archivos de tipo {{fileType}} ({{extension}}) para reemplazar este archivo.",
+      "currentFile": "Archivo actual",
+      "maxSize": "Puede cargar archivos hasta el límite de {{maxFileSizeMB}} MB",
+      "name": "Nombre",
+      "supports": "Admite solo: {{fileType}}",
+      "title": "Reemplazar archivo",
+      "upload": "Subir"
+    },
+    "replaceSuccess": "Archivo reemplazado correctamente.",
+    "replaceSuccessDescription": "Se reemplazó «{{oldName}}» por «{{newName}}».",
+    "sidebarLoadFailedAppSectionsDescription": "No se pudieron cargar las secciones de la aplicación. Por favor actualice la página.",
+    "sidebarLoadFailedCollectionsDescription": "No se pudieron cargar las colecciones. Por favor actualice la página.",
+    "sidebarLoadFailedTitle": "No se pudo cargar la barra lateral",
+    "upload": {
+      "addFiles": "Añadir archivos",
+      "addFolder": "Añadir carpeta",
+      "collapseFolder": "Contraer carpeta",
+      "documentation": "Documentación",
+      "expandFolder": "Expandir carpeta",
+      "fileCount_one": "{{count}} archivo",
+      "fileCount_other": "{{count}} archivos",
+      "fileLimitDescription": "Hasta {{maxFileSizeMB}} MB por archivo; se validan el tipo y el tamaño al subirlo.",
+      "folderCount_one": "{{count}} carpeta",
+      "folderCount_other": "{{count}} carpetas",
+      "folderLimitDescription": "Cada archivo se valida al subirlo (máximo {{maxFileSizeMB}} MB por archivo).",
+      "moreBelow": "Más abajo",
+      "or": "O",
+      "removeNamedItem": "Quitar {{name}}",
+      "title": "Subir datos",
+      "upload": "Subir",
+      "uploadFiles": "Subir archivos",
+      "uploadFolders": "Subir carpetas",
+      "fileCount_many": "{{count}} archivos",
+      "folderCount_many": "{{count}} carpetas"
+    },
+    "bulkDeletePartial_many": "Se eliminaron {{successCount}} elementos; no se pudieron eliminar {{failCount}}.",
+    "bulkDeleteProgress_many": "Eliminando {{count}} elementos…",
+    "bulkDeleteSuccess_many": "Se eliminaron {{count}} elementos.",
+    "bulkReindexPartial_many": "Se reindexaron {{successCount}} elementos; no se pudieron reindexar {{failCount}}.",
+    "bulkReindexProgress_many": "Reindexando {{count}} elementos…",
+    "bulkReindexSuccess_many": "Se reindexaron {{count}} elementos."
   },
   "keyboard": {
     "modifier": {

@@ -160,7 +160,8 @@ function TableRow({
   onDelete,
   onDownload,
 }: TableRowProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -279,26 +280,26 @@ function TableRow({
       let baseLabel: string;
       let showReason = true;
       switch (item.indexingStatus) {
-        case 'COMPLETED': baseLabel = 'Completed'; showReason = false; break;
-        case 'IN_PROGRESS': baseLabel = 'In Progress'; showReason = false; break;
-        case 'FAILED': baseLabel = 'Failed'; break;
-        case 'FILE_TYPE_NOT_SUPPORTED': baseLabel = 'File Type Not Supported'; break;
-        case 'NOT_STARTED': baseLabel = 'Not Started'; break;
-        case 'QUEUED': baseLabel = 'Queued'; showReason = false; break;
-        case 'AUTO_INDEX_OFF': baseLabel = 'Manual Indexing'; break;
-        case 'EMPTY': baseLabel = 'Empty'; break;
-        default: baseLabel = 'Queued'; showReason = false;
+        case 'COMPLETED': baseLabel = t('workspace.connectors.overview.statCompleted'); showReason = false; break;
+        case 'IN_PROGRESS': baseLabel = t('status.processing'); showReason = false; break;
+        case 'FAILED': baseLabel = t('status.failed'); break;
+        case 'FILE_TYPE_NOT_SUPPORTED': baseLabel = t('workspace.connectors.overview.statUnsupported'); break;
+        case 'NOT_STARTED': baseLabel = t('workspace.connectors.overview.statNotStarted'); break;
+        case 'QUEUED': baseLabel = t('workspace.connectors.overview.statQueued'); showReason = false; break;
+        case 'AUTO_INDEX_OFF': baseLabel = t('workspace.connectors.overview.statManualIndexing'); break;
+        case 'EMPTY': baseLabel = t('workspace.connectors.overview.statEmpty'); break;
+        default: baseLabel = t('workspace.connectors.overview.statQueued'); showReason = false;
       }
       return appendReason(baseLabel, item.reason, showReason);
     }
     let baseLabel: string;
     let showReason = true;
     switch (item.status) {
-      case 'indexed': baseLabel = 'Completed'; showReason = false; break;
-      case 'processing': baseLabel = 'In Progress'; showReason = false; break;
-      case 'pending': baseLabel = 'Pending'; showReason = false; break;
-      case 'failed': baseLabel = 'Failed'; break;
-      default: baseLabel = 'Queued'; showReason = false;
+      case 'indexed': baseLabel = t('workspace.connectors.overview.statCompleted'); showReason = false; break;
+      case 'processing': baseLabel = t('status.processing'); showReason = false; break;
+      case 'pending': baseLabel = t('status.pending'); showReason = false; break;
+      case 'failed': baseLabel = t('status.failed'); break;
+      default: baseLabel = t('workspace.connectors.overview.statQueued'); showReason = false;
     }
     return appendReason(baseLabel, item.reason, showReason);
   };
@@ -515,7 +516,7 @@ function TableRow({
               flexShrink: 0,
             }}
           >
-            Empty
+            {t('workspace.connectors.overview.statEmpty')}
           </Text>
         )}
       </Flex>
@@ -575,8 +576,8 @@ function TableRow({
         <Flex align="center" style={{ width: '147px', padding: '0 var(--space-2)' }}>
           <Text size="2" style={{ color: 'var(--slate-9)' }}>
             {isKnowledgeHubNode(item)
-              ? (item.createdAt ? formatDate(new Date(item.createdAt).toISOString()) : '-')
-              : (item.createdAt ? formatDate(item.createdAt) : '-')
+              ? (item.createdAt ? formatDate(new Date(item.createdAt).toISOString(), locale) : '-')
+              : (item.createdAt ? formatDate(item.createdAt, locale) : '-')
             }
           </Text>
         </Flex>
@@ -587,8 +588,8 @@ function TableRow({
         <Flex align="center" style={{ width: '146px', padding: '0 var(--space-2)' }}>
           <Text size="2" style={{ color: 'var(--slate-9)' }}>
             {isKnowledgeHubNode(item)
-              ? (item.updatedAt ? formatDate(new Date(item.updatedAt).toISOString()) : '-')
-              : (item.updatedAt ? formatDate(item.updatedAt) : '-')
+              ? (item.updatedAt ? formatDate(new Date(item.updatedAt).toISOString(), locale) : '-')
+              : (item.updatedAt ? formatDate(item.updatedAt, locale) : '-')
             }
           </Text>
         </Flex>
@@ -600,19 +601,19 @@ function TableRow({
           open={isMenuOpen}
           onOpenChange={setIsMenuOpen}
           actions={[
-            { icon: 'folder_open', label: 'Open', onClick: onOpen },
-            !isFolder && onDownload && shouldShowDownloadForTableItem(item) && { icon: 'file_download', label: 'Download', onClick: () => onDownload(item) },
-            onRename && canEditItem && { icon: 'edit', label: 'Rename', onClick: () => startEditing() },
+            { icon: 'folder_open', label: t('recordView.openExternal'), onClick: onOpen },
+            !isFolder && onDownload && shouldShowDownloadForTableItem(item) && { icon: 'file_download', label: t('action.download'), onClick: () => onDownload(item) },
+            onRename && canEditItem && { icon: 'edit', label: t('menu.rename'), onClick: () => startEditing() },
             ...(showReindexMenu
               ? mapReindexOptionsToMenuActions(reindexMenuOptions, t, (statusFilters) =>
                   onReindex!(item, statusFilters),
                 )
               : []),
-            !isFolder && onReplace && canEditItem && { icon: 'drive_folder_upload', label: 'Replace', onClick: () => onReplace(item) },
+            !isFolder && onReplace && canEditItem && { icon: 'drive_folder_upload', label: t('action.replace'), onClick: () => onReplace(item) },
             // Move relocates an item within its collection — a collection itself has nothing to move into.
-            onMove && canEditItem && !isCollectionNode && { icon: 'drive_file_move', label: 'Move', onClick: () => onMove(item) },
+            onMove && canEditItem && !isCollectionNode && { icon: 'drive_file_move', label: t('action.move'), onClick: () => onMove(item) },
             // Collections can only be deleted by OWNER
-            onDelete && canDeleteItem && !(isCollectionNode && item.permission?.role !== 'OWNER') && { icon: 'delete', label: 'Delete', onClick: () => onDelete(item), color: 'red' as const },
+            onDelete && canDeleteItem && !(isCollectionNode && item.permission?.role !== 'OWNER') && { icon: 'delete', label: t('action.delete'), onClick: () => onDelete(item), color: 'red' as const },
           ]}
         />
       </Flex>
@@ -672,6 +673,7 @@ export function KbListView({
   onDelete,
   onDownload,
 }: KbListViewProps) {
+  const { t } = useTranslation();
   // Once per page, so each row's Demo badge is a cheap lookup.
   useDemoDataActive();
   const isMobile = useIsMobile();
@@ -708,29 +710,29 @@ export function KbListView({
         </Flex>
 
         {/* File Name */}
-        <TableHeaderCell label="File Name" field="name" flex={1} sort={sort} onSort={onSort} />
+        <TableHeaderCell label={t('table.fileName')} field="name" flex={1} sort={sort} onSort={onSort} />
 
         {/* Status */}
-        <TableHeaderCell label="Status" width="60px" sort={sort} onSort={onSort} />
+        <TableHeaderCell label={t('table.status')} width="60px" sort={sort} onSort={onSort} />
 
         {/* Source - Only shown in All Records mode */}
         {showSourceColumn && (
-          <TableHeaderCell label="Source" width="70px" sort={sort} onSort={onSort} />
+          <TableHeaderCell label={t('table.source')} width="70px" sort={sort} onSort={onSort} />
         )}
 
         {/* Size — hidden on mobile */}
         {!isMobile && (
-          <TableHeaderCell label="Size" field="size" sortable width="89px" sort={sort} onSort={onSort} />
+          <TableHeaderCell label={t('table.size')} field="size" sortable width="89px" sort={sort} onSort={onSort} />
         )}
 
         {/* Created — hidden on mobile */}
         {!isMobile && (
-          <TableHeaderCell label="Created" field="createdAt" sortable width="147px" sort={sort} onSort={onSort} />
+          <TableHeaderCell label={t('table.created')} field="createdAt" sortable width="147px" sort={sort} onSort={onSort} />
         )}
 
         {/* Updated — hidden on mobile */}
         {!isMobile && (
-          <TableHeaderCell label="Updated" field="updatedAt" sortable width="146px" sort={sort} onSort={onSort} />
+          <TableHeaderCell label={t('table.updated')} field="updatedAt" sortable width="146px" sort={sort} onSort={onSort} />
         )}
 
         {/* Actions */}
@@ -778,7 +780,11 @@ export function KbListView({
           }}
         >
           <Text size="2" style={{ color: 'var(--slate-9)' }}>
-            Showing {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.totalItems)} of {pagination.totalItems} Items
+            {t('kb.pagination.showing', {
+              start: ((pagination.page - 1) * pagination.limit) + 1,
+              end: Math.min(pagination.page * pagination.limit, pagination.totalItems),
+              total: pagination.totalItems,
+            })}
           </Text>
           <Flex gap="3" align="center">
             {/* Previous Button */}
@@ -793,7 +799,7 @@ export function KbListView({
               onClick={() => pagination.hasPrev && onPageChange?.(pagination.page - 1)}
             >
               <MaterialIcon name="chevron_left" size={16} />
-              <Text size="2">Previous</Text>
+              <Text size="2">{t('common.previous')}</Text>
             </Flex>
 
             {/* Page Number Box */}
@@ -822,7 +828,7 @@ export function KbListView({
               }}
               onClick={() => pagination.hasNext && onPageChange?.(pagination.page + 1)}
             >
-              <Text size="2">Next</Text>
+              <Text size="2">{t('common.next')}</Text>
               <MaterialIcon name="chevron_right" size={16} />
             </Flex>
 
@@ -854,7 +860,7 @@ export function KbListView({
                     key={limit}
                     onClick={() => onLimitChange?.(limit)}
                   >
-                    {limit} per page
+                    {t('kb.pagination.perPage', { limit })}
                   </DropdownMenu.Item>
                 ))}
               </DropdownMenu.Content>

@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Flex, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 
 interface MediaRendererProps {
   fileUrl: string;
@@ -9,8 +10,9 @@ interface MediaRendererProps {
 }
 
 export function MediaRenderer({ fileUrl, fileName: _fileName, fileType }: MediaRendererProps) {
+  const { t } = useTranslation();
   const isVideo = fileType.startsWith('video/');
-  const _isAudio = fileType.startsWith('audio/');
+  const mediaType = isVideo ? 'video' : 'audio';
 
   if (!fileUrl || fileUrl.trim() === '') {
     return (
@@ -19,7 +21,7 @@ export function MediaRenderer({ fileUrl, fileName: _fileName, fileType }: MediaR
           {isVideo ? 'movie' : 'audio_file'}
         </span>
         <Text size="3" weight="medium" color="gray">
-          {isVideo ? 'Video' : 'Audio'} file URL not available
+          {t(`filePreview.mediaUnavailable.${mediaType}SourceUnavailable`)}
         </Text>
       </Flex>
     );
@@ -57,7 +59,7 @@ export function MediaRenderer({ fileUrl, fileName: _fileName, fileType }: MediaR
               backgroundColor: 'var(--slate-12)',
             }}
           >
-            Your browser does not support video playback.
+            {t('filePreview.mediaUnavailable.videoUnsupported')}
           </video>
         ) : (
           <audio
@@ -69,7 +71,7 @@ export function MediaRenderer({ fileUrl, fileName: _fileName, fileType }: MediaR
               backgroundColor: 'var(--slate-12)',
             }}
           >
-            Your browser does not support audio playback.
+            {t('filePreview.mediaUnavailable.audioUnsupported')}
           </audio>
         )}
       </Box>

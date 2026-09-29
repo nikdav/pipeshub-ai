@@ -128,6 +128,7 @@ export function AppSection({
   onChevronClick,
   onAppSelect,
 }: AppSectionProps) {
+  const { t } = useTranslation();
   const isKbApp = isKbCollectionsHubApp(app);
   const connectorType = mapConnectorType(app.connector || app.name);
   const hierarchicalTree = categorizedTree ?? connectorTree;
@@ -341,7 +342,7 @@ export function AppSection({
           </>
         ) : (
           <Text size="1" style={{ color: 'var(--slate-9)', padding: 'var(--space-2) var(--space-6)' }}>
-            No items
+            {t('table.emptyState')}
           </Text>
         )}
         {showChildLoadInline && onLoadMoreAppChildren ? (

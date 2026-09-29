@@ -6,6 +6,9 @@ import { immer } from 'zustand/middleware/immer';
 import { enableMapSet } from 'immer';
 import { categorizeNode, mergeChildrenIntoTree } from './utils/tree-builder';
 import type { SidebarNodeChildrenPaginationMeta } from './utils/sidebar-child-pagination-meta';
+import type { LocalizedTextValue } from '@/lib/i18n/localized-text';
+import { localizedText } from '@/lib/i18n/localized-text';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
 
 /**
  * Default page size for KB and all-records pagination. Shared across store
@@ -75,7 +78,7 @@ interface KnowledgeBaseState {
   // Table data from new endpoint
   tableData: KnowledgeHubApiResponse | null;
   isLoadingTableData: boolean;
-  tableDataError: string | null;
+  tableDataError: LocalizedTextValue | null;
 
   // Currently selected node in sidebar (for table data fetching)
   selectedNode: {
@@ -118,7 +121,7 @@ interface KnowledgeBaseState {
   // All Records table data (from API)
   allRecordsTableData: KnowledgeHubApiResponse | null;
   isLoadingAllRecordsTable: boolean;
-  allRecordsTableError: string | null;
+  allRecordsTableError: LocalizedTextValue | null;
 
   // All Records selection
   allRecordsSidebarSelection: AllRecordsSidebarSelection;
@@ -221,7 +224,7 @@ interface KnowledgeBaseActions {
   // Table data actions
   setTableData: (data: KnowledgeHubApiResponse | null) => void;
   setIsLoadingTableData: (loading: boolean) => void;
-  setTableDataError: (error: string | null) => void;
+  setTableDataError: (error: LocalizedTextValue | null) => void;
   setSelectedNode: (node: { nodeType: string; nodeId: string } | null) => void;
   clearTableData: () => void;
 
@@ -292,7 +295,7 @@ interface KnowledgeBaseActions {
   setAllRecordsTableData: (data: KnowledgeHubApiResponse | null) => void;
   syncAllRecordsPaginationMeta: (pagination: { totalItems: number; totalPages: number; hasNext: boolean; hasPrev: boolean }) => void;
   setIsLoadingAllRecordsTable: (loading: boolean) => void;
-  setAllRecordsTableError: (error: string | null) => void;
+  setAllRecordsTableError: (error: LocalizedTextValue | null) => void;
 
   // Refresh
   setIsRefreshing: (refreshing: boolean) => void;
@@ -1084,8 +1087,16 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
           get().purgeDeletedIdsFromSidebarChildrenCaches([nodeId]);
 
           // Show success toast immediately
-          toast.success('Deleted successfully', {
-            description: `The ${nodeType === 'kb' || nodeType === 'app' ? 'knowledge base' : nodeType === 'folder' ? 'collection' : 'file'} has been deleted.`,
+          const kindKey =
+            nodeType === 'kb' || nodeType === 'app'
+              ? 'itemType.knowledgeBase'
+              : nodeType === 'folder'
+                ? 'itemType.collection'
+                : 'itemType.file';
+          toast.success(localizedText('knowledgeBase.deleteSuccessTitle'), {
+            description: localizedText('knowledgeBase.deleteSuccessDescription', {
+              kind: localizedText(kindKey),
+            }),
           });
 
           // Orchestrate refresh: Re-fetch sidebar and content data
@@ -1100,8 +1111,11 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
             state.deletingNodeIds.delete(nodeId);
           });
 
-          toast.error('Delete failed', {
-            description: (error as Error).message || 'Failed to delete. Please try again.',
+          toast.error(localizedText('knowledgeBase.deleteFailedTitle'), {
+            description: getUserFacingErrorText(
+              error,
+              localizedText('knowledgeBase.deleteFallback'),
+            ),
           });
 
           throw error;
@@ -1160,7 +1174,9 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
         const { KnowledgeBaseApi } = await import('./api');
         const { toast } = await import('@/lib/store/toast-store');
 
-        const toastId = toast.loading(`Re-indexing ${items.length} items...`, {
+        const toastId = toast.loading(localizedText('knowledgeBase.bulkReindexProgress', {
+          count: items.length,
+        }), {
           icon: 'lap_timer',
         });
 
@@ -1174,12 +1190,18 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
           if (failCount === 0) {
             toast.update(toastId, {
               variant: 'success',
-              title: `Successfully reindexed ${successCount} items`,
+              title: localizedText('knowledgeBase.bulkReindexSuccess', {
+                count: successCount,
+              }),
             });
           } else {
             toast.update(toastId, {
               variant: 'warning',
-              title: `Reindexed ${successCount} items, ${failCount} failed`,
+              title: localizedText('knowledgeBase.bulkReindexPartial', {
+                count: successCount,
+                successCount,
+                failCount,
+              }),
             });
           }
 
@@ -1193,8 +1215,11 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
         } catch (error: unknown) {
           toast.update(toastId, {
             variant: 'error',
-            title: 'Bulk reindex failed',
-            description: (error as Error).message,
+            title: localizedText('knowledgeBase.bulkReindexFailed'),
+            description: getUserFacingErrorText(
+              error,
+              localizedText('knowledgeBase.bulkReindexFallback'),
+            ),
           });
           throw error;
         }
@@ -1209,7 +1234,9 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
           items.forEach(item => state.deletingNodeIds.add(item.id));
         });
 
-        const toastId = toast.loading(`Deleting ${items.length} items...`);
+        const toastId = toast.loading(localizedText('knowledgeBase.bulkDeleteProgress', {
+          count: items.length,
+        }));
 
         try {
           const results = await KnowledgeBaseApi.bulkDelete(items);
@@ -1219,12 +1246,18 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
           if (failCount === 0) {
             toast.update(toastId, {
               variant: 'success',
-              title: `Successfully deleted ${successCount} items`,
+              title: localizedText('knowledgeBase.bulkDeleteSuccess', {
+                count: successCount,
+              }),
             });
           } else {
             toast.update(toastId, {
               variant: 'warning',
-              title: `Deleted ${successCount} items, ${failCount} failed`,
+              title: localizedText('knowledgeBase.bulkDeletePartial', {
+                count: successCount,
+                successCount,
+                failCount,
+              }),
             });
           }
 
@@ -1267,8 +1300,11 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseStore>()(
 
           toast.update(toastId, {
             variant: 'error',
-            title: 'Bulk delete failed',
-            description: (error as Error).message,
+            title: localizedText('knowledgeBase.bulkDeleteFailed'),
+            description: getUserFacingErrorText(
+              error,
+              localizedText('knowledgeBase.bulkDeleteFallback'),
+            ),
           });
           throw error;
         }

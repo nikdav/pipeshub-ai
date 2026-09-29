@@ -124,7 +124,8 @@
       "httpFallback": "Der Upload wurde nicht abgeschlossen. Bitte versuchen Sie es erneut. Falls er weiterhin fehlschlägt, wenden Sie sich an Ihre Administration.",
       "stalled": "PipesHub hat nicht mehr reagiert, bevor dieser Upload abgeschlossen war. Bitte laden Sie diese Dateien erneut hoch.",
       "incomplete": "Upload nicht abgeschlossen"
-    }
+    },
+    "fileExceedsSizeLimit": "Diese Datei überschreitet die Größenbegrenzung von {{maxFileSizeMB}} MB. Verkleinern oder teilen Sie sie und laden Sie sie anschließend erneut hoch."
   },
   "onboarding": {
     "skipEmbeddingDefault": "Überspringen",
@@ -400,7 +401,14 @@
     "willBeDeleted": "wird gelöscht",
     "willBeReindexed": "wird neu indiziert",
     "reindexConfirm": "Diesen {{type}} neu indizieren?",
-    "reindexDescription": "Dies aktualisiert den Suchindex für diesen {{type}} und seinen Inhalt."
+    "reindexDescription": "Dies aktualisiert den Suchindex für diesen {{type}} und seinen Inhalt.",
+    "bulkDeleteQuestion_one": "{{itemCount}} Element löschen?",
+    "bulkDeleteQuestion_other": "{{itemCount}} Elemente löschen?",
+    "bulkDeleteAction_one": "{{itemCount}} Element löschen",
+    "bulkDeleteAction_other": "{{itemCount}} Elemente löschen",
+    "bulkDeleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden. Alle ausgewählten Elemente werden dauerhaft gelöscht.",
+    "deleteItemDescription": "{{itemType}} wird gelöscht",
+    "deleteItemFromCollectionDescription": "{{itemType}} wird aus der Sammlung gelöscht"
   },
   "table": {
     "fileName": "Dateiname",
@@ -543,6 +551,7 @@
         "busyRetry_other": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in {{count}} Sekunden erneut."
       }
     },
+    "unknown": "Unbekannt",
     "connectorIconAlt": "{{type}}-Symbol",
     "submit": "Absenden"
   },
@@ -626,7 +635,11 @@
     "searchEmptyHint": "Keine passenden Ergebnisse gefunden. Versuchen Sie einen anderen Suchbegriff.",
     "adjustFiltersHint": "Wählen Sie eine andere Quelle oder passen Sie Ihre Filter an",
     "addFromCollectionsHint": "Sie können Unternehmensdateien oder -ordner über die Sammlungen hinzufügen",
-    "addFilesHint": "Fügen Sie Ihre Dateien oder Ordner hinzu"
+    "addFilesHint": "Fügen Sie Ihre Dateien oder Ordner hinzu",
+    "pagination": {
+      "showing": "{{start}}–{{end}} von {{total}} Elementen werden angezeigt",
+      "perPage": "{{limit}} pro Seite"
+    }
   },
   "connectorTypes": {
     "slack": "Slack",
@@ -4158,7 +4171,82 @@
     "resizeCitations": "Größe des Quellen-Panels ändern",
     "resizePreview": "Größe der Dateivorschau ändern",
     "viewCitations": "Quellen anzeigen",
-    "openNamedInSource": "{{name}} in der Quelle öffnen"
+    "openNamedInSource": "{{name}} in der Quelle öffnen",
+    "openFailedFallback": "Für diese Datei konnte keine Vorschau geöffnet werden. Laden Sie die Datei stattdessen herunter oder versuchen Sie es gleich noch einmal.",
+    "dialogDescription": "Vorschaubereich für {{name}}. Hier werden Dokumentinhalt, Dateidetails und zugehörige Zitate angezeigt.",
+    "documentLoadFailed": {
+      "loading": "Dokument wird geladen …",
+      "fileUnavailable": "Dateidaten nicht verfügbar",
+      "fetchFailed": "Dokument konnte nicht abgerufen werden",
+      "emptyServerFile": "Vom Server wurde eine leere Datei empfangen.",
+      "emptyDocument": "Das Dokument ist leer.",
+      "renderFailed": "Dieses Dokument kann nicht dargestellt werden.",
+      "loadFailed": "Dokument konnte nicht geladen werden"
+    },
+    "htmlLoadFailed": {
+      "loading": "HTML wird geladen …",
+      "noUrl": "Datei-URL nicht verfügbar",
+      "fetchFailed": "Dateiinhalt konnte nicht abgerufen werden",
+      "loadFailed": "Datei konnte nicht geladen werden"
+    },
+    "imageLoadFailed": {
+      "noUrl": "URL der Bilddatei nicht verfügbar",
+      "failed": "Bild konnte nicht geladen werden",
+      "couldNotDisplay": "Die Bilddatei konnte nicht angezeigt werden.",
+      "loading": "Bild wird geladen …",
+      "goToCitation": "Zu Zitat {{id}} wechseln"
+    },
+    "mediaUnavailable": {
+      "videoSourceUnavailable": "URL der Videodatei nicht verfügbar",
+      "audioSourceUnavailable": "URL der Audiodatei nicht verfügbar",
+      "videoUnsupported": "Ihr Browser unterstützt keine Videowiedergabe.",
+      "audioUnsupported": "Ihr Browser unterstützt keine Audiowiedergabe."
+    },
+    "pdfLoadFailed": {
+      "noUrl": "PDF-Datei-URL nicht verfügbar",
+      "unableToLoadPreview": "Vorschau für {{fileName}} kann nicht geladen werden",
+      "loading": "PDF wird geladen …",
+      "loadFailed": "PDF-Datei konnte nicht geladen werden"
+    },
+    "unsupportedDocument": {
+      "legacyDoc": "Diese Datei liegt im veralteten Word-Format (.doc) vor. Eine Vorschau im Browser wird hier nicht unterstützt. Laden Sie die Datei herunter, um sie in Word zu öffnen, oder speichern Sie eine Kopie als .docx, um sie in Pipeshub in der Vorschau anzuzeigen.",
+      "documentType": "Für diesen Dokumenttyp ist keine Vorschau verfügbar. Bitte laden Sie das Dokument herunter, um es anzusehen.",
+      "fileType": "Für diesen Dateityp ist keine Vorschau verfügbar.",
+      "openInBrowser": "Im Browser öffnen"
+    },
+    "markdownLoadFailed": {
+      "loading": "Markdown wird geladen …",
+      "noUrl": "Datei-URL nicht verfügbar",
+      "fetchFailed": "Markdown-Inhalt konnte nicht abgerufen werden",
+      "loadFailed": "Datei konnte nicht geladen werden"
+    },
+    "spreadsheet": {
+      "emptyCell": "(Leer)",
+      "loading": "Tabelle wird geladen …",
+      "noUrl": "Datei-URL nicht verfügbar",
+      "fetchFailed": "Tabelle konnte nicht abgerufen werden",
+      "loadFailed": "Tabelle konnte nicht geladen werden",
+      "emptySheet": "Dieses Tabellenblatt ist leer.",
+      "showingRows_one": "Die ersten {{shown}} von {{total}} Zeilen werden angezeigt. Laden Sie die Datei herunter, um alle Daten zu sehen.",
+      "showingRows_other": "Die ersten {{shown}} von {{total}} Zeilen werden angezeigt. Laden Sie die Datei herunter, um alle Daten zu sehen."
+    },
+    "switchVersion": {
+      "switchLabel": "Version {{version}}, Version wechseln",
+      "versionLabel": "Version {{version}}",
+      "switchTitle": "Version wechseln",
+      "optionLabel": "Version {{version}}",
+      "latest": "neueste"
+    },
+    "tabs": {
+      "preview": "Vorschau",
+      "fileDetails": "Dateidetails"
+    },
+    "textLoadFailed": {
+      "loading": "Datei wird geladen …",
+      "noUrl": "Datei-URL nicht verfügbar",
+      "fetchFailed": "Dateiinhalt konnte nicht abgerufen werden",
+      "loadFailed": "Datei konnte nicht geladen werden"
+    }
   },
   "agentBuilder": {
     "goBack": "Zurück",
@@ -4592,7 +4680,8 @@
     "forceReindexDescription": "Das Dokument wird von Grund auf neu indexiert. Dabei können zusätzliche Kosten entstehen. Verwenden Sie diese Option, wenn Suchergebnisse veraltet sind oder das Dokument trotz abgeschlossener Indexierung nicht durchsuchbar ist.",
     "deleteRecord": "Datensatz löschen",
     "previewConversionFailed": "Konvertierung für die Vorschau fehlgeschlagen. Sie können die Datei weiterhin herunterladen.",
-    "missingRecordId": "Datensatz-ID fehlt"
+    "missingRecordId": "Datensatz-ID fehlt",
+    "chatAttachment": "Chat-Anhang"
   },
   "oauthConsent": {
     "loading": "Autorisierungsanfrage wird geladen…",
@@ -4904,6 +4993,13 @@
       "reindexFailedError": "Fehlgeschlagene Datensätze konnten nicht neu indexiert werden",
       "manualIndexStart": "Datensätze mit manueller Indexierung werden indexiert…",
       "manualIndexError": "Manuelle Indexierung konnte nicht gestartet werden"
+    },
+    "toast": {
+      "renameFailed": "Umbenennen fehlgeschlagen",
+      "folderRenamed": "Ordner erfolgreich umbenannt",
+      "collectionRenamed": "Sammlung erfolgreich umbenannt",
+      "renameRefreshWarningTitle": "Liste konnte nicht aktualisiert werden",
+      "renameRefreshWarningDescription": "{{kind}} wurde umbenannt, aber die Liste wurde nicht aktualisiert. Aktualisieren Sie die Seite, um die aktuelle Liste zu sehen."
     }
   },
   "reindexScope": {
@@ -5037,6 +5133,119 @@
         "authenticationFailed": "Die Authentifizierung ist fehlgeschlagen. Bitte versuchen Sie es erneut oder wenden Sie sich an Ihre Administration.",
         "rejected": "Der Server hat die OAuth-Authentifizierung abgelehnt."
       }
+    }
+  },
+  "knowledgeBase": {
+    "accessRevoked": "Sie haben keinen Zugriff mehr auf diese Sammlung.",
+    "bulkDeleteFailed": "Massenlöschung fehlgeschlagen",
+    "bulkDeleteFallback": "Die ausgewählten Elemente konnten nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "bulkDeletePartial_one": "{{successCount}} Element gelöscht; {{failCount}} fehlgeschlagen.",
+    "bulkDeletePartial_other": "{{successCount}} Elemente gelöscht; {{failCount}} fehlgeschlagen.",
+    "bulkDeleteProgress_one": "{{count}} Element wird gelöscht …",
+    "bulkDeleteProgress_other": "{{count}} Elemente werden gelöscht …",
+    "bulkDeleteSuccess_one": "{{count}} Element erfolgreich gelöscht",
+    "bulkDeleteSuccess_other": "{{count}} Elemente erfolgreich gelöscht",
+    "bulkReindexFailed": "Massenindizierung fehlgeschlagen",
+    "bulkReindexFallback": "Die ausgewählten Elemente konnten nicht erneut indiziert werden. Bitte versuchen Sie es erneut.",
+    "bulkReindexPartial_one": "{{successCount}} Element erneut indiziert; {{failCount}} fehlgeschlagen.",
+    "bulkReindexPartial_other": "{{successCount}} Elemente erneut indiziert; {{failCount}} fehlgeschlagen.",
+    "bulkReindexProgress_one": "{{count}} Element wird erneut indiziert …",
+    "bulkReindexProgress_other": "{{count}} Elemente werden erneut indiziert …",
+    "bulkReindexSuccess_one": "{{count}} Element erfolgreich erneut indiziert",
+    "bulkReindexSuccess_other": "{{count}} Elemente erfolgreich erneut indiziert",
+    "collectionsLoadFailedTitle": "Sammlungen konnten nicht geladen werden",
+    "createFolderFailed": "Ordner konnte nicht erstellt werden",
+    "createFolderFallback": "Der Ordner konnte nicht erstellt werden. Überprüfen Sie den Namen und versuchen Sie es erneut.",
+    "createFolderSuccess": "Ordner erfolgreich erstellt",
+    "createFolderSuccessDescription": "„{{name}}“ wurde erstellt",
+    "deleteFailed": "{{kind}} konnte nicht gelöscht werden",
+    "deleteFailedTitle": "Löschen fehlgeschlagen",
+    "deleteFallback": "Löschen fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "deleteRefreshFailed": "Liste konnte nicht aktualisiert werden",
+    "deleteRefreshFailedDescription": "{{kind}} wurde gelöscht, aber die Liste wurde nicht aktualisiert. Aktualisieren Sie die Seite, um die aktuelle Liste zu sehen.",
+    "deleteSuccess": "„{{name}}“ erfolgreich gelöscht",
+    "deleteSuccessDescription": "{{kind}} wurde gelöscht.",
+    "deleteSuccessTitle": "Erfolgreich gelöscht",
+    "downloadFailed": "Download fehlgeschlagen",
+    "downloadFallback": "Die Datei konnte nicht heruntergeladen werden. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "errors": {
+      "folderCollectionIdRequired": "Die Sammlungs-ID ist erforderlich, um diesen Ordner zu aktualisieren."
+    },
+    "folderDetails": {
+      "collection": "Sammlung",
+      "connector": "Konnektor",
+      "createdAt": "Erstellt am",
+      "empty": "Keine Ordnerdetails verfügbar",
+      "folder": "Ordner",
+      "indexingStatus": "Indizierungsstatus",
+      "metadata": "Metadaten",
+      "origin": "Ursprung",
+      "permissions": "Berechtigungen",
+      "recordGroup": "Datensatzgruppe",
+      "recordType": "Datensatztyp",
+      "title": "Ordnerdetails",
+      "totalItems": "Elemente insgesamt",
+      "updatedAt": "Aktualisiert am",
+      "version": "Version"
+    },
+    "loadCollectionsFallback": "Ihre Sammlungen konnten nicht geladen werden. Überprüfen Sie Ihre Verbindung und wählen Sie dann „Erneut versuchen“.",
+    "loadItemsFailed": "Elemente konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "loadMoreConnectorsFailed": "Weitere Konnektoren konnten nicht geladen werden",
+    "loadMoreFailedDescription": "Bitte versuchen Sie es erneut oder aktualisieren Sie die Seite.",
+    "loadMoreItemsFailed": "Weitere Elemente konnten nicht geladen werden",
+    "loadRecordsFailed": "Datensätze konnten nicht geladen werden",
+    "moveFailed": "Element konnte nicht verschoben werden",
+    "moveFallback": "Das Element konnte nicht verschoben werden. Bitte versuchen Sie es gleich noch einmal.",
+    "moveSuccess": "Element erfolgreich verschoben",
+    "moveSuccessDescription": "„{{name}}“ wurde verschoben",
+    "reindex": {
+      "toast": {
+        "indexing": "Wird indiziert …",
+        "reindexing": "Wird erneut indiziert …",
+        "queuedIndexing": "Erfolgreich zur Indizierung vorgemerkt",
+        "queuedReindexing": "Erfolgreich zur erneuten Indizierung vorgemerkt"
+      }
+    },
+    "reindexFallback": "Die erneute Indizierung konnte nicht gestartet werden. Bitte versuchen Sie es gleich noch einmal.",
+    "renameFailed": "Umbenennen fehlgeschlagen",
+    "renameFallback": "Das Element konnte nicht umbenannt werden. Bitte versuchen Sie es gleich noch einmal.",
+    "renameSuccess": "Erfolgreich umbenannt",
+    "renameSuccessDescription": "Umbenannt in „{{name}}“",
+    "replaceFailed": "Datei konnte nicht ersetzt werden",
+    "replaceFallback": "Die Datei konnte nicht ersetzt werden. Bitte versuchen Sie es gleich noch einmal.",
+    "replaceFile": {
+      "allowedFileType": "Zum Ersetzen dieser Datei können Sie nur {{fileType}}-Dateien ({{extension}}) hochladen.",
+      "currentFile": "Aktuelle Datei",
+      "maxSize": "Sie können Dateien bis zu {{maxFileSizeMB}} MB hochladen.",
+      "name": "Name",
+      "supports": "Unterstützt: nur {{fileType}}",
+      "title": "Datei ersetzen",
+      "upload": "Hochladen"
+    },
+    "replaceSuccess": "Datei erfolgreich ersetzt",
+    "replaceSuccessDescription": "„{{oldName}}“ wurde durch „{{newName}}“ ersetzt",
+    "sidebarLoadFailedAppSectionsDescription": "App-Bereiche konnten nicht geladen werden. Bitte aktualisieren Sie die Seite.",
+    "sidebarLoadFailedCollectionsDescription": "Sammlungen konnten nicht geladen werden. Bitte aktualisieren Sie die Seite.",
+    "sidebarLoadFailedTitle": "Seitenleiste konnte nicht geladen werden",
+    "upload": {
+      "addFiles": "Dateien hinzufügen",
+      "addFolder": "Ordner hinzufügen",
+      "collapseFolder": "Ordner zuklappen",
+      "documentation": "Dokumentation",
+      "expandFolder": "Ordner aufklappen",
+      "fileCount_one": "{{count}} Datei",
+      "fileCount_other": "{{count}} Dateien",
+      "fileLimitDescription": "Bis zu {{maxFileSizeMB}} MB pro Datei; Dateityp und -größe werden beim Hochladen geprüft",
+      "folderCount_one": "{{count}} Ordner",
+      "folderCount_other": "{{count}} Ordner",
+      "folderLimitDescription": "Jede Datei wird beim Hochladen geprüft (max. {{maxFileSizeMB}} MB pro Datei)",
+      "moreBelow": "Weitere Elemente unten",
+      "or": "ODER",
+      "removeNamedItem": "{{name}} entfernen",
+      "title": "Daten hochladen",
+      "upload": "Hochladen",
+      "uploadFiles": "Dateien hochladen",
+      "uploadFolders": "Ordner hochladen"
     }
   },
   "keyboard": {

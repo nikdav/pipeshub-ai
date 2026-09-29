@@ -101,12 +101,16 @@ export function groupAppNodesByConnector(nodes: KnowledgeHubNode[]): AppNodeGrou
  */
 export function getSourceDisplay(
   node: KnowledgeHubNode,
-  kbLookup: Map<string, string>
+  kbLookup: Map<string, string>,
+  fallbackLabels: { collection: string; connector: string } = {
+    collection: 'Collection',
+    connector: 'Connector',
+  },
 ): { sourceName: string; sourceType: 'collection' | ConnectorType; sourceIcon: string } {
   if (node.origin === 'COLLECTION' || isKbCollectionsHubApp(node)) {
     // For KB items, extract KB name from webUrl or use lookup
     const kbId = extractKbIdFromNode(node);
-    const kbName = kbId ? kbLookup.get(kbId) || 'Collection' : 'Collection';
+    const kbName = kbId ? kbLookup.get(kbId) || fallbackLabels.collection : fallbackLabels.collection;
 
     return {
       sourceName: kbName,
@@ -117,7 +121,7 @@ export function getSourceDisplay(
 
   // For connector items, use the connector field
   const connectorType = node.connector ? mapConnectorType(node.connector) : 'google-drive';
-  const sourceName = node.connector || 'Connector';
+  const sourceName = node.connector || fallbackLabels.connector;
 
   return {
     sourceName,

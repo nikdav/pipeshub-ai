@@ -132,7 +132,25 @@ describe('useKbStreamUpload', () => {
     const items = useUploadStore.getState().items;
     expect(items).toHaveLength(2);
     expect(items.every((i) => i.status === 'failed')).toBe(true);
+    expect(items.every((i) => i.errorTexts?.[0]?.key === 'chat.projects.workspace.knowledgeBaseUnavailable')).toBe(true);
     expect(KnowledgeBaseApi.streamUpload).not.toHaveBeenCalled();
+  });
+
+  it('keeps app-authored fallback metadata when a failed file event has no server detail', async () => {
+    scriptedEvents = [
+      { event: 'file:failed', data: { filePath: 'bad.txt' } },
+      { event: 'done', data: {} },
+    ];
+    const getKbId = vi.fn().mockResolvedValue('kb1');
+    const hook = mountHook(() => useKbStreamUpload({ getKbId }));
+
+    await act(async () => {
+      await hook.current.uploadFiles([makeFile('bad.txt')]);
+    });
+
+    const item = useUploadStore.getState().items[0]!;
+    expect(item.errors).toEqual(['Upload failed']);
+    expect(item.errorTexts?.[0]?.key).toBe('uploadProgress.uploadFailedDefault');
   });
 
   it('fails rows still in flight when the stream throws mid-batch (finalizeSession safety net)', async () => {

@@ -14,6 +14,7 @@ import { isKbCollectionsHubApp } from './utils/all-records-transformer';
 import { getReindexNodeFromHubItem, isKbCollectionNode } from './utils/reindex-label';
 import { normalizeKbId } from './utils/resolve-root-kb-id';
 import { ConnectorsApi } from '../workspace/connectors/api';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 const BASE_URL = '/api/v1/knowledgeBase';
 
@@ -503,7 +504,10 @@ export const KnowledgeBaseApi = {
   async deleteFolder(kbId: string, folderId: string) {
     const normalizedKbId = normalizeKbId(kbId);
     if (!normalizedKbId) {
-      throw new Error('Knowledge base id is required to delete a folder');
+      throw Object.assign(
+        new Error('Knowledge base id is required to delete a folder'),
+        { messageText: localizedText('knowledgeBase.errors.folderCollectionIdRequired') },
+      );
     }
     await apiClient.delete(`${BASE_URL}/${normalizedKbId}/folder/${folderId}`, { suppressErrorToast: true });
   },
@@ -562,7 +566,10 @@ export const KnowledgeBaseApi = {
   async renameFolder(rootKbId: string, folderId: string, newName: string) {
     const normalizedKbId = normalizeKbId(rootKbId);
     if (!normalizedKbId) {
-      throw new Error('Knowledge base id is required to rename a folder');
+      throw Object.assign(
+        new Error('Knowledge base id is required to rename a folder'),
+        { messageText: localizedText('knowledgeBase.errors.folderCollectionIdRequired') },
+      );
     }
     const { data } = await apiClient.put(`${BASE_URL}/${normalizedKbId}/folder/${folderId}`, {
       folderName: newName,

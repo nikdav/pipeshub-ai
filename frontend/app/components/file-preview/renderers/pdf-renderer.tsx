@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Flex, Text } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import {
@@ -145,6 +146,7 @@ export function PDFRenderer({
   citationClickVersion,
   onHighlightClick,
 }: PDFRendererProps) {
+  const { t } = useTranslation();
   const scrollViewerTo = useRef<(highlight: IHighlight) => void>(() => {});
   const [viewerReadyEpoch, setViewerReadyEpoch] = useState(0);
 
@@ -432,10 +434,10 @@ export function PDFRenderer({
       >
         <MaterialIcon name="description" size={48} color="var(--olive-9)" />
         <Text size="2" color="gray" align="center">
-          PDF file URL not available
+          {t('filePreview.pdfLoadFailed.noUrl')}
         </Text>
         <Text size="1" color="gray" align="center">
-          Unable to load preview for {fileName}
+          {t('filePreview.pdfLoadFailed.unableToLoadPreview', { fileName })}
         </Text>
       </Flex>
     );
@@ -465,7 +467,7 @@ export function PDFRenderer({
             }}
           >
             <Text size="2" color="gray">
-              Loading PDF...
+              {t('filePreview.pdfLoadFailed.loading')}
             </Text>
           </Flex>
         }
@@ -483,10 +485,10 @@ export function PDFRenderer({
           >
             <MaterialIcon name="error_outline" size={48} color="var(--olive-9)" />
             <Text size="2" color="gray" align="center">
-              Failed to load PDF file
+              {t('filePreview.pdfLoadFailed.loadFailed')}
             </Text>
             <Text size="1" color="gray" align="center">
-              Unable to load preview for {fileName}
+              {t('filePreview.pdfLoadFailed.unableToLoadPreview', { fileName })}
             </Text>
           </Flex>
         }

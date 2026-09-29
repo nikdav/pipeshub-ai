@@ -48,11 +48,11 @@ export function DeleteConfirmationDialog({
   const getItemTypeLabel = () => {
     switch (itemType) {
       case 'KB':
-        return t('itemType.knowledgeBase') + ' will be deleted';
+        return t('dialog.deleteItemDescription', { itemType: t('itemType.knowledgeBase') });
       case 'folder':
-        return t('itemType.folder') + ' will be deleted from the collection';
+        return t('dialog.deleteItemFromCollectionDescription', { itemType: t('itemType.folder') });
       case 'record':
-        return t('itemType.file') + ' will be deleted from the collection';
+        return t('dialog.deleteItemFromCollectionDescription', { itemType: t('itemType.file') });
       default:
         return t('itemType.file');
     }
@@ -81,7 +81,7 @@ export function DeleteConfirmationDialog({
         }}
       >
         <VisuallyHidden>
-          <Dialog.Title>Delete Confirmation</Dialog.Title>
+          <Dialog.Title>{t('dialog.deleteConfirmation')}</Dialog.Title>
         </VisuallyHidden>
         <Flex direction="column" gap="4">
           <Flex direction="column" gap="1">

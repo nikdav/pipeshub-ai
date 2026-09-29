@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 import { Box, Flex, Text } from '@radix-ui/themes';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, vs } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -87,11 +89,12 @@ function getLanguageFromExtension(fileName: string): string {
 }
 
 export function TextRenderer({ fileUrl, fileName, fileType: _fileType, citations, activeCitationId, onHighlightClick }: TextRendererProps) {
+  const { t } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDark = appearance === 'dark';
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedText | null>(null);
   /** True after content is shown and one frame has passed (SyntaxHighlighter needs a paint). */
   const [textDomReady, setTextDomReady] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,7 +111,7 @@ export function TextRenderer({ fileUrl, fileName, fileType: _fileType, citations
 
   useEffect(() => {
     if (!fileUrl || fileUrl.trim() === '') {
-      setError('File URL not available');
+      setError(localizedText('filePreview.textLoadFailed.noUrl'));
       setIsLoading(false);
       return;
     }
@@ -117,14 +120,16 @@ export function TextRenderer({ fileUrl, fileName, fileType: _fileType, citations
       try {
         const response = await fetch(fileUrl);
         if (!response.ok) {
-          throw new Error('Failed to fetch file content');
+          throw new Error('FETCH_FAILED');
         }
         const text = await response.text();
         setContent(text);
         setError(null);
       } catch (err) {
         console.error('Error loading text file:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load file');
+        setError(localizedText(err instanceof Error && err.message === 'FETCH_FAILED'
+          ? 'filePreview.textLoadFailed.fetchFailed'
+          : 'filePreview.textLoadFailed.loadFailed'));
       } finally {
         setIsLoading(false);
       }
@@ -219,7 +224,7 @@ export function TextRenderer({ fileUrl, fileName, fileType: _fileType, citations
     return (
       <Flex align="center" justify="center" style={{ height: '100%', padding: 'var(--space-6)' }}>
         <Text size="2" color="gray">
-          Loading file...
+          {t('filePreview.textLoadFailed.loading')}
         </Text>
       </Flex>
     );
@@ -232,7 +237,7 @@ export function TextRenderer({ fileUrl, fileName, fileType: _fileType, citations
           error_outline
         </span>
         <Text size="3" weight="medium" color="red">
-          {error}
+          {resolveLocalizedText(error, t)}
         </Text>
       </Flex>
     );
