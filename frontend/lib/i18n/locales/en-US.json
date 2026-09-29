@@ -1530,6 +1530,20 @@
         "saveErrorDescription": "Could not update team. Please try again.",
         "applyToAll": "Apply to all",
         "newMemberRoles": "New Member Roles"
+      },
+      "roles": {
+        "owner": {
+          "label": "Owner",
+          "description": "Full control over the team and its resources"
+        },
+        "writer": {
+          "label": "Writer",
+          "description": "Can view and edit team resources"
+        },
+        "reader": {
+          "label": "Reader",
+          "description": "Can view team resources"
+        }
       }
     },
     "oauth2": {
@@ -1863,7 +1877,9 @@
           "label": "Video",
           "badge": "Multimodal"
         }
-      }
+      },
+      "requiredFileUploadError": "Required file upload missing: {{fieldNames}}. Please upload the file and try again.",
+      "defaultModelName": "Model"
     },
     "common": {
       "loadingUsers": "Loading users...",
@@ -1936,7 +1952,9 @@
         "configured": "Configured",
         "notConfigured": "Not configured",
         "authenticated": "Authenticated",
-        "notAuthenticated": "Not authenticated"
+        "notAuthenticated": "Not authenticated",
+        "labelWithCount_one": "{{label}} ({{formattedCount}})",
+        "labelWithCount_other": "{{label}} ({{formattedCount}})"
       },
       "personalSegment": {
         "my": "My actions",
@@ -1998,7 +2016,8 @@
         "authenticatedOne": "1 authenticated",
         "authenticatedMany": "{{count}} authenticated",
         "needsAuthOne": "1 needs sign-in",
-        "needsAuthMany": "{{count}} need sign-in"
+        "needsAuthMany": "{{count}} need sign-in",
+        "addInstance": "Add instance"
       },
       "typeDetail": {
         "scopeTeam": "Actions",
@@ -2072,7 +2091,8 @@
         "urlProtocol": "{{field}} must use http or https"
       },
       "adminRequiredToast": "Only admins can add new actions. Ask your admin to configure this action first.",
-      "personalNonAdminHint": "Actions marked \"Not configured\" need to be set up by an admin before you can use them."
+      "personalNonAdminHint": "Actions marked \"Not configured\" need to be set up by an admin before you can use them.",
+      "searchPlaceholder": "Search..."
     },
     "rightPanel": {
       "primaryDisabledHint": "Scroll up and complete the required fields (marked with *) to continue.",
@@ -2093,7 +2113,9 @@
       "assistantChat": "Assistant Chat",
       "agents": "Agents",
       "showMore": "Show More",
-      "moreAgents": "More Agents"
+      "moreAgents": "More Agents",
+      "searchError": "Could not search archived chats. Please try again.",
+      "conversationLoadError": "Could not load this conversation. Please try again."
     },
     "general": {
       "subtitle": "Your company general information",
@@ -2239,7 +2261,8 @@
       },
       "xmlUpload": {
         "parseError": "Could not parse SAML metadata from this file. Check that it is a valid IdP metadata XML.",
-        "readError": "Failed to read the file."
+        "readError": "Failed to read the file.",
+        "chooseFile": "Choose XML File"
       },
       "riskDialog": {
         "title": "Confirm authentication changes",
@@ -2252,6 +2275,129 @@
       "userMethods": {
         "heading": "User Sign-In Methods",
         "subtitle": "Controls which sign-in methods are available to every user, across every organization."
+      },
+      "methods": {
+        "password": {
+          "label": "Password",
+          "description": "Traditional email and password authentication"
+        },
+        "otp": {
+          "label": "One-Time Password",
+          "description": "Send a verification code via email"
+        },
+        "google": {
+          "description": "Allow users to sign in with Google accounts"
+        },
+        "microsoft": {
+          "description": "Allow users to sign in with Microsoft accounts"
+        },
+        "samlSso": {
+          "description": "Single Sign-On with SAML protocol"
+        },
+        "oauth": {
+          "description": "Generic OAuth 2.0 provider authentication"
+        }
+      },
+      "password": {
+        "show": "Show password",
+        "hide": "Hide password"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "Redirect URI",
+            "labelSuffix": "(add to your Google OAuth settings)"
+          },
+          "authorizedOrigin": {
+            "label": "Authorized Origin",
+            "labelSuffix": "(add to your Google OAuth settings)",
+            "warning": "The current origin differs from the configured frontend URL. Use the value above in Google OAuth settings."
+          },
+          "clientId": {
+            "label": "Client ID",
+            "placeholder": "Enter your Google OAuth Client ID",
+            "hint": "The client ID from your Google OAuth credentials"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "Redirect URI",
+            "labelSuffix": "(add to your Microsoft OAuth settings)"
+          },
+          "clientId": {
+            "label": "Client ID",
+            "placeholder": "Enter your Microsoft Application (client) ID",
+            "hint": "The Application (client) ID from your Azure portal app registration"
+          },
+          "tenantId": {
+            "label": "Tenant ID",
+            "placeholder": "Enter your Microsoft Directory (tenant) ID",
+            "hint": "The Directory (tenant) ID from your Azure portal app registration"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS (Assertion Consumer Service) URL",
+            "labelSuffix": "(add this to your Identity Provider)",
+            "warning": "The current origin differs from the configured frontend URL. Add the value above to your Identity Provider."
+          },
+          "spEntityId": {
+            "label": "SP Entity ID (Issuer)",
+            "labelSuffix": "(add this to your Identity Provider)",
+            "hint": "The Service Provider entity ID sent in SAML requests. Override with the SAML_SP_ENTITY_ID environment variable."
+          },
+          "_xmlFile": {
+            "label": "IdP Metadata XML",
+            "hint": "Upload your Identity Provider's metadata XML"
+          },
+          "entryPoint": {
+            "label": "SSO Entry Point (IdP URL)",
+            "hint": "The Single Sign-On URL provided by your Identity Provider"
+          },
+          "certificate": {
+            "label": "X.509 Certificate",
+            "hint": "The public certificate from your Identity Provider (PEM format)"
+          },
+          "emailKey": {
+            "label": "Email Attribute Key",
+            "hint": "The SAML attribute name that contains the user's email address"
+          },
+          "samlPlatform": {
+            "label": "Provider Name",
+            "labelSuffix": "(optional)"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "Provider Name"
+          },
+          "redirectUri": {
+            "label": "Redirect URI",
+            "labelSuffix": "(register in your OAuth provider)"
+          },
+          "clientId": {
+            "label": "Client ID",
+            "placeholder": "Enter your OAuth Client ID"
+          },
+          "clientSecret": {
+            "label": "Client Secret",
+            "placeholder": "Enter your OAuth Client Secret"
+          },
+          "authorizationUrl": {
+            "label": "Authorization URL"
+          },
+          "tokenEndpoint": {
+            "label": "Token Endpoint"
+          },
+          "userInfoEndpoint": {
+            "label": "UserInfo Endpoint"
+          },
+          "scope": {
+            "label": "Scope",
+            "labelSuffix": "(optional)",
+            "hint": "Space-separated OAuth scopes. Defaults to openid email profile"
+          }
+        }
       }
     },
     "connectors": {
@@ -2783,7 +2929,13 @@
         "noState": "No state parameter was returned.",
         "backendRejected": "The server rejected the authorization request."
       },
-      "deleteDisabledTooltip": "This server cannot be deleted"
+      "deleteDisabledTooltip": "This server cannot be deleted",
+      "authModes": {
+        "none": "No authentication",
+        "apiToken": "API token",
+        "oauth": "OAuth 2.0",
+        "headers": "Custom header"
+      }
     },
     "bots": {
       "subtitle": "Configure bot credentials and optionally map each bot to an agent",
@@ -2869,7 +3021,11 @@
         "loadConfigs": "Failed to load bot configurations",
         "loadData": "Failed to load data"
       },
-      "refreshed": "Refreshed"
+      "refreshed": "Refreshed",
+      "secretVisibility": {
+        "show": "Show {{secret}}",
+        "hide": "Hide {{secret}}"
+      }
     },
     "skills": {
       "title": "Skills",
@@ -2978,7 +3134,8 @@
         "empty": "No bundled resources yet.",
         "addNew": "Add resource",
         "path": "Path",
-        "content": "Content"
+        "content": "Content",
+        "remove": "Remove {{path}}"
       },
       "versions": {
         "empty": "No version history yet.",
@@ -3019,7 +3176,21 @@
         "reject": "Reject",
         "view": "View",
         "hide": "Hide",
-        "editAndApprove": "Edit & Approve"
+        "editAndApprove": "Edit & Approve",
+        "sourceSummaryHeading": "How it was learned:"
+      },
+      "editorToolbar": {
+        "bold": "Bold ({{modifier}}+B)",
+        "italic": "Italic ({{modifier}}+I)",
+        "inlineCode": "Inline code",
+        "heading2": "Heading 2",
+        "bulletList": "Bullet list",
+        "numberedList": "Numbered list",
+        "codeBlock": "Code block",
+        "blockquote": "Blockquote",
+        "horizontalRule": "Horizontal rule",
+        "undo": "Undo",
+        "redo": "Redo"
       }
     },
     "mail": {
@@ -3080,6 +3251,11 @@
         "usernamePlaceholder": "Enter SMTP username",
         "password": "Password (Optional)",
         "passwordHint": "Password for SMTP authentication (if required)"
+      },
+      "configure": "Configure SMTP",
+      "password": {
+        "show": "Show password",
+        "hide": "Hide password"
       }
     },
     "prompts": {
@@ -3357,7 +3533,8 @@
           "label": "Extraction Service",
           "description": "LLM-based document classification and metadata extraction"
         }
-      }
+      },
+      "logoAlt": "{{service}} logo"
     },
     "tenants": {
       "title": "Tenants",

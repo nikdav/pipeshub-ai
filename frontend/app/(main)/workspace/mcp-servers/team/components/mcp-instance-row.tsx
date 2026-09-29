@@ -7,7 +7,7 @@ import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { apiClient } from '@/lib/api';
 import { isMcpInstanceReadOnly, McpInheritedBadge } from '@/config';
 import type { McpMyServerEntry, McpToolInfo } from '../../types';
-import { MCP_AUTH_MODE_LABELS, MCP_TRANSPORT_LABELS } from '../../types';
+import { MCP_AUTH_MODE_LABEL_KEYS, MCP_TRANSPORT_LABELS } from '../../types';
 
 // ========================================
 // Props
@@ -170,7 +170,7 @@ export function McpInstanceRow({
           </Text>
           <DotSeparator />
           <Text size="2" style={{ color: 'var(--gray-11)' }}>
-            {MCP_AUTH_MODE_LABELS[instance.authMode]}
+            {t(MCP_AUTH_MODE_LABEL_KEYS[instance.authMode])}
           </Text>
           {managedByAdmin && (
             <>

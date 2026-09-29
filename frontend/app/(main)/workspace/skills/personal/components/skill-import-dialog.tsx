@@ -238,7 +238,7 @@ function ImportPreviewCard({
           <MaterialIcon name="psychology" size={16} color="var(--gray-10)" />
           <Badge size="1" color="gray">v{preview.version}</Badge>
         </Flex>
-        <Button variant="ghost" color="gray" size="1" onClick={onDiscard} style={{ cursor: 'pointer' }}>
+        <Button variant="ghost" color="gray" size="1" onClick={onDiscard} aria-label={t('common.close')} style={{ cursor: 'pointer' }}>
           <MaterialIcon name="close" size={14} color="var(--gray-10)" />
         </Button>
       </Flex>

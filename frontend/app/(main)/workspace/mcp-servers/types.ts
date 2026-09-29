@@ -195,9 +195,9 @@ export const MCP_TRANSPORT_LABELS: Record<McpTransport, string> = {
   streamable_http: 'Streamable HTTP',
 };
 
-export const MCP_AUTH_MODE_LABELS: Record<McpAuthMode, string> = {
-  none: 'No authentication',
-  api_token: 'API token',
-  oauth: 'OAuth 2.0',
-  headers: 'Custom header',
+export const MCP_AUTH_MODE_LABEL_KEYS: Record<McpAuthMode, string> = {
+  none: 'workspace.mcpServers.authModes.none',
+  api_token: 'workspace.mcpServers.authModes.apiToken',
+  oauth: 'workspace.mcpServers.authModes.oauth',
+  headers: 'workspace.mcpServers.authModes.headers',
 };

@@ -3,6 +3,8 @@
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { Flex, Grid, Text, Button } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { useUserStore, selectIsProfileInitialized } from '@/lib/store/user-store';
 import { useBreakpoint } from '@/lib/hooks/use-breakpoint';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
@@ -24,7 +26,7 @@ function Oauth2PageContent() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [createPanelOpen, setCreatePanelOpen] = useState(false);
@@ -61,13 +63,11 @@ function Oauth2PageContent() {
         }
       );
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : t('workspace.oauth2.errorGeneric');
-      setError(message);
+      setError(getUserFacingErrorText(err, localizedText('workspace.oauth2.errorGeneric')));
     } finally {
       setIsLoading(false);
     }
-  }, [page, limit, debouncedSearchQuery, t]);
+  }, [page, limit, debouncedSearchQuery]);
 
   useEffect(() => {
     if (!isProfileInitialized) return;
@@ -161,7 +161,7 @@ function Oauth2PageContent() {
             style={{ flex: 1, padding: 'var(--space-6)' }}
           >
             <Text size="2" style={{ color: 'var(--red-11)', textAlign: 'center' }}>
-              {error}
+              {resolveLocalizedText(error, t)}
             </Text>
             <Button size="2" variant="soft" onClick={() => void fetchClients()}>
               {t('workspace.oauth2.retry')}

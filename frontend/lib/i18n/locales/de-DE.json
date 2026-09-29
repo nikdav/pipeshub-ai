@@ -1512,6 +1512,20 @@
         "saveErrorDescription": "Team konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.",
         "applyToAll": "Auf alle anwenden",
         "newMemberRoles": "Rollen neuer Mitglieder"
+      },
+      "roles": {
+        "owner": {
+          "label": "Inhaber",
+          "description": "Volle Kontrolle über das Team und seine Ressourcen"
+        },
+        "writer": {
+          "label": "Bearbeiter",
+          "description": "Kann Teamressourcen ansehen und bearbeiten"
+        },
+        "reader": {
+          "label": "Leser",
+          "description": "Kann Teamressourcen ansehen"
+        }
       }
     },
     "oauth2": {
@@ -1784,7 +1798,9 @@
           "label": "Video",
           "badge": "Multimodal"
         }
-      }
+      },
+      "requiredFileUploadError": "Erforderlicher Datei-Upload fehlt: {{fieldNames}}. Bitte laden Sie die Datei hoch und versuchen Sie es erneut.",
+      "defaultModelName": "Modell"
     },
     "common": {
       "loadingUsers": "Benutzer werden geladen...",
@@ -1857,7 +1873,9 @@
         "configured": "Konfiguriert",
         "notConfigured": "Nicht konfiguriert",
         "authenticated": "Authentifiziert",
-        "notAuthenticated": "Nicht authentifiziert"
+        "notAuthenticated": "Nicht authentifiziert",
+        "labelWithCount_one": "{{label}} ({{formattedCount}})",
+        "labelWithCount_other": "{{label}} ({{formattedCount}})"
       },
       "personalSegment": {
         "my": "Meine Aktionen",
@@ -1919,7 +1937,8 @@
         "authenticatedOne": "1 authentifiziert",
         "authenticatedMany": "{{count}} authentifiziert",
         "needsAuthOne": "1 benötigt Anmeldung",
-        "needsAuthMany": "{{count}} benötigen Anmeldung"
+        "needsAuthMany": "{{count}} benötigen Anmeldung",
+        "addInstance": "Instanz hinzufügen"
       },
       "typeDetail": {
         "scopeTeam": "Aktionen",
@@ -1993,7 +2012,8 @@
         "urlProtocol": "{{field}} muss http oder https verwenden"
       },
       "adminRequiredToast": "Nur Administratoren können neue Aktionen hinzufügen. Bitten Sie Ihren Administrator, diese Aktion zuerst zu konfigurieren.",
-      "personalNonAdminHint": "Als „Nicht konfiguriert“ markierte Aktionen müssen zunächst von einem Administrator eingerichtet werden, bevor Sie sie verwenden können."
+      "personalNonAdminHint": "Als „Nicht konfiguriert“ markierte Aktionen müssen zunächst von einem Administrator eingerichtet werden, bevor Sie sie verwenden können.",
+      "searchPlaceholder": "Suchen …"
     },
     "rightPanel": {
       "primaryDisabledHint": "Scrollen Sie nach oben und füllen Sie die Pflichtfelder (mit *) aus, um fortzufahren.",
@@ -2014,7 +2034,9 @@
       "assistantChat": "Assistenten-Chat",
       "agents": "Agenten",
       "showMore": "Mehr anzeigen",
-      "moreAgents": "Weitere Agenten"
+      "moreAgents": "Weitere Agenten",
+      "searchError": "Archivierte Chats konnten nicht durchsucht werden. Bitte versuchen Sie es erneut.",
+      "conversationLoadError": "Diese Unterhaltung konnte nicht geladen werden. Bitte versuchen Sie es erneut."
     },
     "general": {
       "subtitle": "Allgemeine Informationen Ihres Unternehmens",
@@ -2160,7 +2182,8 @@
       },
       "xmlUpload": {
         "parseError": "SAML-Metadaten konnten aus dieser Datei nicht gelesen werden. Prüfen Sie, ob es sich um eine gültige IdP-Metadaten-XML handelt.",
-        "readError": "Datei konnte nicht gelesen werden."
+        "readError": "Datei konnte nicht gelesen werden.",
+        "chooseFile": "XML-Datei auswählen"
       },
       "riskDialog": {
         "title": "Authentifizierungsänderungen bestätigen",
@@ -2173,6 +2196,129 @@
       "userMethods": {
         "heading": "Anmeldemethoden für Benutzer",
         "subtitle": "Legen Sie fest, welche Anmeldemethoden allen Benutzern in allen Organisationen zur Verfügung stehen."
+      },
+      "methods": {
+        "password": {
+          "label": "Passwort",
+          "description": "Klassische Authentifizierung mit E-Mail-Adresse und Passwort"
+        },
+        "otp": {
+          "label": "Einmalpasswort",
+          "description": "Bestätigungscode per E-Mail senden"
+        },
+        "google": {
+          "description": "Anmeldung mit Google-Konten ermöglichen"
+        },
+        "microsoft": {
+          "description": "Anmeldung mit Microsoft-Konten ermöglichen"
+        },
+        "samlSso": {
+          "description": "Single Sign-On mit dem SAML-Protokoll"
+        },
+        "oauth": {
+          "description": "Authentifizierung mit einem generischen OAuth-2.0-Anbieter"
+        }
+      },
+      "password": {
+        "show": "Passwort anzeigen",
+        "hide": "Passwort verbergen"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "Weiterleitungs-URI",
+            "labelSuffix": "(zu den Google-OAuth-Einstellungen hinzufügen)"
+          },
+          "authorizedOrigin": {
+            "label": "Autorisierter Ursprung",
+            "labelSuffix": "(zu den Google-OAuth-Einstellungen hinzufügen)",
+            "warning": "Der aktuelle Ursprung unterscheidet sich von der konfigurierten Frontend-URL. Verwenden Sie den obigen Wert in den Google-OAuth-Einstellungen."
+          },
+          "clientId": {
+            "label": "Client-ID",
+            "placeholder": "Geben Sie Ihre Google-OAuth-Client-ID ein",
+            "hint": "Die Client-ID aus Ihren Google-OAuth-Anmeldedaten"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "Weiterleitungs-URI",
+            "labelSuffix": "(zu den Microsoft-OAuth-Einstellungen hinzufügen)"
+          },
+          "clientId": {
+            "label": "Client-ID",
+            "placeholder": "Geben Sie Ihre Microsoft-Anwendungs-ID (Client-ID) ein",
+            "hint": "Die Anwendungs-ID (Client-ID) aus der App-Registrierung in Ihrem Azure-Portal"
+          },
+          "tenantId": {
+            "label": "Mandanten-ID",
+            "placeholder": "Geben Sie Ihre Microsoft-Verzeichnis-ID (Mandanten-ID) ein",
+            "hint": "Die Verzeichnis-ID (Mandanten-ID) aus Ihrem Azure-Portal"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS-URL (Assertion Consumer Service)",
+            "labelSuffix": "(zu Ihrem Identitätsanbieter hinzufügen)",
+            "warning": "Der aktuelle Ursprung unterscheidet sich von der konfigurierten Frontend-URL. Fügen Sie den obigen Wert zu Ihrem Identitätsanbieter hinzu."
+          },
+          "spEntityId": {
+            "label": "SP-Entitäts-ID (Aussteller)",
+            "labelSuffix": "(zu Ihrem Identitätsanbieter hinzufügen)",
+            "hint": "Die in SAML-Anfragen gesendete Dienstanbieter-Entitäts-ID. Überschreiben Sie sie mit der Umgebungsvariable SAML_SP_ENTITY_ID."
+          },
+          "_xmlFile": {
+            "label": "IdP-Metadaten-XML",
+            "hint": "Laden Sie die Metadaten-XML Ihres Identitätsanbieters hoch."
+          },
+          "entryPoint": {
+            "label": "SSO-Einstiegspunkt (IdP-URL)",
+            "hint": "Die von Ihrem Identitätsanbieter bereitgestellte Single-Sign-On-URL"
+          },
+          "certificate": {
+            "label": "X.509-Zertifikat",
+            "hint": "Das öffentliche Zertifikat Ihres Identitätsanbieters (PEM-Format)"
+          },
+          "emailKey": {
+            "label": "E-Mail-Attributschlüssel",
+            "hint": "Der SAML-Attributname, der die E-Mail-Adresse des Benutzers enthält"
+          },
+          "samlPlatform": {
+            "label": "Anbietername",
+            "labelSuffix": "(optional)"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "Anbietername"
+          },
+          "redirectUri": {
+            "label": "Weiterleitungs-URI",
+            "labelSuffix": "(bei Ihrem OAuth-Anbieter registrieren)"
+          },
+          "clientId": {
+            "label": "Client-ID",
+            "placeholder": "Geben Sie Ihre OAuth-Client-ID ein"
+          },
+          "clientSecret": {
+            "label": "Client-Geheimnis",
+            "placeholder": "Geben Sie Ihr OAuth-Client-Geheimnis ein"
+          },
+          "authorizationUrl": {
+            "label": "Autorisierungs-URL"
+          },
+          "tokenEndpoint": {
+            "label": "Token-Endpunkt"
+          },
+          "userInfoEndpoint": {
+            "label": "UserInfo-Endpunkt"
+          },
+          "scope": {
+            "label": "Geltungsbereich",
+            "labelSuffix": "(optional)",
+            "hint": "Durch Leerzeichen getrennte OAuth-Geltungsbereiche. Standardmäßig werden openid email profile verwendet."
+          }
+        }
       }
     },
     "connectors": {
@@ -2704,7 +2850,13 @@
         "noState": "Es wurde kein State-Parameter zurückgegeben.",
         "backendRejected": "Der Server hat die Autorisierungsanfrage abgelehnt."
       },
-      "deleteDisabledTooltip": "Dieser Server kann nicht gelöscht werden"
+      "deleteDisabledTooltip": "Dieser Server kann nicht gelöscht werden",
+      "authModes": {
+        "none": "Keine Authentifizierung",
+        "apiToken": "API-Token",
+        "oauth": "OAuth 2.0",
+        "headers": "Benutzerdefinierter Header"
+      }
     },
     "bots": {
       "subtitle": "Konfigurieren Sie Bot-Anmeldedaten und ordnen Sie optional jeden Bot einem Agenten zu",
@@ -2790,7 +2942,11 @@
         "loadConfigs": "Bot-Konfigurationen konnten nicht geladen werden",
         "loadData": "Daten konnten nicht geladen werden"
       },
-      "refreshed": "Aktualisiert"
+      "refreshed": "Aktualisiert",
+      "secretVisibility": {
+        "show": "{{secret}} anzeigen",
+        "hide": "{{secret}} verbergen"
+      }
     },
     "mail": {
       "subtitle": "E-Mail-Server-Konfiguration für OTP und Benachrichtigungen",
@@ -2850,6 +3006,11 @@
         "usernamePlaceholder": "SMTP-Benutzernamen eingeben",
         "password": "Passwort (optional)",
         "passwordHint": "Passwort für die SMTP-Authentifizierung (falls erforderlich)"
+      },
+      "configure": "SMTP konfigurieren",
+      "password": {
+        "show": "Passwort anzeigen",
+        "hide": "Passwort verbergen"
       }
     },
     "prompts": {
@@ -3127,7 +3288,8 @@
           "label": "Extraktionsdienst",
           "description": "LLM-basierte Dokumentklassifizierung und Metadatenextraktion"
         }
-      }
+      },
+      "logoAlt": "{{service}}-Logo"
     },
     "tenants": {
       "title": "Mandanten",
@@ -3471,7 +3633,8 @@
         "empty": "Noch keine Ressourcen enthalten.",
         "addNew": "Ressource hinzufügen",
         "path": "Pfad",
-        "content": "Inhalt"
+        "content": "Inhalt",
+        "remove": "{{path}} entfernen"
       },
       "versions": {
         "empty": "Noch kein Versionsverlauf.",
@@ -3512,12 +3675,26 @@
         "reject": "Ablehnen",
         "view": "Anzeigen",
         "hide": "Ausblenden",
-        "editAndApprove": "Bearbeiten und genehmigen"
+        "editAndApprove": "Bearbeiten und genehmigen",
+        "sourceSummaryHeading": "So wurde es gelernt:"
       },
       "availability": {
         "label": "Für Agenten verfügbar",
         "description": "Wenn deaktiviert, bleibt dieser Skill in Ihrer Bibliothek, kann von Agenten jedoch nicht gefunden oder geladen werden.",
         "descriptionBuiltin": "Wenn deaktiviert, bleibt dieser integrierte Skill in der Bibliothek, kann jedoch von Agenten in der gesamten Organisation nicht gefunden oder geladen werden."
+      },
+      "editorToolbar": {
+        "bold": "Fett ({{modifier}}+B)",
+        "italic": "Kursiv ({{modifier}}+I)",
+        "inlineCode": "Inline-Code",
+        "heading2": "Überschrift 2",
+        "bulletList": "Aufzählungsliste",
+        "numberedList": "Nummerierte Liste",
+        "codeBlock": "Codeblock",
+        "blockquote": "Zitatblock",
+        "horizontalRule": "Horizontale Linie",
+        "undo": "Rückgängig",
+        "redo": "Wiederholen"
       }
     },
     "serviceAccounts": {

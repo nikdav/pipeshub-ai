@@ -6,7 +6,7 @@ import { Badge, Flex, Text } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { isMcpInstanceReadOnly, McpInheritedBadge } from '@/config';
 import type { McpMyServerEntry } from '../../types';
-import { MCP_AUTH_MODE_LABELS, MCP_TRANSPORT_LABELS } from '../../types';
+import { MCP_AUTH_MODE_LABEL_KEYS, MCP_TRANSPORT_LABELS } from '../../types';
 
 interface McpInstanceCardProps {
   instance: McpMyServerEntry;
@@ -81,7 +81,7 @@ export function McpInstanceCard({ instance, onEdit, onDelete }: McpInstanceCardP
         </Text>
         <Flex align="center" gap="2" wrap="wrap" style={{ marginTop: 4 }}>
           <Text size="1" style={{ color: 'var(--gray-9)' }}>{MCP_TRANSPORT_LABELS[instance.transport]}</Text>
-          <Text size="1" style={{ color: 'var(--gray-9)' }}>· {MCP_AUTH_MODE_LABELS[instance.authMode]}</Text>
+          <Text size="1" style={{ color: 'var(--gray-9)' }}>· {t(MCP_AUTH_MODE_LABEL_KEYS[instance.authMode])}</Text>
           {instance.useAdminAuth && (
             <Text size="1" style={{ color: 'var(--gray-9)' }}>· {t('workspace.mcpServers.sharedAuth')}</Text>
           )}

@@ -222,6 +222,7 @@ function InstanceCountBar({
           e.stopPropagation();
           onAdd?.();
         }}
+        aria-label={t('workspace.mcpServers.cta.addInstance')}
         onMouseEnter={() => setIsAddHovered(true)}
         onMouseLeave={() => setIsAddHovered(false)}
         style={{

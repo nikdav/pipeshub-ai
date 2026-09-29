@@ -1519,6 +1519,20 @@
         "saveErrorDescription": "更新團隊失敗。請重試。",
         "applyToAll": "套用至全部",
         "newMemberRoles": "新成員角色"
+      },
+      "roles": {
+        "owner": {
+          "label": "擁有者",
+          "description": "完全控制團隊及其資源"
+        },
+        "writer": {
+          "label": "編輯者",
+          "description": "可以檢視及編輯團隊資源"
+        },
+        "reader": {
+          "label": "檢視者",
+          "description": "可以檢視團隊資源"
+        }
       }
     },
     "oauth2": {
@@ -1851,7 +1865,9 @@
           "label": "影片",
           "badge": "多模態"
         }
-      }
+      },
+      "requiredFileUploadError": "缺少必要的檔案上傳：{{fieldNames}}。請上傳檔案後再試一次。",
+      "defaultModelName": "模型"
     },
     "common": {
       "loadingUsers": "正在載入使用者…",
@@ -1924,7 +1940,8 @@
         "configured": "已設定",
         "notConfigured": "未設定",
         "authenticated": "已驗證",
-        "notAuthenticated": "未驗證"
+        "notAuthenticated": "未驗證",
+        "labelWithCount_other": "{{label}}（{{formattedCount}}）"
       },
       "personalSegment": {
         "my": "我的動作",
@@ -1986,7 +2003,8 @@
         "authenticatedOne": "1 個已驗證",
         "authenticatedMany": "{{count}} 個已驗證",
         "needsAuthOne": "1 個需要登入",
-        "needsAuthMany": "{{count}} 個需要登入"
+        "needsAuthMany": "{{count}} 個需要登入",
+        "addInstance": "新增執行個體"
       },
       "typeDetail": {
         "scopeTeam": "動作",
@@ -2060,7 +2078,8 @@
         "urlProtocol": "{{field}}必須使用 http 或 https"
       },
       "adminRequiredToast": "只有管理員可以新增動作。請請管理員先設定此動作。",
-      "personalNonAdminHint": "標示為「未設定」的動作需由管理員先完成設定，您才能使用。"
+      "personalNonAdminHint": "標示為「未設定」的動作需由管理員先完成設定，您才能使用。",
+      "searchPlaceholder": "搜尋…"
     },
     "rightPanel": {
       "primaryDisabledHint": "請向上捲動並填寫必填欄位（標有 * 者）以繼續。",
@@ -2081,7 +2100,9 @@
       "assistantChat": "助理對話",
       "agents": "代理程式",
       "showMore": "顯示更多",
-      "moreAgents": "更多代理程式"
+      "moreAgents": "更多代理程式",
+      "searchError": "無法搜尋已封存的聊天。請再試一次。",
+      "conversationLoadError": "無法載入此對話。請再試一次。"
     },
     "general": {
       "subtitle": "您公司的一般資訊",
@@ -2227,7 +2248,8 @@
       },
       "xmlUpload": {
         "parseError": "無法從此檔案解析 SAML 中繼資料。請確認它是有效的 IdP 中繼資料 XML。",
-        "readError": "讀取檔案失敗。"
+        "readError": "讀取檔案失敗。",
+        "chooseFile": "選擇 XML 檔案"
       },
       "riskDialog": {
         "title": "確認驗證變更",
@@ -2240,6 +2262,129 @@
       "userMethods": {
         "heading": "使用者登入方式",
         "subtitle": "控制所有組織中每位使用者可使用的登入方式。"
+      },
+      "methods": {
+        "password": {
+          "label": "密碼",
+          "description": "傳統的電子郵件和密碼驗證"
+        },
+        "otp": {
+          "label": "一次性密碼",
+          "description": "透過電子郵件傳送驗證碼"
+        },
+        "google": {
+          "description": "允許使用者使用 Google 帳戶登入"
+        },
+        "microsoft": {
+          "description": "允許使用者使用 Microsoft 帳戶登入"
+        },
+        "samlSso": {
+          "description": "使用 SAML 通訊協定的單一登入"
+        },
+        "oauth": {
+          "description": "通用 OAuth 2.0 供應商驗證"
+        }
+      },
+      "password": {
+        "show": "顯示密碼",
+        "hide": "隱藏密碼"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "重新導向 URI",
+            "labelSuffix": "（新增至 Google OAuth 設定）"
+          },
+          "authorizedOrigin": {
+            "label": "授權來源",
+            "labelSuffix": "（新增至 Google OAuth 設定）",
+            "warning": "目前來源與設定的前端 URL 不同。請在 Google OAuth 設定中使用上方的值。"
+          },
+          "clientId": {
+            "label": "用戶端 ID",
+            "placeholder": "輸入您的 Google OAuth 用戶端 ID",
+            "hint": "Google OAuth 憑證中的用戶端 ID"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "重新導向 URI",
+            "labelSuffix": "（新增至 Microsoft OAuth 設定）"
+          },
+          "clientId": {
+            "label": "用戶端 ID",
+            "placeholder": "輸入您的 Microsoft 應用程式（用戶端）ID",
+            "hint": "Azure 入口網站應用程式註冊中的應用程式（用戶端）ID"
+          },
+          "tenantId": {
+            "label": "租用戶 ID",
+            "placeholder": "輸入您的 Microsoft 目錄（租用戶）ID",
+            "hint": "Azure 入口網站應用程式註冊中的目錄（租用戶）ID"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS（Assertion Consumer Service）URL",
+            "labelSuffix": "（新增至您的身分識別提供者）",
+            "warning": "目前來源與設定的前端 URL 不同。請將上方的值新增至您的身分識別提供者。"
+          },
+          "spEntityId": {
+            "label": "SP Entity ID（Issuer）",
+            "labelSuffix": "（新增至您的身分識別提供者）",
+            "hint": "在 SAML 要求中傳送的服務提供者實體 ID。請使用 SAML_SP_ENTITY_ID 環境變數覆寫。"
+          },
+          "_xmlFile": {
+            "label": "IdP 中繼資料 XML",
+            "hint": "上傳身分識別提供者的中繼資料 XML"
+          },
+          "entryPoint": {
+            "label": "SSO 入口點（IdP URL）",
+            "hint": "身分識別提供者提供的單一登入 URL"
+          },
+          "certificate": {
+            "label": "X.509 憑證",
+            "hint": "身分識別提供者的公開憑證（PEM 格式）"
+          },
+          "emailKey": {
+            "label": "電子郵件屬性索引鍵",
+            "hint": "包含使用者電子郵件地址的 SAML 屬性名稱"
+          },
+          "samlPlatform": {
+            "label": "供應商名稱",
+            "labelSuffix": "（選填）"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "供應商名稱"
+          },
+          "redirectUri": {
+            "label": "重新導向 URI",
+            "labelSuffix": "（在 OAuth 供應商中註冊）"
+          },
+          "clientId": {
+            "label": "用戶端 ID",
+            "placeholder": "輸入您的 OAuth 用戶端 ID"
+          },
+          "clientSecret": {
+            "label": "用戶端密碼",
+            "placeholder": "輸入您的 OAuth 用戶端密碼"
+          },
+          "authorizationUrl": {
+            "label": "授權 URL"
+          },
+          "tokenEndpoint": {
+            "label": "權杖端點"
+          },
+          "userInfoEndpoint": {
+            "label": "UserInfo 端點"
+          },
+          "scope": {
+            "label": "範圍",
+            "labelSuffix": "（選填）",
+            "hint": "以空格分隔的 OAuth 範圍。預設值為 openid email profile"
+          }
+        }
       }
     },
     "connectors": {
@@ -2771,7 +2916,13 @@
         "noState": "未傳回 state 參數。",
         "backendRejected": "伺服器拒絕了此授權要求。"
       },
-      "deleteDisabledTooltip": "此伺服器無法刪除"
+      "deleteDisabledTooltip": "此伺服器無法刪除",
+      "authModes": {
+        "none": "不需驗證",
+        "apiToken": "API 權杖",
+        "oauth": "OAuth 2.0",
+        "headers": "自訂標頭"
+      }
     },
     "bots": {
       "subtitle": "設定機器人憑證，並可選擇將每個機器人對應至代理程式",
@@ -2857,7 +3008,11 @@
         "loadConfigs": "載入機器人設定失敗",
         "loadData": "載入資料失敗"
       },
-      "refreshed": "已重新整理"
+      "refreshed": "已重新整理",
+      "secretVisibility": {
+        "show": "顯示 {{secret}}",
+        "hide": "隱藏 {{secret}}"
+      }
     },
     "skills": {
       "title": "技能",
@@ -2961,7 +3116,8 @@
         "empty": "尚無隨附資源。",
         "addNew": "新增資源",
         "path": "路徑",
-        "content": "內容"
+        "content": "內容",
+        "remove": "移除 {{path}}"
       },
       "versions": {
         "empty": "尚無版本歷程。",
@@ -3000,12 +3156,26 @@
         "reject": "拒絕",
         "view": "檢視",
         "hide": "隱藏",
-        "editAndApprove": "編輯並核准"
+        "editAndApprove": "編輯並核准",
+        "sourceSummaryHeading": "學習來源："
       },
       "availability": {
         "label": "可供代理程式使用",
         "description": "關閉後，此技能仍保留在您的資料庫中，但代理程式無法探索或載入它。",
         "descriptionBuiltin": "關閉後，此內建技能仍保留在資料庫中，但整個組織的代理程式都無法探索或載入它。"
+      },
+      "editorToolbar": {
+        "bold": "粗體（{{modifier}}+B）",
+        "italic": "斜體（{{modifier}}+I）",
+        "inlineCode": "行內程式碼",
+        "heading2": "標題 2",
+        "bulletList": "項目符號清單",
+        "numberedList": "編號清單",
+        "codeBlock": "程式碼區塊",
+        "blockquote": "引用區塊",
+        "horizontalRule": "水平線",
+        "undo": "復原",
+        "redo": "重做"
       }
     },
     "mail": {
@@ -3066,6 +3236,11 @@
         "usernamePlaceholder": "輸入 SMTP 使用者名稱",
         "password": "密碼（選填）",
         "passwordHint": "SMTP 驗證的密碼（如需要）"
+      },
+      "configure": "設定 SMTP",
+      "password": {
+        "show": "顯示密碼",
+        "hide": "隱藏密碼"
       }
     },
     "prompts": {
@@ -3343,7 +3518,8 @@
           "label": "Extraction 服務",
           "description": "基於 LLM 的文件分類與中繼資料擷取"
         }
-      }
+      },
+      "logoAlt": "{{service}} 標誌"
     },
     "tenants": {
       "title": "租戶",

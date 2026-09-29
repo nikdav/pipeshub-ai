@@ -147,7 +147,7 @@ export function XmlUploadField({ field, onPopulate }: XmlUploadFieldProps) {
           style={{ cursor: 'pointer' }}
         >
           <MaterialIcon name="upload_file" size={16} color="var(--slate-11)" />
-          Choose XML File
+          {t('workspace.authentication.xmlUpload.chooseFile')}
         </Button>
 
         {fileName && (

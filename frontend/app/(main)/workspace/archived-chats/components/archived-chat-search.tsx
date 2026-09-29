@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { createPortal } from 'react-dom';
 import { Box, Flex, Text, TextField, Theme } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { useThemeAppearance } from '@/app/components/theme-provider';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { groupConversationsByTime, getNonEmptyGroups } from '@/chat/sidebar/time-group';
@@ -53,7 +54,7 @@ export function ArchivedChatSearch({
     (Conversation & { source?: 'assistant' | 'agent'; agentKey?: string })[]
   >([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState<LocalizedTextValue | null>(null);
 
   // Ref to track in-flight request for cancellation
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -143,7 +144,7 @@ export function ArchivedChatSearch({
       .catch((err) => {
         if (cancelled) return;
         if (err?.name === 'CanceledError' || err?.name === 'AbortError') return;
-        setSearchError(err instanceof Error ? err.message : 'Search failed');
+        setSearchError(err instanceof Error ? err.message : localizedText('workspace.archivedChats.searchError'));
         setIsSearching(false);
       });
 
@@ -244,7 +245,7 @@ export function ArchivedChatSearch({
               ) : searchError ? (
                 <Flex align="center" justify="center" style={{ padding: 'var(--space-6)' }}>
                   <Text size="2" style={{ color: 'var(--red-11)' }}>
-                    {searchError}
+                    {resolveLocalizedText(searchError, t)}
                   </Text>
                 </Flex>
               ) : searchResults.length > 0 ? (

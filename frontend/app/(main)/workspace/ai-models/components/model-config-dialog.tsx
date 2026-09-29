@@ -4,6 +4,8 @@ import type { TFunction } from 'i18next';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Box, Button, Callout, Flex, Switch, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText } from '@/lib/i18n/localized-text';
+import type { LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ThemeableAssetIcon } from '@/app/components/ui/themeable-asset-icon';
 import { WorkspaceRightPanel } from '@/app/(main)/workspace/components/workspace-right-panel';
@@ -171,14 +173,15 @@ export interface ModelConfigSaveResult {
 
 function resolveModelDisplayName(
   values: Record<string, unknown>,
-  provider: AIModelProvider | null
+  provider: AIModelProvider | null,
+  defaultName: string,
 ): string {
   const friendly = String(values.modelFriendlyName ?? '').trim();
   if (friendly) return friendly;
   const model = String(values.model ?? values.deploymentName ?? '').trim();
   if (model) return model;
   if (provider?.modelName?.trim()) return provider.modelName.trim();
-  return provider?.name?.trim() || 'Model';
+  return provider?.name?.trim() || defaultName;
 }
 
 function modelCategoryFromCapability(capability: string): 'ai' | 'embedding' {
@@ -218,7 +221,7 @@ export function ModelConfigDialog({
   const [fields, setFields] = useState<AIModelProviderField[]>([]);
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [downloadTarget, setDownloadTarget] = useState<{
     modelName: string;
     trustRemoteCode: boolean;
@@ -394,7 +397,8 @@ export function ModelConfigDialog({
         const names = missingRequiredFiles
           .map((f) => (f as AIModelProviderField).displayName || f.name)
           .join(', ');
-        throw new Error(`Required file upload missing: ${names}. Please upload the file and try again.`);
+        setError(localizedText('workspace.aiModels.requiredFileUploadError', { fieldNames: names }));
+        return;
       }
 
       for (const [key, val] of Object.entries(values)) {
@@ -472,12 +476,16 @@ export function ModelConfigDialog({
 
       onSaved({
         mode,
-        modelName: resolveModelDisplayName(values, provider),
+        modelName: resolveModelDisplayName(
+          values,
+          provider,
+          t('workspace.aiModels.defaultModelName'),
+        ),
         modelCategory: modelCategoryFromCapability(capability),
       });
       onClose();
     } catch (err: unknown) {
-      setError(resolveModelConfigSaveError(err, t));
+      setError(resolveModelConfigSaveError(err));
     } finally {
       setSaving(false);
     }
@@ -619,7 +627,7 @@ function ModelConfigFormBody({
   fields: AIModelProviderField[];
   values: Record<string, unknown>;
   saving: boolean;
-  error: string | null;
+  error: LocalizedTextValue | null;
   hiddenCredentials: Set<string>;
   onFieldChange: (name: string, value: unknown) => void;
 }) {
@@ -700,7 +708,7 @@ function ModelConfigFormBody({
         
         {error && (
           <Text size="2" style={{ color: 'var(--red-11)', padding: '4px 0' }}>
-            {error}
+            {resolveLocalizedText(error, t)}
           </Text>
         )}
       </Flex>
@@ -813,7 +821,7 @@ function ModelConfigFormBody({
 
       {error && (
         <Text size="2" style={{ color: 'var(--red-11)', padding: '4px 0' }}>
-          {error}
+          {resolveLocalizedText(error, t)}
         </Text>
       )}
     </Flex>

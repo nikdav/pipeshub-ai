@@ -41,7 +41,7 @@ const GROUPS_FILTER_CHIPS: FilterChipConfig[] = [
 // ========================================
 
 function GroupsPageContent() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const addToast = useToastStore((s) => s.addToast);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -348,7 +348,7 @@ function GroupsPageContent() {
         width: '140px',
         render: (group) => (
           <Text size="2" style={{ color: 'var(--slate-11)' }}>
-            {group.createdAt ? formatDate(group.createdAt) : '-'}
+            {group.createdAt ? formatDate(group.createdAt, i18n.resolvedLanguage ?? i18n.language) : '-'}
           </Text>
         ),
       },

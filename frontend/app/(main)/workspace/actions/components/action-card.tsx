@@ -249,6 +249,7 @@ function ToolsetInstanceSummaryBar({
       {showAdd ? (
         <button
           type="button"
+          aria-label={t('workspace.actions.card.addInstance')}
           onClick={onAdd}
           onMouseEnter={() => setIsAddHovered(true)}
           onMouseLeave={() => setIsAddHovered(false)}

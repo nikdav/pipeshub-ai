@@ -1519,6 +1519,20 @@
         "saveErrorDescription": "팀을 업데이트하지 못했습니다. 다시 시도해 주세요.",
         "applyToAll": "전체에 적용",
         "newMemberRoles": "새 멤버 역할"
+      },
+      "roles": {
+        "owner": {
+          "label": "소유자",
+          "description": "팀과 리소스를 모두 제어할 수 있습니다"
+        },
+        "writer": {
+          "label": "작성자",
+          "description": "팀 리소스를 보고 수정할 수 있습니다"
+        },
+        "reader": {
+          "label": "읽기 권한자",
+          "description": "팀 리소스를 볼 수 있습니다"
+        }
       }
     },
     "oauth2": {
@@ -1851,7 +1865,9 @@
           "label": "비디오",
           "badge": "멀티모달"
         }
-      }
+      },
+      "requiredFileUploadError": "필수 파일이 없습니다: {{fieldNames}}. 파일을 업로드한 후 다시 시도하세요.",
+      "defaultModelName": "모델"
     },
     "common": {
       "loadingUsers": "사용자 로드 중...",
@@ -1924,7 +1940,8 @@
         "configured": "구성됨",
         "notConfigured": "구성되지 않음",
         "authenticated": "인증됨",
-        "notAuthenticated": "인증되지 않음"
+        "notAuthenticated": "인증되지 않음",
+        "labelWithCount_other": "{{label}} ({{formattedCount}})"
       },
       "personalSegment": {
         "my": "내 액션",
@@ -1986,7 +2003,8 @@
         "authenticatedOne": "1명 인증됨",
         "authenticatedMany": "{{count}}명 인증됨",
         "needsAuthOne": "1명 로그인 필요",
-        "needsAuthMany": "{{count}}명 로그인 필요"
+        "needsAuthMany": "{{count}}명 로그인 필요",
+        "addInstance": "인스턴스 추가"
       },
       "typeDetail": {
         "scopeTeam": "액션",
@@ -2060,7 +2078,8 @@
         "urlProtocol": "{{field}}은(는) http 또는 https를 사용해야 합니다"
       },
       "adminRequiredToast": "관리자만 새 작업을 추가할 수 있습니다. 관리자에게 이 작업을 먼저 구성해 달라고 요청하세요.",
-      "personalNonAdminHint": "\"구성되지 않음\"으로 표시된 작업은 사용하기 전에 관리자가 설정해야 합니다."
+      "personalNonAdminHint": "\"구성되지 않음\"으로 표시된 작업은 사용하기 전에 관리자가 설정해야 합니다.",
+      "searchPlaceholder": "검색..."
     },
     "rightPanel": {
       "primaryDisabledHint": "위로 스크롤하여 필수 필드(* 표시)를 작성한 후 계속하세요.",
@@ -2081,7 +2100,9 @@
       "assistantChat": "어시스턴트 채팅",
       "agents": "에이전트",
       "showMore": "더 보기",
-      "moreAgents": "더 많은 에이전트"
+      "moreAgents": "더 많은 에이전트",
+      "searchError": "보관된 채팅을 검색하지 못했습니다. 다시 시도하세요.",
+      "conversationLoadError": "이 대화를 불러오지 못했습니다. 다시 시도하세요."
     },
     "general": {
       "subtitle": "회사의 일반 정보",
@@ -2227,7 +2248,8 @@
       },
       "xmlUpload": {
         "parseError": "이 파일에서 SAML 메타데이터를 파싱할 수 없습니다. 유효한 IdP 메타데이터 XML인지 확인하세요.",
-        "readError": "파일 읽기에 실패했습니다."
+        "readError": "파일 읽기에 실패했습니다.",
+        "chooseFile": "XML 파일 선택"
       },
       "riskDialog": {
         "title": "인증 변경 확인",
@@ -2240,6 +2262,129 @@
       "userMethods": {
         "heading": "사용자 로그인 방법",
         "subtitle": "모든 조직의 모든 사용자가 사용할 수 있는 로그인 방법을 제어합니다."
+      },
+      "methods": {
+        "password": {
+          "label": "비밀번호",
+          "description": "기본 이메일 및 비밀번호 인증"
+        },
+        "otp": {
+          "label": "일회용 비밀번호",
+          "description": "이메일로 인증 코드 보내기"
+        },
+        "google": {
+          "description": "Google 계정으로 로그인 허용"
+        },
+        "microsoft": {
+          "description": "Microsoft 계정으로 로그인 허용"
+        },
+        "samlSso": {
+          "description": "SAML 프로토콜을 통한 싱글 사인온"
+        },
+        "oauth": {
+          "description": "일반 OAuth 2.0 제공자 인증"
+        }
+      },
+      "password": {
+        "show": "비밀번호 표시",
+        "hide": "비밀번호 숨기기"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "리디렉션 URI",
+            "labelSuffix": "(Google OAuth 설정에 추가)"
+          },
+          "authorizedOrigin": {
+            "label": "승인된 출처",
+            "labelSuffix": "(Google OAuth 설정에 추가)",
+            "warning": "현재 출처가 구성된 프런트엔드 URL과 다릅니다. 위 값을 Google OAuth 설정에 사용하세요."
+          },
+          "clientId": {
+            "label": "클라이언트 ID",
+            "placeholder": "Google OAuth 클라이언트 ID 입력",
+            "hint": "Google OAuth 자격 증명의 클라이언트 ID"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "리디렉션 URI",
+            "labelSuffix": "(Microsoft OAuth 설정에 추가)"
+          },
+          "clientId": {
+            "label": "클라이언트 ID",
+            "placeholder": "Microsoft 애플리케이션(클라이언트) ID 입력",
+            "hint": "Azure 포털의 앱 등록에 지정된 애플리케이션(클라이언트) ID"
+          },
+          "tenantId": {
+            "label": "테넌트 ID",
+            "placeholder": "Microsoft 디렉터리(테넌트) ID 입력",
+            "hint": "Azure 포털의 앱 등록에 지정된 디렉터리(테넌트) ID"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS(어설션 소비자 서비스) URL",
+            "labelSuffix": "(ID 공급자에 추가)",
+            "warning": "현재 출처가 구성된 프런트엔드 URL과 다릅니다. 위 값을 ID 공급자에 추가하세요."
+          },
+          "spEntityId": {
+            "label": "SP 엔터티 ID(발급자)",
+            "labelSuffix": "(ID 공급자에 추가)",
+            "hint": "SAML 요청에 전송되는 서비스 공급자 엔터티 ID입니다. SAML_SP_ENTITY_ID 환경 변수로 재정의할 수 있습니다."
+          },
+          "_xmlFile": {
+            "label": "ID 공급자 메타데이터 XML",
+            "hint": "ID 공급자의 메타데이터 XML을 업로드하세요"
+          },
+          "entryPoint": {
+            "label": "SSO 진입점(IdP URL)",
+            "hint": "ID 공급자가 제공한 싱글 사인온 URL"
+          },
+          "certificate": {
+            "label": "X.509 인증서",
+            "hint": "ID 공급자의 공개 인증서(PEM 형식)"
+          },
+          "emailKey": {
+            "label": "이메일 속성 키",
+            "hint": "사용자 이메일 주소를 포함하는 SAML 속성 이름"
+          },
+          "samlPlatform": {
+            "label": "제공자 이름",
+            "labelSuffix": "(선택 사항)"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "제공자 이름"
+          },
+          "redirectUri": {
+            "label": "리디렉션 URI",
+            "labelSuffix": "(OAuth 제공자에 등록)"
+          },
+          "clientId": {
+            "label": "클라이언트 ID",
+            "placeholder": "OAuth 클라이언트 ID 입력"
+          },
+          "clientSecret": {
+            "label": "클라이언트 비밀 키",
+            "placeholder": "OAuth 클라이언트 비밀 키 입력"
+          },
+          "authorizationUrl": {
+            "label": "인증 URL"
+          },
+          "tokenEndpoint": {
+            "label": "토큰 엔드포인트"
+          },
+          "userInfoEndpoint": {
+            "label": "사용자 정보 엔드포인트"
+          },
+          "scope": {
+            "label": "범위",
+            "labelSuffix": "(선택 사항)",
+            "hint": "공백으로 구분된 OAuth 범위입니다. 기본값은 openid email profile입니다."
+          }
+        }
       }
     },
     "connectors": {
@@ -2771,7 +2916,13 @@
         "noState": "state 매개변수가 반환되지 않았습니다.",
         "backendRejected": "서버가 인증 요청을 거부했습니다."
       },
-      "deleteDisabledTooltip": "이 서버는 삭제할 수 없습니다"
+      "deleteDisabledTooltip": "이 서버는 삭제할 수 없습니다",
+      "authModes": {
+        "none": "인증 없음",
+        "apiToken": "API 토큰",
+        "oauth": "OAuth 2.0",
+        "headers": "사용자 지정 헤더"
+      }
     },
     "bots": {
       "subtitle": "봇 자격 증명을 구성하고 필요에 따라 각 봇을 에이전트에 연결합니다",
@@ -2857,7 +3008,11 @@
         "loadConfigs": "봇 구성을 불러오지 못했습니다",
         "loadData": "데이터를 불러오지 못했습니다"
       },
-      "refreshed": "새로 고침됨"
+      "refreshed": "새로 고침됨",
+      "secretVisibility": {
+        "show": "{{secret}} 표시",
+        "hide": "{{secret}} 숨기기"
+      }
     },
     "skills": {
       "title": "스킬",
@@ -2961,7 +3116,8 @@
         "empty": "아직 번들 리소스가 없습니다.",
         "addNew": "리소스 추가",
         "path": "경로",
-        "content": "콘텐츠"
+        "content": "콘텐츠",
+        "remove": "{{path}} 제거"
       },
       "versions": {
         "empty": "아직 버전 기록이 없습니다.",
@@ -3000,12 +3156,26 @@
         "reject": "거부",
         "view": "보기",
         "hide": "숨기기",
-        "editAndApprove": "편집 후 승인"
+        "editAndApprove": "편집 후 승인",
+        "sourceSummaryHeading": "학습 방법:"
       },
       "availability": {
         "label": "에이전트에서 사용 가능",
         "description": "끄면 이 스킬은 라이브러리에 남아 있지만 에이전트가 찾거나 불러올 수 없습니다.",
         "descriptionBuiltin": "끄면 이 기본 제공 스킬은 라이브러리에 남아 있지만 조직 전체의 에이전트가 찾거나 불러올 수 없습니다."
+      },
+      "editorToolbar": {
+        "bold": "굵게({{modifier}}+B)",
+        "italic": "기울임꼴({{modifier}}+I)",
+        "inlineCode": "인라인 코드",
+        "heading2": "제목 2",
+        "bulletList": "글머리 기호 목록",
+        "numberedList": "번호 매기기 목록",
+        "codeBlock": "코드 블록",
+        "blockquote": "인용문",
+        "horizontalRule": "가로줄",
+        "undo": "실행 취소",
+        "redo": "다시 실행"
       }
     },
     "mail": {
@@ -3066,6 +3236,11 @@
         "usernamePlaceholder": "SMTP 사용자 이름 입력",
         "password": "비밀번호 (선택 사항)",
         "passwordHint": "SMTP 인증용 비밀번호 (필요한 경우)"
+      },
+      "configure": "SMTP 구성",
+      "password": {
+        "show": "비밀번호 표시",
+        "hide": "비밀번호 숨기기"
       }
     },
     "prompts": {
@@ -3343,7 +3518,8 @@
           "label": "추출 서비스",
           "description": "LLM 기반 문서 분류 및 메타데이터 추출"
         }
-      }
+      },
+      "logoAlt": "{{service}} 로고"
     },
     "tenants": {
       "title": "테넌트",

@@ -58,6 +58,9 @@ export function AuthMethodRow({
   // ── Badge colour ─────────────────────────────────────────
   const badgeColor = isConfigured ? 'green' : 'orange';
   const badgeLabel = isConfigured ? t('workspace.authentication.badges.configured') : t('workspace.authentication.badges.notConfigured');
+  const methodLabel = state.type === 'password' || state.type === 'otp'
+    ? t(`workspace.authentication.methods.${state.type}.label`)
+    : meta.label;
 
   return (
     <Flex
@@ -85,7 +88,7 @@ export function AuthMethodRow({
         {meta.iconType === 'image' ? (
           <img
             src={meta.icon}
-            alt={meta.label}
+            alt={methodLabel}
             style={{ width: 16, height: 16, objectFit: 'contain' }}
           />
         ) : (
@@ -96,7 +99,7 @@ export function AuthMethodRow({
       {/* Label + description */}
       <Box style={{ flex: 1, minWidth: 0 }}>
         <Text size="2" weight="medium" style={{ color: 'var(--slate-12)', display: 'block' }}>
-          {meta.label}
+          {methodLabel}
         </Text>
         <Text
           size="1"
@@ -110,7 +113,7 @@ export function AuthMethodRow({
             whiteSpace: 'nowrap',
           }}
         >
-          {meta.description}
+          {t(`workspace.authentication.methods.${state.type}.description`)}
         </Text>
       </Box>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Grid, Heading, SegmentedControl, Text, TextField } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
@@ -48,7 +49,7 @@ export interface ActionsCatalogLayoutProps {
 export function ActionsCatalogLayout({
   title,
   subtitle,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder,
   searchQuery,
   onSearchChange,
   tabs,
@@ -67,6 +68,8 @@ export function ActionsCatalogLayout({
   showQuickAddOnMergedCards = true,
   preFilteredCatalog = false,
 }: ActionsCatalogLayoutProps) {
+  const { t, i18n } = useTranslation();
+  const resolvedSearchPlaceholder = searchPlaceholder ?? t('workspace.actions.searchPlaceholder');
   const tabFiltered = useMemo(() => {
     if (preFilteredCatalog) return items;
     if (tabFilterMode === 'orgInstances') {
@@ -151,7 +154,7 @@ export function ActionsCatalogLayout({
 
         <TextField.Root
           size="2"
-          placeholder={searchPlaceholder}
+          placeholder={resolvedSearchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           style={{ width: 224, flexShrink: 0 }}
@@ -170,7 +173,11 @@ export function ActionsCatalogLayout({
         >
           {tabs.map((tab) => (
             <SegmentedControl.Item key={tab.value} value={tab.value}>
-              {tab.label} ({tabCounts[tab.value] ?? 0})
+              {t('workspace.actions.tabs.labelWithCount', {
+                label: tab.label,
+                count: tabCounts[tab.value] ?? 0,
+                formattedCount: new Intl.NumberFormat(i18n.language).format(tabCounts[tab.value] ?? 0),
+              })}
             </SegmentedControl.Item>
           ))}
         </SegmentedControl.Root>

@@ -1512,6 +1512,20 @@
         "saveSuccess": "टीम अपडेट की गई!",
         "saveSuccessDescription": "'{{name}}' में परिवर्तन सफलतापूर्वक सहेजे गए",
         "undo": "पूर्ववत करें"
+      },
+      "roles": {
+        "owner": {
+          "label": "मालिक",
+          "description": "टीम और उसके संसाधनों पर पूरा नियंत्रण"
+        },
+        "writer": {
+          "label": "लेखक",
+          "description": "टीम के संसाधन देख और संपादित कर सकता है"
+        },
+        "reader": {
+          "label": "पाठक",
+          "description": "टीम के संसाधन देख सकता है"
+        }
       }
     },
     "oauth2": {
@@ -1784,7 +1798,9 @@
           "label": "वीडियो",
           "badge": "मल्टीमॉडल"
         }
-      }
+      },
+      "requiredFileUploadError": "आवश्यक फ़ाइल अपलोड नहीं हुई: {{fieldNames}}। कृपया फ़ाइल अपलोड करके फिर प्रयास करें।",
+      "defaultModelName": "मॉडल"
     },
     "filters": {
       "role": "भूमिका",
@@ -1851,7 +1867,9 @@
         "configured": "कॉन्फ़िगर की गई",
         "notConfigured": "कॉन्फ़िगर नहीं",
         "authenticated": "प्रमाणित",
-        "notAuthenticated": "अप्रमाणित"
+        "notAuthenticated": "अप्रमाणित",
+        "labelWithCount_one": "{{label}} ({{formattedCount}})",
+        "labelWithCount_other": "{{label}} ({{formattedCount}})"
       },
       "personalSegment": {
         "my": "मेरी कार्रवाइयाँ",
@@ -1913,7 +1931,8 @@
         "authenticatedOne": "1 प्रमाणित",
         "authenticatedMany": "{{count}} प्रमाणित",
         "needsAuthOne": "1 को साइन-इन चाहिए",
-        "needsAuthMany": "{{count}} को साइन-इन चाहिए"
+        "needsAuthMany": "{{count}} को साइन-इन चाहिए",
+        "addInstance": "इंस्टेंस जोड़ें"
       },
       "typeDetail": {
         "scopeTeam": "कार्रवाइयाँ",
@@ -1987,7 +2006,8 @@
         "urlProtocol": "{{field}} में http या https का उपयोग होना चाहिए"
       },
       "adminRequiredToast": "केवल व्यवस्थापक नई क्रियाएँ जोड़ सकते हैं। अपने व्यवस्थापक से पहले यह क्रिया कॉन्फ़िगर करने को कहें।",
-      "personalNonAdminHint": "\"कॉन्फ़िगर नहीं\" चिह्नित क्रियाओं को उपयोग करने से पहले व्यवस्थापक द्वारा सेट किया जाना आवश्यक है।"
+      "personalNonAdminHint": "\"कॉन्फ़िगर नहीं\" चिह्नित क्रियाओं को उपयोग करने से पहले व्यवस्थापक द्वारा सेट किया जाना आवश्यक है।",
+      "searchPlaceholder": "खोजें…"
     },
     "rightPanel": {
       "primaryDisabledHint": "जारी रखने के लिए ऊपर स्क्रॉल करें और आवश्यक फ़ील्ड (* चिह्न वाले) पूरे करें।",
@@ -2008,7 +2028,9 @@
       "assistantChat": "असिस्टेंट चैट",
       "agents": "एजेंट",
       "showMore": "और दिखाएँ",
-      "moreAgents": "और एजेंट"
+      "moreAgents": "और एजेंट",
+      "searchError": "आर्काइव की गई चैट खोजी नहीं जा सकी। कृपया फिर प्रयास करें।",
+      "conversationLoadError": "यह बातचीत लोड नहीं हो सकी। कृपया फिर प्रयास करें।"
     },
     "general": {
       "subtitle": "Your company general information",
@@ -2154,7 +2176,8 @@
       },
       "xmlUpload": {
         "parseError": "इस फ़ाइल से SAML मेटाडेटा पार्स नहीं किया जा सका। जाँच लें कि यह एक मान्य IdP मेटाडेटा XML है।",
-        "readError": "फ़ाइल पढ़ने में विफल।"
+        "readError": "फ़ाइल पढ़ने में विफल।",
+        "chooseFile": "XML फ़ाइल चुनें"
       },
       "riskDialog": {
         "title": "प्रमाणीकरण परिवर्तन की पुष्टि करें",
@@ -2167,6 +2190,129 @@
       "userMethods": {
         "heading": "उपयोगकर्ता साइन-इन विधियाँ",
         "subtitle": "नियंत्रित करता है कि हर संगठन में हर उपयोगकर्ता के लिए कौन-सी साइन-इन विधियाँ उपलब्ध हैं।"
+      },
+      "methods": {
+        "password": {
+          "label": "पासवर्ड",
+          "description": "पारंपरिक ईमेल और पासवर्ड प्रमाणीकरण"
+        },
+        "otp": {
+          "label": "एक बार का पासवर्ड",
+          "description": "ईमेल से सत्यापन कोड भेजें"
+        },
+        "google": {
+          "description": "उपयोगकर्ताओं को Google खाते से साइन इन करने दें"
+        },
+        "microsoft": {
+          "description": "उपयोगकर्ताओं को Microsoft खाते से साइन इन करने दें"
+        },
+        "samlSso": {
+          "description": "SAML प्रोटोकॉल से एकल साइन-ऑन"
+        },
+        "oauth": {
+          "description": "सामान्य OAuth 2.0 provider प्रमाणीकरण"
+        }
+      },
+      "password": {
+        "show": "पासवर्ड दिखाएँ",
+        "hide": "पासवर्ड छिपाएँ"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "रीडायरेक्ट URI",
+            "labelSuffix": "(अपनी Google OAuth सेटिंग में जोड़ें)"
+          },
+          "authorizedOrigin": {
+            "label": "अधिकृत Origin",
+            "labelSuffix": "(अपनी Google OAuth सेटिंग में जोड़ें)",
+            "warning": "मौजूदा origin कॉन्फ़िगर किए गए frontend URL से अलग है। Google OAuth सेटिंग में ऊपर दिया गया मान इस्तेमाल करें।"
+          },
+          "clientId": {
+            "label": "क्लाइंट ID",
+            "placeholder": "अपना Google OAuth Client ID दर्ज करें",
+            "hint": "आपके Google OAuth क्रेडेंशियल का Client ID"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "रीडायरेक्ट URI",
+            "labelSuffix": "(अपनी Microsoft OAuth सेटिंग में जोड़ें)"
+          },
+          "clientId": {
+            "label": "क्लाइंट ID",
+            "placeholder": "अपना Microsoft Application (client) ID दर्ज करें",
+            "hint": "आपके Azure portal ऐप पंजीकरण का Application (client) ID"
+          },
+          "tenantId": {
+            "label": "Tenant ID",
+            "placeholder": "अपना Microsoft Directory (tenant) ID दर्ज करें",
+            "hint": "आपके Azure portal ऐप पंजीकरण का Directory (tenant) ID"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS (Assertion Consumer Service) URL",
+            "labelSuffix": "(अपने Identity Provider में जोड़ें)",
+            "warning": "मौजूदा origin कॉन्फ़िगर किए गए frontend URL से अलग है। ऊपर दिया गया मान अपने Identity Provider में जोड़ें।"
+          },
+          "spEntityId": {
+            "label": "SP Entity ID (Issuer)",
+            "labelSuffix": "(अपने Identity Provider में जोड़ें)",
+            "hint": "SAML अनुरोधों में भेजा जाने वाला Service Provider entity ID। इसे SAML_SP_ENTITY_ID environment variable से ओवरराइड करें।"
+          },
+          "_xmlFile": {
+            "label": "IdP Metadata XML",
+            "hint": "अपने Identity Provider का metadata XML अपलोड करें"
+          },
+          "entryPoint": {
+            "label": "SSO Entry Point (IdP URL)",
+            "hint": "आपके Identity Provider द्वारा दिया गया Single Sign-On URL"
+          },
+          "certificate": {
+            "label": "X.509 प्रमाणपत्र",
+            "hint": "आपके Identity Provider का सार्वजनिक प्रमाणपत्र (PEM फ़ॉर्मैट)"
+          },
+          "emailKey": {
+            "label": "ईमेल Attribute Key",
+            "hint": "वह SAML attribute नाम जिसमें उपयोगकर्ता का ईमेल पता होता है"
+          },
+          "samlPlatform": {
+            "label": "Provider का नाम",
+            "labelSuffix": "(वैकल्पिक)"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "Provider का नाम"
+          },
+          "redirectUri": {
+            "label": "रीडायरेक्ट URI",
+            "labelSuffix": "(अपने OAuth provider में पंजीकृत करें)"
+          },
+          "clientId": {
+            "label": "Client ID",
+            "placeholder": "अपना OAuth Client ID दर्ज करें"
+          },
+          "clientSecret": {
+            "label": "Client Secret",
+            "placeholder": "अपना OAuth Client Secret दर्ज करें"
+          },
+          "authorizationUrl": {
+            "label": "Authorization URL"
+          },
+          "tokenEndpoint": {
+            "label": "Token Endpoint"
+          },
+          "userInfoEndpoint": {
+            "label": "UserInfo Endpoint"
+          },
+          "scope": {
+            "label": "Scope",
+            "labelSuffix": "(वैकल्पिक)",
+            "hint": "स्पेस से अलग किए गए OAuth scopes। डिफ़ॉल्ट: openid email profile"
+          }
+        }
       }
     },
     "connectors": {
@@ -2698,7 +2844,13 @@
         "noState": "कोई state पैरामीटर नहीं मिला।",
         "backendRejected": "सर्वर ने प्रमाणीकरण अनुरोध को अस्वीकार कर दिया।"
       },
-      "deleteDisabledTooltip": "यह सर्वर हटाया नहीं जा सकता"
+      "deleteDisabledTooltip": "यह सर्वर हटाया नहीं जा सकता",
+      "authModes": {
+        "none": "कोई प्रमाणीकरण नहीं",
+        "apiToken": "API टोकन",
+        "oauth": "OAuth 2.0",
+        "headers": "कस्टम हेडर"
+      }
     },
     "bots": {
       "subtitle": "Configure bot credentials and optionally map each bot to an agent",
@@ -2784,7 +2936,11 @@
         "loadConfigs": "बॉट कॉन्फ़िगरेशन लोड नहीं हो सके",
         "loadData": "डेटा लोड नहीं हो सका"
       },
-      "refreshed": "ताज़ा किया गया"
+      "refreshed": "ताज़ा किया गया",
+      "secretVisibility": {
+        "show": "{{secret}} दिखाएँ",
+        "hide": "{{secret}} छिपाएँ"
+      }
     },
     "mail": {
       "subtitle": "Email server configuration for OTP and notifications",
@@ -2844,6 +3000,11 @@
         "usernamePlaceholder": "Enter SMTP username",
         "password": "Password (Optional)",
         "passwordHint": "Password for SMTP authentication (if required)"
+      },
+      "configure": "SMTP कॉन्फ़िगर करें",
+      "password": {
+        "show": "पासवर्ड दिखाएँ",
+        "hide": "पासवर्ड छिपाएँ"
       }
     },
     "prompts": {
@@ -3121,7 +3282,8 @@
           "label": "एक्सट्रैक्शन सेवा",
           "description": "LLM-आधारित दस्तावेज़ वर्गीकरण और मेटाडेटा निष्कर्षण"
         }
-      }
+      },
+      "logoAlt": "{{service}} लोगो"
     },
     "tenants": {
       "title": "किरायेदार",
@@ -3476,7 +3638,8 @@
         "empty": "अभी तक कोई बंडल किया गया संसाधन नहीं।",
         "addNew": "संसाधन जोड़ें",
         "path": "पथ",
-        "content": "सामग्री"
+        "content": "सामग्री",
+        "remove": "{{path}} हटाएँ"
       },
       "versions": {
         "empty": "अभी तक कोई संस्करण इतिहास नहीं।",
@@ -3517,7 +3680,21 @@
         "reject": "अस्वीकार करें",
         "view": "देखें",
         "hide": "छिपाएँ",
-        "editAndApprove": "संपादित करें और स्वीकृत करें"
+        "editAndApprove": "संपादित करें और स्वीकृत करें",
+        "sourceSummaryHeading": "इसे कैसे सीखा गया:"
+      },
+      "editorToolbar": {
+        "bold": "बोल्ड ({{modifier}}+B)",
+        "italic": "इटैलिक ({{modifier}}+I)",
+        "inlineCode": "इनलाइन कोड",
+        "heading2": "शीर्षक 2",
+        "bulletList": "बुलेट सूची",
+        "numberedList": "क्रमांकित सूची",
+        "codeBlock": "कोड ब्लॉक",
+        "blockquote": "उद्धरण",
+        "horizontalRule": "क्षैतिज रेखा",
+        "undo": "पहले जैसा करें",
+        "redo": "फिर से करें"
       }
     },
     "serviceAccounts": {

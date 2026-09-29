@@ -3,6 +3,8 @@
 import React, { Suspense, useCallback, useEffect, useState } from 'react';
 import { Button, Flex, Heading, IconButton, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { useUserStore, selectIsProfileInitialized } from '@/lib/store/user-store';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
@@ -42,7 +44,7 @@ function PersonalAccessTokensPageContent() {
 
   const [tokens, setTokens] = useState<PatListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [createPanelOpen, setCreatePanelOpen] = useState(false);
   const [revokeTarget, setRevokeTarget] = useState<PatListItem | null>(null);
   const [isRevoking, setIsRevoking] = useState(false);
@@ -54,15 +56,11 @@ function PersonalAccessTokensPageContent() {
       const data = await PatApi.listTokens();
       setTokens(data.tokens ?? []);
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : t('workspace.personalAccessTokens.errorGeneric');
-      setError(message);
+      setError(getUserFacingErrorText(err, localizedText('workspace.personalAccessTokens.errorGeneric')));
     } finally {
       setIsLoading(false);
     }
-  }, [t]);
+  }, []);
 
   useEffect(() => {
     if (!isProfileInitialized) return;
@@ -150,7 +148,7 @@ function PersonalAccessTokensPageContent() {
             style={{ flex: 1, padding: 'var(--space-6)' }}
           >
             <Text size="2" style={{ color: 'var(--red-11)', textAlign: 'center' }}>
-              {error}
+              {resolveLocalizedText(error, t)}
             </Text>
             <Button size="2" variant="soft" onClick={() => void fetchTokens()}>
               {t('workspace.personalAccessTokens.retry')}

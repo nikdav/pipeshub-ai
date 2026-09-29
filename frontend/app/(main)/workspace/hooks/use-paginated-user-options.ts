@@ -87,6 +87,7 @@ export function usePaginatedUserOptions({
         const newOpts = users.map((u) => ({
           id: idField === 'id' ? u.id : u.userId,
           label: u.name || u.email || 'Unknown User',
+          isUnknownUser: !u.name && !u.email,
           subtitle: u.email,
           profilePicture: u.profilePicture,
         }));

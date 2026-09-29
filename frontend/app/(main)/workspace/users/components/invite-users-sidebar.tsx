@@ -25,13 +25,6 @@ import { isProcessedError } from '@/lib/api';
 // Constants
 // ========================================
 
-// Sourced from shared constants — cast to SelectOption[] for the dropdown.
-const ROLE_OPTIONS: SelectOption[] = INVITE_ROLE_OPTIONS.map((r) => ({
-  value: r.value,
-  label: r.label,
-  description: r.description,
-}));
-
 // Matches MAX_BULK_INVITE on the server.
 const MAX_IMPORT_EMAILS = 1000;
 
@@ -48,10 +41,10 @@ const SAMPLE_CELL_STYLE: React.CSSProperties = {
 // Helpers
 // ========================================
 
-function validateEmail(value: string): string | null {
+function validateEmail(value: string): 'invalidEmail' | null {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(value)) {
-    return 'Invalid email address';
+    return 'invalidEmail';
   }
   return null;
 }
@@ -69,6 +62,11 @@ export function InviteUsersSidebar({
   isSmtpConfigured?: boolean;
 }) {
   const { t } = useTranslation();
+  const roleOptions: SelectOption[] = INVITE_ROLE_OPTIONS.map((role) => ({
+    value: role.value,
+    label: t(`workspace.users.roles.${role.value.toLowerCase()}`, role.label),
+    description: role.description,
+  }));
   const addToast = useToastStore((s) => s.addToast);
   const isAdmin = useUserStore(selectIsAdmin);
 
@@ -601,7 +599,10 @@ export function InviteUsersSidebar({
                     'Enter one or more email addresses'
                   )
             }
-            validate={validateEmail}
+            validate={(value) => {
+              const errorCode = validateEmail(value);
+              return errorCode ? t('workspace.users.invite.invalidEmail') : null;
+            }}
             disabled={isEditMode}
           />
         </FormField>
@@ -613,8 +614,8 @@ export function InviteUsersSidebar({
             onChange={setInviteRole}
             options={
               isAdmin
-                ? ROLE_OPTIONS
-                : ROLE_OPTIONS.filter((r) => r.value === USER_ROLES.MEMBER)
+                ? roleOptions
+                : roleOptions.filter((r) => r.value === USER_ROLES.MEMBER)
             }
             disabled={!isAdmin}
             placeholder={t(

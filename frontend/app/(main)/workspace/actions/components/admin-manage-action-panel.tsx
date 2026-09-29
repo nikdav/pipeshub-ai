@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { useRouter } from 'next/navigation';
 import {
   AlertDialog,
@@ -121,7 +122,7 @@ export function AdminManageActionPanel({
 
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [instanceNameError, setInstanceNameError] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -853,7 +854,7 @@ export function AdminManageActionPanel({
 
       {error ? (
         <Callout.Root color="red">
-          <Callout.Text>{error}</Callout.Text>
+          <Callout.Text>{resolveLocalizedText(error, t)}</Callout.Text>
         </Callout.Root>
       ) : null}
 
