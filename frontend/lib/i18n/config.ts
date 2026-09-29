@@ -30,4 +30,8 @@ i18n
     },
   });
 
+i18n.services.formatter?.add('lowercase', (value, lng) =>
+  String(value).toLocaleLowerCase(lng),
+);
+
 export default i18n;

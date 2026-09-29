@@ -108,6 +108,11 @@
       "unsupportedType": "Unsupported file type",
       "duplicateName": "A file with this name already exists",
       "rejected": "File rejected"
+    },
+    "errors": {
+      "httpFallback": "The upload didn't go through. Please try again, and if it keeps failing, contact your admin.",
+      "stalled": "PipesHub stopped responding before this upload finished. Please upload these files again.",
+      "incomplete": "Upload did not complete"
     }
   },
   "onboarding": {
@@ -253,7 +258,9 @@
     "filterTooltip": "Filter: {{filter}}",
     "loadFailed": "Failed to load notifications",
     "updateFailed": "Could not update notification",
-    "removeFailed": "Could not remove notification"
+    "removeFailed": "Could not remove notification",
+    "hiddenCount_one": "+{{count}} more",
+    "hiddenCount_other": "+{{count}} more"
   },
   "action": {
     "find": "Find",
@@ -442,7 +449,56 @@
     "openProfile": "Open profile",
     "loading": "Loading...",
     "moreOptions": "More options",
-    "docs": "Docs"
+    "docs": "Docs",
+    "errors": {
+      "api": {
+        "cancelled": "Request was cancelled.",
+        "timeout": "Request timed out. Please try again.",
+        "network": "Network error. Please check your connection.",
+        "sessionExpired": "Session expired. Please sign in again.",
+        "forbidden": "You do not have permission to perform this action.",
+        "notFound": "The requested resource was not found.",
+        "validation": "Invalid request. Please check your input.",
+        "conflict": "A conflict occurred. Please try again.",
+        "busy": "PipesHub is busy right now. Please try again in a few seconds.",
+        "busyRetry_one": "PipesHub is busy right now. Please try again in {{count}} second.",
+        "busyRetry_other": "PipesHub is busy right now. Please try again in {{count}} seconds.",
+        "server": "Server error. Please try again later.",
+        "unknown": "An unexpected error occurred."
+      },
+      "toast": {
+        "authorizationTitle": "Access Denied",
+        "authorizationDescription": "You don't have permission to perform this action.",
+        "validationTitle": "Invalid Request",
+        "validationDescription": "Please check your input and try again.",
+        "notFoundTitle": "Not Found",
+        "notFoundDescription": "The requested resource was not found.",
+        "conflictTitle": "Action Required",
+        "conflictDescription": "A conflict occurred. Please check the details and try again.",
+        "networkTitle": "Connection Error",
+        "networkDescription": "Please check your internet connection and try again.",
+        "serverTitle": "Server Error",
+        "serverDescription": "Something went wrong on our end. Please try again in a moment; if it keeps happening, contact your workspace admin.",
+        "timeoutTitle": "Request Timed Out",
+        "timeoutDescription": "The server took too long to respond. Please try again.",
+        "unknownTitle": "Something Went Wrong",
+        "unknownDescription": "That didn't work. Please try again; if it keeps happening, contact your workspace admin.",
+        "busyTitle": "Please try again shortly",
+        "withReference": "{{message}} Reference: {{requestId}}"
+      },
+      "stream": {
+        "sessionExpired": "Your session has expired. Sign in again to continue.",
+        "forbidden": "You don't have access to this. Ask a workspace admin if you need it.",
+        "offline": "Couldn't reach PipesHub. Check your internet connection, then try again.",
+        "interrupted": "The connection to PipesHub dropped before this finished. Please try again.",
+        "unavailable": "PipesHub is having trouble right now. Please try again in a minute.",
+        "chatInterrupted": "The answer was interrupted before it finished. Click Regenerate or send your message again.",
+        "chatUnavailable": "PipesHub couldn't answer right now. Please try again in a minute.",
+        "busy": "PipesHub is busy right now. Please try again in a few seconds.",
+        "busyRetry_one": "PipesHub is busy right now. Please try again in {{count}} second.",
+        "busyRetry_other": "PipesHub is busy right now. Please try again in {{count}} seconds."
+      }
+    }
   },
   "units": {
     "bytes": "Bytes",
@@ -2447,6 +2503,9 @@
           "confirm": "Start reindex"
         },
         "typePrompt": "Type {{token}} to confirm."
+      },
+      "validation": {
+        "syncFilterRequired": "Select a {{field, lowercase}} before saving. Each connector instance syncs exactly one {{field, lowercase}}."
       }
     },
     "mcpServers": {

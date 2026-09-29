@@ -4,6 +4,7 @@ import { render, screen, fireEvent, cleanup, waitFor, act } from '@testing-libra
 import { Theme } from '@radix-ui/themes';
 
 import '@/lib/__tests__/test-i18n';
+import { localizedText } from '@/lib/i18n/localized-text';
 import type { ConversationMessage } from '../types';
 
 // ── Module-boundary mocks ──────────────────────────────────────────
@@ -420,7 +421,7 @@ describe('Chat page — opening a conversation', () => {
     await waitFor(() => expect(fetchConversation).toHaveBeenCalled());
     await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
     expect(toastError).toHaveBeenCalledTimes(1);
-    expect(toastError.mock.calls[0][0]).toBe('Server Error');
+    expect(toastError.mock.calls[0][0]).toEqual(localizedText('common.errors.toast.serverTitle'));
   });
 
   it('tells the user when the conversation cannot be read, instead of showing an empty chat', async () => {

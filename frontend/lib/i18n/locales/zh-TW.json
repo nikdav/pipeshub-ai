@@ -121,6 +121,11 @@
       "unsupportedType": "不支援的檔案類型",
       "duplicateName": "已存在同名檔案",
       "rejected": "檔案遭拒"
+    },
+    "errors": {
+      "httpFallback": "上傳未成功。請再試一次；如果仍然失敗，請聯絡管理員。",
+      "stalled": "此上傳尚未完成，PipesHub 就停止回應。請重新上傳這些檔案。",
+      "incomplete": "上傳未完成"
     }
   },
   "onboarding": {
@@ -266,7 +271,8 @@
     "filterTooltip": "篩選：{{filter}}",
     "loadFailed": "載入通知失敗",
     "updateFailed": "無法更新通知",
-    "removeFailed": "無法移除通知"
+    "removeFailed": "無法移除通知",
+    "hiddenCount_other": "另外 {{count}} 個"
   },
   "action": {
     "find": "尋找",
@@ -455,7 +461,54 @@
     "openProfile": "開啟個人資料",
     "loading": "載入中...",
     "moreOptions": "更多選項",
-    "docs": "說明文件"
+    "docs": "說明文件",
+    "errors": {
+      "api": {
+        "cancelled": "要求已取消。",
+        "timeout": "要求逾時。請再試一次。",
+        "network": "網路錯誤。請檢查您的連線。",
+        "sessionExpired": "工作階段已逾期。請重新登入。",
+        "forbidden": "您沒有權限執行此操作。",
+        "notFound": "找不到要求的資源。",
+        "validation": "要求無效。請檢查您輸入的內容。",
+        "conflict": "發生衝突。請再試一次。",
+        "busy": "PipesHub 目前忙碌中。請幾秒後再試一次。",
+        "busyRetry_other": "PipesHub 目前忙碌中。請於 {{count}} 秒後再試一次。",
+        "server": "伺服器錯誤。請稍後再試一次。",
+        "unknown": "發生未預期的錯誤。"
+      },
+      "toast": {
+        "authorizationTitle": "拒絕存取",
+        "authorizationDescription": "您沒有權限執行此操作。",
+        "validationTitle": "要求無效",
+        "validationDescription": "請檢查您輸入的內容並再試一次。",
+        "notFoundTitle": "找不到",
+        "notFoundDescription": "找不到要求的資源。",
+        "conflictTitle": "需要採取動作",
+        "conflictDescription": "發生衝突。請檢查詳細資料並再試一次。",
+        "networkTitle": "連線錯誤",
+        "networkDescription": "請檢查您的網際網路連線並再試一次。",
+        "serverTitle": "伺服器錯誤",
+        "serverDescription": "我們這邊發生錯誤。請稍後再試一次；如果問題持續，請聯絡工作區管理員。",
+        "timeoutTitle": "要求逾時",
+        "timeoutDescription": "伺服器回應時間過長。請再試一次。",
+        "unknownTitle": "發生錯誤",
+        "unknownDescription": "操作未成功。請再試一次；如果問題持續，請聯絡工作區管理員。",
+        "busyTitle": "請稍後再試一次",
+        "withReference": "{{message}} 參考編號：{{requestId}}"
+      },
+      "stream": {
+        "sessionExpired": "您的工作階段已逾期。請重新登入以繼續。",
+        "forbidden": "您沒有權限存取此內容。如有需要，請洽工作區管理員。",
+        "offline": "無法連線至 PipesHub。請檢查網際網路連線後再試一次。",
+        "interrupted": "完成前與 PipesHub 的連線中斷。請再試一次。",
+        "unavailable": "PipesHub 目前發生問題。請一分鐘後再試一次。",
+        "chatInterrupted": "回答尚未完成就中斷了。請按一下「重新產生」或重新傳送訊息。",
+        "chatUnavailable": "PipesHub 目前無法回答。請一分鐘後再試一次。",
+        "busy": "PipesHub 目前忙碌中。請幾秒後再試一次。",
+        "busyRetry_other": "PipesHub 目前忙碌中。請於 {{count}} 秒後再試一次。"
+      }
+    }
   },
   "units": {
     "bytes": "位元組",
@@ -2526,6 +2579,9 @@
           "confirm": "開始重新索引"
         },
         "typePrompt": "請輸入 {{token}} 以確認。"
+      },
+      "validation": {
+        "syncFilterRequired": "儲存前請選取 {{field, lowercase}}。每個連接器執行個體只會同步一個 {{field, lowercase}}。"
       }
     },
     "mcpServers": {

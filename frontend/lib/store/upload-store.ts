@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type { FileRejectionReason } from '@/lib/constants/file-rejection-reason';
+import type { LocalizedText } from '@/lib/i18n/localized-text';
 
 export type UploadItemType = 'file' | 'folder';
 export type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
@@ -43,6 +44,8 @@ export interface UploadItem {
   filesWithPaths?: FileWithPath[]; // For folder uploads with path preservation
   // Human-readable failure messages shown in the upload tracker.
   errors?: string[];
+  /** App-authored error fallbacks aligned by index with `errors`. */
+  errorTexts?: Array<LocalizedText | undefined>;
   /** Stable codes from the API (`EXCEEDS_SIZE_LIMIT`, `UNSUPPORTED_TYPE`, …). */
   rejectionReasons?: FileRejectionReason[];
   knowledgeBaseId: string;
@@ -84,6 +87,7 @@ interface UploadActions {
         status?: UploadStatus;
         progress?: number;
         errors?: string[];
+        errorTexts?: Array<LocalizedText | undefined>;
         rejectionReasons?: FileRejectionReason[];
       }
     >,
@@ -93,6 +97,7 @@ interface UploadActions {
     status: UploadStatus,
     progress?: number,
     error?: string | string[],
+    errorTexts?: Array<LocalizedText | undefined>,
   ) => void;
   bulkUpdateItemStatus: (
     ids: string[],
@@ -110,6 +115,7 @@ interface UploadActions {
     id: string,
     error: string | string[],
     rejectionReasons?: FileRejectionReason[],
+    errorTexts?: Array<LocalizedText | undefined>,
   ) => void;
 
   // ---- Session grouping ----
@@ -175,13 +181,16 @@ export const useUploadStore = create<UploadStore>()(
           state.isVisible = true;
         }),
 
-      updateItemStatus: (id, status, progress, error) =>
+      updateItemStatus: (id, status, progress, error, errorTexts) =>
         set((state) => {
           const item = state.items.find((i) => i.id === id);
           if (item) {
             item.status = status;
             if (progress !== undefined) item.progress = progress;
-            if (error !== undefined) item.errors = toErrorList(error);
+            if (error !== undefined) {
+              item.errors = toErrorList(error);
+              item.errorTexts = errorTexts;
+            }
           }
           state.completedCount = state.items.filter(
             (i) => i.status === 'completed',
@@ -272,6 +281,7 @@ export const useUploadStore = create<UploadStore>()(
             item.status = 'completed';
             item.progress = 100;
             item.errors = undefined;
+            item.errorTexts = undefined;
             item.rejectionReasons = undefined;
           }
           state.completedCount = state.items.filter(
@@ -279,13 +289,14 @@ export const useUploadStore = create<UploadStore>()(
           ).length;
         }),
 
-      failUpload: (id, error, rejectionReasons) =>
+      failUpload: (id, error, rejectionReasons, errorTexts) =>
         set((state) => {
           const item = state.items.find((i) => i.id === id);
           if (item) {
             item.status = 'failed';
             item.progress = 0;
             item.errors = toErrorList(error);
+            item.errorTexts = errorTexts;
             item.rejectionReasons =
               rejectionReasons && rejectionReasons.length > 0
                 ? [...rejectionReasons]
@@ -324,6 +335,9 @@ export const useUploadStore = create<UploadStore>()(
               item.status = 'failed';
               item.progress = 0;
               item.errors = [message || 'Upload did not complete'];
+              item.errorTexts = message
+                ? undefined
+                : [{ key: 'uploadProgress.errors.incomplete' }];
             }
           }
           state.completedCount = state.items.filter(

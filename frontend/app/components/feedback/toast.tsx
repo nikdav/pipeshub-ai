@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text, IconButton } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
@@ -8,6 +9,7 @@ import { LapTimerIcon } from '@/app/components/ui/lap-timer-icon';
 import type { Toast as ToastType, ToastVariant } from '@/lib/store/toast-store';
 import { getToastRenderDescription } from '@/lib/store/toast-store';
 import { Link } from '@/lib/navigation';
+import { resolveLocalizedText } from '@/lib/i18n/localized-text';
 
 // ========================================
 // Toast Icon Configuration
@@ -63,6 +65,7 @@ function handleDescriptionWheel(event: React.WheelEvent<HTMLDivElement>) {
 }
 
 export function Toast({ toast, onDismiss, style }: ToastProps) {
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
   const config = VARIANT_CONFIG[toast.variant];
 
@@ -70,7 +73,16 @@ export function Toast({ toast, onDismiss, style }: ToastProps) {
   const isLoading = toast.variant === 'loading';
   const isExpanded = toast.contentLayout === 'expanded';
   const renderDescription = getToastRenderDescription(toast.id);
-  const hasDescription = !!(renderDescription || toast.description);
+  const title = toast.titleText
+    ? resolveLocalizedText(toast.titleText, t)
+    : toast.title;
+  const description = toast.descriptionText
+    ? resolveLocalizedText(toast.descriptionText, t)
+    : toast.description;
+  const actionLabel = toast.action?.labelText
+    ? resolveLocalizedText(toast.action.labelText, t)
+    : toast.action?.label;
+  const hasDescription = !!(renderDescription || description);
 
   const descriptionMaxHeight = isExpanded
     ? 'min(48dvh, 300px)'
@@ -143,13 +155,13 @@ export function Toast({ toast, onDismiss, style }: ToastProps) {
               wordBreak: 'break-word',
             }}
           >
-            {toast.title}
+            {title}
           </Text>
 
           {hasDescription && (
             <Box
               role="region"
-              aria-label={toast.title}
+              aria-label={title}
               tabIndex={0}
               onWheel={handleDescriptionWheel}
               style={{
@@ -179,7 +191,7 @@ export function Toast({ toast, onDismiss, style }: ToastProps) {
                     whiteSpace: 'pre-line',
                   }}
                 >
-                  {toast.description}
+                  {description}
                 </Text>
               )}
             </Box>
@@ -208,7 +220,7 @@ export function Toast({ toast, onDismiss, style }: ToastProps) {
                         cursor: 'pointer',
                       }}
                     >
-                      {toast.action.label}
+                      {actionLabel}
                     </Link>
                   </Text>
                   {toast.action.openInNewTab && (
@@ -252,7 +264,7 @@ export function Toast({ toast, onDismiss, style }: ToastProps) {
                         letterSpacing: '0.04px',
                       }}
                     >
-                      {toast.action.label}
+                      {actionLabel}
                     </Text>
                   </button>
                 </Flex>

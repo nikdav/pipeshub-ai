@@ -24,6 +24,10 @@ describe('streamHttpError', () => {
     expect(err).toBeInstanceOf(StreamError);
     expect(err.message).toBe('PipesHub is busy right now. Please try again in 12 seconds.');
     expect(err.message).not.toContain('429');
+    expect(err.messageText).toEqual({
+      key: 'common.errors.stream.busyRetry',
+      values: { count: 12 },
+    });
   });
 
   it('says the session expired on a 401', async () => {
@@ -37,6 +41,7 @@ describe('streamHttpError', () => {
       CHAT_STREAM_ERROR_MESSAGES,
     );
     expect(err.message).toBe('No AI model is set up for this workspace yet.');
+    expect(err.messageText).toBeUndefined();
   });
 
   it('replaces technical server text with a plain message', async () => {
@@ -70,6 +75,7 @@ describe('streamFailure', () => {
   it('says the answer was interrupted when the connection dropped mid-answer', () => {
     const err = streamFailure(new TypeError('network error'), true, CHAT_STREAM_ERROR_MESSAGES);
     expect(err.message).toBe(CHAT_STREAM_ERROR_MESSAGES.interrupted);
+    expect(err.messageText).toEqual({ key: 'common.errors.stream.chatInterrupted' });
   });
 
   it('uses neutral wording outside chat', () => {

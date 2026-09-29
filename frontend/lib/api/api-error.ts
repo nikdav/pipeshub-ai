@@ -1,4 +1,7 @@
 import { AxiosError, isAxiosError } from 'axios';
+import type { LocalizedText, LocalizedTextValue } from '@/lib/i18n/localized-text';
+import { localizedText, resolveLocalizedText } from '@/lib/i18n/localized-text';
+import { i18n } from '@/lib/i18n';
 
 export enum ErrorType {
   AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
@@ -16,6 +19,8 @@ export enum ErrorType {
 export interface ProcessedError {
   type: ErrorType;
   message: string;
+  /** Present only when `message` is an app-authored fallback. */
+  messageText?: LocalizedText;
   statusCode?: number;
   details?: Record<string, unknown>;
   /** Reference the server logged this failure under, shown so it can be quoted. */
@@ -125,33 +130,54 @@ export function busyMessage(retryAfter?: number): string {
     : 'PipesHub is busy right now. Please try again in a few seconds.';
 }
 
+function busyMessageText(retryAfter?: number): LocalizedText {
+  return retryAfter
+    ? localizedText('common.errors.api.busyRetry', { count: retryAfter })
+    : localizedText('common.errors.api.busy');
+}
+
 function isAxiosRequestCancelled(error: AxiosError): boolean {
   return error.code === 'ERR_CANCELED' || error.message === 'canceled';
+}
+
+function withLocalizedFallbackMessage(processed: ProcessedError): ProcessedError {
+  if (!processed.messageText) return processed;
+  return {
+    ...processed,
+    message: resolveLocalizedText(
+      processed.messageText,
+      (key, options) => i18n.t(key, { ...options, defaultValue: processed.message }),
+      processed.message,
+    ),
+  };
 }
 
 export function processError(error: AxiosError<ApiErrorResponse>): ProcessedError {
   // Network error - no response received
   if (!error.response) {
     if (isAxiosRequestCancelled(error)) {
-      return {
+      return withLocalizedFallbackMessage({
         type: ErrorType.REQUEST_CANCELLED,
         message: 'Request was cancelled.',
+        messageText: localizedText('common.errors.api.cancelled'),
         originalError: error,
-      };
+      });
     }
     if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
-      return {
+      return withLocalizedFallbackMessage({
         type: ErrorType.TIMEOUT_ERROR,
         message: 'Request timed out. Please try again.',
+        messageText: localizedText('common.errors.api.timeout'),
         originalError: error,
-      };
+      });
     }
 
-    return {
+    return withLocalizedFallbackMessage({
       type: ErrorType.NETWORK_ERROR,
       message: 'Network error. Please check your connection.',
+      messageText: localizedText('common.errors.api.network'),
       originalError: error,
-    };
+    });
   }
 
   const { status, data } = error.response;
@@ -183,6 +209,7 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
         return {
           type: ErrorType.AUTHENTICATION_ERROR,
           message: message || 'Session expired. Please sign in again.',
+          ...(!message && { messageText: localizedText('common.errors.api.sessionExpired') }),
           statusCode: status,
           details: data?.details,
           originalError: error,
@@ -192,6 +219,7 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
         return {
           type: ErrorType.AUTHORIZATION_ERROR,
           message: message || 'You do not have permission to perform this action.',
+          ...(!message && { messageText: localizedText('common.errors.api.forbidden') }),
           statusCode: status,
           details: data?.details,
           originalError: error,
@@ -204,6 +232,7 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
         return {
           type: ErrorType.NOT_FOUND,
           message: message || 'The requested resource was not found.',
+          ...(!message && { messageText: localizedText('common.errors.api.notFound') }),
           statusCode: status,
           details: bodyStatus ? { ...baseDetails, apiStatus: bodyStatus } : data?.details,
           originalError: error,
@@ -212,21 +241,25 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
 
       case 400:
       case 422:
+        {
+          const validationMessage =
+            extractApiErrorMessage(data) ||
+            (typeof message === 'string' ? message.trim() : '');
         return {
           type: ErrorType.VALIDATION_ERROR,
-          message:
-            extractApiErrorMessage(data) ||
-            (typeof message === 'string' ? message.trim() : '') ||
-            'Invalid request. Please check your input.',
+          message: validationMessage || 'Invalid request. Please check your input.',
+          ...(!validationMessage && { messageText: localizedText('common.errors.api.validation') }),
           statusCode: status,
           details: data?.errors ? { errors: data.errors } : data?.details,
           originalError: error,
         };
+        }
 
       case 409:
         return {
           type: ErrorType.CONFLICT,
           message: message || 'A conflict occurred. Please try again.',
+          ...(!message && { messageText: localizedText('common.errors.api.conflict') }),
           statusCode: status,
           details: data?.details,
           originalError: error,
@@ -238,9 +271,11 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
       case 503:
       case 504: {
         const serverMessage = data?.message || reasonField || errorField || detailField;
+        const retryAfter = retryAfterSeconds(error);
         return {
           type: ErrorType.SERVER_ERROR,
-          message: serverMessage || busyMessage(retryAfterSeconds(error)),
+          message: serverMessage || busyMessage(retryAfter),
+          ...(!serverMessage && { messageText: busyMessageText(retryAfter) }),
           statusCode: status,
           details: data?.details,
           originalError: error,
@@ -252,6 +287,7 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
         return {
           type: ErrorType.SERVER_ERROR,
           message: message || 'Server error. Please try again later.',
+          ...(!message && { messageText: localizedText('common.errors.api.server') }),
           statusCode: status,
           details: data?.details,
           originalError: error,
@@ -261,6 +297,7 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
         return {
           type: ErrorType.UNKNOWN_ERROR,
           message: message || 'An unexpected error occurred.',
+          ...(!message && { messageText: localizedText('common.errors.api.unknown') }),
           statusCode: status,
           details: data?.details,
           originalError: error,
@@ -271,7 +308,8 @@ export function processError(error: AxiosError<ApiErrorResponse>): ProcessedErro
 
   // The reference rides beside the message, never inside it: a client that
   // filters technical-looking text would otherwise drop the whole sentence.
-  return requestId ? { ...processed, requestId } : processed;
+  const localized = withLocalizedFallbackMessage(processed);
+  return requestId ? { ...localized, requestId } : localized;
 }
 
 /**
@@ -319,6 +357,28 @@ export function getUserFacingErrorMessage(error: unknown, fallback: string): str
   const text = messageOf(error).trim();
   if (!text || looksTechnical(text)) return fallback;
   return text;
+}
+
+/**
+ * Like `getUserFacingErrorMessage`, but preserves an app-authored descriptor so
+ * the presentation can follow a later language change without another request.
+ */
+export function getUserFacingErrorText(
+  error: unknown,
+  fallback: LocalizedTextValue,
+): LocalizedTextValue {
+  const source = isAxiosError(error) ? processError(error) : error;
+  const messageText = (source as { messageText?: unknown } | null | undefined)?.messageText;
+  if (isLocalizedText(messageText)) return messageText;
+
+  const text = messageOf(source).trim();
+  if (!text || looksTechnical(text)) return fallback;
+  return text;
+}
+
+function isLocalizedText(value: unknown): value is LocalizedText {
+  return !!value && typeof value === 'object' &&
+    typeof (value as LocalizedText).key === 'string';
 }
 
 // Type guard to check if an error is a ProcessedError

@@ -115,6 +115,11 @@
       "unsupportedType": "Tipo de archivo no admitido",
       "duplicateName": "Ya existe un archivo con este nombre",
       "rejected": "Archivo rechazado"
+    },
+    "errors": {
+      "httpFallback": "No se pudo completar la subida. Inténtalo de nuevo y, si sigue fallando, contacta con tu administrador.",
+      "stalled": "PipesHub dejó de responder antes de completar la subida. Vuelve a subir estos archivos.",
+      "incomplete": "La carga no se completó"
     }
   },
   "onboarding": {
@@ -260,7 +265,10 @@
     "filterTooltip": "Filtro: {{filter}}",
     "loadFailed": "No se pudieron cargar las notificaciones",
     "updateFailed": "No se pudo actualizar la notificación",
-    "removeFailed": "No se pudo eliminar la notificación"
+    "removeFailed": "No se pudo eliminar la notificación",
+    "hiddenCount_one": "+{{count}} más",
+    "hiddenCount_other": "+{{count}} más",
+    "hiddenCount_many": "+{{count}} más"
   },
   "action": {
     "find": "Buscar",
@@ -449,7 +457,58 @@
     "openProfile": "Abrir perfil",
     "loading": "Cargando...",
     "moreOptions": "Más opciones",
-    "docs": "Documentación"
+    "docs": "Documentación",
+    "errors": {
+      "api": {
+        "cancelled": "Se canceló la solicitud.",
+        "timeout": "La solicitud agotó el tiempo de espera. Inténtalo de nuevo.",
+        "network": "Error de red. Comprueba tu conexión.",
+        "sessionExpired": "La sesión ha caducado. Vuelve a iniciar sesión.",
+        "forbidden": "No tienes permiso para realizar esta acción.",
+        "notFound": "No se encontró el recurso solicitado.",
+        "validation": "Solicitud no válida. Revisa los datos.",
+        "conflict": "Se produjo un conflicto. Inténtalo de nuevo.",
+        "busy": "PipesHub está ocupado. Inténtalo de nuevo dentro de unos segundos.",
+        "busyRetry_one": "PipesHub está ocupado. Inténtalo de nuevo dentro de {{count}} segundo.",
+        "busyRetry_other": "PipesHub está ocupado. Inténtalo de nuevo dentro de {{count}} segundos.",
+        "server": "Error del servidor. Inténtelo de nuevo más tarde.",
+        "unknown": "Se produjo un error inesperado.",
+        "busyRetry_many": "PipesHub está ocupado. Inténtalo de nuevo dentro de {{count}} segundos."
+      },
+      "toast": {
+        "authorizationTitle": "Acceso denegado",
+        "authorizationDescription": "No tienes permiso para realizar esta acción.",
+        "validationTitle": "Solicitud no válida",
+        "validationDescription": "Revisa los datos e inténtalo de nuevo.",
+        "notFoundTitle": "No encontrado",
+        "notFoundDescription": "No se encontró el recurso solicitado.",
+        "conflictTitle": "Acción requerida",
+        "conflictDescription": "Se produjo un conflicto. Revisa los detalles e inténtalo de nuevo.",
+        "networkTitle": "Error de conexión",
+        "networkDescription": "Comprueba tu conexión a Internet e inténtalo de nuevo.",
+        "serverTitle": "Error del servidor",
+        "serverDescription": "Se produjo un error por nuestra parte. Inténtalo de nuevo en un momento. Si el problema persiste, contacta con el administrador del espacio de trabajo.",
+        "timeoutTitle": "Tiempo de espera agotado",
+        "timeoutDescription": "El servidor tardó demasiado en responder. Inténtalo de nuevo.",
+        "unknownTitle": "Algo salió mal",
+        "unknownDescription": "No se pudo completar la acción. Inténtalo de nuevo. Si el problema persiste, contacta con el administrador del espacio de trabajo.",
+        "busyTitle": "Inténtalo de nuevo dentro de unos instantes",
+        "withReference": "{{message}} Referencia: {{requestId}}"
+      },
+      "stream": {
+        "sessionExpired": "Tu sesión ha caducado. Inicia sesión nuevamente para continuar.",
+        "forbidden": "No tienes acceso a esto. Si lo necesitas, consulta con un administrador del espacio de trabajo.",
+        "offline": "No se pudo conectar con PipesHub. Comprueba tu conexión a Internet e inténtalo de nuevo.",
+        "interrupted": "La conexión con PipesHub se interrumpió antes de terminar. Inténtalo de nuevo.",
+        "unavailable": "PipesHub tiene problemas en este momento. Inténtalo de nuevo dentro de un minuto.",
+        "chatInterrupted": "La respuesta se interrumpió antes de terminar. Pulsa «Regenerar» o vuelve a enviar el mensaje.",
+        "chatUnavailable": "PipesHub no puede responder en este momento. Inténtalo de nuevo dentro de un minuto.",
+        "busy": "PipesHub está ocupado en este momento. Inténtelo de nuevo en unos segundos.",
+        "busyRetry_one": "PipesHub está ocupado en este momento. Inténtelo de nuevo en {{count}} segundo.",
+        "busyRetry_other": "PipesHub está ocupado en este momento. Inténtelo de nuevo en {{count}} segundos.",
+        "busyRetry_many": "PipesHub está ocupado en este momento. Inténtelo de nuevo en {{count}} segundos."
+      }
+    }
   },
   "units": {
     "bytes": "Bytes",
@@ -2472,6 +2531,9 @@
           "confirm": "Iniciar la reindexación"
         },
         "typePrompt": "Escriba {{token}} para confirmar."
+      },
+      "validation": {
+        "syncFilterRequired": "Selecciona {{field, lowercase}} antes de guardar. Cada instancia de conector sincroniza exactamente un {{field, lowercase}}."
       }
     },
     "mcpServers": {

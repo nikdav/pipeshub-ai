@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { AxiosError, AxiosHeaders } from 'axios';
-import { ErrorType, getUserFacingErrorMessage, processError } from '../api-error';
+import {
+  ErrorType,
+  getUserFacingErrorMessage,
+  getUserFacingErrorText,
+  isSearchNoAccessibleDocumentsNotFound,
+  processError,
+  SEARCH_ACCESSIBLE_RECORDS_NOT_FOUND_STATUS,
+  SEARCH_NO_ACCESSIBLE_DOCUMENTS_FRAGMENT,
+} from '../api-error';
+import { localizedText } from '@/lib/i18n/localized-text';
+import { i18n } from '@/lib/i18n';
 
 const FALLBACK = 'We couldn\'t do that. Please try again in a moment.';
 
@@ -97,5 +107,61 @@ describe('getUserFacingErrorMessage', () => {
     expect(getUserFacingErrorMessage(processed, FALLBACK)).toBe(
       'Server error. Please try again later.',
     );
+  });
+});
+
+describe('getUserFacingErrorText', () => {
+  const fallback = localizedText('chatStream.errorFallback');
+
+  it('keeps readable Axios response wording verbatim', () => {
+    const error = httpError(403, { reason: 'You can only share collections you own.' });
+    expect(getUserFacingErrorText(error, fallback)).toBe('You can only share collections you own.');
+  });
+
+  it('uses the descriptor fallback for technical Axios response wording', () => {
+    const error = httpError(500, { message: 'Error publishing to Kafka topic records' });
+    expect(getUserFacingErrorText(error, fallback)).toEqual(fallback);
+  });
+
+  it('preserves a descriptor for a locally authored Axios fallback', () => {
+    const error = httpError(500, {});
+    expect(getUserFacingErrorText(error, fallback)).toEqual(localizedText('common.errors.api.server'));
+  });
+});
+
+describe('processError localized compatibility snapshots', () => {
+  it('localizes connection and HTTP fallback snapshots with the active catalogue', async () => {
+    const previousLanguage = i18n.language;
+    await i18n.changeLanguage('de-DE');
+    try {
+      const cases = [
+        [new AxiosError('canceled', 'ERR_CANCELED'), 'Anfrage wurde abgebrochen.', 'cancelled'],
+        [new AxiosError('timeout of 1000ms exceeded', 'ECONNABORTED'), 'Zeitüberschreitung bei der Anfrage. Bitte versuchen Sie es erneut.', 'timeout'],
+        [new AxiosError('Network Error'), 'Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.', 'network'],
+      ] as const;
+
+      for (const [error, message, key] of cases) {
+        const processed = processError(error);
+        expect(processed.message).toBe(message);
+        expect(processed.messageText).toEqual(localizedText(`common.errors.api.${key}`));
+      }
+
+      const httpProcessed = processError(httpError(500, {}));
+      expect(httpProcessed.message).toBe('Serverfehler. Bitte versuchen Sie es später erneut.');
+      expect(httpProcessed.messageText).toEqual(localizedText('common.errors.api.server'));
+    } finally {
+      await i18n.changeLanguage(previousLanguage);
+    }
+  });
+
+  it('leaves server-authored search status and message sentinel unchanged', () => {
+    const processed = processError(httpError(404, {
+      status: SEARCH_ACCESSIBLE_RECORDS_NOT_FOUND_STATUS,
+      message: SEARCH_NO_ACCESSIBLE_DOCUMENTS_FRAGMENT,
+    }));
+    expect(processed.details?.apiStatus).toBe(SEARCH_ACCESSIBLE_RECORDS_NOT_FOUND_STATUS);
+    expect(processed.message).toBe(SEARCH_NO_ACCESSIBLE_DOCUMENTS_FRAGMENT);
+    expect(processed.messageText).toBeUndefined();
+    expect(isSearchNoAccessibleDocumentsNotFound(processed)).toBe(true);
   });
 });

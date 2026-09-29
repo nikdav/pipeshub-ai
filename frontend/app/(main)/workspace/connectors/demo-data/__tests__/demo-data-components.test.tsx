@@ -11,19 +11,23 @@ import { DemoSourceBadge } from '../components/demo-source-badge';
 import { DemoDataRemovalNotice } from '../components/demo-data-removal-notice';
 import { findSampleAccounts, removeDemoData } from '../remove-demo-data';
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string, vars?: Record<string, string>) => {
-      let cur: unknown = en;
-      for (const part of key.split('.')) {
-        if (typeof cur !== 'object' || cur === null || !(part in cur)) return key;
-        cur = (cur as Record<string, unknown>)[part];
-      }
-      if (typeof cur !== 'string') return key;
-      return cur.replace(/\{\{(\w+)\}\}/g, (_, name: string) => vars?.[name] ?? '');
-    },
-  }),
-}));
+vi.mock('react-i18next', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-i18next')>();
+  return {
+    ...actual,
+    useTranslation: () => ({
+      t: (key: string, vars?: Record<string, string>) => {
+        let cur: unknown = en;
+        for (const part of key.split('.')) {
+          if (typeof cur !== 'object' || cur === null || !(part in cur)) return key;
+          cur = (cur as Record<string, unknown>)[part];
+        }
+        if (typeof cur !== 'string') return key;
+        return cur.replace(/\{\{(\w+)\}\}/g, (_, name: string) => vars?.[name] ?? '');
+      },
+    }),
+  };
+});
 
 // The lookups are exercised in store.test.ts. Here the store is seeded, and
 // the listing returns the same connectors, as the real one would.
