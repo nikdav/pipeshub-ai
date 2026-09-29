@@ -187,7 +187,9 @@ export function InstanceManagementPanel() {
   const localSyncStatus = instanceId ? localSyncStatuses[instanceId] : undefined;
 
   const lastSyncedLabel = selectedInstance.lastSynced
-    ? `Synced ${selectedInstance.lastSynced}`
+    ? t('workspace.connectors.instancePanel.syncedAt', {
+        lastSynced: selectedInstance.lastSynced,
+      })
     : undefined;
 
   const connectorIcon = (

@@ -1,4 +1,6 @@
 import { apiClient } from '@/lib/api';
+import { localizedText } from '@/lib/i18n/localized-text';
+import type { LocalizedText } from '@/lib/i18n/localized-text';
 import type {
   ConfiguredWebSearchProvider,
   WebSearchConfigData,
@@ -12,6 +14,14 @@ import type {
 // ============================================================
 
 const BASE_URL = '/api/v1/configurationManager/web-search';
+
+function throwWebSearchFallback(dataMessage: unknown, fallback: string, key: string): never {
+  const hasServerMessage = typeof dataMessage === 'string' && dataMessage.length > 0;
+  const message = hasServerMessage ? dataMessage : fallback;
+  const error = new Error(message) as Error & { messageText?: LocalizedText };
+  if (!hasServerMessage) error.messageText = localizedText(key);
+  throw error;
+}
 
 // ============================================================
 // Defaults
@@ -71,7 +81,11 @@ export const WebSearchApi = {
     if (data.status === 'success') {
       return normalizeWebSearchSettings(data.settings);
     }
-    throw new Error(data.message || 'Failed to update web search settings');
+    throwWebSearchFallback(
+      data.message,
+      'Failed to update web search settings',
+      'workspace.webSearch.errors.updateSettings',
+    );
   },
 
   async addProvider(providerData: WebSearchProviderData): Promise<unknown> {
@@ -84,7 +98,11 @@ export const WebSearchApi = {
     if (data.status === 'success') {
       return data;
     }
-    throw new Error(data.message || 'Failed to add provider');
+    throwWebSearchFallback(
+      data.message,
+      'Failed to add provider',
+      'workspace.webSearch.errors.addProvider',
+    );
   },
 
   async updateProvider(providerKey: string, providerData: WebSearchProviderData): Promise<unknown> {
@@ -97,7 +115,11 @@ export const WebSearchApi = {
     if (data.status === 'success') {
       return data;
     }
-    throw new Error(data.message || 'Failed to update provider');
+    throwWebSearchFallback(
+      data.message,
+      'Failed to update provider',
+      'workspace.webSearch.errors.updateProvider',
+    );
   },
 
   async deleteProvider(providerKey: string): Promise<unknown> {
@@ -105,7 +127,11 @@ export const WebSearchApi = {
     if (data.status === 'success') {
       return data;
     }
-    throw new Error(data.message || 'Failed to delete provider');
+    throwWebSearchFallback(
+      data.message,
+      'Failed to delete provider',
+      'workspace.webSearch.errors.deleteProvider',
+    );
   },
 
   async getProviderUsage(provider: string): Promise<WebSearchProviderAgentUsage[]> {
@@ -125,6 +151,10 @@ export const WebSearchApi = {
     if (data.status === 'success') {
       return data;
     }
-    throw new Error(data.message || 'Failed to set default provider');
+    throwWebSearchFallback(
+      data.message,
+      'Failed to set default provider',
+      'workspace.webSearch.errors.setDefaultProvider',
+    );
   },
 };

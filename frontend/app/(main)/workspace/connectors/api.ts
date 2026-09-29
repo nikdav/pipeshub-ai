@@ -17,6 +17,20 @@ import { pruneInactiveFilterValues } from './utils/prune-inactive-filter-values'
 import { isDesktopOfflineError } from './utils/local-fs-helpers';
 const BASE_URL = '/api/v1/connectors';
 
+export type ConnectorApiInvariantCode =
+  | 'CONNECTOR_INSTANCE_UNAVAILABLE'
+  | 'CONNECTOR_TYPE_REQUIRED';
+
+export class ConnectorApiInvariantError extends Error {
+  constructor(
+    readonly code: ConnectorApiInvariantCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'ConnectorApiInvariantError';
+  }
+}
+
 /** Normalized DELETE /connectors/:id body for optimistic UI merge. */
 export type DeleteConnectorInstanceMerge = {
   _key: string;
@@ -349,7 +363,10 @@ export const ConnectorsApi = {
       `${BASE_URL}/${connectorId}`
     );
     if (!data?.connector) {
-      throw new Error(`getConnectorInstance: empty response for ${connectorId}`);
+      throw new ConnectorApiInvariantError(
+        'CONNECTOR_INSTANCE_UNAVAILABLE',
+        `getConnectorInstance: empty response for ${connectorId}`,
+      );
     }
     return data.connector;
   },
@@ -362,7 +379,10 @@ export const ConnectorsApi = {
    */
   async resyncConnector(connectorId: string, connectorType: string, fullSync?: boolean) {
     if (!connectorType) {
-      throw new Error('resyncConnector: connectorType is required');
+      throw new ConnectorApiInvariantError(
+        'CONNECTOR_TYPE_REQUIRED',
+        'resyncConnector: connectorType is required',
+      );
     }
     const { data } = await apiClient.post(
       `${BASE_URL}/${connectorId}/resync`,

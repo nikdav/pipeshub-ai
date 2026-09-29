@@ -4,6 +4,11 @@
  */
 import type { FilterSchemaField } from '../types';
 
+export type SyncFilterError =
+  | { code: 'syncFilterRequired'; values: { field: string } }
+  | { code: 'syncFilterSingleSelection'; values: { field: string; count: number } }
+  | { code: 'syncFilterUnsupportedOperator'; values: { field: string; operator: string } };
+
 type FilterRow = { operator?: string; value?: unknown };
 
 function isFilterRow(raw: unknown): raw is FilterRow {
@@ -81,7 +86,7 @@ export function hasAnySyncFiltersSelected(
  * a required sync filter needs a value and a `select` filter takes exactly one.
  * Wording matches the API's 400 detail so the user sees one message either way.
  */
-export function syncFilterRowError(field: FilterSchemaField, raw: unknown): string | null {
+export function syncFilterRowError(field: FilterSchemaField, raw: unknown): SyncFilterError | null {
   const ft = String(field.filterType ?? '').toLowerCase();
   const rawValue = isFilterRow(raw) ? raw.value : undefined;
   const items: unknown[] = Array.isArray(rawValue) ? rawValue : typeof rawValue === 'string' ? [rawValue] : [];
@@ -90,24 +95,21 @@ export function syncFilterRowError(field: FilterSchemaField, raw: unknown): stri
     .filter((id): id is string => typeof id === 'string' && id.trim().length > 0);
   // `values` only reads list and string rows, so non-list required fields cannot be judged here.
   if (field.required && isListLikeFilterField(field) && values.length === 0) {
-    return (
-      `Select a ${field.displayName.toLowerCase()} before saving. ` +
-      `Each connector instance syncs exactly one ${field.displayName.toLowerCase()}.`
-    );
+    return { code: 'syncFilterRequired', values: { field: field.displayName } };
   }
   if (ft === 'select' && values.length > 1) {
-    return (
-      `${field.displayName} has ${values.length} selections. Narrow it down to one to ` +
-      `continue, as each connector instance syncs exactly one ${field.displayName.toLowerCase()}.`
-    );
+    return {
+      code: 'syncFilterSingleSelection',
+      values: { field: field.displayName, count: values.length },
+    };
   }
   if (ft === 'select' && values.length === 1) {
     const operator = isFilterRow(raw) ? String(raw.operator ?? '').trim().toLowerCase() : '';
     if (operator !== 'in') {
-      return (
-        `Re-select the ${field.displayName.toLowerCase()} to continue. The saved ` +
-        `configuration uses an unsupported '${operator}' rule.`
-      );
+      return {
+        code: 'syncFilterUnsupportedOperator',
+        values: { field: field.displayName, operator },
+      };
     }
   }
   return null;
@@ -116,11 +118,11 @@ export function syncFilterRowError(field: FilterSchemaField, raw: unknown): stri
 export function collectSyncFilterErrors(
   syncFields: FilterSchemaField[] | undefined,
   syncFormValues: Record<string, unknown>
-): Record<string, string> {
-  const errors: Record<string, string> = {};
+): Record<string, SyncFilterError> {
+  const errors: Record<string, SyncFilterError> = {};
   for (const field of syncFields ?? []) {
-    const message = syncFilterRowError(field, syncFormValues[field.name]);
-    if (message) errors[field.name] = message;
+    const error = syncFilterRowError(field, syncFormValues[field.name]);
+    if (error) errors[field.name] = error;
   }
   return errors;
 }

@@ -1957,7 +1957,13 @@
         "authenticatedMany": "{{count}} autenticadas",
         "needsAuthOne": "1 necesita inicio de sesión",
         "needsAuthMany": "{{count}} necesitan inicio de sesión",
-        "addInstance": "Añadir instancia"
+        "active_one": "{{count}} instancia activa",
+        "active_other": "{{count}} instancias activas",
+        "inactive_one": "{{count}} instancia inactiva",
+        "inactive_other": "{{count}} instancias inactivas",
+        "addInstance": "Añadir instancia",
+        "active_many": "{{count}} instancias activas",
+        "inactive_many": "{{count}} instancias inactivas"
       },
       "typeDetail": {
         "scopeTeam": "Acciones",
@@ -2374,7 +2380,10 @@
         "configSaveError": "Failed to save configuration",
         "oauthAppUnavailableTitle": "No hay aplicaciones OAuth disponibles para este conector",
         "oauthAppUnavailableDescription": "Pide al administrador de tu espacio de trabajo que primero cree una aplicación OAuth para {{name}} y vuelve a intentarlo.",
-        "thisConnectorFallback": "este conector"
+        "thisConnectorFallback": "este conector",
+        "syncToggleDisabled": "Sincronización del conector deshabilitada",
+        "syncToggleEnabled": "Sincronización del conector habilitada",
+        "syncToggleError": "No se pudo actualizar el conector"
       },
       "tabs": {
         "authenticate": "Authenticate Instance",
@@ -2475,7 +2484,36 @@
         "oauthAppNamePlaceholder": "p. ej., {{name}} OAuth",
         "oauthAppNameHelper": "Este nombre se guarda con el registro OAuth y aparece cuando los usuarios eligen una app guardada para otras instancias.",
         "oauthAppNameRequired": "Introduce un nombre para la nueva app OAuth.",
-        "oauthAppChangeReauthWarning": "Cambiar la aplicación OAuth o sus credenciales obligará a volver a autenticar el conector."
+        "oauthAppChangeReauthWarning": "Cambiar la aplicación OAuth o sus credenciales obligará a volver a autenticar el conector.",
+        "authTypes": {
+          "oauth": "OAuth 2.0",
+          "oauthAdminConsent": "OAuth (Consentimiento del administrador)",
+          "oauthCertificate": "OAuth (Certificado)",
+          "apiToken": "Token de API",
+          "usernamePassword": "Nombre de usuario y contraseña",
+          "basicAuth": "Autenticación básica",
+          "bearerToken": "Token Bearer",
+          "custom": "Personalizado",
+          "none": "Ninguno"
+        },
+        "redirectCallbackUrlCopyErrorTitle": "No se ha podido copiar",
+        "redirectCallbackUrlCopyErrorDescription": "Copie el URL manualmente o permita el acceso al portapapeles para este sitio.",
+        "methodDescription": "Elige cómo se autenticará esta instancia del conector con {{name}}.",
+        "oauthAppUnnamed": "Aplicación OAuth sin nombre",
+        "oauthAppsLoadFailed": "No se pudieron cargar aplicaciones OAuth para este conector.",
+        "oauthAppLinkedNamed": "{{name}} (vinculado)",
+        "oauthAppLinkedRegistration": "Registro OAuth vinculado",
+        "oauthAppsEmptyLinkedAdminExisting": "Esta instancia está vinculada a un registro OAuth que no aparece en la lista. Elija otra aplicación guardada a continuación o mantenga el enlace actual.",
+        "oauthAppsEmptyLinkedAdminNew": "Esta instancia está vinculada a un registro OAuth que no aparece en la lista. Elija otra aplicación a continuación, use Crear nueva o mantenga el enlace actual.",
+        "oauthAppsEmptyLinkedUser": "Esta instancia está vinculada a un registro de OAuth que no aparece en la lista. Podrás cambiarlo cuando tu administrador añada más aplicaciones guardadas.",
+        "oauthAppsEmptyRegisteredNone": "Todavía no hay aplicaciones OAuth registradas. Pide a un administrador que añada una en la configuración de conectores del espacio de trabajo.",
+        "oauthAppsEmptyCredentials": "Introduce las credenciales de cliente de OAuth o elige una aplicación guardada cuando haya alguna disponible.",
+        "oauthAppLabel": "Aplicación OAuth",
+        "oauthAppsLoading": "Cargando configuraciones de OAuth…",
+        "oauthAppPlaceholderAdmin": "Selecciona una aplicación OAuth o crea otra…",
+        "oauthAppPlaceholder": "Selecciona una aplicación OAuth (obligatorio)…",
+        "oauthAppNew": "Crear nueva aplicación OAuth",
+        "oauthAppSelectionRequired": "Seleccione una aplicación OAuth."
       },
       "docSection": {
         "title": "Setup Documentation",
@@ -2506,7 +2544,8 @@
       "instancePanel": {
         "overview": "Overview",
         "settings": "Settings",
-        "manageConfig": "Manage Configuration"
+        "manageConfig": "Manage Configuration",
+        "syncedAt": "Sincronizado el {{lastSynced}}"
       },
       "overview": {
         "progressPercent": "{{n}}% Complete",
@@ -2534,7 +2573,16 @@
         "recordsByType": "Records by Type",
         "noRecordTypes": "No record types available",
         "localWatcherLabel": "VIGILANTE LOCAL",
-        "localWatcherStatus": "{{state}} · {{pending}} pendientes · {{failed}} fallidos"
+        "localWatcherStatus": "{{state}} · {{pending}} pendientes · {{failed}} fallidos",
+        "actions": {
+          "syncStarted": "Sincronización iniciada",
+          "syncStartFailed": "No se pudo iniciar la sincronización",
+          "unexpectedError": "Se produjo un error inesperado.",
+          "reindexFailedStarted": "Reindexando los registros fallidos…",
+          "reindexFailedError": "No se han podido reindexar los registros fallidos",
+          "manualIndexStarted": "Se están indexando los registros seleccionados para la indexación manual…",
+          "manualIndexError": "No se ha podido iniciar la indexación manual"
+        }
       },
       "settingsTab": {
         "instanceName": "Nombre de la instancia",
@@ -2566,7 +2614,23 @@
         "removing": "Este conector se está quitando.",
         "configureFirst": "Termine la configuración para poder activar la sincronización.",
         "authenticateFirst": "Autentique este conector para poder activar la sincronización.",
-        "selected": "{{field}} seleccionados"
+        "selected": "{{field}} seleccionados",
+        "syncAction": {
+          "label": "Sincronizar",
+          "syncing": "Sincronizando...",
+          "retry": "Error de sincronización. Inténtalo de nuevo",
+          "started": "Sincronización iniciada",
+          "failed": "Error de sincronización",
+          "unexpectedError": "Se produjo un error inesperado."
+        },
+        "fullSyncAction": {
+          "label": "Sincronización completa",
+          "syncing": "Sincronización completa en curso…",
+          "retry": "Error en la sincronización completa. Inténtalo de nuevo",
+          "started": "Se inició la sincronización completa",
+          "failed": "Error de sincronización completa"
+        },
+        "connect": "Conectar"
       },
       "instanceStatus": {
         "setup": {
@@ -2597,14 +2661,40 @@
         "unclaimedToast": "Este conector aún no se ha configurado en un escritorio. Abre la aplicación de escritorio de PipesHub en el equipo que gestiona esta carpeta y activa allí la sincronización una vez.",
         "ownedByOtherDeviceToast": "Este conector pertenece a {{deviceName}}. Activa la sincronización desde la aplicación de escritorio de PipesHub en ese dispositivo.",
         "ownedByOtherDeviceUnknownToast": "Este conector pertenece a otro dispositivo. Activa la sincronización desde la aplicación de escritorio de PipesHub en ese dispositivo.",
-        "deviceIdentityError": "No se pudo identificar este dispositivo: {{error}}"
+        "deviceIdentityError": "No se pudo identificar este dispositivo: {{error}}",
+        "anotherConnector": "otro conector",
+        "rootPathConflict": "La ruta raíz de sincronización local ya está sincronizada por el conector «{{owner}}»: {{rootPath}}"
       },
       "schemaForm": {
         "tagsPlaceholder": "Escriba y pulse Intro para añadir etiquetas",
         "removeTagAriaLabel": "Quitar {{tag}}",
         "chooseFolder": "Elegir carpeta",
         "folderPickerUnavailableTitle": "Selector de carpetas no disponible",
-        "folderPickerUnavailableDescription": "Reinicie la aplicación de escritorio o actualícela a la última versión."
+        "folderPickerUnavailableDescription": "Reinicie la aplicación de escritorio o actualícela a la última versión.",
+        "examples": {
+          "copyFailed": "No se pudo copiar",
+          "heading": "Ejemplo",
+          "headingPlural": "Ejemplos",
+          "copied": "Copiado",
+          "copyToClipboard": "Copiar al portapapeles",
+          "copyExample": "Copiar el ejemplo {{label}}"
+        },
+        "selectPlaceholder": "Seleccionar...",
+        "fileUpload": {
+          "invalidJson": "El archivo debe ser JSON válido.",
+          "missingRequiredFields": "Faltan campos obligatorios: {{missing}}",
+          "fieldMustEqual": "El campo \"{{field}}\" debe ser igual a \"{{value}}\".",
+          "contentMustContain": "El contenido debe contener: {{pattern}}",
+          "contentMustNotContain": "El contenido no debe contener: {{pattern}}",
+          "tooLarge": "El archivo es demasiado grande ({{size}} KB). El tamaño máximo para archivos de claves, certificados o JSON es de {{max}} KB.",
+          "invalidFile": "Archivo no válido.",
+          "readFailed": "No se pudo leer el archivo.",
+          "optional": "(opcional)",
+          "alreadyConfigured": "Ya configurado",
+          "replace": "Reemplazar",
+          "clickToUpload": "Haz clic para subir un archivo",
+          "maxSize": "Máx. {{max}} KB"
+        }
       },
       "personal": {
         "desktopRequiredTitle": "Se requiere la aplicación de escritorio",
@@ -2620,7 +2710,10 @@
       "errors": {
         "missingCreatedId": "La creación se ha realizado, pero no se ha devuelto ningún id de conector",
         "createdConfigUnavailable": "El conector se ha creado, pero no se ha podido cargar su configuración. Pruebe a volver a abrir el panel.",
-        "authenticateFirst": "No se ha encontrado ningún ID de conector. Complete primero la autenticación."
+        "authenticateFirst": "No se ha encontrado ningún ID de conector. Complete primero la autenticación.",
+        "connectorInstanceUnavailable": "Esta instancia de conector no está disponible. Actualiza la página y vuelve a intentarlo.",
+        "connectorTypeRequired": "No se pudo iniciar la sincronización porque falta el tipo de conector.",
+        "settingsLoadFallback": "No pudimos cargar la configuración de este conector. Inténtelo de nuevo en un momento."
       },
       "syncIntervals": {
         "5": "Cada 5 minutos",
@@ -2707,7 +2800,9 @@
           "title": "¿Eliminar todos los embeddings?",
           "body": "Esto elimina la colección vectorial compartida y la vuelve a crear vacía.",
           "warning": "La búsqueda dejará de devolver resultados para todo el mundo y seguirá así hasta que termine una reindexación. En despliegues grandes la reindexación puede tardar horas. Sus registros no se eliminan: solo sus embeddings.",
-          "confirm": "Eliminar los embeddings"
+          "confirm": "Eliminar los embeddings",
+          "started": "Limpieza iniciada",
+          "startedDetail": "La colección se está recreando. La búsqueda permanece vacía hasta que se completa una reindexación."
         },
         "reindex": {
           "label": "Reindexar los embeddings",
@@ -2716,12 +2811,28 @@
           "title": "¿Reindexar todos los registros?",
           "body": "Esto vuelve a generar los embeddings de cada registro a partir de su contenido almacenado. Las fuentes no se vuelven a descargar ni a analizar.",
           "warning": "En despliegues grandes esto puede tardar mucho tiempo y se ejecuta en segundo plano.",
-          "confirm": "Iniciar la reindexación"
+          "confirm": "Iniciar la reindexación",
+          "started": "Reindexación iniciada",
+          "startedDetail": "Los registros se están volviendo a incrustar en segundo plano. Esto puede llevar un tiempo."
         },
         "typePrompt": "Escriba {{token}} para confirmar."
       },
+      "authorizeTab": {
+        "signInHeading": "Inicia sesión con tu proveedor",
+        "signInDescription": "Abre la ventana de inicio de sesión de tu proveedor de identidad y autoriza el acceso. Cuando hayas iniciado sesión, pulsa «Continuar con la configuración» en el pie de página para configurar la sincronización, los filtros y los registros.",
+        "authorizationStatus": "Estado de autorización",
+        "authorizationStatusDescription": "Esta instancia puede acceder a tus datos en el proveedor. Continúa para configurar la sincronización y la indexación, o vuelve a iniciar sesión si revocaste el acceso o rotaste las credenciales.",
+        "connected": "Conectado; puedes continuar con la configuración de registros",
+        "signInFailed": "No se completó el inicio de sesión. Inténtalo de nuevo o revisa la configuración de tu proveedor de identidad.",
+        "refreshAccess": "Actualizar acceso",
+        "refreshAccessDescription": "Equivale a la acción antigua de volver a autenticar cuando hay que renovar los tokens.",
+        "authenticating": "Autenticando…",
+        "reauthenticate": "Volver a autenticarse con el proveedor"
+      },
       "validation": {
-        "syncFilterRequired": "Selecciona {{field, lowercase}} antes de guardar. Cada instancia de conector sincroniza exactamente un {{field, lowercase}}."
+        "syncFilterRequired": "Selecciona {{field, lowercase}} antes de guardar. Cada instancia de conector sincroniza exactamente un {{field, lowercase}}.",
+        "syncFilterSingleSelection": "En {{field}} hay {{count}} selecciones. Reduce la selección a una para continuar; cada instancia del conector sincroniza exactamente un {{field, lowercase}}.",
+        "syncFilterUnsupportedOperator": "Vuelve a seleccionar {{field, lowercase}} para continuar. La configuración guardada usa una regla «{{operator}}» no compatible."
       }
     },
     "mcpServers": {
@@ -3105,7 +3216,8 @@
         "default": "Default",
         "configured": "Configured",
         "notConfigured": "Not Configured",
-        "active": "Configured"
+        "active": "Configured",
+        "builtIn": "Integrado"
       },
       "heading": "Web Search Configuration",
       "methodsSection": "Different Web Search Methods",
@@ -3114,7 +3226,105 @@
       "verifying": "Verifying connection...",
       "disabledReasonConfigure": "Configure this provider first before enabling it.",
       "disabledReasonActive": "Disable the currently active provider before enabling this one.",
-      "configureTip": "Configure"
+      "configureTip": "Configure",
+      "errors": {
+        "updateSettings": "No se pudo actualizar la configuración de búsqueda web",
+        "addProvider": "No se pudo agregar el proveedor",
+        "updateProvider": "No se pudo actualizar el proveedor",
+        "deleteProvider": "No se pudo eliminar el proveedor",
+        "setDefaultProvider": "No se pudo establecer el proveedor predeterminado"
+      },
+      "actions": {
+        "configureBeforeDefault": "Configura primero este proveedor para poder establecerlo como predeterminado.",
+        "setAsDefault": "Establecer como predeterminado",
+        "setting": "Configuración...",
+        "editConfiguration": "Editar configuración",
+        "deleteConfiguration": "Eliminar configuración"
+      },
+      "providers": {
+        "builtInDescription": "Integrado, no requiere configuración"
+      },
+      "configure": {
+        "update": "Actualizar",
+        "defaultKeyNotice": "Este proveedor es el predeterminado. Si actualizas la clave de API, seguirá siendo el predeterminado.",
+        "editNotice": "Estás editando una configuración existente. Los cambios se aplicarán al guardarla.",
+        "apiKeyLabel": "Clave API",
+        "apiKeyPlaceholder": "Introduce la clave de API de {{provider}}.",
+        "apiKeyHelp": "Obtén tu clave de API en {{url}}.",
+        "secret": {
+          "show": "Mostrar clave API",
+          "hide": "Ocultar clave API"
+        },
+        "errors": {
+          "save": "No se pudo guardar el proveedor",
+          "delete": "No se pudo eliminar el proveedor"
+        },
+        "dangerZone": "Zona de peligro",
+        "removeDescription": "Elimina la configuración de este proveedor. Si es el predeterminado, se usará DuckDuckGo en su lugar.",
+        "deleteProvider": "Eliminar proveedor",
+        "delete": {
+          "cannotDelete": "No se puede eliminar {{provider}}.",
+          "title": "¿Eliminar la configuración de {{provider}}?",
+          "checkingUsage": "Comprobando el uso por parte de los agentes…",
+          "usage_one": "Actualmente, {{count}} agente utiliza este proveedor:",
+          "usage_other": "Actualmente, {{count}} agentes utilizan este proveedor:",
+          "createdBy": "(creado por {{creator}})",
+          "removeFromAgents": "Quita la configuración de búsqueda web de estos agentes antes de eliminar el proveedor.",
+          "defaultDescription": "Se eliminará de forma permanente tu clave de API de {{provider}}. DuckDuckGo pasará a ser el proveedor de búsqueda web predeterminado.",
+          "description": "Se eliminará de forma permanente tu clave de API de {{provider}}. Después podrás volver a configurarla.",
+          "usage_many": "Actualmente, {{count}} agentes utilizan este proveedor:"
+        }
+      },
+      "images": {
+        "maxImages": "Máximo de imágenes de entrada por llamada LLM",
+        "invalidMaxImages": "Introduzca un número entero entre 1 y 500",
+        "maxImagesHelp": "Introduzca un número entero entre 1 y 500",
+        "costWarning": "Incluir imágenes puede aumentar el coste y la latencia de las búsquedas web."
+      },
+      "page": {
+        "toasts": {
+          "loadFailed": "No se pudo cargar la configuración de búsqueda web",
+          "providerUpdated": "{{provider}} actualizado",
+          "providerAdded": "{{provider}} añadido",
+          "configurationSaved": "Configuración guardada correctamente.",
+          "providerConfigured": "{{provider}} ya está configurado. Pulsa «Establecer como predeterminado» para empezar a usarlo.",
+          "providerRemoved": "{{provider}} eliminado",
+          "duckDuckGoDefault": "DuckDuckGo es ahora el proveedor de búsqueda web predeterminado.",
+          "configurationDeleted": "La configuración se eliminó correctamente.",
+          "resetDefaultFailed": "No se pudo restablecer el proveedor predeterminado",
+          "configureProviderFirst": "Configure {{provider}} primero",
+          "providerDefault": "{{provider}} es ahora el proveedor predeterminado.",
+          "setDefaultFailed": "No se pudo establecer el proveedor predeterminado",
+          "deleteFailed": "No se pudo eliminar el proveedor",
+          "imageSettingsFailed": "No se pudo actualizar la configuración de la imagen",
+          "imagesEnabled": "Se enviarán imágenes al LLM.",
+          "imagesDisabled": "No se enviarán imágenes al LLM.",
+          "maxImagesUpdated_one": "Recuento máximo de imágenes establecido en {{count}}.",
+          "maxImagesUpdated_other": "Recuento máximo de imágenes establecido en {{count}}.",
+          "maxImagesUpdated_many": "Recuento máximo de imágenes establecido en {{count}}."
+        },
+        "providers": {
+          "heading": "Proveedores de búsqueda web",
+          "description": "Configura los proveedores que quieras y luego elige uno como predeterminado."
+        },
+        "images": {
+          "heading": "Configuración de imágenes",
+          "description": "Controla si se envían imágenes al LLM durante las búsquedas web."
+        },
+        "delete": {
+          "cannotDelete": "No se puede eliminar {{provider}}",
+          "title": "¿Eliminar la configuración de {{provider}}?",
+          "providerTitle": "¿Eliminar proveedor?",
+          "checkingUsage": "Comprobando el uso del agente...",
+          "usage_one": "Actualmente, {{count}} agente utiliza este proveedor:",
+          "usage_other": "Actualmente, {{count}} agentes utilizan este proveedor:",
+          "createdBy": "(creado por {{creator}})",
+          "removeFromAgents": "Quita la configuración de búsqueda web de estos agentes antes de eliminar el proveedor.",
+          "defaultDescription": "Este proveedor es el predeterminado. Si lo eliminas, DuckDuckGo volverá a ser el predeterminado.",
+          "description": "Esta acción eliminará de forma permanente la configuración del proveedor. Después podrás volver a configurarla.",
+          "usage_many": "Actualmente, {{count}} agentes utilizan este proveedor:"
+        }
+      }
     },
     "profile": {
       "subtitle": "Manage all your personal profile details here",
@@ -4723,6 +4933,15 @@
         "saveFailed": "No se pudo guardar tu nombre. Inténtalo de nuevo."
       },
       "saveAndContinue": "Guardar y continuar"
+    }
+  },
+  "connectors": {
+    "oauthCallback": {
+      "errors": {
+        "serverConfirmation": "El servidor no confirmó la finalización de OAuth.",
+        "authenticationFailed": "Error de autenticación. Inténtelo de nuevo o póngase en contacto con su administrador.",
+        "rejected": "El servidor rechazó la autenticación OAuth."
+      }
     }
   },
   "keyboard": {

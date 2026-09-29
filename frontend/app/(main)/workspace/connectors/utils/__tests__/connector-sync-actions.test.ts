@@ -220,7 +220,13 @@ describe('assertLocalFsRootPathAvailable', () => {
       checkRootPathConflict: vi.fn(async () => ({ available: false, ownerConnectorName: 'Notes (old)' })),
     });
     fakeApi({ [`GET ${BASE}/c1/config`]: { status: 200, data: { config: { config: { sync: { customValues: { folderPath: ' /data ' } } } } } } });
-    await expect(assertLocalFsRootPathAvailable('c1', 'Local FS')).rejects.toThrow(/Notes \(old\)/);
+    await expect(assertLocalFsRootPathAvailable('c1', 'Local FS')).rejects.toMatchObject({
+      message: 'Local sync root is already synced by connector "Notes (old)": /data',
+      messageText: {
+        key: 'workspace.connectors.localFsDesktop.rootPathConflict',
+        values: { owner: 'Notes (old)', rootPath: '/data' },
+      },
+    });
   });
 
   it('is a no-op in the browser and for other connector types', async () => {

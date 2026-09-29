@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Button, Flex, Text } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
@@ -10,13 +11,15 @@ import {
   postConnectorOAuthErrorToOpener,
   postConnectorOAuthSuccessToOpener,
 } from '@/app/(main)/connectors/oauth/connector-oauth-window-messages';
-import { parseConnectorOAuthCallbackPayload } from '@/app/(main)/connectors/oauth/connector-oauth-callback-response';
+import { LocalizedConnectorOAuthError, parseConnectorOAuthCallbackPayload } from '@/app/(main)/connectors/oauth/connector-oauth-callback-response';
+import { localizedText, resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import {
   OAUTH_CALLBACK_SUCCESS_DISPLAY_MS,
 } from '@/app/(main)/workspace/connectors/components/authenticate-tab/use-connector-oauth-popup';
 
-function userFacingCallbackError(e: unknown, fallback: string): string {
-  if (isProcessedError(e)) return e.message;
+function userFacingCallbackError(e: unknown, fallback: LocalizedTextValue): LocalizedTextValue {
+  if (isProcessedError(e)) return e.messageText ?? e.message;
+  if (e instanceof LocalizedConnectorOAuthError) return e.messageText;
   if (e instanceof Error && e.message.trim()) return e.message;
   return fallback;
 }
@@ -50,9 +53,10 @@ type CallbackStatus = 'processing' | 'success' | 'error';
  * notifies the opener with `CONNECTOR_OAUTH_*` postMessage types, then closes the window.
  */
 export function ConnectorOAuthCallbackClient() {
+  const { t, i18n } = useTranslation();
   const [status, setStatus] = useState<CallbackStatus>('processing');
   const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<LocalizedTextValue | ''>('');
   const ranRef = useRef(false);
 
   const closeWindow = useCallback(() => {
@@ -103,10 +107,10 @@ export function ConnectorOAuthCallbackClient() {
           closeWindow();
         }, OAUTH_CALLBACK_SUCCESS_DISPLAY_MS);
       } catch (e) {
-        const detail = userFacingCallbackError(e, 'OAuth authentication failed.');
+        const detail = userFacingCallbackError(e, localizedText('connectors.oauthCallback.errors.authenticationFailed'));
         setStatus('error');
         setError(detail);
-        postConnectorOAuthErrorToOpener(detail);
+        postConnectorOAuthErrorToOpener(resolveLocalizedText(detail, i18n.t.bind(i18n)));
       }
     };
 
@@ -234,7 +238,7 @@ export function ConnectorOAuthCallbackClient() {
                 wordBreak: 'break-word',
               }}
             >
-              {error}
+              {resolveLocalizedText(error, t)}
             </Text>
           </Flex>
           <Button size="2" variant="outline" color="gray" onClick={closeWindow}>

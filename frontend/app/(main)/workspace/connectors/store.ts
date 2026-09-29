@@ -20,6 +20,7 @@ import type {
 } from './types';
 import { mergeConfigWithSchema, initializeFormData } from './utils/config-merge';
 import { evaluateConditionalDisplay } from './utils/conditional-display';
+import type { LocalizedTextValue } from '@/lib/i18n/localized-text';
 import {
   isNoneAuthType,
   isOAuthType,
@@ -69,7 +70,7 @@ interface ConnectorsState {
   connectorConfig: ConnectorConfig | null;
   isLoadingSchema: boolean;
   isLoadingConfig: boolean;
-  schemaError: string | null;
+  schemaError: LocalizedTextValue | null;
 
   // ── Form state ────────────────────────────────────────────────
   formData: PanelFormData;
@@ -95,7 +96,7 @@ interface ConnectorsState {
   // ── Save state ────────────────────────────────────────────────
   isSavingAuth: boolean;
   isSavingConfig: boolean;
-  saveError: string | null;
+  saveError: LocalizedTextValue | null;
 
   // ── Instance page state ───────────────────────────────────────
   /** Connector type instances list */
@@ -128,7 +129,7 @@ interface ConnectorsState {
   /** OAuth registration list for the open panel (OAuth auth type); avoids duplicate list fetches. */
   oauthAppsList: ConnectorOAuthAppListRow[];
   oauthAppsListPhase: OAuthAppsListPhase;
-  oauthAppsListFetchError: string | null;
+  oauthAppsListFetchError: LocalizedTextValue | null;
   /** Connector type the current list / in-flight fetch applies to. */
   oauthAppsListConnectorType: string;
   /**
@@ -184,17 +185,17 @@ interface ConnectorsState {
   setAvailableRecords: (records: { id: string; name: string }[]) => void;
   setIsLoadingSchema: (loading: boolean) => void;
   setIsLoadingConfig: (loading: boolean) => void;
-  setSchemaError: (error: string | null) => void;
+  setSchemaError: (error: LocalizedTextValue | null) => void;
   setIsSavingAuth: (saving: boolean) => void;
   setIsSavingConfig: (saving: boolean) => void;
-  setSaveError: (error: string | null) => void;
+  setSaveError: (error: LocalizedTextValue | null) => void;
   /** Set or clear individual form error keys. Pass `null` to remove a key. */
   mergeFormErrors: (patch: Record<string, string | null | undefined>) => void;
   clearOAuthAppsListState: () => void;
   beginOAuthAppsListFetch: (connectorType: string) => void;
   finishOAuthAppsListFetch: (
     connectorType: string,
-    result: { ok: true; apps: ConnectorOAuthAppListRow[] } | { ok: false; error: string }
+    result: { ok: true; apps: ConnectorOAuthAppListRow[] } | { ok: false; error: LocalizedTextValue }
   ) => void;
   /** When a list fetch is cancelled (effect cleanup), avoid leaving the store stuck in `loading`. */
   cancelOAuthAppsListFetchIfPending: (connectorType: string) => void;
@@ -278,7 +279,7 @@ const initialState = {
   connectorConfig: null as ConnectorConfig | null,
   isLoadingSchema: false,
   isLoadingConfig: false,
-  schemaError: null as string | null,
+  schemaError: null as LocalizedTextValue | null,
 
   // Form
   formData: { ...defaultFormData },
@@ -304,7 +305,7 @@ const initialState = {
   // Save
   isSavingAuth: false,
   isSavingConfig: false,
-  saveError: null as string | null,
+  saveError: null as LocalizedTextValue | null,
 
   // Instance page
   instances: [] as ConnectorInstance[],
@@ -341,7 +342,7 @@ const panelResetState = {
   connectorConfig: null as ConnectorConfig | null,
   isLoadingSchema: false,
   isLoadingConfig: false,
-  schemaError: null as string | null,
+  schemaError: null as LocalizedTextValue | null,
   formData: { ...defaultFormData },
   formErrors: {} as Record<string, string>,
   conditionalDisplay: {} as Record<string, boolean>,
@@ -356,7 +357,7 @@ const panelResetState = {
   isLoadingRecords: false,
   isSavingAuth: false,
   isSavingConfig: false,
-  saveError: null as string | null,
+  saveError: null as LocalizedTextValue | null,
 
   oauthAppsList: [] as ConnectorOAuthAppListRow[],
   oauthAppsListPhase: 'idle' as OAuthAppsListPhase,

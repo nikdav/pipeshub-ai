@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { useUserStore, selectIsAdmin, selectIsProfileInitialized } from '@/lib/store/user-store';
 import { useToastStore } from '@/lib/store/toast-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 import { isProcessedError } from '@/lib/api';
 import { ServiceGate } from '@/app/components/ui/service-gate';
 import { useConnectorsStore } from '../store';
@@ -422,7 +423,12 @@ function TeamConnectorsPageContent() {
         await refreshConnectorRowQuiet(instance._key);
         addToast({
           variant: 'success',
-          title: instance.isActive ? 'Connector sync disabled' : 'Connector sync enabled',
+          title: t(instance.isActive
+            ? 'workspace.connectors.toasts.syncToggleDisabled'
+            : 'workspace.connectors.toasts.syncToggleEnabled'),
+          titleText: localizedText(instance.isActive
+            ? 'workspace.connectors.toasts.syncToggleDisabled'
+            : 'workspace.connectors.toasts.syncToggleEnabled'),
           duration: 2500,
         });
         try {
@@ -435,7 +441,8 @@ function TeamConnectorsPageContent() {
         }
       } catch (err: unknown) {
         if (!isProcessedError(err)) {
-          addToast({ variant: 'error', title: 'Could not update connector' });
+          const titleText = localizedText('workspace.connectors.toasts.syncToggleError');
+          addToast({ variant: 'error', title: t(titleText.key), titleText });
         }
       }
     },

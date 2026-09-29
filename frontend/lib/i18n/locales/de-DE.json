@@ -1938,6 +1938,10 @@
         "authenticatedMany": "{{count}} authentifiziert",
         "needsAuthOne": "1 benötigt Anmeldung",
         "needsAuthMany": "{{count}} benötigen Anmeldung",
+        "active_one": "{{count}} aktive Instanz",
+        "active_other": "{{count}} aktive Instanzen",
+        "inactive_one": "{{count}} inaktive Instanz",
+        "inactive_other": "{{count}} inaktive Instanzen",
         "addInstance": "Instanz hinzufügen"
       },
       "typeDetail": {
@@ -2355,7 +2359,10 @@
         "configSaveError": "Konfiguration konnte nicht gespeichert werden",
         "oauthAppUnavailableTitle": "Für diesen Konnektor sind keine OAuth-Apps verfügbar",
         "oauthAppUnavailableDescription": "Bitten Sie den Administrator Ihres Arbeitsbereichs, zuerst eine OAuth-App für {{name}} zu erstellen, und versuchen Sie es dann erneut.",
-        "thisConnectorFallback": "diesen Konnektor"
+        "thisConnectorFallback": "diesen Konnektor",
+        "syncToggleDisabled": "Konnektor-Synchronisierung deaktiviert",
+        "syncToggleEnabled": "Konnektor-Synchronisierung aktiviert",
+        "syncToggleError": "Konnektor konnte nicht aktualisiert werden"
       },
       "tabs": {
         "authenticate": "Instanz authentifizieren",
@@ -2456,7 +2463,36 @@
         "oauthAppNamePlaceholder": "z. B. {{name}} OAuth",
         "oauthAppNameHelper": "Dieser Name wird mit der OAuth-Registrierung gespeichert und angezeigt, wenn Benutzer eine gespeicherte App für andere Instanzen auswählen.",
         "oauthAppNameRequired": "Geben Sie einen Namen für die neue OAuth-App ein.",
-        "oauthAppChangeReauthWarning": "Wenn Sie die OAuth-App oder ihre Anmeldedaten ändern, müssen Sie den Konnektor erneut authentifizieren."
+        "oauthAppChangeReauthWarning": "Wenn Sie die OAuth-App oder ihre Anmeldedaten ändern, müssen Sie den Konnektor erneut authentifizieren.",
+        "authTypes": {
+          "oauth": "OAuth 2.0",
+          "oauthAdminConsent": "OAuth (Administratorzustimmung)",
+          "oauthCertificate": "OAuth (Zertifikat)",
+          "apiToken": "API-Token",
+          "usernamePassword": "Benutzername und Passwort",
+          "basicAuth": "Standardauthentifizierung",
+          "bearerToken": "Bearer-Token",
+          "custom": "Benutzerdefiniert",
+          "none": "Keine"
+        },
+        "redirectCallbackUrlCopyErrorTitle": "Kopieren nicht möglich",
+        "redirectCallbackUrlCopyErrorDescription": "Kopieren Sie die URL manuell oder erlauben Sie dieser Website den Zugriff auf die Zwischenablage.",
+        "methodDescription": "Wählen Sie aus, wie sich diese Konnektor-Instanz bei {{name}} authentifizieren soll.",
+        "oauthAppUnnamed": "Unbenannte OAuth-App",
+        "oauthAppsLoadFailed": "Die OAuth-Apps für diesen Konnektor konnten nicht geladen werden.",
+        "oauthAppLinkedNamed": "{{name}} (verknüpft)",
+        "oauthAppLinkedRegistration": "Verknüpfte OAuth-Registrierung",
+        "oauthAppsEmptyLinkedAdminExisting": "Diese Instanz ist mit einer OAuth-Registrierung verknüpft, die nicht in der Liste angezeigt wird. Wählen Sie unten eine andere gespeicherte App aus oder behalten Sie die aktuelle Verknüpfung bei.",
+        "oauthAppsEmptyLinkedAdminNew": "Diese Instanz ist mit einer OAuth-Registrierung verknüpft, die nicht in der Liste angezeigt wird. Wählen Sie unten eine andere App aus, verwenden Sie „Neu erstellen“ oder behalten Sie die aktuelle Verknüpfung bei.",
+        "oauthAppsEmptyLinkedUser": "Diese Instanz ist mit einer OAuth-Registrierung verknüpft, die nicht in der Liste angezeigt wird. Sie können wechseln, sobald Ihre Administration weitere gespeicherte Apps hinzugefügt hat.",
+        "oauthAppsEmptyRegisteredNone": "Es sind noch keine OAuth-Apps registriert. Bitten Sie Ihre Administration, in den Konnektor-Einstellungen des Arbeitsbereichs eine App hinzuzufügen.",
+        "oauthAppsEmptyCredentials": "Geben Sie unten die OAuth-Client-Anmeldedaten ein oder wählen Sie eine gespeicherte App aus, sobald eine verfügbar ist.",
+        "oauthAppLabel": "OAuth-App",
+        "oauthAppsLoading": "OAuth-Konfigurationen werden geladen …",
+        "oauthAppPlaceholderAdmin": "OAuth-App auswählen oder neu erstellen …",
+        "oauthAppPlaceholder": "OAuth-App auswählen (erforderlich) …",
+        "oauthAppNew": "Neue OAuth-App erstellen",
+        "oauthAppSelectionRequired": "Bitte wählen Sie eine OAuth-App aus."
       },
       "docSection": {
         "title": "Einrichtungsdokumentation",
@@ -2487,7 +2523,8 @@
       "instancePanel": {
         "overview": "Übersicht",
         "settings": "Einstellungen",
-        "manageConfig": "Konfiguration verwalten"
+        "manageConfig": "Konfiguration verwalten",
+        "syncedAt": "Synchronisiert {{lastSynced}}"
       },
       "overview": {
         "progressPercent": "{{n}}% abgeschlossen",
@@ -2515,7 +2552,16 @@
         "recordsByType": "Datensätze nach Typ",
         "noRecordTypes": "Keine Datensatztypen verfügbar",
         "localWatcherLabel": "LOKALER WATCHER",
-        "localWatcherStatus": "{{state}} · {{pending}} ausstehend · {{failed}} fehlgeschlagen"
+        "localWatcherStatus": "{{state}} · {{pending}} ausstehend · {{failed}} fehlgeschlagen",
+        "actions": {
+          "syncStarted": "Synchronisierung gestartet",
+          "syncStartFailed": "Synchronisierung konnte nicht gestartet werden",
+          "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten.",
+          "reindexFailedStarted": "Fehlerhafte Datensätze werden erneut indiziert …",
+          "reindexFailedError": "Fehlerhafte Datensätze konnten nicht erneut indiziert werden",
+          "manualIndexStarted": "Datensätze mit manueller Indizierung werden indiziert …",
+          "manualIndexError": "Die manuelle Indizierung konnte nicht gestartet werden"
+        }
       },
       "settingsTab": {
         "instanceName": "Instanzname",
@@ -2547,7 +2593,23 @@
         "removing": "Dieser Konnektor wird entfernt.",
         "configureFirst": "Schließen Sie die Konfiguration ab, bevor Sie die Synchronisierung aktivieren.",
         "authenticateFirst": "Authentifizieren Sie diesen Konnektor, bevor Sie die Synchronisierung aktivieren.",
-        "selected": "{{field}} ausgewählt"
+        "selected": "{{field}} ausgewählt",
+        "syncAction": {
+          "label": "Synchronisieren",
+          "syncing": "Synchronisierung läuft …",
+          "retry": "Synchronisierung fehlgeschlagen – erneut versuchen",
+          "started": "Synchronisierung gestartet",
+          "failed": "Synchronisierung fehlgeschlagen",
+          "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten."
+        },
+        "fullSyncAction": {
+          "label": "Vollständige Synchronisierung",
+          "syncing": "Vollständige Synchronisierung läuft …",
+          "retry": "Vollständige Synchronisierung fehlgeschlagen – erneut versuchen",
+          "started": "Vollständige Synchronisierung gestartet",
+          "failed": "Vollständige Synchronisierung fehlgeschlagen"
+        },
+        "connect": "Verbinden"
       },
       "instanceStatus": {
         "setup": {
@@ -2578,14 +2640,40 @@
         "unclaimedToast": "Dieser Connector wurde noch auf keinem Desktop eingerichtet. Öffnen Sie die PipesHub-Desktop-App auf dem Rechner, dem dieser Ordner gehört, und aktivieren Sie dort einmalig die Synchronisierung.",
         "ownedByOtherDeviceToast": "Dieser Connector gehört zum Gerät {{deviceName}}. Aktivieren Sie die Synchronisierung dort in der PipesHub-Desktop-App.",
         "ownedByOtherDeviceUnknownToast": "Dieser Connector gehört zu einem anderen Gerät. Aktivieren Sie die Synchronisierung dort in der PipesHub-Desktop-App.",
-        "deviceIdentityError": "Dieses Gerät konnte nicht identifiziert werden: {{error}}"
+        "deviceIdentityError": "Dieses Gerät konnte nicht identifiziert werden: {{error}}",
+        "anotherConnector": "anderer Konnektor",
+        "rootPathConflict": "Der lokale Synchronisierungs-Stammpfad wird bereits von Konnektor „{{owner}}“ synchronisiert: {{rootPath}}"
       },
       "schemaForm": {
         "tagsPlaceholder": "Tippen und Enter drücken, um Tags hinzuzufügen",
         "removeTagAriaLabel": "{{tag}} entfernen",
         "chooseFolder": "Ordner auswählen",
         "folderPickerUnavailableTitle": "Ordnerauswahl nicht verfügbar",
-        "folderPickerUnavailableDescription": "Starten Sie die Desktop-App neu oder aktualisieren Sie auf die neueste Version."
+        "folderPickerUnavailableDescription": "Starten Sie die Desktop-App neu oder aktualisieren Sie auf die neueste Version.",
+        "examples": {
+          "copyFailed": "Kopieren fehlgeschlagen",
+          "heading": "Beispiel",
+          "headingPlural": "Beispiele",
+          "copied": "Kopiert",
+          "copyToClipboard": "In die Zwischenablage kopieren",
+          "copyExample": "Beispiel {{label}} kopieren"
+        },
+        "selectPlaceholder": "Auswählen …",
+        "fileUpload": {
+          "invalidJson": "Die Datei muss gültiges JSON enthalten.",
+          "missingRequiredFields": "Erforderliche Felder fehlen: {{missing}}",
+          "fieldMustEqual": "Das Feld „{{field}}“ muss „{{value}}“ entsprechen.",
+          "contentMustContain": "Der Inhalt muss Folgendes enthalten: {{pattern}}",
+          "contentMustNotContain": "Der Inhalt darf Folgendes nicht enthalten: {{pattern}}",
+          "tooLarge": "Die Datei ist zu groß ({{size}} KB). Für Uploads von Schlüsseln, Zertifikaten oder JSON-Dateien sind maximal {{max}} KB zulässig.",
+          "invalidFile": "Ungültige Datei.",
+          "readFailed": "Datei konnte nicht gelesen werden.",
+          "optional": "(optional)",
+          "alreadyConfigured": "Bereits konfiguriert",
+          "replace": "Ersetzen",
+          "clickToUpload": "Klicken Sie, um eine Datei hochzuladen",
+          "maxSize": "Max. {{max}} KB"
+        }
       },
       "personal": {
         "desktopRequiredTitle": "Desktop-App erforderlich",
@@ -2601,7 +2689,10 @@
       "errors": {
         "missingCreatedId": "Der Konnektor wurde erstellt, aber es wurde keine Konnektor-ID zurückgegeben",
         "createdConfigUnavailable": "Der Konnektor wurde erstellt, aber die Konfiguration konnte nicht geladen werden. Öffnen Sie das Panel erneut.",
-        "authenticateFirst": "Keine Konnektor-ID gefunden. Schließen Sie zuerst die Authentifizierung ab."
+        "authenticateFirst": "Keine Konnektor-ID gefunden. Schließen Sie zuerst die Authentifizierung ab.",
+        "connectorInstanceUnavailable": "Diese Konnektor-Instanz ist nicht verfügbar. Aktualisieren Sie die Seite und versuchen Sie es erneut.",
+        "connectorTypeRequired": "Die Synchronisierung konnte nicht gestartet werden, da der Konnektortyp fehlt.",
+        "settingsLoadFallback": "Die Einstellungen dieses Konnektors konnten nicht geladen werden. Bitte versuchen Sie es gleich noch einmal."
       },
       "syncIntervals": {
         "5": "Alle 5 Minuten",
@@ -2688,7 +2779,9 @@
           "title": "Alle Embeddings löschen?",
           "body": "Die gemeinsame Vektorsammlung wird gelöscht und leer neu erstellt.",
           "warning": "Die Suche liefert für niemanden mehr Ergebnisse, bis die Neuindizierung abgeschlossen ist. Bei großen Bereitstellungen kann das mehrere Stunden dauern. Ihre Datensätze werden nicht gelöscht, sondern nur deren Embeddings.",
-          "confirm": "Embeddings löschen"
+          "confirm": "Embeddings löschen",
+          "started": "Bereinigung gestartet",
+          "startedDetail": "Die Sammlung wird neu erstellt. Die Suche bleibt leer, bis die Neuindizierung abgeschlossen ist."
         },
         "reindex": {
           "label": "Embeddings neu indexieren",
@@ -2697,12 +2790,28 @@
           "title": "Alle Datensätze neu indexieren?",
           "body": "Die Embeddings aller Datensätze werden anhand der gespeicherten Inhalte neu erstellt. Quellen werden weder erneut heruntergeladen noch erneut geparst.",
           "warning": "Dies kann bei großen Bereitstellungen lange dauern und wird im Hintergrund ausgeführt.",
-          "confirm": "Neuindizierung starten"
+          "confirm": "Neuindizierung starten",
+          "started": "Neuindizierung gestartet",
+          "startedDetail": "Datensätze werden im Hintergrund erneut eingebettet. Dieser Vorgang kann einige Zeit dauern."
         },
         "typePrompt": "Geben Sie zur Bestätigung {{token}} ein."
       },
+      "authorizeTab": {
+        "signInHeading": "Mit Ihrem Anbieter anmelden",
+        "signInDescription": "Öffnen Sie das Anmeldefenster Ihres Identitätsanbieters und stimmen Sie dem Zugriff zu. Wählen Sie nach erfolgreicher Anmeldung unten „Mit der Konfiguration fortfahren“, um Synchronisierung, Filter und Datensätze einzurichten.",
+        "authorizationStatus": "Autorisierungsstatus",
+        "authorizationStatusDescription": "Diese Instanz kann beim Anbieter auf Ihre Daten zugreifen. Fahren Sie mit der Einrichtung von Synchronisierung und Indizierung fort oder melden Sie sich erneut an, wenn Sie den Zugriff widerrufen oder Anmeldedaten geändert haben.",
+        "connected": "Verbunden – Sie können mit „Datensätze konfigurieren“ fortfahren.",
+        "signInFailed": "Die Anmeldung wurde nicht abgeschlossen. Versuchen Sie es erneut oder prüfen Sie die Einstellungen Ihres Identitätsanbieters.",
+        "refreshAccess": "Zugriff aktualisieren",
+        "refreshAccessDescription": "Entspricht der bisherigen Aktion „Erneut authentifizieren“, wenn Tokens erneuert werden müssen.",
+        "authenticating": "Authentifizierung läuft …",
+        "reauthenticate": "Beim Anbieter erneut authentifizieren"
+      },
       "validation": {
-        "syncFilterRequired": "Wählen Sie {{field}} aus, bevor Sie speichern. Pro Konnektor-Instanz kann jeweils nur eine Auswahl für {{field}} synchronisiert werden."
+        "syncFilterRequired": "Wählen Sie {{field}} aus, bevor Sie speichern. Pro Konnektor-Instanz kann jeweils nur eine Auswahl für {{field}} synchronisiert werden.",
+        "syncFilterSingleSelection": "Für {{field}} wurden {{count}} Werte ausgewählt. Grenzen Sie die Auswahl auf einen Wert ein, um fortzufahren; pro Konnektor-Instanz kann nur ein Wert für {{field}} synchronisiert werden.",
+        "syncFilterUnsupportedOperator": "Wählen Sie {{field}} erneut aus, um fortzufahren. Die gespeicherte Konfiguration verwendet eine nicht unterstützte Regel „{{operator}}“."
       }
     },
     "mcpServers": {
@@ -3084,7 +3193,8 @@
         "default": "Standard",
         "configured": "Konfiguriert",
         "notConfigured": "Nicht konfiguriert",
-        "active": "Konfiguriert"
+        "active": "Konfiguriert",
+        "builtIn": "Integriert"
       },
       "heading": "Websuche-Konfiguration",
       "methodsSection": "Verschiedene Websuche-Methoden",
@@ -3093,7 +3203,102 @@
       "verifying": "Verbindung wird überprüft...",
       "disabledReasonConfigure": "Konfigurieren Sie diesen Anbieter, bevor Sie ihn aktivieren.",
       "disabledReasonActive": "Deaktivieren Sie den aktuell aktiven Anbieter, bevor Sie diesen aktivieren.",
-      "configureTip": "Konfigurieren"
+      "configureTip": "Konfigurieren",
+      "errors": {
+        "updateSettings": "Websucheinstellungen konnten nicht aktualisiert werden",
+        "addProvider": "Anbieter konnte nicht hinzugefügt werden",
+        "updateProvider": "Anbieter konnte nicht aktualisiert werden",
+        "deleteProvider": "Anbieter konnte nicht gelöscht werden",
+        "setDefaultProvider": "Standardanbieter konnte nicht festgelegt werden"
+      },
+      "actions": {
+        "configureBeforeDefault": "Konfigurieren Sie diesen Anbieter zuerst, bevor Sie ihn als Standard festlegen.",
+        "setAsDefault": "Als Standard festlegen",
+        "setting": "Wird festgelegt …",
+        "editConfiguration": "Konfiguration bearbeiten",
+        "deleteConfiguration": "Konfiguration löschen"
+      },
+      "providers": {
+        "builtInDescription": "Integriert, keine Konfiguration erforderlich"
+      },
+      "configure": {
+        "update": "Aktualisieren",
+        "defaultKeyNotice": "Dieser Anbieter ist derzeit als Standard festgelegt. Wenn Sie den API-Schlüssel aktualisieren, bleibt er weiterhin der Standard.",
+        "editNotice": "Sie bearbeiten eine bestehende Konfiguration. Änderungen werden unmittelbar nach dem Speichern wirksam.",
+        "apiKeyLabel": "API-Schlüssel",
+        "apiKeyPlaceholder": "Geben Sie Ihren API-Schlüssel für {{provider}} ein",
+        "apiKeyHelp": "Sie erhalten Ihren API-Schlüssel unter {{url}}",
+        "secret": {
+          "show": "API-Schlüssel anzeigen",
+          "hide": "API-Schlüssel verbergen"
+        },
+        "errors": {
+          "save": "Anbieter konnte nicht gespeichert werden",
+          "delete": "Anbieter konnte nicht gelöscht werden"
+        },
+        "dangerZone": "Gefahrenbereich",
+        "removeDescription": "Konfiguration dieses Anbieters entfernen. Wenn er als Standard festgelegt ist, wird stattdessen DuckDuckGo verwendet.",
+        "deleteProvider": "Anbieter löschen",
+        "delete": {
+          "cannotDelete": "{{provider}} kann nicht gelöscht werden",
+          "title": "Konfiguration für {{provider}} löschen?",
+          "checkingUsage": "Agentennutzung wird überprüft …",
+          "usage_one": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
+          "usage_other": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
+          "createdBy": "(erstellt von {{creator}})",
+          "removeFromAgents": "Entfernen Sie die Websuchkonfiguration aus diesen Service-Agenten, bevor Sie diesen Anbieter löschen.",
+          "defaultDescription": "Dadurch wird Ihr API-Schlüssel für {{provider}} dauerhaft gelöscht. DuckDuckGo wird zum Standardanbieter für die Websuche.",
+          "description": "Dadurch wird Ihr API-Schlüssel für {{provider}} dauerhaft gelöscht. Sie können ihn später erneut konfigurieren."
+        }
+      },
+      "images": {
+        "maxImages": "Maximale Anzahl Eingabebilder pro LLM-Aufruf",
+        "invalidMaxImages": "Geben Sie eine ganze Zahl zwischen 1 und 500 ein",
+        "maxImagesHelp": "Geben Sie eine ganze Zahl zwischen 1 und 500 ein",
+        "costWarning": "Das Einbeziehen von Bildern kann die Kosten erhöhen und Websuchanfragen verzögern."
+      },
+      "page": {
+        "toasts": {
+          "loadFailed": "Websucheinstellungen konnten nicht geladen werden",
+          "providerUpdated": "{{provider}} aktualisiert",
+          "providerAdded": "{{provider}} hinzugefügt",
+          "configurationSaved": "Konfiguration erfolgreich gespeichert.",
+          "providerConfigured": "{{provider}} ist jetzt konfiguriert. Klicken Sie auf „Als Standard festlegen“, um den Anbieter zu verwenden.",
+          "providerRemoved": "{{provider}} entfernt",
+          "duckDuckGoDefault": "DuckDuckGo ist jetzt der Standardanbieter für die Websuche.",
+          "configurationDeleted": "Konfiguration erfolgreich gelöscht.",
+          "resetDefaultFailed": "Standardanbieter konnte nicht zurückgesetzt werden",
+          "configureProviderFirst": "Konfigurieren Sie zuerst {{provider}}",
+          "providerDefault": "{{provider}} ist jetzt der Standardanbieter",
+          "setDefaultFailed": "Standardanbieter konnte nicht festgelegt werden",
+          "deleteFailed": "Anbieter konnte nicht gelöscht werden",
+          "imageSettingsFailed": "Bildeinstellungen konnten nicht aktualisiert werden",
+          "imagesEnabled": "Bilder werden an das LLM gesendet",
+          "imagesDisabled": "Bilder werden nicht an das LLM gesendet",
+          "maxImagesUpdated_one": "Maximale Bildanzahl auf {{count}} festgelegt.",
+          "maxImagesUpdated_other": "Maximale Bildanzahl auf {{count}} festgelegt."
+        },
+        "providers": {
+          "heading": "Websuchanbieter",
+          "description": "Konfigurieren Sie die gewünschten Anbieter und wählen Sie dann einen als Standard aus."
+        },
+        "images": {
+          "heading": "Bildeinstellungen",
+          "description": "Legen Sie fest, ob bei der Websuche Bilder an das LLM gesendet werden."
+        },
+        "delete": {
+          "cannotDelete": "{{provider}} kann nicht gelöscht werden",
+          "title": "Konfiguration für {{provider}} löschen?",
+          "providerTitle": "Anbieter löschen?",
+          "checkingUsage": "Agentennutzung wird überprüft …",
+          "usage_one": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
+          "usage_other": "Dieser Anbieter wird derzeit von {{count}} Service-Agenten verwendet:",
+          "createdBy": "(erstellt von {{creator}})",
+          "removeFromAgents": "Entfernen Sie die Websuchkonfiguration aus diesen Service-Agenten, bevor Sie diesen Anbieter löschen.",
+          "defaultDescription": "Dieser Anbieter ist derzeit der Standard. Beim Löschen wird DuckDuckGo wieder als Standard festgelegt.",
+          "description": "Dadurch wird die Anbieterkonfiguration dauerhaft gelöscht. Sie können sie später erneut einrichten."
+        }
+      }
     },
     "profile": {
       "subtitle": "Verwalten Sie hier alle Ihre persönlichen Profildaten",
@@ -4687,6 +4892,15 @@
         "saveFailed": "Ihr Name konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
       },
       "saveAndContinue": "Speichern und fortfahren"
+    }
+  },
+  "connectors": {
+    "oauthCallback": {
+      "errors": {
+        "serverConfirmation": "Der Server hat den Abschluss der OAuth-Anmeldung nicht bestätigt.",
+        "authenticationFailed": "Die Authentifizierung ist fehlgeschlagen. Bitte versuchen Sie es erneut oder wenden Sie sich an Ihre Administration.",
+        "rejected": "Der Server hat die OAuth-Authentifizierung abgelehnt."
+      }
     }
   },
   "keyboard": {

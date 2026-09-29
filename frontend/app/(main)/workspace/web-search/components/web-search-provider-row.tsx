@@ -57,20 +57,22 @@ export function WebSearchProviderRow({
     if (!isConfigurable) {
       return (
         <Badge color="gray" variant="soft" size="1">
-          Built-in
+          {t('workspace.webSearch.badges.builtIn')}
         </Badge>
       );
     }
     return (
       <Badge color={isConfigured ? 'green' : 'orange'} variant="soft" size="1">
-        {isConfigured ? 'Configured' : 'Not Configured'}
+        {isConfigured
+          ? t('workspace.webSearch.badges.configured')
+          : t('workspace.webSearch.badges.notConfigured')}
       </Badge>
     );
   };
 
   const setDefaultDisabled = !isConfigured || isDefault || anyActionInProgress;
   const setDefaultTooltip = !isConfigured
-    ? 'Configure this provider first before setting it as default.'
+    ? t('workspace.webSearch.actions.configureBeforeDefault')
     : '';
 
   return (
@@ -124,7 +126,9 @@ export function WebSearchProviderRow({
             whiteSpace: 'nowrap',
           }}
         >
-          {meta.description}
+          {meta.type === 'duckduckgo'
+            ? t('workspace.webSearch.providers.builtInDescription')
+            : meta.description}
         </Text>
       </Box>
 
@@ -145,7 +149,7 @@ export function WebSearchProviderRow({
                   style={{ cursor: 'not-allowed', gap: 4 }}
                 >
                   <MaterialIcon name="star" size={14} color="var(--slate-10)" />
-                  Set as default
+                  {t('workspace.webSearch.actions.setAsDefault')}
                 </Button>
               </span>
             </Tooltip>
@@ -159,18 +163,25 @@ export function WebSearchProviderRow({
               style={{ cursor: setDefaultDisabled ? 'not-allowed' : 'pointer', gap: 4 }}
             >
               <MaterialIcon name="star" size={14} color="var(--slate-10)" />
-              {isSettingDefault ? 'Setting...' : 'Set as default'}
+              {isSettingDefault
+                ? t('workspace.webSearch.actions.setting')
+                : t('workspace.webSearch.actions.setAsDefault')}
             </Button>
           )
         )}
 
         {/* Configure (gear) */}
         {isConfigurable && (
-          <Tooltip content={isConfigured ? 'Edit configuration' : 'Configure'}>
+          <Tooltip content={isConfigured
+            ? t('workspace.webSearch.actions.editConfiguration')
+            : t('workspace.webSearch.configureTip')}>
             <IconButton
               variant="ghost"
               color="gray"
               size="2"
+              aria-label={isConfigured
+                ? t('workspace.webSearch.actions.editConfiguration')
+                : t('workspace.webSearch.configureTip')}
               onClick={() => onConfigure(meta.type as ConfigurableProvider)}
               disabled={anyActionInProgress}
               style={{ cursor: anyActionInProgress ? 'not-allowed' : 'pointer' }}
@@ -186,11 +197,12 @@ export function WebSearchProviderRow({
 
         {/* Delete */}
         {isConfigurable && isConfigured && (
-          <Tooltip content="Delete configuration">
+          <Tooltip content={t('workspace.webSearch.actions.deleteConfiguration')}>
             <IconButton
               variant="ghost"
               color="red"
               size="2"
+              aria-label={t('workspace.webSearch.actions.deleteConfiguration')}
               onClick={onDelete}
               disabled={anyActionInProgress}
               style={{ cursor: anyActionInProgress ? 'not-allowed' : 'pointer' }}

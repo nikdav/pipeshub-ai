@@ -24,7 +24,7 @@ export function SelectRecordsPage() {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const connectorName = panelConnector?.name ?? 'Connector';
+  const connectorName = panelConnector?.name ?? t('filter.connector');
 
   // Filter records by search
   const filteredRecords = useMemo(() => {
