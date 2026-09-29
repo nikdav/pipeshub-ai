@@ -1,12 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Flex, Text, Heading, Badge, Button } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import {
   useServicesHealthStore,
   selectAppServices,
-  APP_SERVICE_LABELS,
   formatServiceList,
   type AppServices,
 } from '@/lib/store/services-health-store';
@@ -22,6 +22,7 @@ interface ServiceGateProps {
 export type { AppServiceKey };
 
 export function ServiceGate({ children, services }: ServiceGateProps) {
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const appServices = useServicesHealthStore(selectAppServices);
   const isAdmin = useUserStore(selectIsAdmin);
@@ -38,7 +39,8 @@ export function ServiceGate({ children, services }: ServiceGateProps) {
     return <>{children}</>;
   }
 
-  const labels = unhealthyServices.map((k) => APP_SERVICE_LABELS[k]);
+  const labels = unhealthyServices.map((key) => t(`workspace.services.app.${key}.label`));
+  const locale = i18n.resolvedLanguage || i18n.language;
 
   return (
     <Flex
@@ -70,7 +72,7 @@ export function ServiceGate({ children, services }: ServiceGateProps) {
         </Flex>
 
         <Heading size="5" style={{ color: 'var(--slate-12)' }}>
-          Service Unavailable
+          {t('healthGate.serviceGate.title')}
         </Heading>
 
         {/* Service names help an admin act; to everyone else they are noise,
@@ -78,18 +80,14 @@ export function ServiceGate({ children, services }: ServiceGateProps) {
             still loading) counts as a member. */}
         {isAdmin === true ? (
           <Text size="2" style={{ color: 'var(--slate-10)', lineHeight: 1.6 }}>
-            This page requires {formatServiceList(labels)} which{' '}
-            {unhealthyServices.length === 1 ? 'is' : 'are'} currently
-            unavailable. It will become available automatically once{' '}
-            {unhealthyServices.length === 1
-              ? 'the service recovers'
-              : 'the services recover'}
-            .
+            {t('healthGate.serviceGate.adminDescription', {
+              count: unhealthyServices.length,
+              services: formatServiceList(labels, locale),
+            })}
           </Text>
         ) : (
           <Text size="2" style={{ color: 'var(--slate-10)', lineHeight: 1.6 }}>
-            This page is temporarily unavailable. It will come back
-            automatically; if it lasts, contact your admin.
+            {t('healthGate.serviceGate.memberDescription')}
           </Text>
         )}
 
@@ -97,7 +95,7 @@ export function ServiceGate({ children, services }: ServiceGateProps) {
           <Flex gap="2" wrap="wrap" justify="center">
             {unhealthyServices.map((key) => (
               <Badge key={key} color="red" variant="soft" size="2">
-                {APP_SERVICE_LABELS[key]}
+                {t(`workspace.services.app.${key}.label`)}
               </Badge>
             ))}
           </Flex>
@@ -114,7 +112,7 @@ export function ServiceGate({ children, services }: ServiceGateProps) {
             <span className="material-icons-outlined" style={{ fontSize: 16 }}>
               monitor_heart
             </span>
-            View Service Status
+            {t('healthGate.serviceGate.viewStatus')}
           </Button>
         )}
 

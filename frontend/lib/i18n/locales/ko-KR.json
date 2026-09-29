@@ -383,7 +383,8 @@
     "loading": "데이터 로드 중...",
     "selectAll": "모두 선택",
     "selected": "{{count}}개 선택됨",
-    "emptyState": "표시할 항목이 없습니다"
+    "emptyState": "표시할 항목이 없습니다",
+    "selectRow": "{{item}} 행 선택"
   },
   "status": {
     "indexed": "인덱싱됨",
@@ -508,7 +509,9 @@
         "busy": "PipesHub가 현재 바쁩니다. 몇 초 후 다시 시도하세요.",
         "busyRetry_other": "PipesHub가 현재 바쁩니다. {{count}}초 후 다시 시도하세요."
       }
-    }
+    },
+    "connectorIconAlt": "{{type}} 아이콘",
+    "submit": "제출"
   },
   "units": {
     "bytes": "바이트",
@@ -1262,7 +1265,8 @@
         "pending": "대기 중",
         "expired": "만료됨",
         "deactivated": "비활성화됨",
-        "blocked": "차단됨"
+        "blocked": "차단됨",
+        "inactive": "비활성"
       },
       "invite": {
         "title": "사용자 초대",
@@ -1816,7 +1820,8 @@
     "common": {
       "loadingUsers": "사용자 로드 중...",
       "noUsersAvailable": "사용자가 없습니다",
-      "selected": "{{count}}개 선택됨"
+      "selected": "{{count}}개 선택됨",
+      "unknownUser": "알 수 없는 사용자"
     },
     "filters": {
       "role": "역할",
@@ -1830,7 +1835,8 @@
     "pagination": {
       "showing": "전체 {{total}}개 중 {{from}}-{{to}} 표시",
       "previous": "이전",
-      "next": "다음"
+      "next": "다음",
+      "perPage": "페이지당 {{value}}개"
     },
     "sidebar": {
       "backToApp": "앱으로 돌아가기",
@@ -3558,6 +3564,31 @@
       "disableTitle": "이 서비스 계정을 사용 중지할까요?",
       "disableDescription": "{{name}}은(는) 즉시 작동을 멈춥니다. 다음 로그인 때가 아니라 이미 보유한 모든 토큰이 함께 중지됩니다. 다시 사용 설정할 때까지 그 토큰을 사용하는 모든 것이 실패합니다.",
       "disableConfirm": "사용 안 함"
+    },
+    "avatar": {
+      "upload": "업로드",
+      "remove": "제거"
+    },
+    "entities": {
+      "selectedSummary_other": "{{itemLabel}} {{count}}개 선택됨"
+    },
+    "form": {
+      "optional": "선택 사항"
+    },
+    "members": {
+      "noItemsFound": "항목이 없습니다"
+    },
+    "selector": {
+      "searchOrSelect": "검색하거나 선택하세요",
+      "noOptionsAvailable": "사용 가능한 옵션이 없습니다",
+      "selectOption": "옵션 선택",
+      "removeOption": "{{option}} 제거"
+    },
+    "settings": {
+      "discardChanges": "변경 사항 취소"
+    },
+    "tagInput": {
+      "placeholder": "값 입력"
     }
   },
   "filePreview": {
@@ -4163,7 +4194,25 @@
   "healthGate": {
     "title": "서버에 연결할 수 없음",
     "description": "현재 서버에 연결할 수 없습니다. 서버가 시작 중이거나 점검 중일 수 있습니다. 다시 연결을 시도하고 있습니다.",
-    "contactAdmin": "문제가 계속되면 PipesHub 관리자에게 문의해 주세요."
+    "contactAdmin": "문제가 계속되면 PipesHub 관리자에게 문의해 주세요.",
+    "toast": {
+      "critical": {
+        "title": "일부 서비스를 사용할 수 없습니다",
+        "memberDescription": "일부 기능을 일시적으로 사용할 수 없습니다. 자동으로 다시 연결됩니다. 문제가 계속되면 관리자에게 문의하세요.",
+        "adminDescription": "영향을 받는 서비스: {{services}}"
+      },
+      "viewStatus": "상태 보기",
+      "nonCritical": {
+        "adminTitle_other": "현재 {{services}} 서비스를 사용할 수 없습니다",
+        "memberTitle": "일부 기능을 일시적으로 사용할 수 없습니다"
+      }
+    },
+    "serviceGate": {
+      "title": "서비스를 사용할 수 없음",
+      "adminDescription_other": "이 페이지에는 현재 사용할 수 없는 {{services}} 서비스가 필요합니다. 서비스가 복구되면 자동으로 다시 이용할 수 있습니다.",
+      "memberDescription": "이 페이지를 일시적으로 사용할 수 없습니다. 자동으로 다시 이용할 수 있습니다. 문제가 계속되면 관리자에게 문의하세요.",
+      "viewStatus": "서비스 상태 보기"
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "질문:",
@@ -4258,7 +4307,8 @@
     },
     "team": "팀",
     "teamsNoRoles": "팀에는 역할이 없습니다",
-    "invite": "Pipeshub에 초대"
+    "invite": "Pipeshub에 초대",
+    "searchPlaceholder": "이메일, 팀 또는 이름(쉼표로 구분)"
   },
   "demoData": {
     "badge": {
@@ -4299,5 +4349,27 @@
       "onTitle": "모두에 대해 데모 데이터를 다시 켰습니다",
       "errorTitle": "모두에 대한 데모 데이터를 변경하지 못했습니다"
     }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Ctrl"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "특정 날짜",
+      "between": "기간",
+      "before": "이전",
+      "after": "이후"
+    },
+    "startDateEndDate": "시작 날짜 - 종료 날짜",
+    "pickDate": "날짜 선택",
+    "endDate": "종료 날짜",
+    "startTime": "시작 시간",
+    "endTime": "종료 시간",
+    "time": "시간",
+    "apply": "적용",
+    "previousMonth": "이전 달",
+    "nextMonth": "다음 달"
   }
 }

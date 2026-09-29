@@ -384,7 +384,8 @@
     "loading": "Loading data...",
     "selectAll": "Select all",
     "selected": "{{count}} selected",
-    "emptyState": "No items to display"
+    "emptyState": "No items to display",
+    "selectRow": "Select {{item}}"
   },
   "status": {
     "indexed": "Indexed",
@@ -511,7 +512,9 @@
         "busyRetry_one": "PipesHub is busy right now. Please try again in {{count}} second.",
         "busyRetry_other": "PipesHub is busy right now. Please try again in {{count}} seconds."
       }
-    }
+    },
+    "connectorIconAlt": "{{type}} icon",
+    "submit": "Submit"
   },
   "units": {
     "bytes": "Bytes",
@@ -1267,7 +1270,8 @@
         "pending": "Pending",
         "expired": "Expired",
         "deactivated": "Deactivated",
-        "blocked": "Blocked"
+        "blocked": "Blocked",
+        "inactive": "Inactive"
       },
       "invite": {
         "title": "Invite User(s)",
@@ -1828,7 +1832,8 @@
     "common": {
       "loadingUsers": "Loading users...",
       "noUsersAvailable": "No users available",
-      "selected": "{{count}} Selected"
+      "selected": "{{count}} Selected",
+      "unknownUser": "Unknown user"
     },
     "filters": {
       "role": "Role",
@@ -1842,7 +1847,8 @@
     "pagination": {
       "showing": "Showing {{from}}-{{to}} of {{total}} Item",
       "previous": "Previous",
-      "next": "Next"
+      "next": "Next",
+      "perPage": "{{value}} per page"
     },
     "sidebar": {
       "backToApp": "Back to app",
@@ -3572,6 +3578,32 @@
       "disableTitle": "Disable this service account?",
       "disableDescription": "{{name}} stops working immediately — including every token it already holds, not just at the next sign-in. Anything using one of those tokens will start failing until you enable it again.",
       "disableConfirm": "Disable"
+    },
+    "avatar": {
+      "upload": "Upload",
+      "remove": "Remove"
+    },
+    "entities": {
+      "selectedSummary_one": "Selected {{count}} {{itemLabel}}",
+      "selectedSummary_other": "Selected {{count}} {{itemLabel}}"
+    },
+    "form": {
+      "optional": "optional"
+    },
+    "members": {
+      "noItemsFound": "No items found"
+    },
+    "selector": {
+      "searchOrSelect": "Search or select",
+      "noOptionsAvailable": "No options available",
+      "selectOption": "Select an option",
+      "removeOption": "Remove {{option}}"
+    },
+    "settings": {
+      "discardChanges": "Discard changes"
+    },
+    "tagInput": {
+      "placeholder": "Enter a value"
     }
   },
   "filePreview": {
@@ -4191,7 +4223,27 @@
   "healthGate": {
     "title": "Unable to Connect to Server",
     "description": "The server is currently unreachable. It may be starting up or undergoing maintenance. We're trying to reconnect.",
-    "contactAdmin": "If this persists, please contact your PipesHub administrator."
+    "contactAdmin": "If this persists, please contact your PipesHub administrator.",
+    "toast": {
+      "critical": {
+        "title": "Some services are unavailable",
+        "memberDescription": "Some features are temporarily unavailable. We'll reconnect automatically; if it lasts, contact your admin.",
+        "adminDescription": "Affected: {{services}}"
+      },
+      "viewStatus": "View status",
+      "nonCritical": {
+        "adminTitle_one": "{{services}} is currently unavailable",
+        "adminTitle_other": "{{services}} are currently unavailable",
+        "memberTitle": "Some features are temporarily unavailable"
+      }
+    },
+    "serviceGate": {
+      "title": "Service Unavailable",
+      "adminDescription_one": "This page requires {{services}}, which is currently unavailable. It will become available automatically once the service recovers.",
+      "adminDescription_other": "This page requires {{services}}, which are currently unavailable. It will become available automatically once the services recover.",
+      "memberDescription": "This page is temporarily unavailable. It will come back automatically; if it lasts, contact your admin.",
+      "viewStatus": "View Service Status"
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "Question :",
@@ -4275,7 +4327,8 @@
     },
     "team": "Team",
     "teamsNoRoles": "Teams do not have roles",
-    "invite": "Invite to Pipeshub"
+    "invite": "Invite to Pipeshub",
+    "searchPlaceholder": "Emails, teams or names (separated by commas)"
   },
   "demoData": {
     "badge": {
@@ -4316,5 +4369,27 @@
       "onTitle": "Demo data turned back on for everyone",
       "errorTitle": "Couldn't change the demo data for everyone"
     }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Ctrl"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "On",
+      "between": "Between",
+      "before": "Before",
+      "after": "After"
+    },
+    "startDateEndDate": "Start Date - End Date",
+    "pickDate": "Pick a date",
+    "endDate": "End Date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "time": "Time",
+    "apply": "Apply",
+    "previousMonth": "Previous month",
+    "nextMonth": "Next month"
   }
 }

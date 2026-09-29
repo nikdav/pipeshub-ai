@@ -2,6 +2,8 @@ import React from 'react';
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { render, screen, cleanup } from '@testing-library/react';
 import { Theme } from '@radix-ui/themes';
+import { I18nextProvider } from 'react-i18next';
+import testI18n, { en } from '@/lib/__tests__/test-i18n';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
@@ -17,7 +19,6 @@ vi.mock('@/lib/store/user-store', () => ({
 vi.mock('@/lib/store/services-health-store', () => ({
   useServicesHealthStore: (selector: (state: unknown) => unknown) => selector(undefined),
   selectAppServices: () => ({ query: 'unhealthy', connector: 'healthy' }),
-  APP_SERVICE_LABELS: { query: 'Query Service', connector: 'Connector Service' },
   formatServiceList: (labels: string[]) => labels.join(' and '),
 }));
 
@@ -30,11 +31,13 @@ afterEach(() => {
 
 function renderGate() {
   return render(
-    <Theme>
-      <ServiceGate services={['query']}>
-        <div>page body</div>
-      </ServiceGate>
-    </Theme>,
+    <I18nextProvider i18n={testI18n}>
+      <Theme>
+        <ServiceGate services={['query']}>
+          <div>page body</div>
+        </ServiceGate>
+      </Theme>
+    </I18nextProvider>,
   );
 }
 
@@ -43,7 +46,8 @@ describe('ServiceGate when a service is down', () => {
     isAdmin = true;
     renderGate();
     // The sentence names it, and the badge repeats it.
-    expect(screen.getAllByText(/Query Service/).length).toBeGreaterThan(0);
+    const serviceLabel = en.workspace.services.app.query.label;
+    expect(screen.getAllByText((content) => content.includes(serviceLabel)).length).toBeGreaterThan(0);
   });
 
   it.each([
@@ -52,9 +56,8 @@ describe('ServiceGate when a service is down', () => {
   ])('tells %s what to expect without naming services', (_label, admin) => {
     isAdmin = admin;
     renderGate();
-    expect(screen.queryByText(/Query Service/)).toBeNull();
-    expect(
-      screen.getByText(/temporarily unavailable.*contact your admin/i),
-    ).toBeTruthy();
+    const serviceLabel = en.workspace.services.app.query.label;
+    expect(screen.queryByText((content) => content.includes(serviceLabel))).toBeNull();
+    expect(screen.getByText(en.healthGate.serviceGate.memberDescription)).toBeTruthy();
   });
 });

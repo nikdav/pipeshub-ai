@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconButton, Flex, Text, Box, Popover, Tooltip } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { Spinner } from '@/app/components/ui/spinner';
@@ -295,6 +296,7 @@ function ActionCard({
 // ────────────────────────────────────────────────────────────────
 
 export function EntityRowActionMenu({ actions }: EntityRowActionMenuProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<View>('actions');
 
@@ -314,6 +316,7 @@ export function EntityRowActionMenu({ actions }: EntityRowActionMenuProps) {
         <IconButton
           variant="ghost"
           size="1"
+          aria-label={t('common.moreOptions')}
           color="gray"
           onClick={(e) => e.stopPropagation()}
           style={{ cursor: 'pointer' }}

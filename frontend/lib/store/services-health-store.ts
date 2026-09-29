@@ -245,10 +245,8 @@ export const APP_SERVICE_LABELS: Record<string, string> = {
   extraction: 'Extraction Service',
 };
 
-export function formatServiceList(items: string[]): string {
-  if (items.length <= 1) return items[0] ?? '';
-  if (items.length === 2) return `${items[0]} and ${items[1]}`;
-  return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+export function formatServiceList(items: string[], locale = 'en-US'): string {
+  return new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(items);
 }
 
 // ========================================

@@ -168,8 +168,8 @@ export function WorkspaceRightPanel({
   onBack,
   headerActions,
   children,
-  primaryLabel = 'Submit',
-  secondaryLabel = 'Cancel',
+  primaryLabel,
+  secondaryLabel,
   primaryDisabled = false,
   primaryLoading = false,
   onPrimaryClick,
@@ -329,6 +329,7 @@ export function WorkspaceRightPanel({
               variant="ghost"
               color="gray"
               size="2"
+              aria-label={t('common.close')}
               onClick={handleClose}
               style={{ cursor: 'pointer' }}
             >
@@ -376,7 +377,7 @@ export function WorkspaceRightPanel({
               disabled={primaryLoading}
               style={{ cursor: primaryLoading ? 'not-allowed' : 'pointer' }}
             >
-              {secondaryLabel}
+              {secondaryLabel ?? t('action.cancel')}
             </Button>
             {showPrimaryButtonTooltip && primaryButtonTooltipText ? (
               <Tooltip content={primaryButtonTooltipText}>
@@ -391,7 +392,7 @@ export function WorkspaceRightPanel({
                     disabled={primaryDisabled}
                     loading={primaryLoading}
                   >
-                    {primaryLabel}
+                    {primaryLabel ?? t('common.submit')}
                   </LoadingButton>
                 </span>
               </Tooltip>
@@ -403,7 +404,7 @@ export function WorkspaceRightPanel({
                 disabled={primaryDisabled}
                 loading={primaryLoading}
               >
-                {primaryLabel}
+                {primaryLabel ?? t('common.submit')}
               </LoadingButton>
             )}
           </Flex>

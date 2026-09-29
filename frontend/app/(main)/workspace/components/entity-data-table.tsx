@@ -32,6 +32,8 @@ export interface EntityDataTableProps<T> {
   data: T[];
   /** Extract unique ID from an item */
   getItemId: (item: T) => string;
+  /** Human-readable row label for the row selection checkbox. */
+  getItemLabel?: (item: T) => string;
   /** Currently selected item IDs */
   selectedIds: Set<string>;
   /** Called when selection changes */
@@ -63,6 +65,7 @@ export function EntityDataTable<T>({
   columns,
   data,
   getItemId,
+  getItemLabel,
   selectedIds,
   onSelectionChange,
   renderRowActions,
@@ -116,6 +119,7 @@ export function EntityDataTable<T>({
             size="1"
             checked={allSelected ? true : someSelected ? 'indeterminate' : false}
             onCheckedChange={handleSelectAll}
+            aria-label={t('table.selectAll')}
             style={{ cursor: 'pointer' }}
           />
         </Flex>
@@ -230,6 +234,7 @@ export function EntityDataTable<T>({
                   size="1"
                   checked={isSelected}
                   onCheckedChange={() => handleSelectItem(id)}
+                  aria-label={t('table.selectRow', { item: getItemLabel?.(item) ?? id })}
                   style={{ cursor: 'pointer' }}
                 />
               </Flex>

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from "./MaterialIcon";
 import { useThemeAppearance } from '@/app/components/theme-provider';
 
@@ -294,6 +295,7 @@ export const ConnectorIcon = ({
   style
 }: ConnectorIconProps) => {
   const [imageError, setImageError] = useState(false);
+  const { t } = useTranslation();
   const { appearance } = useThemeAppearance();
   const isDarkMode = appearance === 'dark';
 
@@ -308,7 +310,7 @@ export const ConnectorIcon = ({
     return (
       <Image
         src={iconConfig.svg}
-        alt={`${type} icon`}
+        alt={t('common.connectorIconAlt', { type })}
         width={size}
         height={size}
         unoptimized

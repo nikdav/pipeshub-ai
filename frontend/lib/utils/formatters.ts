@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 /**
  * Format file size in bytes to human readable format
  */
@@ -11,8 +13,16 @@ export function formatSize(bytes?: number): string {
 /**
  * Format date string to localized format (e.g., "3 Nov 2025")
  */
-export function formatDate(dateString: string | number): string {
+export function formatDate(dateString: string | number, locale?: string): string {
   const date = new Date(dateString);
+  if (locale) {
+    return date.toLocaleDateString(locale, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  }
+  // Preserve the historical format for callers that do not supply a UI locale.
   const day = date.getDate();
   const month = date.toLocaleDateString('en-US', { month: 'short' });
   const year = date.getFullYear();
@@ -29,7 +39,11 @@ export function formatDate(dateString: string | number): string {
  *
  * Result format: "Month Year"  (e.g. "October 2025")
  */
-export function formatConversationDateForSearch(createdAt: string, updatedAt: string): string {
+export function formatConversationDateForSearch(
+  createdAt: string,
+  updatedAt: string,
+  locale: string = 'en-US',
+): string {
   const created = new Date(createdAt);
   const updated = new Date(updatedAt);
 
@@ -39,7 +53,7 @@ export function formatConversationDateForSearch(createdAt: string, updatedAt: st
     (updated.getMonth() - created.getMonth());
 
   const target = monthsDiff > 1 ? updated : created;
-  return target.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  return target.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
 }
 
 /**
@@ -81,18 +95,44 @@ export function formatSnakeCaseTitle(value: string): string {
  * Format chatMode for display label (capitalize first letter).
  * Handles API form `agent:<strategy>` from agent streams.
  */
-export function formatChatMode(chatMode?: string): string {
+export function formatChatMode(chatMode?: string, t?: TFunction): string {
   if (!chatMode) return '';
   if (chatMode.startsWith('agent:')) {
     const strategy = chatMode.slice('agent:'.length);
     // API uses `planExecute` (legacy alias: `verification`); UI label reads as "Plan & Execute"
-    const label =
+    let label =
       strategy === 'planExecute' || strategy === 'verification'
         ? 'Plan & Execute'
         : strategy.length > 0
           ? strategy.charAt(0).toUpperCase() + strategy.slice(1)
           : strategy;
-    return `Agent (${label})`;
+    if (t) {
+      switch (strategy) {
+        case 'planExecute':
+        case 'verification':
+        case 'plan-execute': label = t('chat.agentStrategy.modes.plan-execute.label'); break;
+        case 'auto': label = t('chat.agentStrategy.modes.auto.label'); break;
+        case 'quick': label = t('chat.agentStrategy.modes.quick.label'); break;
+        case 'deep': label = t('chat.agentStrategy.modes.deep.label'); break;
+      }
+    }
+    return `${t ? t('chat.queryModes.agent.label') : 'Agent'} (${label})`;
+  }
+  if (t) {
+    switch (chatMode) {
+      case 'chat':
+      case 'internal_search': return t('chat.queryModes.chat.label');
+      case 'web-search':
+      case 'web_search': return t('chat.queryModes.web-search.label');
+      case 'image': return t('chat.queryModes.image.label');
+      case 'agent': return t('chat.queryModes.agent.label');
+      case 'auto': return t('chat.agentStrategy.modes.auto.label');
+      case 'quick': return t('chat.agentStrategy.modes.quick.label');
+      case 'deep': return t('chat.agentStrategy.modes.deep.label');
+      case 'planExecute':
+      case 'verification':
+      case 'plan-execute': return t('chat.agentStrategy.modes.plan-execute.label');
+    }
   }
   return formatSnakeCaseTitle(chatMode);
 }
@@ -101,7 +141,7 @@ export function formatChatMode(chatMode?: string): string {
  * Format a Unix timestamp (ms) as a relative time string.
  * e.g. "Just now", "3 minutes ago", "2 hours ago", "5 days ago", "3 Nov 2025"
  */
-export function formatRelativeTime(timestamp?: number | null): string {
+export function formatRelativeTime(timestamp?: number | null, locale?: string): string {
   if (!timestamp) return '-';
   const now = Date.now();
   const diff = now - timestamp;
@@ -111,7 +151,7 @@ export function formatRelativeTime(timestamp?: number | null): string {
   const days = Math.floor(diff / 86400000);
   const weeks = Math.floor(days / 7);
 
-  const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
 
   if (seconds < 60) return rtf.format(-seconds, 'second');
   if (minutes < 60) return rtf.format(-minutes, 'minute');
@@ -121,7 +161,7 @@ export function formatRelativeTime(timestamp?: number | null): string {
   if (weeks < 4) return rtf.format(-weeks, 'week');
 
   const date = new Date(timestamp);
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(locale, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',

@@ -379,7 +379,8 @@
     "loading": "Cargando datos...",
     "selectAll": "Seleccionar todo",
     "selected": "{{count}} seleccionado(s)",
-    "emptyState": "No hay elementos para mostrar"
+    "emptyState": "No hay elementos para mostrar",
+    "selectRow": "Seleccionar {{item}}"
   },
   "status": {
     "indexed": "Indexado",
@@ -508,7 +509,9 @@
         "busyRetry_other": "PipesHub está ocupado en este momento. Inténtelo de nuevo en {{count}} segundos.",
         "busyRetry_many": "PipesHub está ocupado en este momento. Inténtelo de nuevo en {{count}} segundos."
       }
-    }
+    },
+    "connectorIconAlt": "Icono {{type}}",
+    "submit": "Enviar"
   },
   "units": {
     "bytes": "Bytes",
@@ -1267,7 +1270,8 @@
         "pending": "Pendiente",
         "expired": "Expirado",
         "deactivated": "Desactivado",
-        "blocked": "Bloqueado"
+        "blocked": "Bloqueado",
+        "inactive": "Inactivo"
       },
       "invite": {
         "title": "Invitar usuarios",
@@ -1782,7 +1786,8 @@
     "pagination": {
       "showing": "Mostrando {{from}}-{{to}} de {{total}} elementos",
       "previous": "Anterior",
-      "next": "Siguiente"
+      "next": "Siguiente",
+      "perPage": "{{value}} por página"
     },
     "sidebar": {
       "backToApp": "Volver a la aplicación",
@@ -3352,7 +3357,8 @@
     "common": {
       "loadingUsers": "Cargando usuarios...",
       "noUsersAvailable": "No hay usuarios disponibles",
-      "selected": "{{count}} seleccionados"
+      "selected": "{{count}} seleccionados",
+      "unknownUser": "Usuario desconocido"
     },
     "skills": {
       "title": "Skills",
@@ -3583,6 +3589,33 @@
       "disableTitle": "¿Desactivar esta cuenta de servicio?",
       "disableDescription": "{{name}} deja de funcionar de inmediato, incluidos todos los tokens que ya tenga, no solo en el siguiente inicio de sesión. Todo lo que use uno de esos tokens empezará a fallar hasta que vuelva a activarla.",
       "disableConfirm": "Desactivar"
+    },
+    "avatar": {
+      "upload": "Subir",
+      "remove": "Eliminar"
+    },
+    "entities": {
+      "selectedSummary_one": "Seleccionados: {{count}} · {{itemLabel}}",
+      "selectedSummary_other": "Seleccionados: {{count}} · {{itemLabel}}",
+      "selectedSummary_many": "Seleccionados: {{count}} · {{itemLabel}}"
+    },
+    "form": {
+      "optional": "opcional"
+    },
+    "members": {
+      "noItemsFound": "No se encontraron elementos."
+    },
+    "selector": {
+      "searchOrSelect": "Buscar o seleccionar",
+      "noOptionsAvailable": "No hay opciones disponibles",
+      "selectOption": "Seleccione una opción",
+      "removeOption": "Quitar {{option}}"
+    },
+    "settings": {
+      "discardChanges": "Descartar cambios"
+    },
+    "tagInput": {
+      "placeholder": "Introduce un valor"
     }
   },
   "filePreview": {
@@ -4192,7 +4225,29 @@
   "healthGate": {
     "title": "No se puede conectar al servidor",
     "description": "El servidor no está disponible en este momento. Es posible que se esté iniciando o en mantenimiento. Estamos intentando reconectar.",
-    "contactAdmin": "Si el problema persiste, comuníquese con su administrador de PipesHub."
+    "contactAdmin": "Si el problema persiste, comuníquese con su administrador de PipesHub.",
+    "toast": {
+      "critical": {
+        "title": "Algunos servicios no están disponibles",
+        "memberDescription": "Algunas funciones no están disponibles temporalmente. Nos reconectaremos automáticamente. Si el problema persiste, contacta con tu administrador.",
+        "adminDescription": "Servicios afectados: {{services}}"
+      },
+      "viewStatus": "Ver estado",
+      "nonCritical": {
+        "adminTitle_one": "{{services}} no está disponible actualmente",
+        "adminTitle_other": "{{services}} no están disponibles actualmente",
+        "memberTitle": "Algunas funciones no están disponibles temporalmente",
+        "adminTitle_many": "{{services}} no están disponibles actualmente"
+      }
+    },
+    "serviceGate": {
+      "title": "Servicio no disponible",
+      "adminDescription_one": "Esta página requiere {{services}}, que actualmente no está disponible. Estará disponible automáticamente una vez que se recupere el servicio.",
+      "adminDescription_other": "Esta página requiere {{services}}, que actualmente no están disponibles. Estará disponible automáticamente una vez que los servicios se recuperen.",
+      "memberDescription": "Esta página no está disponible temporalmente. Volverá a estar disponible automáticamente. Si el problema persiste, contacta con tu administrador.",
+      "viewStatus": "Ver estado del servicio",
+      "adminDescription_many": "Esta página requiere {{services}}, que actualmente no están disponibles. Estará disponible automáticamente una vez que los servicios se recuperen."
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "Pregunta :",
@@ -4307,7 +4362,8 @@
     "team": "Equipo",
     "teamsNoRoles": "Los equipos no tienen roles",
     "invite": "Invitar a Pipeshub",
-    "memberCount_many": "{{count}} de miembros"
+    "memberCount_many": "{{count}} de miembros",
+    "searchPlaceholder": "Correos electrónicos, equipos o nombres (separados por comas)"
   },
   "demoData": {
     "badge": {
@@ -4348,5 +4404,27 @@
       "onTitle": "Datos de demostración reactivados para todos",
       "errorTitle": "No se han podido cambiar los datos de demostración para todos"
     }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Ctrl"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "El",
+      "between": "Entre",
+      "before": "Antes",
+      "after": "Después"
+    },
+    "startDateEndDate": "Fecha de inicio - Fecha de finalización",
+    "pickDate": "Elige una fecha",
+    "endDate": "Fecha de finalización",
+    "startTime": "Hora de inicio",
+    "endTime": "Hora de finalización",
+    "time": "Hora",
+    "apply": "Aplicar",
+    "previousMonth": "Mes anterior",
+    "nextMonth": "Mes próximo"
   }
 }

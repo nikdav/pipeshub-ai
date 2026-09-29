@@ -371,7 +371,8 @@
     "loading": "डेटा लोड किया जा रहा है...",
     "selectAll": "सभी चुनें",
     "selected": "{{count}} चयनित",
-    "emptyState": "दिखाने के लिए कोई आइटम नहीं"
+    "emptyState": "दिखाने के लिए कोई आइटम नहीं",
+    "selectRow": "{{item}} चुनें"
   },
   "status": {
     "indexed": "इंडेक्स किया गया",
@@ -498,7 +499,9 @@
         "busyRetry_one": "PipesHub अभी व्यस्त है। कृपया {{count}} सेकंड बाद फिर प्रयास करें।",
         "busyRetry_other": "PipesHub अभी व्यस्त है। कृपया {{count}} सेकंड बाद फिर प्रयास करें।"
       }
-    }
+    },
+    "connectorIconAlt": "{{type}} आइकन",
+    "submit": "जमा करें"
   },
   "units": {
     "bytes": "बाइट",
@@ -1249,7 +1252,8 @@
         "pending": "लंबित",
         "expired": "समाप्त",
         "deactivated": "निष्क्रिय",
-        "blocked": "अवरोधित"
+        "blocked": "अवरोधित",
+        "inactive": "निष्क्रिय"
       },
       "invite": {
         "title": "उपयोगकर्ताओं को आमंत्रित करें",
@@ -1758,7 +1762,8 @@
     "pagination": {
       "showing": "दिखा रहा है {{from}}-{{to}} में से {{total}} आइटम",
       "previous": "पिछला",
-      "next": "अगला"
+      "next": "अगला",
+      "perPage": "हर पेज पर {{value}}"
     },
     "sidebar": {
       "backToApp": "ऐप पर वापस",
@@ -3325,7 +3330,8 @@
     "common": {
       "loadingUsers": "उपयोगकर्ता लोड हो रहे हैं...",
       "noUsersAvailable": "कोई उपयोगकर्ता उपलब्ध नहीं",
-      "selected": "{{count}} चयनित"
+      "selected": "{{count}} चयनित",
+      "unknownUser": "अज्ञात उपयोगकर्ता"
     },
     "skills": {
       "title": "Skills",
@@ -3554,6 +3560,32 @@
       "disableTitle": "यह सेवा खाता अक्षम करें?",
       "disableDescription": "{{name}} तुरंत काम करना बंद कर देता है — इसमें उसके पास पहले से मौजूद हर टोकन शामिल है, न कि केवल अगला साइन-इन। उन टोकनों में से किसी का उपयोग करने वाली हर चीज़ तब तक विफल होती रहेगी जब तक आप इसे दोबारा सक्षम न करें।",
       "disableConfirm": "अक्षम करें"
+    },
+    "avatar": {
+      "upload": "अपलोड करें",
+      "remove": "हटाएँ"
+    },
+    "entities": {
+      "selectedSummary_one": "{{count}} {{itemLabel}} चुना गया",
+      "selectedSummary_other": "{{count}} {{itemLabel}} चुने गए"
+    },
+    "form": {
+      "optional": "वैकल्पिक"
+    },
+    "members": {
+      "noItemsFound": "कोई आइटम नहीं मिला"
+    },
+    "selector": {
+      "searchOrSelect": "खोजें या चुनें",
+      "noOptionsAvailable": "कोई विकल्प उपलब्ध नहीं है",
+      "selectOption": "कोई विकल्प चुनें",
+      "removeOption": "{{option}} हटाएँ"
+    },
+    "settings": {
+      "discardChanges": "बदलाव छोड़ें"
+    },
+    "tagInput": {
+      "placeholder": "कोई मान दर्ज करें"
     }
   },
   "filePreview": {
@@ -4161,7 +4193,27 @@
   "healthGate": {
     "title": "सर्वर से कनेक्ट नहीं हो पा रहा",
     "description": "सर्वर अभी उपलब्ध नहीं है। यह शुरू हो रहा हो सकता है या रखरखाव चल रहा हो सकता है। हम पुनः कनेक्ट करने का प्रयास कर रहे हैं।",
-    "contactAdmin": "यदि यह समस्या बनी रहती है, तो कृपया अपने PipesHub व्यवस्थापक से संपर्क करें।"
+    "contactAdmin": "यदि यह समस्या बनी रहती है, तो कृपया अपने PipesHub व्यवस्थापक से संपर्क करें।",
+    "toast": {
+      "critical": {
+        "title": "कुछ सेवाएँ उपलब्ध नहीं हैं",
+        "memberDescription": "कुछ सुविधाएँ अस्थायी रूप से उपलब्ध नहीं हैं। हम अपने आप फिर कनेक्ट करेंगे; समस्या बनी रहे तो अपने व्यवस्थापक से संपर्क करें।",
+        "adminDescription": "प्रभावित सेवाएँ: {{services}}"
+      },
+      "viewStatus": "स्थिति देखें",
+      "nonCritical": {
+        "adminTitle_one": "{{services}} अभी उपलब्ध नहीं है",
+        "adminTitle_other": "{{services}} अभी उपलब्ध नहीं हैं",
+        "memberTitle": "कुछ सुविधाएँ अस्थायी रूप से उपलब्ध नहीं हैं"
+      }
+    },
+    "serviceGate": {
+      "title": "सेवा उपलब्ध नहीं है",
+      "adminDescription_one": "इस पेज के लिए {{services}} आवश्यक है, जो अभी उपलब्ध नहीं है। सेवा बहाल होने पर यह अपने आप उपलब्ध हो जाएगा।",
+      "adminDescription_other": "इस पेज के लिए {{services}} आवश्यक हैं, जो अभी उपलब्ध नहीं हैं। सेवाएँ बहाल होने पर यह अपने आप उपलब्ध हो जाएगा।",
+      "memberDescription": "यह पेज अस्थायी रूप से उपलब्ध नहीं है। यह अपने आप फिर उपलब्ध होगा; समस्या बनी रहे तो अपने व्यवस्थापक से संपर्क करें।",
+      "viewStatus": "सेवा स्थिति देखें"
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "प्रश्न :",
@@ -4275,7 +4327,8 @@
     },
     "team": "टीम",
     "teamsNoRoles": "टीमों की कोई भूमिकाएँ नहीं होतीं",
-    "invite": "Pipeshub में आमंत्रित करें"
+    "invite": "Pipeshub में आमंत्रित करें",
+    "searchPlaceholder": "ईमेल, टीम या नाम (अल्पविराम से अलग करें)"
   },
   "demoData": {
     "badge": {
@@ -4316,5 +4369,27 @@
       "onTitle": "डेमो डेटा सभी के लिए वापस चालू किया गया",
       "errorTitle": "सभी के लिए डेमो डेटा बदला नहीं जा सका"
     }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Ctrl"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "को",
+      "between": "के बीच",
+      "before": "से पहले",
+      "after": "के बाद"
+    },
+    "startDateEndDate": "शुरू की तारीख - समाप्ति की तारीख",
+    "pickDate": "तारीख चुनें",
+    "endDate": "समाप्ति की तारीख",
+    "startTime": "शुरू होने का समय",
+    "endTime": "समाप्ति का समय",
+    "time": "समय",
+    "apply": "लागू करें",
+    "previousMonth": "पिछला महीना",
+    "nextMonth": "अगला महीना"
   }
 }
