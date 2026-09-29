@@ -2,6 +2,7 @@
 
 import { toast } from '@/lib/store/toast-store';
 import { selectIsAdmin, useUserStore } from '@/lib/store/user-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 /**
  * Warn that the workspace has no AI model. The settings page is admin-only,
@@ -10,17 +11,19 @@ import { selectIsAdmin, useUserStore } from '@/lib/store/user-store';
 export function showNoModelToast(): void {
   // Unknown (profile still loading) counts as a member: never offer a page they may not open.
   if (selectIsAdmin(useUserStore.getState()) !== true) {
-    toast.warning('No AI model configured', {
-      description:
-        'This workspace has no AI model set up yet, so chat can\'t answer. Ask a workspace admin to add one in Workspace → AI Models.',
+    toast.warning(localizedText('chat.noModelConfigured.title'), {
+      description: localizedText('chat.noModelConfigured.memberDescription'),
       duration: null,
     });
     return;
   }
-  toast.warning('No AI model configured', {
-    description:
-      'This workspace has no AI model set up yet, so chat can\'t answer. Add one in AI Models, then send your message again.',
-    action: { label: 'Open AI Models', href: '/workspace/ai-models' },
+  toast.warning(localizedText('chat.noModelConfigured.title'), {
+    description: localizedText('chat.noModelConfigured.adminDescription'),
+    action: {
+      label: 'Open AI Models',
+      labelText: localizedText('chat.noModelConfigured.action'),
+      href: '/workspace/ai-models',
+    },
     duration: null,
   });
 }

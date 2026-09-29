@@ -3,6 +3,7 @@
 import React from 'react';
 import { Flex, Text, Tooltip } from '@radix-ui/themes';
 import type { ConfidenceLevel } from '@/chat/types';
+import { useTranslation } from 'react-i18next';
 
 interface ConfidenceIndicatorProps {
   confidence: ConfidenceLevel;
@@ -24,10 +25,11 @@ const getConfidenceColor = (confidence: ConfidenceLevel): string => {
 };
 
 export function ConfidenceIndicator({ confidence }: ConfidenceIndicatorProps) {
+  const { t } = useTranslation();
   const color = getConfidenceColor(confidence);
 
   return (
-    <Tooltip content="Confidence level of assistant's response">
+    <Tooltip content={t('chat.confidenceTooltip', { defaultValue: "Confidence level of assistant's response" })}>
       <Flex 
         align="center" 
         gap="1" 

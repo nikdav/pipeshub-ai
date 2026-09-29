@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import type { LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { useTranslation } from 'react-i18next';
 import {
   Background,
@@ -82,7 +83,7 @@ export function AgentBuilderCanvas(props: {
   configuredConnectors: Connector[];
   activeAgentConnectors: Connector[];
   onNodeDelete: (id: string) => void;
-  onError?: (msg: string) => void;
+  onError?: (msg: LocalizedTextValue) => void;
   readOnly?: boolean;
 }) {
   const {

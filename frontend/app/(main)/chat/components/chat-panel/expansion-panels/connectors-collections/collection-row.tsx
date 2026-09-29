@@ -6,10 +6,13 @@ import { KnowledgeItemIcon } from '@/app/components/ui/knowledge-item-icon';
 import { ConnectorIcon, resolveConnectorType } from '@/app/components/ui/ConnectorIcon';
 import { ThemeableAssetIcon, themeableAssetIconPresets } from '@/app/components/ui/themeable-asset-icon';
 import { AGENT_KNOWLEDGE_FALLBACK_ICON } from '@/app/(main)/agents/agent-builder/display-utils';
+import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 
 interface CollectionRowProps {
   id: string;
   name: string;
+  nameText?: LocalizedText;
   /** Knowledge graph entry `type` (e.g. `KB`, `Jira`) — selects row icon. */
   sourceType?: string;
   isSelected: boolean;
@@ -52,11 +55,14 @@ export function CollectionLeadingIcon({ sourceType, size = 20 }: { sourceType?: 
 export function CollectionRow({
   id,
   name,
+  nameText,
   sourceType,
   isSelected,
   onToggle,
   counts,
 }: CollectionRowProps) {
+  const { t } = useTranslation();
+  const displayName = resolveLocalizedText(nameText, t, name);
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -104,7 +110,7 @@ export function CollectionRow({
             textOverflow: 'ellipsis',
           }}
         >
-          {name}
+          {displayName}
         </Text>
       </Flex>
 
@@ -118,7 +124,13 @@ export function CollectionRow({
             flexShrink: 0,
           }}
         >
-          {counts.folders} Folders & {counts.files} Files
+          {t('chat.collectionRow.folders', {
+            count: counts.folders,
+            defaultValue: `${counts.folders} ${counts.folders === 1 ? 'folder' : 'folders'}`,
+          })} & {t('chat.collectionRow.files', {
+            count: counts.files,
+            defaultValue: `${counts.files} ${counts.files === 1 ? 'file' : 'files'}`,
+          })}
         </Text>
       )}
 

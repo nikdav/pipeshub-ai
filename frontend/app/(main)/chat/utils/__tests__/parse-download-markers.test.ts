@@ -19,6 +19,7 @@ import {
   isSignedUrl,
   isTrustedApiUrl,
 } from '../parse-download-markers';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 describe('parseArtifactMarkers', () => {
   it('preserves backend-authored markers', () => {
@@ -104,6 +105,17 @@ describe('parseArtifactMarkers', () => {
     expect(artifacts).toHaveLength(1);
     expect(artifacts[0]).toMatchObject({ fileName: 'final.pdf', recordId: 'r2' });
   });
+
+  it('adds a descriptor only for an artifact with a missing label', () => {
+    const { artifacts } = parseArtifactMarkers(
+      '::artifact[   ](record:r1){application/pdf|d1|r1|DOCUMENT|1}',
+    );
+    expect(artifacts[0]).toMatchObject({
+      fileName: 'artifact',
+      fileNameText: localizedText('chat.unnamedArtifact'),
+      recordId: 'r1',
+    });
+  });
 });
 
 describe('parseDownloadMarkers', () => {
@@ -113,6 +125,16 @@ describe('parseDownloadMarkers', () => {
     );
     expect(text).toBe('Full data:');
     expect(tasks).toEqual([{ fileName: 'report.csv', url: 'https://our.api/file' }]);
+  });
+
+  it('localizes only the missing download label and preserves valid filenames', () => {
+    const { tasks } = parseDownloadMarkers(
+      '::download_conversation_task[   ](https://our.api/unnamed) ::download_conversation_task[report.csv](https://our.api/report)',
+    );
+    expect(tasks).toEqual([
+      { fileName: 'Download', fileNameText: localizedText('chat.unnamedDownload'), url: 'https://our.api/unnamed' },
+      { fileName: 'report.csv', url: 'https://our.api/report' },
+    ]);
   });
 });
 

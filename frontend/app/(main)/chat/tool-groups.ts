@@ -1,6 +1,7 @@
 import type { BuilderSidebarToolset } from '@/app/(main)/toolsets/api';
 import type { McpMyServerEntry } from '@/app/(main)/workspace/mcp-servers/types';
 import type { ScopedToolGroupRow } from './store';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 /** Toolset / MCP group row built from the caller's own catalog (my-toolsets, my-mcp-servers). */
 export interface CatalogToolGroupRow extends ScopedToolGroupRow {
@@ -48,10 +49,14 @@ export function buildCatalogToolGroups(toolsets: BuilderSidebarToolset[]): Catal
     });
 
     const instanceLabel = typeof ts.instanceName === 'string' ? ts.instanceName.trim() : '';
-    const productLabel = (ts.displayName || ts.name || 'Tools').trim();
+    const rawProductLabel = (ts.displayName || ts.name || '').trim();
+    const productLabel = rawProductLabel || 'Tools';
 
     groups.push({
       label: instanceLabel || productLabel,
+      ...(!instanceLabel && !rawProductLabel
+        ? { labelText: localizedText('agentBuilder.tools') }
+        : {}),
       toolsetSlug: (ts.toolsetType || ts.name || '').trim(),
       instanceId: groupDiscriminator,
       iconPath: ts.iconPath?.trim() || undefined,
@@ -86,8 +91,10 @@ export function buildCatalogMcpGroups(instances: McpMyServerEntry[]): CatalogToo
       if (d) toolDescriptions[key] = d;
     });
 
+    const rawLabel = (entry.name || '').trim();
     groups.push({
-      label: (entry.name || 'MCP Server').trim(),
+      label: rawLabel || 'MCP Server',
+      ...(!rawLabel ? { labelText: localizedText('agentBuilder.mcpServerDefaultName') } : {}),
       toolsetSlug: 'mcp',
       instanceId: entry._id,
       fullNames,

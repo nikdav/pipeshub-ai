@@ -33,6 +33,7 @@ vi.mock('@/lib/api', () => ({
 const { bareToolFullName, buildCatalogToolGroups, buildCatalogMcpGroups, restrictGroupsToBareNames } =
   await import('../tool-groups');
 const { buildProjectChatScope } = await import('../hooks/use-project-scope-hydration');
+const { localizedText } = await import('@/lib/i18n/localized-text');
 
 describe('bareToolFullName', () => {
   it('strips a single instance prefix', () => {
@@ -54,6 +55,16 @@ describe('buildCatalogToolGroups', () => {
     expect(groups[0]!.toolDescriptions).toEqual({ 'i1:slack.send': 'Send' });
     expect(groups[1]!.toolDescriptions).toBeUndefined();
   });
+
+  it('keeps a localized metadata field for a missing display label', () => {
+    const [group] = buildCatalogToolGroups([
+      { instanceId: 'i1', tools: [{ fullName: 'custom.call' }] },
+    ] as never);
+    expect(group).toMatchObject({
+      label: 'Tools',
+      labelText: localizedText('agentBuilder.tools'),
+    });
+  });
 });
 
 describe('buildCatalogMcpGroups', () => {
@@ -63,6 +74,16 @@ describe('buildCatalogMcpGroups', () => {
     ] as never);
     expect(groups).toHaveLength(1);
     expect(groups[0]).toMatchObject({ label: 'GitHub', toolsetSlug: 'mcp', instanceId: 'm1', fullNames: ['m1:mcp_github_list'] });
+  });
+
+  it('keeps a localized metadata field for an unnamed MCP server', () => {
+    const [group] = buildCatalogMcpGroups([
+      { _id: 'm1', tools: [{ namespacedName: 'mcp_tool' }] },
+    ] as never);
+    expect(group).toMatchObject({
+      label: 'MCP Server',
+      labelText: localizedText('agentBuilder.mcpServerDefaultName'),
+    });
   });
 });
 

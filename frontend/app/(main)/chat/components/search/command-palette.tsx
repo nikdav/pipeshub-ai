@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 import { ChatStarIcon } from '@/app/components/ui/chat-star-icon';
 import { useTranslation } from 'react-i18next';
-import { getModifierSymbol } from '@/lib/utils/platform';
+import { getLocalizedModifierSymbol } from '@/lib/utils/platform';
 
 interface CommandPaletteProps {
   onClick: () => void;
@@ -18,7 +18,7 @@ interface CommandPaletteProps {
 export function CommandPalette({ onClick }: CommandPaletteProps) {
   const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
-  const modKey = getModifierSymbol();
+  const modKey = getLocalizedModifierSymbol(t);
 
   return (
     <Flex

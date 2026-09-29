@@ -34,7 +34,9 @@ export function createChatShareAdapter(
   return {
     entityType: 'conversation',
     entityId: conversationId,
-    sidebarTitle: 'Share Chat',
+    get sidebarTitle() {
+      return i18next.t('shareSidebar.shareConversation');
+    },
     supportsRoles: false,
     supportsTeams: false,
 
@@ -86,7 +88,9 @@ export function createChatShareAdapter(
         members.push({
           id: ownerId.toString(),
           type: 'user',
-          name: ownerData?.name ?? ownerData?.email ?? 'Owner',
+          get name() {
+            return ownerData?.name ?? ownerData?.email ?? i18next.t('chat.projects.workspace.ownerLabel');
+          },
           email: ownerData?.email,
           avatarUrl: ownerData?.profilePicture,
           role: 'OWNER',
@@ -180,7 +184,9 @@ export function createProjectShareAdapter(project: ProjectDetail): ShareAdapter 
   return {
     entityType: 'project',
     entityId: projectId,
-    sidebarTitle: i18next.t('chat.projects.shareProject'),
+    get sidebarTitle() {
+      return i18next.t('chat.projects.shareProject');
+    },
     supportsRoles: true,
     supportsTeams: false,
 
@@ -196,7 +202,9 @@ export function createProjectShareAdapter(project: ProjectDetail): ShareAdapter 
         {
           id: ownerId,
           type: 'user',
-          name: ownerInfo?.name ?? 'Unknown',
+          get name() {
+            return ownerInfo?.name ?? i18next.t('shareSidebar.memberNameUnknown');
+          },
           email: ownerInfo?.email,
           avatarUrl: ownerInfo?.avatarUrl,
           role: 'OWNER',
@@ -210,7 +218,9 @@ export function createProjectShareAdapter(project: ProjectDetail): ShareAdapter 
         rows.push({
           id: m.principalId,
           type: 'user',
-          name: info?.name ?? 'Unknown',
+          get name() {
+            return info?.name ?? i18next.t('shareSidebar.memberNameUnknown');
+          },
           email: info?.email,
           avatarUrl: info?.avatarUrl,
           role: toShareRole(m.role),

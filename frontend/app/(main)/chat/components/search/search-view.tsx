@@ -19,6 +19,7 @@ import { ChatRow } from './chat-row';
 import { SearchResultRow } from './search-result-row';
 import { CommandPalette } from './command-palette';
 import { useDebouncedSearch } from '@/knowledge-base/hooks/use-debounced-search';
+import { localizedText } from '@/lib/i18n/localized-text';
 
 // ── Constants ──
 
@@ -134,12 +135,16 @@ export function ChatSearch({ open, onClose }: ChatSearchProps) {
         addToast({
           variant: 'error',
           title: t('message.error'),
-          description:
-            err instanceof Error
-              ? err.message
-              : isSearch
-                ? 'Search failed'
-                : 'Could not load conversations',
+          description: err instanceof Error
+            ? err.message
+            : isSearch
+              ? 'Search failed'
+              : 'Could not load conversations',
+          ...(!(err instanceof Error) && {
+            descriptionText: localizedText(
+              isSearch ? 'chat.searchFailed' : 'chat.couldNotLoadConversations',
+            ),
+          }),
         });
         if (isSearch) setSearchResults([]);
       } finally {

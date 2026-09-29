@@ -1056,7 +1056,9 @@ export function MessageList() {
               >
                 <ChatResponse
                   question={pair.question}
+                  questionText={pair.questionText}
                   answer={pair.answer}
+                  answerText={pair.answerText}
                   citationMaps={pair.citationMaps}
                   citationCallbacks={citationCallbacks}
                   confidence={pair.confidence}

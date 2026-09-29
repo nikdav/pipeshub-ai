@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KnowledgeBaseApi } from '@/knowledge-base/api';
 import { useUploadStore, generateUploadId } from '@/lib/store/upload-store';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 
 interface StreamedFileEventData {
   filePath?: string;
@@ -61,6 +62,7 @@ export function useKbStreamUpload({ getKbId, onUploaded }: UseKbStreamUploadOpti
                 defaultValue: 'Could not prepare this project’s file storage',
               }),
             ],
+            errorTexts: [localizedText('chat.projects.workspace.knowledgeBaseUnavailable')],
           })),
         );
         return;
@@ -102,7 +104,8 @@ export function useKbStreamUpload({ getKbId, onUploaded }: UseKbStreamUploadOpti
 
       let gotDone = false;
       let gotError: string | null = null;
-      let streamError: Error | null = null;
+      let gotErrorText: LocalizedText | undefined;
+      let streamError: (Error & { messageText?: LocalizedText }) | null = null;
       let anySuccess = false;
 
       try {
@@ -120,18 +123,23 @@ export function useKbStreamUpload({ getKbId, onUploaded }: UseKbStreamUploadOpti
                 anySuccess = true;
               } else if (evt.event === 'file:failed') {
                 if (storeId) {
-                  const errors =
-                    Array.isArray(data?.errors) && data.errors.length > 0
-                      ? data.errors
-                      : [t('uploadProgress.uploadFailedDefault', { defaultValue: 'Upload failed' })];
-                  useUploadStore.getState().failUpload(storeId, errors);
+                  const hasErrors = Array.isArray(data?.errors) && data.errors.length > 0;
+                  const errors = hasErrors
+                    ? data.errors!
+                    : [t('uploadProgress.uploadFailedDefault', { defaultValue: 'Upload failed' })];
+                  useUploadStore.getState().failUpload(
+                    storeId,
+                    errors,
+                    undefined,
+                    hasErrors ? undefined : [localizedText('uploadProgress.uploadFailedDefault')],
+                  );
                 }
               } else if (evt.event === 'done') {
                 gotDone = true;
               } else if (evt.event === 'error') {
-                gotError =
-                  (data && typeof data.message === 'string' && data.message) ||
-                  t('uploadProgress.serverError', { defaultValue: 'Upload failed on the server' });
+                const serverMessage = data && typeof data.message === 'string' ? data.message : '';
+                gotError = serverMessage || t('uploadProgress.serverError', { defaultValue: 'Upload failed on the server' });
+                gotErrorText = serverMessage ? undefined : localizedText('uploadProgress.serverError');
               }
             },
             onError: (err) => {
@@ -147,9 +155,11 @@ export function useKbStreamUpload({ getKbId, onUploaded }: UseKbStreamUploadOpti
       // finished (`done`) with no error — a row whose terminal event was
       // missed is failed instead of assumed successful.
       const fallbackMessage =
-        (streamError as Error | null)?.message ||
+        streamError?.message ||
         gotError ||
         t('uploadProgress.uploadIncomplete', { defaultValue: 'Upload incomplete' });
+      const fallbackMessageText = streamError?.messageText || gotErrorText ||
+        (!streamError && !gotError ? localizedText('uploadProgress.uploadIncomplete') : undefined);
       const succeededCleanly = gotDone && !gotError && !streamError;
       const items = useUploadStore.getState().items;
       entries.forEach((e) => {
@@ -159,7 +169,12 @@ export function useKbStreamUpload({ getKbId, onUploaded }: UseKbStreamUploadOpti
             useUploadStore.getState().completeUpload(e.storeId);
             anySuccess = true;
           } else {
-            useUploadStore.getState().failUpload(e.storeId, fallbackMessage);
+            useUploadStore.getState().failUpload(
+              e.storeId,
+              fallbackMessage,
+              undefined,
+              fallbackMessageText ? [fallbackMessageText] : undefined,
+            );
           }
         }
       });

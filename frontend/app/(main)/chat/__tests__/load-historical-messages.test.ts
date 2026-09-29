@@ -12,6 +12,7 @@ vi.mock('@/lib/api', () => ({
 }));
 
 const { loadHistoricalMessages } = await import('../runtime');
+const { localizedText } = await import('@/lib/i18n/localized-text');
 
 function message(overrides: Partial<ConversationMessage>): ConversationMessage {
   return {
@@ -29,6 +30,22 @@ function message(overrides: Partial<ConversationMessage>): ConversationMessage {
 }
 
 describe('loadHistoricalMessages', () => {
+  it('adds localized metadata only to an empty historical error fallback', () => {
+    const { messages } = loadHistoricalMessages([
+      message({ _id: 'fallback', messageType: 'error', content: '' }),
+      message({ _id: 'server', messageType: 'error', content: 'Agent provider rejected the request.' }),
+    ]);
+
+    expect(messages[0]?.content).toEqual([
+      { type: 'text', text: 'An error occurred. Please try again.' },
+    ]);
+    expect(messages[0]?.metadata?.custom?.messageText).toEqual(localizedText('chatStream.errorFallback'));
+    expect(messages[1]?.content).toEqual([
+      { type: 'text', text: 'Agent provider rejected the request.' },
+    ]);
+    expect(messages[1]?.metadata?.custom?.messageText).toBeUndefined();
+  });
+
   it('drops a reply that was stopped before any text arrived', () => {
     // The backend saves this row when a stopped run's connection closes; the
     // live view never shows it, so a reload must not either.

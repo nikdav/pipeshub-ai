@@ -41,38 +41,47 @@ import { KnowledgeBaseApi } from '@/knowledge-base/api';
 import { TextPreviewDialog } from '../text-preview-dialog';
 import { isPastedTextAttachment } from '../../utils/paste-attachment';
 import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText, type LocalizedText, type TranslateText } from '@/lib/i18n/localized-text';
 import { CitationMessageRowKeyContext } from './response-tabs/citations/citation-popover-control';
 import { useInlineCitationPopoverStore } from './response-tabs/citations/citation-popover-store';
 
 // Stable empty reference — avoids creating new objects in default params
 const EMPTY_CITATION_MAPS: CitationMaps = emptyCitationMaps();
 
-function formatMessageTime(isoString: string): string {
+function formatMessageTime(isoString: string, locale: string): string {
   const date = new Date(isoString);
   if (isNaN(date.getTime())) return '';
   const now = new Date();
   const isToday = date.toDateString() === now.toDateString();
-  const timeStr = date.toLocaleTimeString(undefined, {
+  const timeStr = new Intl.DateTimeFormat(locale, {
     hour: 'numeric',
     minute: '2-digit',
-  });
+  }).format(date);
   if (isToday) return timeStr;
-  return date.toLocaleDateString(undefined, {
+  return new Intl.DateTimeFormat(locale, {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: '2-digit',
-  });
+  }).format(date);
 }
 
-function buildQuestionCardReadAloudText(payload: AskUserQuestionPayload): string {
+function buildQuestionCardReadAloudText(payload: AskUserQuestionPayload, t: TranslateText): string {
   const parts: string[] = [];
   if (payload.userIntent) parts.push(payload.userIntent);
   payload.questions.forEach((q, i) => {
-    parts.push(`Question ${i + 1}: ${q.question}`);
-    q.options.forEach((opt) => parts.push(`Option: ${opt.label}`));
+    parts.push(t('chat.askUserQuestion.readAloudQuestion', { number: i + 1, question: q.question }));
+    q.options.forEach((opt) => parts.push(t('chat.askUserQuestion.readAloudOption', { option: opt.label })));
   });
   return parts.join('. ');
+}
+
+function getLocalizedErrorText(error: unknown): LocalizedText | undefined {
+  if (!error || typeof error !== 'object' || !('messageText' in error)) return undefined;
+  const messageText = (error as { messageText?: unknown }).messageText;
+  return messageText && typeof messageText === 'object' && 'key' in messageText
+    ? messageText as LocalizedText
+    : undefined;
 }
 
 interface FeedbackInfo {
@@ -81,7 +90,9 @@ interface FeedbackInfo {
 
 interface ChatResponseProps {
   question: string;
+  questionText?: LocalizedText;
   answer: string;
+  answerText?: LocalizedText;
   citationMaps?: CitationMaps;
   citationCallbacks?: CitationCallbacks;
   confidence?: ConfidenceLevel;
@@ -133,7 +144,9 @@ interface ChatResponseProps {
 
 export const ChatResponse = React.memo(function ChatResponse({
   question,
+  questionText,
   answer,
+  answerText,
   citationMaps = EMPTY_CITATION_MAPS,
   citationCallbacks,
   confidence,
@@ -159,7 +172,10 @@ export const ChatResponse = React.memo(function ChatResponse({
   unanswered = false,
 }: ChatResponseProps) {
   debugLog.tick('[chat] [ChatResponse]');
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const displayQuestion = resolveLocalizedText(questionText, t as TranslateText, question);
+  const displayAnswer = resolveLocalizedText(answerText, t as TranslateText, answer);
+  const locale = i18n.resolvedLanguage ?? i18n.language;
   const isMobile = useIsMobile();
 
   /** Shown only if the stream is active but no SSE status has arrived yet */
@@ -176,7 +192,7 @@ export const ChatResponse = React.memo(function ChatResponse({
   // ── Render-reason tracking ─────────────────────────────────────────
   const prevCRRef = useRef<Record<string, unknown>>({});
   const currentCRVals: Record<string, unknown> = {
-    question, answer, citationMaps, citationCallbacks, confidence,
+    question, answer, questionText, answerText, citationMaps, citationCallbacks, confidence,
     isStreaming, modelInfo, collections, appliedFilters, messageId,
     isLastMessage, streamingContent, currentStatusMessage: currentStatusMessageProp,
     streamingCitationMaps, streamingParts, persistedParts, createdAt, persistedAskUserQuestion, status,
@@ -256,11 +272,14 @@ export const ChatResponse = React.memo(function ChatResponse({
           url: '',
           type: att.mimeType,
           error: error instanceof Error ? error.message : 'Failed to load file',
+          errorText: getLocalizedErrorText(error) ??
+            (error instanceof Error ? undefined : localizedText('chat.attachments.previewLoadFailed')),
           isLoading: false,
           hideFileDetails: true,
           showDownload: true,
         });
       }
+
     },
     [setPreviewFile, setPreviewMode],
   );
@@ -439,9 +458,9 @@ export const ChatResponse = React.memo(function ChatResponse({
   const processedContent = useMemo(
     () =>
       processMarkdownContent(
-        isStreaming && streamingContent ? repairStreamingMarkdown(streamingContent) : answer,
+        isStreaming && streamingContent ? repairStreamingMarkdown(streamingContent) : displayAnswer,
       ),
-    [isStreaming, streamingContent, answer],
+    [isStreaming, streamingContent, displayAnswer],
   );
   // Extract persisted artifact + legacy download-task markers so the markdown
   // pipeline doesn't try to render them as raw text. The backend appends these
@@ -727,14 +746,14 @@ export const ChatResponse = React.memo(function ChatResponse({
     if (!messageId || isStreaming) return;
     useCommandStore.getState().dispatch('showEditQuery', {
       messageId,
-      text: question,
+      text: displayQuestion,
     });
-  }, [messageId, question, isStreaming]);
+  }, [messageId, displayQuestion, question, isStreaming]);
 
   // When the active question card owns this row, read aloud the question text
   // and its options instead of the hidden bot response.
   const speakContent = askQuestionMatchesRow && pendingAskUserQuestion
-    ? buildQuestionCardReadAloudText(pendingAskUserQuestion?.payload)
+    ? buildQuestionCardReadAloudText(pendingAskUserQuestion?.payload, t as TranslateText)
     : displayContent;
 
   const shell = (
@@ -751,6 +770,7 @@ export const ChatResponse = React.memo(function ChatResponse({
       >
         <ExpandableUserQuery
           question={question}
+          questionText={questionText}
           isMobile={isMobile}
           messageId={messageId}
           isStreaming={isStreaming}
@@ -765,7 +785,7 @@ export const ChatResponse = React.memo(function ChatResponse({
               display: 'block',
             }}
           >
-            {formatMessageTime(createdAt)}
+            {formatMessageTime(createdAt, locale)}
           </Text>
         )}
       </Box>

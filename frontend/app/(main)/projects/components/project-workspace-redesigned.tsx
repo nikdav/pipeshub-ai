@@ -22,6 +22,7 @@ import { chatContentColumnStyle } from '@/chat/constants';
 import { useProjectScopeHydration } from '@/chat/hooks/use-project-scope-hydration';
 import { usePendingChatStore } from '@/lib/store/pending-chat-store';
 import { toast } from '@/lib/store/toast-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 import { DeleteProjectDialog } from '@/chat/sidebar/dialogs';
 import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 import { useUserStore } from '@/lib/store/user-store';
@@ -281,9 +282,17 @@ export function ProjectWorkspaceRedesigned({ projectId }: ProjectWorkspaceRedesi
   const handleUploadFile = useCallback(async (file: File, signal: AbortSignal): Promise<AttachmentRef> => {
     const refs = await ChatApi.uploadAttachments([file], { conversationId: null, signal });
     const ref = refs[0];
-    if (!ref) throw new Error('Upload returned no attachment ref');
+    if (!ref) {
+      const error = new Error(
+        t('chat.attachments.uploadMissingReference', {
+          defaultValue: 'Upload returned no attachment ref',
+        }),
+      ) as Error & { messageText: ReturnType<typeof localizedText> };
+      error.messageText = localizedText('chat.attachments.uploadMissingReference');
+      throw error;
+    }
     return ref;
-  }, []);
+  }, [t]);
 
   const handleDeleteFile = useCallback((recordId: string) => {
     ChatApi.deleteAttachment(recordId, {}).catch(() => {});
@@ -383,7 +392,7 @@ export function ProjectWorkspaceRedesigned({ projectId }: ProjectWorkspaceRedesi
             <DropdownMenu.Trigger>
               <button
                 type="button"
-                aria-label="Project actions"
+                aria-label={t('chat.projects.workspace.projectActions', { defaultValue: 'Project actions' })}
                 style={{
                   appearance: 'none',
                   border: 'none',

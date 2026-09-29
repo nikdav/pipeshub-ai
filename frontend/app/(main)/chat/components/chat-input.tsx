@@ -38,6 +38,7 @@ import { toast } from '@/lib/store/toast-store';
 import { attachmentErrorMessage } from '@/chat/utils/attachment-error';
 import { streamRegenerateForSlot, cancelStreamForSlot } from '@/chat/streaming';
 import { useTranslation } from 'react-i18next';
+import { formatLocalizedBytes, localizedText, resolveLocalizedText } from '@/lib/i18n/localized-text';
 import { useChatSpeechRecognition } from '@/lib/hooks/use-chat-speech-recognition';
 import { PastedTextChip } from '@/chat/components/pasted-text-chip';
 import { TextPreviewDialog } from '@/chat/components/text-preview-dialog';
@@ -106,10 +107,11 @@ interface ChatInputProps {
   prefill?: { text: string; key: number } | null;
 }
 
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+function formatFileSize(bytes: number, locale: string): string {
+  return formatLocalizedBytes(bytes, locale, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: bytes < 1024 * 1024 ? 0 : 1,
+  });
 }
 
 interface SpeechInputButtonProps {
@@ -531,7 +533,7 @@ export function ChatInput({
         const isConnector = meta?.nodeType === 'app';
         return {
           id,
-          name: collectionNamesCache[id] || meta?.name || 'Collection',
+          name: collectionNamesCache[id] || meta?.name || t('itemType.collection'),
           kind: (isConnector ? 'connector' : 'collection') as 'connector' | 'collection',
           connectorType: meta?.connector ? resolveConnectorType(meta.connector) : undefined,
         };
@@ -540,7 +542,7 @@ export function ChatInput({
         const meta = collectionMetaCache[id];
         return {
           id,
-          name: collectionNamesCache[id] || meta?.name || 'Collection',
+          name: collectionNamesCache[id] || meta?.name || t('itemType.collection'),
           kind: 'collection' as const,
           connectorType: meta?.connector ? resolveConnectorType(meta.connector) : undefined,
         };
@@ -558,6 +560,7 @@ export function ChatInput({
     settings.queryMode,
     collectionNamesCache,
     collectionMetaCache,
+    t,
   ]);
 
   const showSelectedCollectionsRow =
@@ -886,7 +889,9 @@ export function ChatInput({
 
     setUploadedFiles((prev) =>
       prev.map((f) =>
-        f.id === file.id ? { ...f, status: 'uploading', errorMessage: undefined } : f,
+        f.id === file.id
+          ? { ...f, status: 'uploading', errorMessage: undefined, errorMessageText: undefined }
+          : f,
       ),
     );
 
@@ -899,16 +904,24 @@ export function ChatInput({
       })
       .catch((err: unknown) => {
         if (controller.signal.aborted) return;
-        const errorMessage = attachmentErrorMessage(file.name, err);
+        const attachmentError = attachmentErrorMessage(file.name, err);
         setUploadedFiles((prev) =>
           prev.map((f) =>
-            f.id === file.id ? { ...f, status: 'error', errorMessage, ref: undefined } : f,
+            f.id === file.id
+              ? {
+                  ...f,
+                  status: 'error',
+                  errorMessage: attachmentError.message,
+                  errorMessageText: attachmentError.messageText,
+                  ref: undefined,
+                }
+              : f,
           ),
         );
         toast.error(
-          t('chat.attachments.uploadFailedNamed', {
+          localizedText('chat.attachments.uploadFailedNamed', {
             name: file.name,
-            error: errorMessage,
+            error: attachmentError.messageText ?? attachmentError.message,
           }),
         );
       })
@@ -1620,7 +1633,7 @@ export function ChatInput({
                         side="top"
                       >
                         <Box
-                          aria-label={`Uploading ${file.name}`}
+                          aria-label={t('chat.attachments.fileActionAria.uploading', { name: file.name, defaultValue: `Uploading ${file.name}` })}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -1634,7 +1647,7 @@ export function ChatInput({
                             size={14}
                             thickness={1.5}
                             color="var(--slate-11)"
-                            ariaLabel={`Uploading ${file.name}`}
+                            ariaLabel={t('chat.attachments.fileActionAria.uploading', { name: file.name, defaultValue: `Uploading ${file.name}` })}
                           />
                         </Box>
                       </Tooltip>
@@ -1650,7 +1663,7 @@ export function ChatInput({
                               size="1"
                               onClick={() => retryFile(file.id)}
                               style={{ margin: 0, flexShrink: 0 }}
-                              aria-label={`Retry uploading ${file.name}`}
+                              aria-label={t('chat.attachments.fileActionAria.retry', { name: file.name, defaultValue: `Retry uploading ${file.name}` })}
                             >
                               <MaterialIcon
                                 name="refresh"
@@ -1665,7 +1678,7 @@ export function ChatInput({
                           size="1"
                           onClick={() => removeFile(file.id)}
                           style={{ margin: 0, flexShrink: 0 }}
-                          aria-label={`Remove ${file.name}`}
+                          aria-label={t('chat.attachments.fileActionAria.remove', { name: file.name, defaultValue: `Remove ${file.name}` })}
                         >
                           <MaterialIcon
                             name="close"
@@ -1701,9 +1714,10 @@ export function ChatInput({
                       }}
                     >
                       {file.status === 'error'
-                        ? file.errorMessage ||
+                        ? resolveLocalizedText(file.errorMessageText, t, file.errorMessage ||
                           t('chat.attachments.uploadFailed', { defaultValue: 'Upload failed' })
-                        : formatFileSize(file.size)}
+                          )
+                        : formatFileSize(file.size, i18n.resolvedLanguage ?? i18n.language)}
                     </Text>
                   </Flex>
                 </Flex>

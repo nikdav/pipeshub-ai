@@ -13,9 +13,13 @@ interface ChatRowProps {
 }
 
 export function ChatRow({ conversation, onClick, showDate }: ChatRowProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
-  const dateLabel = formatConversationDateForSearch(conversation.createdAt, conversation.updatedAt);
+  const dateLabel = formatConversationDateForSearch(
+    conversation.createdAt,
+    conversation.updatedAt,
+    i18n.resolvedLanguage || i18n.language,
+  );
   const sharedByName = conversation.sharedBy?.name?.trim();
   const sharedByLabel =
     conversation.isOwner === false && sharedByName

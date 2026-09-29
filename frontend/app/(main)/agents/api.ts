@@ -2,6 +2,7 @@ import { apiClient } from '@/lib/api';
 import { mapApiConversationToConversation } from '@/chat/api';
 import type { ConversationApiResponse, ConversationsListResponse, Conversation } from '@/chat/types';
 import { CONVERSATION_MESSAGES_PAGE_SIZE } from '@/chat/constants';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 
 // The agent conversations endpoint returns both owned and shared lists in one
 // response, unlike `/api/v1/conversations` which now takes a `source` param.
@@ -171,6 +172,8 @@ function isKbKnowledgeEntry(entry: KnowledgeGraphEntry): boolean {
 /** Toolset groups for agent chat Actions tab (labels, icons, search metadata). */
 export interface AgentChatToolGroupRow {
   label: string;
+  /** Present only when label is a local generic fallback; chat resolves it at render time. */
+  labelText?: LocalizedText;
   toolsetSlug: string;
   /** Stable id for UI keys — same toolset type may appear multiple times as instances. */
   instanceId?: string;
@@ -197,10 +200,16 @@ export function buildAgentChatToolGroups(agent: AgentDetail | null | undefined):
       }
 
       const instanceLabel = typeof ts.instanceName === 'string' ? ts.instanceName.trim() : '';
-      const productLabel = (ts.displayName || ts.name || 'Tools').trim();
+      const rawProductLabel = [ts.displayName, ts.name].find(
+        (value) => typeof value === 'string' && value.trim(),
+      );
+      const productLabel = rawProductLabel?.trim() || 'Tools';
       const instanceId = typeof ts.instanceId === 'string' ? ts.instanceId.trim() : '';
       groups.push({
         label: instanceLabel || productLabel,
+        ...(!instanceLabel && !rawProductLabel
+          ? { labelText: localizedText('agentBuilder.tools') }
+          : {}),
         toolsetSlug: (typeof ts.name === 'string' ? ts.name : '').trim(),
         ...(instanceId ? { instanceId } : {}),
         iconPath:
@@ -216,6 +225,7 @@ export function buildAgentChatToolGroups(agent: AgentDetail | null | undefined):
     const providerLabel = agent.webSearch.providerLabel?.trim();
     groups.push({
       label: providerLabel || 'Web Search',
+      ...(!providerLabel ? { labelText: localizedText('agentBuilder.webSearch') } : {}),
       toolsetSlug: 'web_search',
       instanceId: `web-search:${provider.toLowerCase()}`,
       fullNames: [WEB_SEARCH_TOOL_FULL_NAME],
@@ -247,8 +257,14 @@ export function buildAgentChatMcpGroups(agent: AgentDetail | null | undefined): 
     }
 
     const instanceId = typeof server.instanceId === 'string' ? server.instanceId.trim() : '';
+    const rawLabel = [server.displayName, server.name].find(
+      (value) => typeof value === 'string' && value.trim(),
+    );
     groups.push({
-      label: (server.displayName || server.name || 'MCP Server').trim(),
+      label: rawLabel?.trim() || 'MCP Server',
+      ...(!rawLabel
+        ? { labelText: localizedText('agentBuilder.mcpServerDefaultName') }
+        : {}),
       toolsetSlug: 'mcp',
       ...(instanceId ? { instanceId } : {}),
       fullNames,
@@ -323,6 +339,8 @@ export function extractAgentKnowledgeConnectors(
 export interface AgentKnowledgeCollectionRow {
   id: string;
   name: string;
+  /** Present only when name is the local generic fallback; chat resolves it at render time. */
+  nameText?: LocalizedText;
   /** Knowledge graph `type` (e.g. `KB`, `Jira`, `Confluence`) — drives row artwork. */
   sourceType?: string;
 }
@@ -349,17 +367,22 @@ export function extractAgentKnowledgeCollectionRows(
     if (!connectorId || seen.has(connectorId)) continue;
     seen.add(connectorId);
 
-    const name =
+    const rawName =
       (typeof entry.displayName === 'string' && entry.displayName.trim()) ||
-      (typeof entry.name === 'string' && entry.name.trim()) ||
-      'Collection';
+      (typeof entry.name === 'string' && entry.name.trim());
+    const name = rawName || 'Collection';
 
     const sourceType =
       typeof entry.type === 'string' && entry.type.trim()
         ? entry.type.trim()
         : undefined;
 
-    rows.push({ id: connectorId, name, sourceType });
+    rows.push({
+      id: connectorId,
+      name,
+      ...(!rawName ? { nameText: localizedText('agentBuilder.nodeCollectionFallbackName') } : {}),
+      sourceType,
+    });
   }
   return rows;
 }

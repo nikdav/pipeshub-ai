@@ -5,8 +5,8 @@ import type {
 } from '@/app/(main)/workspace/connectors/types';
 import type { ToolsetOauthConfigListRow } from '@/app/(main)/toolsets/api';
 import { normalizeDocumentationLinks } from '@/app/(main)/workspace/connectors/normalize-documentation-links';
-import { getUserFacingErrorMessage } from '@/lib/api/api-error';
-import { i18n } from '@/lib/i18n';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 
 export { normalizeDocumentationLinks };
 
@@ -157,8 +157,8 @@ export function isOrgOAuthAppCredentialFieldName(fieldName: string): boolean {
   );
 }
 
-export function apiErrorDetail(e: unknown): string {
-  return getUserFacingErrorMessage(e, i18n.t('common.errorOccurred'));
+export function apiErrorDetail(e: unknown): LocalizedTextValue {
+  return getUserFacingErrorText(e, localizedText('common.errorOccurred'));
 }
 
 /** Deterministic serialization for comparing auth field maps (e.g. OAuth dirty state). */

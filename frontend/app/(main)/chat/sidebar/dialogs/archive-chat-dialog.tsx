@@ -55,7 +55,7 @@ export function ArchiveChatDialog({
         }}
       >
         <VisuallyHidden>
-          <Dialog.Title>Archive Confirmation</Dialog.Title>
+          <Dialog.Title>{t('chat.archiveConfirmation', { defaultValue: 'Archive Confirmation' })}</Dialog.Title>
         </VisuallyHidden>
         <Flex direction="column" gap="4">
           <Flex direction="column" gap="1">
