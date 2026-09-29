@@ -1,6 +1,7 @@
 'use client';
 
 import { extractApiErrorMessage } from './api-error';
+import { localizedText, type LocalizedText } from '@/lib/i18n/localized-text';
 
 /**
  * What a person reads when a streamed request (chat, agent chat) fails. The
@@ -23,16 +24,32 @@ export const CHAT_STREAM_ERROR_MESSAGES = {
   unavailable: "PipesHub couldn't answer right now. Please try again in a minute.",
 } as const;
 
+const STREAM_ERROR_TEXT = {
+  sessionExpired: localizedText('common.errors.stream.sessionExpired'),
+  forbidden: localizedText('common.errors.stream.forbidden'),
+  offline: localizedText('common.errors.stream.offline'),
+  interrupted: localizedText('common.errors.stream.interrupted'),
+  unavailable: localizedText('common.errors.stream.unavailable'),
+} satisfies Record<keyof typeof STREAM_ERROR_MESSAGES, LocalizedText>;
+
+const CHAT_STREAM_ERROR_TEXT = {
+  ...STREAM_ERROR_TEXT,
+  interrupted: localizedText('common.errors.stream.chatInterrupted'),
+  unavailable: localizedText('common.errors.stream.chatUnavailable'),
+} satisfies Record<keyof typeof CHAT_STREAM_ERROR_MESSAGES, LocalizedText>;
+
 type StreamErrorMessages = typeof STREAM_ERROR_MESSAGES | typeof CHAT_STREAM_ERROR_MESSAGES;
 
 /** An error whose message was written for the user, so it can be shown as-is. */
 export class StreamError extends Error {
   readonly status?: number;
+  readonly messageText?: LocalizedText;
 
-  constructor(message: string, status?: number) {
+  constructor(message: string, status?: number, messageText?: LocalizedText) {
     super(message);
     this.name = 'StreamError';
     this.status = status;
+    this.messageText = messageText;
   }
 }
 
@@ -40,6 +57,12 @@ export function busyStreamMessage(retryAfterSeconds?: number): string {
   return retryAfterSeconds
     ? `PipesHub is busy right now. Please try again in ${retryAfterSeconds} second${retryAfterSeconds === 1 ? '' : 's'}.`
     : 'PipesHub is busy right now. Please try again in a few seconds.';
+}
+
+function busyStreamText(retryAfterSeconds?: number): LocalizedText {
+  return retryAfterSeconds
+    ? localizedText('common.errors.stream.busyRetry', { count: retryAfterSeconds })
+    : localizedText('common.errors.stream.busy');
 }
 
 // Server text that is a raw error rather than a sentence for the user.
@@ -65,6 +88,9 @@ export async function streamHttpError(
   response: Response,
   messages: StreamErrorMessages = STREAM_ERROR_MESSAGES,
 ): Promise<StreamError> {
+  const texts = messages === CHAT_STREAM_ERROR_MESSAGES
+    ? CHAT_STREAM_ERROR_TEXT
+    : STREAM_ERROR_TEXT;
   let body: unknown = null;
   try {
     body = await response.clone().json();
@@ -72,16 +98,17 @@ export async function streamHttpError(
     // Not JSON (a proxy's HTML page, an empty body): fall back on the status.
   }
   const { status } = response;
-  if (status === 401) return new StreamError(messages.sessionExpired, status);
+  if (status === 401) return new StreamError(messages.sessionExpired, status, texts.sessionExpired);
   if (status === 429 || status === 503 || status === 504) {
-    return new StreamError(busyStreamMessage(retryAfterSeconds(response)), status);
+    const retryAfter = retryAfterSeconds(response);
+    return new StreamError(busyStreamMessage(retryAfter), status, busyStreamText(retryAfter));
   }
   if (status >= 400 && status < 500) {
     const serverMessage = readableServerMessage(body);
     if (serverMessage) return new StreamError(serverMessage, status);
-    if (status === 403) return new StreamError(messages.forbidden, status);
+    if (status === 403) return new StreamError(messages.forbidden, status, texts.forbidden);
   }
-  return new StreamError(messages.unavailable, status);
+  return new StreamError(messages.unavailable, status, texts.unavailable);
 }
 
 /**
@@ -95,5 +122,9 @@ export function streamFailure(
   messages: StreamErrorMessages = STREAM_ERROR_MESSAGES,
 ): StreamError {
   if (error instanceof StreamError) return error;
-  return new StreamError(responseStarted ? messages.interrupted : messages.offline);
+  const texts = messages === CHAT_STREAM_ERROR_MESSAGES
+    ? CHAT_STREAM_ERROR_TEXT
+    : STREAM_ERROR_TEXT;
+  const kind = responseStarted ? 'interrupted' : 'offline';
+  return new StreamError(messages[kind], undefined, texts[kind]);
 }

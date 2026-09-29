@@ -103,10 +103,13 @@ export function checkLocaleParity(source, target, targetLanguage = 'de-DE') {
     }
 
     for (const [group, type] of groups) {
-      // The source may not carry the category this language needs, so compare
-      // placeholders against whichever variant it does define.
-      const reference = Object.entries(expected)
-        .find(([key, value]) => typeof value === 'string' && pluralParts(key)?.group === group)?.[1];
+      // The source may not carry the category this language needs. Prefer its
+      // canonical plural form (`_other`) for placeholder parity: `_one` may
+      // intentionally omit a count that plural forms need to display.
+      const reference = typeof expected[`${group}_other`] === 'string'
+        ? expected[`${group}_other`]
+        : Object.entries(expected)
+          .find(([key, value]) => typeof value === 'string' && pluralParts(key)?.group === group)?.[1];
       const required = pluralCategories(targetLanguage, type);
       for (const category of required) {
         const key = `${group}_${category}`;

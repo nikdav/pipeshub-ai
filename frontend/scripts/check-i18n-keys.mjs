@@ -12,6 +12,8 @@ const SOURCE_FILE = /\.tsx?$/;
 const KEY_PATTERNS = [
   /\bt\(\s*'([A-Za-z][\w.-]*)'/g,
   /\bt\(\s*"([A-Za-z][\w.-]*)"/g,
+  /\blocalizedText\(\s*'([A-Za-z][\w.-]*)'/g,
+  /\blocalizedText\(\s*"([A-Za-z][\w.-]*)"/g,
   /\bi18nKey=\s*"([A-Za-z][\w.-]*)"/g,
   /\bi18nKey=\s*'([A-Za-z][\w.-]*)'/g,
   /\bi18nKey=\s*\{\s*'([A-Za-z][\w.-]*)'\s*\}/g,

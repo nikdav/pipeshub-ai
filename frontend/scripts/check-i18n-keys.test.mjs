@@ -23,8 +23,21 @@ test('accepts keys the catalogue resolves, including through a plural group', ()
     const a = t('chat.send');
     const b = t("common.docs");
     const c = t('chat.attachments.tooMany', { count: n });
+    const d = localizedText('chat.attachments.tooMany', { count: n });
   `);
   assert.deepEqual(findUnresolvedKeys(catalogue, [file]), []);
+});
+
+test('checks literal localizedText descriptors, including plural base keys', () => {
+  const file = sourceFile(`
+    const a = localizedText('chat.send');
+    const b = localizedText("chat.attachments.tooMany", { count: n });
+    const c = localizedText('chat.descriptorMissing');
+  `);
+  assert.deepEqual(
+    findUnresolvedKeys(catalogue, [file]).map((entry) => entry.key),
+    ['chat.descriptorMissing'],
+  );
 });
 
 test('reports a key the catalogue does not have, even with a defaultValue', () => {

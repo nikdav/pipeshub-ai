@@ -121,6 +121,11 @@
       "unsupportedType": "不支持的文件类型",
       "duplicateName": "已存在同名文件",
       "rejected": "文件被拒绝"
+    },
+    "errors": {
+      "httpFallback": "上传未成功。请重试；如果仍然失败，请联系管理员。",
+      "stalled": "PipesHub 在上传完成前停止响应。请重新上传这些文件。",
+      "incomplete": "上传未完成"
     }
   },
   "onboarding": {
@@ -266,7 +271,8 @@
     "filterTooltip": "筛选：{{filter}}",
     "loadFailed": "加载通知失败",
     "updateFailed": "无法更新通知",
-    "removeFailed": "无法移除通知"
+    "removeFailed": "无法移除通知",
+    "hiddenCount_other": "另有 {{count}} 项"
   },
   "action": {
     "find": "查找",
@@ -455,7 +461,54 @@
     "openProfile": "打开个人资料",
     "loading": "加载中...",
     "moreOptions": "更多选项",
-    "docs": "文档"
+    "docs": "文档",
+    "errors": {
+      "api": {
+        "cancelled": "请求已取消。",
+        "timeout": "请求超时。请重试。",
+        "network": "网络错误。请检查网络连接。",
+        "sessionExpired": "会话已过期。请重新登录。",
+        "forbidden": "你没有权限执行此操作。",
+        "notFound": "找不到请求的资源。",
+        "validation": "请求无效。请检查输入内容。",
+        "conflict": "发生冲突。请重试。",
+        "busy": "PipesHub 当前繁忙。请稍后几秒再试。",
+        "busyRetry_other": "PipesHub 当前繁忙。请在 {{count}} 秒后重试。",
+        "server": "服务器错误。请稍后重试。",
+        "unknown": "发生意外错误。"
+      },
+      "toast": {
+        "authorizationTitle": "拒绝访问",
+        "authorizationDescription": "你没有权限执行此操作。",
+        "validationTitle": "请求无效",
+        "validationDescription": "请检查输入内容并重试。",
+        "notFoundTitle": "未找到",
+        "notFoundDescription": "找不到请求的资源。",
+        "conflictTitle": "需要处理",
+        "conflictDescription": "发生冲突。请检查详情并重试。",
+        "networkTitle": "连接错误",
+        "networkDescription": "请检查网络连接并重试。",
+        "serverTitle": "服务器错误",
+        "serverDescription": "我们的服务出现问题。请稍后重试；如果问题持续，请联系工作区管理员。",
+        "timeoutTitle": "请求超时",
+        "timeoutDescription": "服务器响应时间过长。请重试。",
+        "unknownTitle": "发生错误",
+        "unknownDescription": "操作未成功。请重试；如果问题持续，请联系工作区管理员。",
+        "busyTitle": "请稍后重试",
+        "withReference": "{{message}} 参考编号：{{requestId}}"
+      },
+      "stream": {
+        "sessionExpired": "会话已过期。请重新登录以继续。",
+        "forbidden": "你无权访问此内容。如需访问，请联系工作区管理员。",
+        "offline": "无法连接到 PipesHub。请检查网络连接后重试。",
+        "interrupted": "连接 PipesHub 时中断，操作尚未完成。请重试。",
+        "unavailable": "PipesHub 当前遇到问题。请一分钟后重试。",
+        "chatInterrupted": "回答尚未完成就已中断。点击“重新生成”或重新发送消息。",
+        "chatUnavailable": "PipesHub 当前无法回答。请一分钟后重试。",
+        "busy": "PipesHub 当前繁忙。请稍后几秒再试。",
+        "busyRetry_other": "PipesHub 当前繁忙。请在 {{count}} 秒后重试。"
+      }
+    }
   },
   "units": {
     "bytes": "字节",
@@ -2526,6 +2579,9 @@
           "confirm": "开始重新索引"
         },
         "typePrompt": "请输入 {{token}} 以确认。"
+      },
+      "validation": {
+        "syncFilterRequired": "保存前请选择 {{field, lowercase}}。每个连接器实例只能同步一个 {{field, lowercase}}。"
       }
     },
     "mcpServers": {

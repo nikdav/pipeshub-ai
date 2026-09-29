@@ -24,6 +24,10 @@ describe('busy and slow responses', () => {
   it('uses the Retry-After seconds when the server sends them', () => {
     const processed = processError(httpError(503, {}, { 'retry-after': '5' }));
     expect(processed.message).toBe('PipesHub is busy right now. Please try again in 5 seconds.');
+    expect(processed.messageText).toEqual({
+      key: 'common.errors.api.busyRetry',
+      values: { count: 5 },
+    });
   });
 
   it("prefers the server's own words", () => {
@@ -31,6 +35,7 @@ describe('busy and slow responses', () => {
       httpError(503, { error: { message: "We couldn't confirm your sign-in just now." } }),
     );
     expect(processed.message).toBe("We couldn't confirm your sign-in just now.");
+    expect(processed.messageText).toBeUndefined();
   });
 });
 
