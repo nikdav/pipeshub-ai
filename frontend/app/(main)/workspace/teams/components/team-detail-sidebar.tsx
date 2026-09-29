@@ -19,7 +19,7 @@ import { useTeamsStore } from '../store';
 import { TeamsApi } from '../api';
 import type { TeamMember, TeamMemberRole } from '../types';
 import { usePaginatedUserOptions } from '../../hooks/use-paginated-user-options';
-import { TEAM_ROLE_LABELS, normalizeTeamMemberRole } from '../constants';
+import { getTeamRoleLabels, normalizeTeamMemberRole } from '../constants';
 import { RoleDropdownMenu } from '@/app/components/share';
 
 /** Min addable users to prefetch before stopping auto-pagination. */
@@ -37,6 +37,7 @@ export function TeamDetailSidebar({
   onUpdateSuccess?: () => void;
 }) {
   const { t } = useTranslation();
+  const teamRoleLabels = getTeamRoleLabels(t);
   const currentUser = useAuthStore((s) => s.user);
   const profile = useUserStore((s) => s.profile);
   const addToast = useToastStore((s) => s.addToast);
@@ -631,7 +632,7 @@ export function TeamDetailSidebar({
           </Text>
           {creatorUser ? (
             <AvatarCell
-              name={creatorUser.name || creatorUser.email || 'Unknown User'}
+              name={creatorUser.name || creatorUser.email || t('workspace.common.unknownUser')}
               email={creatorUser.email}
               avatarSize={32}
               isSelf={isCreatorSelf}
@@ -698,7 +699,7 @@ export function TeamDetailSidebar({
                         member.userName?.trim() ||
                         member.userEmail?.trim() ||
                         member.userId ||
-                        'Unknown'
+                        t('workspace.common.unknownUser')
                       }
                       email={member.userEmail}
                       avatarSize={28}
@@ -717,7 +718,7 @@ export function TeamDetailSidebar({
                             normalizeTeamMemberRole(member.role, member.isOwner)
                           )
                         }
-                        labels={TEAM_ROLE_LABELS}
+                        labels={teamRoleLabels}
                       />
                     ) : (
                       <Badge variant="soft" color="gray" size="1">
@@ -786,7 +787,7 @@ export function TeamDetailSidebar({
                 <RoleDropdownMenu
                   role={addMemberRole}
                   onRoleChange={(r) => setAddMemberRole(r as TeamMemberRole)}
-                  labels={TEAM_ROLE_LABELS}
+                  labels={teamRoleLabels}
                 />
                 <Button
                   variant="outline"
@@ -840,7 +841,7 @@ export function TeamDetailSidebar({
                       >
                         <Box style={{ flex: 1, minWidth: 0 }}>
                           <AvatarCell
-                            name={user.label}
+                            name={user.isUnknownUser ? t('workspace.common.unknownUser') : user.label}
                             email={user.subtitle}
                             avatarSize={28}
                             profilePicture={user.profilePicture}
@@ -851,7 +852,7 @@ export function TeamDetailSidebar({
                             role={currentRole}
                             onRoleChange={(r) => setAddUserRole(user.id, r as TeamMemberRole)}
                             onRemove={() => removeAddUser(user.id)}
-                            labels={TEAM_ROLE_LABELS}
+                            labels={teamRoleLabels}
                           />
                         </Box>
                       </Flex>

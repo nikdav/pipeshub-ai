@@ -167,7 +167,7 @@ export function SkillCandidatesPanel() {
                 {isExpanded && candidate.source_trajectory_summary && (
                   <Flex direction="column" gap="1" style={{ marginTop: 4 }}>
                     <Text size="1" weight="medium" style={{ color: 'var(--gray-10)' }}>
-                      How it was learned:
+                      {t('workspace.skills.candidates.sourceSummaryHeading')}
                     </Text>
                     <Text size="1" style={{ color: 'var(--gray-9)', fontStyle: 'italic' }}>
                       {candidate.source_trajectory_summary}

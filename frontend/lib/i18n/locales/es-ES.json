@@ -1536,6 +1536,20 @@
         "saveSuccess": "¡Equipo actualizado!",
         "saveSuccessDescription": "Los cambios en '{{name}}' se guardaron exitosamente",
         "undo": "Deshacer"
+      },
+      "roles": {
+        "owner": {
+          "label": "Propietario",
+          "description": "Control total sobre el equipo y sus recursos."
+        },
+        "writer": {
+          "label": "Editor",
+          "description": "Puede ver y editar recursos del equipo"
+        },
+        "reader": {
+          "label": "Lector",
+          "description": "Puede ver los recursos del equipo"
+        }
       }
     },
     "oauth2": {
@@ -1808,7 +1822,9 @@
           "label": "Vídeo",
           "badge": "Multimodal"
         }
-      }
+      },
+      "requiredFileUploadError": "Falta la carga del archivo requerido: {{fieldNames}}. Cargue el archivo e inténtelo de nuevo.",
+      "defaultModelName": "Modelo"
     },
     "filters": {
       "role": "Rol",
@@ -1875,7 +1891,10 @@
         "configured": "Configuradas",
         "notConfigured": "No configuradas",
         "authenticated": "Autenticadas",
-        "notAuthenticated": "No autenticadas"
+        "notAuthenticated": "No autenticadas",
+        "labelWithCount_one": "{{label}} ({{formattedCount}})",
+        "labelWithCount_other": "{{label}} ({{formattedCount}})",
+        "labelWithCount_many": "{{label}} ({{formattedCount}})"
       },
       "personalSegment": {
         "my": "Mis acciones",
@@ -1937,7 +1956,8 @@
         "authenticatedOne": "1 autenticada",
         "authenticatedMany": "{{count}} autenticadas",
         "needsAuthOne": "1 necesita inicio de sesión",
-        "needsAuthMany": "{{count}} necesitan inicio de sesión"
+        "needsAuthMany": "{{count}} necesitan inicio de sesión",
+        "addInstance": "Añadir instancia"
       },
       "typeDetail": {
         "scopeTeam": "Acciones",
@@ -2011,7 +2031,8 @@
         "urlProtocol": "{{field}} debe usar http o https"
       },
       "adminRequiredToast": "Solo los administradores pueden añadir acciones nuevas. Pida a su administrador que configure primero esta acción.",
-      "personalNonAdminHint": "Las acciones marcadas como \"No configurada\" debe configurarlas un administrador antes de que pueda usarlas."
+      "personalNonAdminHint": "Las acciones marcadas como \"No configurada\" debe configurarlas un administrador antes de que pueda usarlas.",
+      "searchPlaceholder": "Buscar..."
     },
     "rightPanel": {
       "primaryDisabledHint": "Suba y complete los campos obligatorios (marcados con *) para continuar.",
@@ -2032,7 +2053,9 @@
       "assistantChat": "Chat con el asistente",
       "agents": "Agentes",
       "showMore": "Mostrar más",
-      "moreAgents": "Más agentes"
+      "moreAgents": "Más agentes",
+      "searchError": "No se pudieron buscar chats archivados. Por favor inténtalo de nuevo.",
+      "conversationLoadError": "No se pudo cargar esta conversación. Por favor inténtalo de nuevo."
     },
     "general": {
       "subtitle": "Your company general information",
@@ -2178,7 +2201,8 @@
       },
       "xmlUpload": {
         "parseError": "No se pudieron analizar los metadatos SAML de este archivo. Comprueba que se trata de un XML de metadatos de IdP válido.",
-        "readError": "No se pudo leer el archivo."
+        "readError": "No se pudo leer el archivo.",
+        "chooseFile": "Elija el archivo XML"
       },
       "riskDialog": {
         "title": "Confirmar cambios de autenticación",
@@ -2191,6 +2215,129 @@
       "userMethods": {
         "heading": "Métodos de inicio de sesión de los usuarios",
         "subtitle": "Controla qué métodos de inicio de sesión están disponibles para todos los usuarios, en todas las organizaciones."
+      },
+      "methods": {
+        "password": {
+          "label": "Contraseña",
+          "description": "Autenticación tradicional de correo electrónico y contraseña"
+        },
+        "otp": {
+          "label": "Código de un solo uso",
+          "description": "Enviar un código de verificación por correo electrónico"
+        },
+        "google": {
+          "description": "Permite que los usuarios inicien sesión con sus cuentas de Google."
+        },
+        "microsoft": {
+          "description": "Permite que los usuarios inicien sesión con sus cuentas de Microsoft."
+        },
+        "samlSso": {
+          "description": "Inicio de sesión único con protocolo SAML"
+        },
+        "oauth": {
+          "description": "Autenticación mediante un proveedor genérico de OAuth 2.0."
+        }
+      },
+      "password": {
+        "show": "Mostrar contraseña",
+        "hide": "Ocultar contraseña"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "URI de redirección",
+            "labelSuffix": "(añade esta URI a la configuración de OAuth de Google)"
+          },
+          "authorizedOrigin": {
+            "label": "Origen autorizado",
+            "labelSuffix": "(añade este origen a la configuración de OAuth de Google)",
+            "warning": "El origen actual no coincide con la URL configurada para el frontend. Usa el valor anterior en la configuración de OAuth de Google."
+          },
+          "clientId": {
+            "label": "ID de cliente",
+            "placeholder": "Introduce el ID de cliente de OAuth de Google.",
+            "hint": "El ID de cliente de tus credenciales de OAuth de Google."
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "URI de redirección",
+            "labelSuffix": "(añade esta URI a la configuración de OAuth de Microsoft)"
+          },
+          "clientId": {
+            "label": "ID de cliente",
+            "placeholder": "Introduce el ID de aplicación (cliente) de Microsoft.",
+            "hint": "El ID de aplicación (cliente) del registro de aplicaciones del portal de Azure."
+          },
+          "tenantId": {
+            "label": "ID de inquilino",
+            "placeholder": "Introduce el ID de directorio (inquilino) de Microsoft.",
+            "hint": "El ID de directorio (inquilino) del registro de aplicaciones del portal de Azure."
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "URL del ACS (servicio de consumidor de aserciones)",
+            "labelSuffix": "(añade esta URL a tu proveedor de identidad)",
+            "warning": "El origen actual no coincide con la URL configurada para el frontend. Añade el valor anterior a tu proveedor de identidad."
+          },
+          "spEntityId": {
+            "label": "ID de entidad del SP (emisor)",
+            "labelSuffix": "(añade este ID a tu proveedor de identidad)",
+            "hint": "ID de entidad del proveedor de servicios enviado en las solicitudes SAML. Se puede cambiar mediante la variable de entorno SAML_SP_ENTITY_ID."
+          },
+          "_xmlFile": {
+            "label": "XML de metadatos del IdP",
+            "hint": "Sube el XML de metadatos de tu proveedor de identidad."
+          },
+          "entryPoint": {
+            "label": "URL del punto de acceso SSO (IdP)",
+            "hint": "URL de inicio de sesión único proporcionada por tu proveedor de identidad."
+          },
+          "certificate": {
+            "label": "Certificado X.509",
+            "hint": "Certificado público de tu proveedor de identidad (formato PEM)."
+          },
+          "emailKey": {
+            "label": "Clave del atributo de correo electrónico",
+            "hint": "Nombre del atributo SAML que contiene la dirección de correo electrónico del usuario."
+          },
+          "samlPlatform": {
+            "label": "Nombre del proveedor",
+            "labelSuffix": "(opcional)"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "Nombre del proveedor"
+          },
+          "redirectUri": {
+            "label": "URI de redirección",
+            "labelSuffix": "(regístrala en tu proveedor de OAuth)"
+          },
+          "clientId": {
+            "label": "ID de cliente",
+            "placeholder": "Introduce tu ID de cliente de OAuth."
+          },
+          "clientSecret": {
+            "label": "Secreto del cliente",
+            "placeholder": "Introduce el secreto de cliente de OAuth."
+          },
+          "authorizationUrl": {
+            "label": "URL de autorización"
+          },
+          "tokenEndpoint": {
+            "label": "Punto de conexión del token"
+          },
+          "userInfoEndpoint": {
+            "label": "Punto de conexión de UserInfo"
+          },
+          "scope": {
+            "label": "Ámbitos",
+            "labelSuffix": "(opcional)",
+            "hint": "Ámbitos de OAuth separados por espacios. El valor predeterminado es openid email profile."
+          }
+        }
       }
     },
     "connectors": {
@@ -2724,7 +2871,13 @@
         "backendRejected": "El servidor rechazó la solicitud de autorización."
       },
       "deleteDisabledTooltip": "Este servidor no se puede eliminar",
-      "toolsCount_many": "{{count}} de herramientas"
+      "toolsCount_many": "{{count}} de herramientas",
+      "authModes": {
+        "none": "Sin autenticación",
+        "apiToken": "Token API",
+        "oauth": "OAuth 2.0",
+        "headers": "Encabezado personalizado"
+      }
     },
     "bots": {
       "subtitle": "Configure bot credentials and optionally map each bot to an agent",
@@ -2810,7 +2963,11 @@
         "loadConfigs": "No se han podido cargar las configuraciones de los bots",
         "loadData": "No se han podido cargar los datos"
       },
-      "refreshed": "Actualizado"
+      "refreshed": "Actualizado",
+      "secretVisibility": {
+        "show": "Mostrar {{secret}}",
+        "hide": "Ocultar {{secret}}"
+      }
     },
     "mail": {
       "subtitle": "Email server configuration for OTP and notifications",
@@ -2870,6 +3027,11 @@
         "usernamePlaceholder": "Enter SMTP username",
         "password": "Password (Optional)",
         "passwordHint": "Password for SMTP authentication (if required)"
+      },
+      "configure": "Configurar SMTP",
+      "password": {
+        "show": "Mostrar contraseña",
+        "hide": "Ocultar contraseña"
       }
     },
     "prompts": {
@@ -3147,7 +3309,8 @@
           "label": "Servicio de extracción",
           "description": "Clasificación de documentos y extracción de metadatos basada en LLM"
         }
-      }
+      },
+      "logoAlt": "Logotipo de {{service}}"
     },
     "tenants": {
       "title": "Inquilinos",
@@ -3503,7 +3666,8 @@
         "empty": "Todavía no hay recursos incluidos.",
         "addNew": "Añadir recurso",
         "path": "Ruta",
-        "content": "Contenido"
+        "content": "Contenido",
+        "remove": "Quitar {{path}}"
       },
       "versions": {
         "empty": "Todavía no hay historial de versiones.",
@@ -3546,7 +3710,21 @@
         "reject": "Rechazar",
         "view": "Ver",
         "hide": "Ocultar",
-        "editAndApprove": "Editar y aprobar"
+        "editAndApprove": "Editar y aprobar",
+        "sourceSummaryHeading": "Cómo se aprendió:"
+      },
+      "editorToolbar": {
+        "bold": "Negrita ({{modifier}}+B)",
+        "italic": "Cursiva ({{modifier}}+I)",
+        "inlineCode": "Código en línea",
+        "heading2": "Título 2",
+        "bulletList": "Lista con viñetas",
+        "numberedList": "Lista numerada",
+        "codeBlock": "Bloque de código",
+        "blockquote": "Cita en bloque",
+        "horizontalRule": "regla horizontal",
+        "undo": "Deshacer",
+        "redo": "Rehacer"
       }
     },
     "serviceAccounts": {

@@ -13,7 +13,7 @@ import {
   ICON_SIZE_DEFAULT,
   KBD_BADGE_PADDING,
 } from '@/app/components/sidebar';
-import { getModifierSymbol } from '@/lib/utils/platform';
+import { getLocalizedModifierSymbol } from '@/lib/utils/platform';
 import { useToastStore } from '@/lib/store/toast-store';
 import { Spinner } from '@/app/components/ui/spinner';
 import type { Conversation, AgentArchivedGroup } from '../types';
@@ -377,7 +377,7 @@ export function ArchivedChatsSidebar({
   onDeleted,
 }: ArchivedChatsSidebarProps) {
   const { t } = useTranslation();
-  const modKey = useMemo(() => getModifierSymbol(), []);
+  const modKey = useMemo(() => getLocalizedModifierSymbol(t), [t]);
   const addToast = useToastStore((s) => s.addToast);
 
   const hasNormal = conversations.length > 0;

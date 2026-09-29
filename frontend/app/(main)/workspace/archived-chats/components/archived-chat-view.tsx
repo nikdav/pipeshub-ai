@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { Flex, Box, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { ChatResponse, emptyCitationMaps } from '@/chat/components';
 import { ChatPixelIcon } from '@/app/components/ui/chat-pixel-icon';
 import type { ConversationMessage } from '../types';
@@ -87,7 +88,7 @@ interface ArchivedChatViewProps {
   conversationTitle: string;
   messages: ConversationMessage[];
   isLoading: boolean;
-  error: string | null;
+  error: LocalizedTextValue | null;
 }
 
 export function ArchivedChatView({
@@ -114,7 +115,7 @@ export function ArchivedChatView({
         style={{ height: '100%', width: '100%' }}
       >
         <Text size="2" style={{ color: 'var(--red-9)' }}>
-          {error}
+          {resolveLocalizedText(error, t)}
         </Text>
       </Flex>
     );

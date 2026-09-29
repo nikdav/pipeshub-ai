@@ -346,6 +346,7 @@ function SlackBotFormView({ editingConfig, agents, onClose, onSaved, onRequestDe
                 variant="ghost"
                 color="gray"
                 size="1"
+                aria-label={t(`workspace.bots.secretVisibility.${showBotToken ? 'hide' : 'show'}`, { secret: t('workspace.bots.form.botToken') })}
                 onClick={() => setShowBotToken((v) => !v)}
                 style={{ cursor: 'pointer' }}
               >
@@ -372,6 +373,7 @@ function SlackBotFormView({ editingConfig, agents, onClose, onSaved, onRequestDe
                 variant="ghost"
                 color="gray"
                 size="1"
+                aria-label={t(`workspace.bots.secretVisibility.${showSigningSecret ? 'hide' : 'show'}`, { secret: t('workspace.bots.form.signingSecret') })}
                 onClick={() => setShowSigningSecret((v) => !v)}
                 style={{ cursor: 'pointer' }}
               >

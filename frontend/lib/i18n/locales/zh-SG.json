@@ -1519,6 +1519,20 @@
         "saveErrorDescription": "更新团队失败。请重试。",
         "applyToAll": "应用于全部",
         "newMemberRoles": "新成员角色"
+      },
+      "roles": {
+        "owner": {
+          "label": "所有者",
+          "description": "完全控制团队及其资源"
+        },
+        "writer": {
+          "label": "编辑者",
+          "description": "可以查看和编辑团队资源"
+        },
+        "reader": {
+          "label": "查看者",
+          "description": "可以查看团队资源"
+        }
       }
     },
     "oauth2": {
@@ -1851,7 +1865,9 @@
           "label": "视频",
           "badge": "多模态"
         }
-      }
+      },
+      "requiredFileUploadError": "缺少必需的文件上传：{{fieldNames}}。请上传文件并重试。",
+      "defaultModelName": "模型"
     },
     "common": {
       "loadingUsers": "正在加载用户...",
@@ -1924,7 +1940,8 @@
         "configured": "已配置",
         "notConfigured": "未配置",
         "authenticated": "已验证",
-        "notAuthenticated": "未验证"
+        "notAuthenticated": "未验证",
+        "labelWithCount_other": "{{label}}（{{formattedCount}}）"
       },
       "personalSegment": {
         "my": "我的操作",
@@ -1986,7 +2003,8 @@
         "authenticatedOne": "1 个已验证",
         "authenticatedMany": "{{count}} 个已验证",
         "needsAuthOne": "1 个需要登录",
-        "needsAuthMany": "{{count}} 个需要登录"
+        "needsAuthMany": "{{count}} 个需要登录",
+        "addInstance": "添加实例"
       },
       "typeDetail": {
         "scopeTeam": "操作",
@@ -2060,7 +2078,8 @@
         "urlProtocol": "{{field}}必须使用 http 或 https"
       },
       "adminRequiredToast": "只有管理员可以添加新操作。请让管理员先配置此操作。",
-      "personalNonAdminHint": "标记为「未配置」的操作需要管理员先完成设置，您才能使用。"
+      "personalNonAdminHint": "标记为「未配置」的操作需要管理员先完成设置，您才能使用。",
+      "searchPlaceholder": "搜索…"
     },
     "rightPanel": {
       "primaryDisabledHint": "请向上滚动并填写必填字段（标有 * 号）以继续。",
@@ -2081,7 +2100,9 @@
       "assistantChat": "助手聊天",
       "agents": "智能体",
       "showMore": "显示更多",
-      "moreAgents": "更多智能体"
+      "moreAgents": "更多智能体",
+      "searchError": "搜索已归档对话失败。请重试。",
+      "conversationLoadError": "无法加载此对话。请重试。"
     },
     "general": {
       "subtitle": "您公司的基本信息",
@@ -2227,7 +2248,8 @@
       },
       "xmlUpload": {
         "parseError": "无法从此文件解析 SAML 元数据。请检查它是否为有效的 IdP 元数据 XML。",
-        "readError": "读取文件失败。"
+        "readError": "读取文件失败。",
+        "chooseFile": "选择 XML 文件"
       },
       "riskDialog": {
         "title": "确认身份验证更改",
@@ -2240,6 +2262,129 @@
       "userMethods": {
         "heading": "用户登录方式",
         "subtitle": "控制所有组织中所有用户可使用的登录方式。"
+      },
+      "methods": {
+        "password": {
+          "label": "密码",
+          "description": "使用传统的电子邮件和密码进行身份验证"
+        },
+        "otp": {
+          "label": "一次性密码",
+          "description": "通过电子邮件发送验证码"
+        },
+        "google": {
+          "description": "允许用户使用 Google 账号登录"
+        },
+        "microsoft": {
+          "description": "允许用户使用 Microsoft 账号登录"
+        },
+        "samlSso": {
+          "description": "使用 SAML 协议进行单点登录"
+        },
+        "oauth": {
+          "description": "使用通用 OAuth 2.0 提供方进行身份验证"
+        }
+      },
+      "password": {
+        "show": "显示密码",
+        "hide": "隐藏密码"
+      },
+      "providerFields": {
+        "google": {
+          "redirectUri": {
+            "label": "重定向 URI",
+            "labelSuffix": "（添加到 Google OAuth 设置）"
+          },
+          "authorizedOrigin": {
+            "label": "授权来源",
+            "labelSuffix": "（添加到 Google OAuth 设置）",
+            "warning": "当前来源与已配置的前端 URL 不同。请在 Google OAuth 设置中使用上方的值。"
+          },
+          "clientId": {
+            "label": "客户端 ID",
+            "placeholder": "输入 Google OAuth 客户端 ID",
+            "hint": "Google OAuth 凭据中的客户端 ID"
+          }
+        },
+        "microsoft": {
+          "redirectUri": {
+            "label": "重定向 URI",
+            "labelSuffix": "（添加到 Microsoft OAuth 设置）"
+          },
+          "clientId": {
+            "label": "客户端 ID",
+            "placeholder": "输入 Microsoft 应用程序（客户端）ID",
+            "hint": "Azure 门户应用注册中的应用程序（客户端）ID"
+          },
+          "tenantId": {
+            "label": "租户 ID",
+            "placeholder": "输入 Microsoft 目录（租户）ID",
+            "hint": "Azure 门户应用注册中的目录（租户）ID"
+          }
+        },
+        "samlSso": {
+          "acsUrl": {
+            "label": "ACS（断言消费者服务）URL",
+            "labelSuffix": "（添加到你的身份提供方）",
+            "warning": "当前来源与已配置的前端 URL 不同。请将上方的值添加到你的身份提供方。"
+          },
+          "spEntityId": {
+            "label": "SP 实体 ID（颁发者）",
+            "labelSuffix": "（添加到你的身份提供方）",
+            "hint": "SAML 请求中发送的服务提供方实体 ID。使用 SAML_SP_ENTITY_ID 环境变量覆盖此值。"
+          },
+          "_xmlFile": {
+            "label": "IdP 元数据 XML",
+            "hint": "上传身份提供方的元数据 XML"
+          },
+          "entryPoint": {
+            "label": "SSO 入口点（IdP URL）",
+            "hint": "身份提供方提供的单点登录 URL"
+          },
+          "certificate": {
+            "label": "X.509 证书",
+            "hint": "身份提供方的公开证书（PEM 格式）"
+          },
+          "emailKey": {
+            "label": "电子邮件属性键",
+            "hint": "包含用户电子邮件地址的 SAML 属性名称"
+          },
+          "samlPlatform": {
+            "label": "提供方名称",
+            "labelSuffix": "（可选）"
+          }
+        },
+        "oauth": {
+          "providerName": {
+            "label": "提供方名称"
+          },
+          "redirectUri": {
+            "label": "重定向 URI",
+            "labelSuffix": "（在 OAuth 提供方中注册）"
+          },
+          "clientId": {
+            "label": "客户端 ID",
+            "placeholder": "输入 OAuth 客户端 ID"
+          },
+          "clientSecret": {
+            "label": "客户端密钥",
+            "placeholder": "输入 OAuth 客户端密钥"
+          },
+          "authorizationUrl": {
+            "label": "授权 URL"
+          },
+          "tokenEndpoint": {
+            "label": "令牌端点"
+          },
+          "userInfoEndpoint": {
+            "label": "UserInfo 端点"
+          },
+          "scope": {
+            "label": "范围",
+            "labelSuffix": "（可选）",
+            "hint": "以空格分隔的 OAuth 范围。默认值为 openid email profile"
+          }
+        }
       }
     },
     "connectors": {
@@ -2771,7 +2916,13 @@
         "noState": "未返回 state 参数。",
         "backendRejected": "服务器拒绝了授权请求。"
       },
-      "deleteDisabledTooltip": "此服务器无法删除"
+      "deleteDisabledTooltip": "此服务器无法删除",
+      "authModes": {
+        "none": "无需身份验证",
+        "apiToken": "API 令牌",
+        "oauth": "OAuth 2.0",
+        "headers": "自定义标头"
+      }
     },
     "bots": {
       "subtitle": "配置机器人凭据，并可选择将每个机器人映射到一个智能体",
@@ -2857,7 +3008,11 @@
         "loadConfigs": "加载机器人配置失败",
         "loadData": "加载数据失败"
       },
-      "refreshed": "已刷新"
+      "refreshed": "已刷新",
+      "secretVisibility": {
+        "show": "显示 {{secret}}",
+        "hide": "隐藏 {{secret}}"
+      }
     },
     "skills": {
       "title": "技能",
@@ -2961,7 +3116,8 @@
         "empty": "暂无捆绑资源。",
         "addNew": "添加资源",
         "path": "路径",
-        "content": "内容"
+        "content": "内容",
+        "remove": "移除 {{path}}"
       },
       "versions": {
         "empty": "暂无版本历史。",
@@ -3000,12 +3156,26 @@
         "reject": "拒绝",
         "view": "查看",
         "hide": "隐藏",
-        "editAndApprove": "编辑并批准"
+        "editAndApprove": "编辑并批准",
+        "sourceSummaryHeading": "学习来源："
       },
       "availability": {
         "label": "可供智能体使用",
         "description": "关闭后，此技能仍保留在您的库中，但智能体无法发现或加载它。",
         "descriptionBuiltin": "关闭后，此内置技能仍保留在库中，但整个组织的智能体都无法发现或加载它。"
+      },
+      "editorToolbar": {
+        "bold": "粗体（{{modifier}}+B）",
+        "italic": "斜体（{{modifier}}+I）",
+        "inlineCode": "行内代码",
+        "heading2": "标题 2",
+        "bulletList": "项目符号列表",
+        "numberedList": "编号列表",
+        "codeBlock": "代码块",
+        "blockquote": "引用块",
+        "horizontalRule": "水平分隔线",
+        "undo": "撤销",
+        "redo": "重做"
       }
     },
     "mail": {
@@ -3066,6 +3236,11 @@
         "usernamePlaceholder": "输入 SMTP 用户名",
         "password": "密码（可选）",
         "passwordHint": "用于 SMTP 身份验证的密码（如需要）"
+      },
+      "configure": "配置 SMTP",
+      "password": {
+        "show": "显示密码",
+        "hide": "隐藏密码"
       }
     },
     "prompts": {
@@ -3343,7 +3518,8 @@
           "label": "提取服务",
           "description": "基于 LLM 的文档分类和元数据提取"
         }
-      }
+      },
+      "logoAlt": "{{service}} 徽标"
     },
     "tenants": {
       "title": "租户",

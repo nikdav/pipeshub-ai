@@ -1,12 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import type { TFunction } from 'i18next';
-import { ErrorType, type ProcessedError } from '@/lib/api/api-error';
+import { AxiosError } from 'axios';
+import { ErrorType, processError, type ProcessedError } from '@/lib/api/api-error';
 import {
   extractErrorCode,
   resolveModelConfigSaveError,
 } from '../resolve-model-config-save-error';
-
-const t = ((key: string) => key) as TFunction;
 
 function processed(partial: Partial<ProcessedError> & Pick<ProcessedError, 'type' | 'message'>): ProcessedError {
   return partial;
@@ -55,9 +53,7 @@ describe('resolveModelConfigSaveError', () => {
         },
       } as ProcessedError['originalError'],
     });
-    expect(resolveModelConfigSaveError(err, t)).toBe(
-      'workspace.aiModels.configSaveOutboundError'
-    );
+    expect(resolveModelConfigSaveError(err)).toEqual({ key: 'workspace.aiModels.configSaveOutboundError' });
   });
 
   it('uses the outbound i18n key when error_code is on processed details', () => {
@@ -66,9 +62,7 @@ describe('resolveModelConfigSaveError', () => {
       message: '   ',
       details: { error_code: 'outbound_connectivity' },
     });
-    expect(resolveModelConfigSaveError(err, t)).toBe(
-      'workspace.aiModels.configSaveOutboundError'
-    );
+    expect(resolveModelConfigSaveError(err)).toEqual({ key: 'workspace.aiModels.configSaveOutboundError' });
   });
 
   it('maps timeout errors to the timeout i18n key', () => {
@@ -76,9 +70,7 @@ describe('resolveModelConfigSaveError', () => {
       type: ErrorType.TIMEOUT_ERROR,
       message: 'Request timed out. Please try again.',
     });
-    expect(resolveModelConfigSaveError(err, t)).toBe(
-      'workspace.aiModels.configSaveTimeoutError'
-    );
+    expect(resolveModelConfigSaveError(err)).toEqual({ key: 'workspace.aiModels.configSaveTimeoutError' });
   });
 
   it('maps health_check_timeout to the timeout i18n key', () => {
@@ -87,9 +79,7 @@ describe('resolveModelConfigSaveError', () => {
       message: 'LLM health check timed out. For cloud providers, verify your API key',
       details: { error_code: 'health_check_timeout' },
     });
-    expect(resolveModelConfigSaveError(err, t)).toBe(
-      'workspace.aiModels.configSaveTimeoutError'
-    );
+    expect(resolveModelConfigSaveError(err)).toEqual({ key: 'workspace.aiModels.configSaveTimeoutError' });
   });
 
   it('uses the processed message for other API errors', () => {
@@ -97,12 +87,19 @@ describe('resolveModelConfigSaveError', () => {
       type: ErrorType.SERVER_ERROR,
       message: 'Incorrect API key provided',
     });
-    expect(resolveModelConfigSaveError(err, t)).toBe('Incorrect API key provided');
+    expect(resolveModelConfigSaveError(err)).toBe('Incorrect API key provided');
+  });
+
+  it('preserves a processed localized fallback when no domain error applies', () => {
+    const err = processError({
+      message: 'Request failed with status code 500',
+      response: { status: 500, data: {} },
+    } as AxiosError);
+
+    expect(resolveModelConfigSaveError(err)).toEqual({ key: 'common.errors.api.server' });
   });
 
   it('uses the fallback key for unknown errors', () => {
-    expect(resolveModelConfigSaveError(new Error('boom'), t)).toBe(
-      'workspace.aiModels.configSaveErrorFallback'
-    );
+    expect(resolveModelConfigSaveError(new Error('boom'))).toEqual({ key: 'workspace.aiModels.configSaveErrorFallback' });
   });
 });

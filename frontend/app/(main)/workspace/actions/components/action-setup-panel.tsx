@@ -2,6 +2,7 @@
 
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { resolveLocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import {
   Badge,
   Box,
@@ -104,7 +105,7 @@ export function ActionSetupPanel({
   const [oauthConfigs, setOauthConfigs] = useState<ToolsetOauthConfigListRow[]>([]);
   const [oauthConfigsLoading, setOauthConfigsLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const lastHydratedOauthIdRef = useRef<string | null>(null);
 
@@ -803,7 +804,7 @@ export function ActionSetupPanel({
 
           {error ? (
             <Text size="2" color="red">
-              {error}
+              {resolveLocalizedText(error, t)}
             </Text>
           ) : null}
         </Flex>

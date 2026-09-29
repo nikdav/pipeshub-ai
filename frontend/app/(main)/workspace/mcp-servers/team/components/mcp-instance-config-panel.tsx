@@ -30,7 +30,7 @@ import type {
   McpToolInfo,
   McpTransport,
 } from '../../types';
-import { MCP_AUTH_MODE_LABELS, MCP_TRANSPORT_LABELS } from '../../types';
+import { MCP_AUTH_MODE_LABEL_KEYS, MCP_TRANSPORT_LABELS } from '../../types';
 
 /** Matches the redirect URI the backend builds — see `_build_oauth_authorization_url` in
  * `backend/python/app/api/routes/mcp_servers.py` (trailing slash included). */
@@ -455,7 +455,7 @@ export function McpInstanceConfigPanel({
         <SelectDropdown
           value={authMode}
           onChange={(v) => setAuthMode(v as McpAuthMode)}
-          options={availableAuthModes.map((m) => ({ value: m, label: MCP_AUTH_MODE_LABELS[m] }))}
+          options={availableAuthModes.map((m) => ({ value: m, label: t(MCP_AUTH_MODE_LABEL_KEYS[m]) }))}
         />
       </FormField>
 

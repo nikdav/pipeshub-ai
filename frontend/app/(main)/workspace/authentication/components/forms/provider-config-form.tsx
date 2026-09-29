@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Flex, Text } from '@radix-ui/themes';
+import { Flex } from '@radix-ui/themes';
 import { LottieLoader } from '@/app/components/ui/lottie-loader';
 import { PROVIDER_CONFIGS } from '../../constants';
 import type { ConfigurableMethod } from '../../types';
@@ -117,50 +117,7 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
     return (
       <Flex direction="column" gap="4">
         {config.fields.map((field) => {
-          if (field.type === 'readonly') {
-            const warned = field.warningKey ? Boolean(values[field.warningKey]) : false;
-            return (
-              <ReadonlyField
-                key={field.key}
-                field={field}
-                value={String(values[field.key] ?? '')}
-                warned={warned}
-              />
-            );
-          }
-
-          if (field.type === 'text') {
-            return (
-              <InputField
-                key={field.key}
-                field={field}
-                value={String(values[field.key] ?? '')}
-                onChange={(val) => setString(field.key, val)}
-              />
-            );
-          }
-
-          if (field.type === 'password') {
-            return (
-              <PasswordInputField
-                key={field.key}
-                field={field}
-                value={String(values[field.key] ?? '')}
-                onChange={(val) => setString(field.key, val)}
-              />
-            );
-          }
-
-          if (field.type === 'textarea') {
-            return (
-              <TextareaField
-                key={field.key}
-                field={field}
-                value={String(values[field.key] ?? '')}
-                onChange={(val) => setString(field.key, val)}
-              />
-            );
-          }
+          const fieldKey = `workspace.authentication.providerFields.${method}.${field.key}`;
 
           if (field.type === 'jit') {
             return (
@@ -173,11 +130,92 @@ const ProviderConfigForm = forwardRef<ProviderConfigFormRef, ProviderConfigFormP
             );
           }
 
+          const localizedText = {
+            label: t(`${fieldKey}.label`),
+            labelSuffix: field.labelSuffix ? t(`${fieldKey}.labelSuffix`) : undefined,
+            helperText: field.helperText ? t(`${fieldKey}.hint`) : undefined,
+          };
+
+          if (field.type === 'readonly') {
+            const warned = field.warningKey ? Boolean(values[field.warningKey]) : false;
+            const localizedField = {
+              ...field,
+              ...localizedText,
+              warningText: field.warningText ? t(`${fieldKey}.warning`) : undefined,
+            };
+            return (
+              <ReadonlyField
+                key={field.key}
+                field={localizedField}
+                value={String(values[field.key] ?? '')}
+                warned={warned}
+              />
+            );
+          }
+
+          if (field.type === 'text') {
+            const localizedField = {
+              ...field,
+              ...localizedText,
+              placeholder: field.translatePlaceholder && field.placeholder
+                ? t(`${fieldKey}.placeholder`)
+                : field.placeholder,
+            };
+            return (
+              <InputField
+                key={field.key}
+                field={localizedField}
+                value={String(values[field.key] ?? '')}
+                onChange={(val) => setString(field.key, val)}
+              />
+            );
+          }
+
+          if (field.type === 'password') {
+            const localizedField = {
+              ...field,
+              ...localizedText,
+              placeholder: field.translatePlaceholder && field.placeholder
+                ? t(`${fieldKey}.placeholder`)
+                : field.placeholder,
+            };
+            return (
+              <PasswordInputField
+                key={field.key}
+                field={localizedField}
+                value={String(values[field.key] ?? '')}
+                onChange={(val) => setString(field.key, val)}
+              />
+            );
+          }
+
+          if (field.type === 'textarea') {
+            const localizedField = {
+              ...field,
+              ...localizedText,
+              placeholder: field.translatePlaceholder && field.placeholder
+                ? t(`${fieldKey}.placeholder`)
+                : field.placeholder,
+            };
+            return (
+              <TextareaField
+                key={field.key}
+                field={localizedField}
+                value={String(values[field.key] ?? '')}
+                onChange={(val) => setString(field.key, val)}
+              />
+            );
+          }
+
           if (field.type === 'xml-upload') {
+            const localizedField = {
+              ...field,
+              ...localizedText,
+            };
             return (
               <XmlUploadField
                 key={field.key}
-                field={field}
+                field={localizedField}
                 onPopulate={(parsed) => {
                   setValues((prev) => ({ ...prev, ...parsed }));
                 }}

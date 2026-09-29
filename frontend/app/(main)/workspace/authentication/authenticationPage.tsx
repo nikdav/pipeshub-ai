@@ -18,7 +18,8 @@ import { ConfirmationDialog } from '../components/confirmation-dialog';
 import { useUserStore, selectIsAdmin, selectIsProfileInitialized } from '@/lib/store/user-store';
 import { AuthMethodRow } from './components/auth-method-row';
 import { ConfigurePanel } from './components/configure-panel';
-import { useToastStore } from '@/lib/store/toast-store';
+import { toast } from '@/lib/store/toast-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 import {
   AuthMethodsApi,
   AuthConfigApi,
@@ -39,7 +40,6 @@ import {
 export default function AuthenticationPage() {
   const { t } = useTranslation();
   const router = useRouter();
-  const addToast = useToastStore((s) => s.addToast);
   const isAdmin = useUserStore(selectIsAdmin);
   const isProfileInitialized = useUserStore(selectIsProfileInitialized);
 
@@ -164,14 +164,12 @@ export default function AuthenticationPage() {
       // Mark as configured in UI
       setConfigStatus((prev) => ({ ...prev, [method]: true }));
 
-      addToast({
-        variant: 'success',
-        title: t('workspace.authentication.toasts.configureSuccess', { label }),
-        description: t('workspace.authentication.toasts.configureSuccessDescription', { label }),
+      toast.success(localizedText('workspace.authentication.toasts.configureSuccess', { label }), {
+        description: localizedText('workspace.authentication.toasts.configureSuccessDescription', { label }),
         duration: 5000,
       });
     },
-    [addToast],
+    [],
   );
 
   const doSave = useCallback(async () => {
@@ -191,23 +189,19 @@ export default function AuthenticationPage() {
       setSavedMethods(methods);
       setIsEditing(false);
 
-      addToast({
-        variant: 'success',
-        title: t('workspace.authentication.toasts.saveSuccess'),
-        description: t('workspace.authentication.toasts.saveSuccessDescription'),
+      toast.success(localizedText('workspace.authentication.toasts.saveSuccess'), {
+        description: localizedText('workspace.authentication.toasts.saveSuccessDescription'),
         duration: 4000,
       });
     } catch {
-      addToast({
-        variant: 'error',
-        title: t('workspace.authentication.toasts.saveError'),
-        description: t('message.tryAgain'),
+      toast.error(localizedText('workspace.authentication.toasts.saveError'), {
+        description: localizedText('message.tryAgain'),
         duration: 5000,
       });
     } finally {
       setIsSaving(false);
     }
-  }, [methods, addToast]);
+  }, [methods]);
 
   const handleSave = useCallback(async () => {
     const hasPasswordOrOtp = methods.some(
@@ -407,7 +401,7 @@ export default function AuthenticationPage() {
         isSaving={isSaving}
         onDiscard={handleDiscard}
         onSave={handleSave}
-        saveLabel="Save"
+        saveLabel={t('action.save')}
       />
 
       {/* ── Configure side panel ── */}

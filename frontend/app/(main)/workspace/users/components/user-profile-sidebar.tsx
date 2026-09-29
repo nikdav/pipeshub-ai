@@ -11,20 +11,20 @@ import { useUsersStore } from '../store';
 // Helpers
 // ========================================
 
-/** Format timestamp to "DD/MM/YYYY, HH:mm:ss" for profile display */
-function formatDateTime(timestampMs?: number): string {
+/** Format a profile timestamp using the active display locale. */
+function formatDateTime(timestampMs: number | undefined, locale: string): string {
   if (!timestampMs) return '-';
   const date = new Date(timestampMs);
   if (isNaN(date.getTime())) return '-';
 
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-
-  return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+  return new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).format(date);
 }
 
 /** Extract initials from a full name */
@@ -74,7 +74,7 @@ function ProfileField({ label, value, valueColor }: ProfileFieldProps) {
 // ========================================
 
 export function UserProfileSidebar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const currentUser = useAuthStore((s) => s.user);
 
   const { isProfilePanelOpen, profileUser, closeProfilePanel } = useUsersStore();
@@ -139,7 +139,9 @@ export function UserProfileSidebar() {
         />
         <ProfileField
           label={t('workspace.users.profile.role')}
-          value={profileUser.role || 'Member'}
+          value={profileUser.role
+            ? t(`workspace.users.roles.${profileUser.role.toLowerCase()}`, profileUser.role)
+            : t('workspace.users.roles.member')}
         />
         <ProfileField
           label={t('workspace.users.profile.companyDesignation')}
@@ -151,16 +153,16 @@ export function UserProfileSidebar() {
         />
         <ProfileField
           label={t('workspace.users.profile.status')}
-          value={status}
+          value={t(`workspace.users.statuses.${status.toLowerCase()}`)}
           valueColor={statusColor}
         />
         <ProfileField
           label={t('workspace.users.profile.lastActive')}
-          value={formatDateTime(profileUser.updatedAtTimestamp)}
+          value={formatDateTime(profileUser.updatedAtTimestamp, i18n.resolvedLanguage ?? i18n.language)}
         />
         <ProfileField
           label={t('workspace.users.profile.dateJoined')}
-          value={formatDateTime(profileUser.createdAtTimestamp)}
+          value={formatDateTime(profileUser.createdAtTimestamp, i18n.resolvedLanguage ?? i18n.language)}
         />
         <ProfileField
           label={t('workspace.users.profile.invitedBy')}

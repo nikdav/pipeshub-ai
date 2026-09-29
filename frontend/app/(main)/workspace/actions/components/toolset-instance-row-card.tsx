@@ -27,7 +27,7 @@ export function ToolsetInstanceRowCard({
   onConfigure,
   onManage,
 }: ToolsetInstanceRowCardProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   /** Org instance label — primary in per-instance lists (type detail / admin instances). */
   const primaryTitle =
     (instance.instanceName || '').trim() || instance.displayName || instance.toolsetType || '';
@@ -81,7 +81,7 @@ export function ToolsetInstanceRowCard({
   }, [instance.createdBy]);
 
   const ts = instance.updatedAtTimestamp ?? instance.createdAtTimestamp;
-  const when = ts ? formatRelativeTime(ts) : '';
+  const when = ts ? formatRelativeTime(ts, i18n.resolvedLanguage || i18n.language) : '';
 
   const toolTags = (instance.tools || []).map((x) => x.name).filter(Boolean);
 
