@@ -1,0 +1,61 @@
+name: Fork-only i18n test typing diagnostics
+on:
+  push:
+    branches: ['verify/i18n-split-20260929']
+    paths: ['.github/workflows/i18n-split-test-types.yml']
+permissions:
+  contents: read
+jobs:
+  test-types:
+    if: github.repository == 'nikdav/pipeshub-ai'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: source
+            sha: 84b9b95da4e2ba4285c6b3b8b6ceb0af7897eaea
+          - name: base
+            sha: 7753f9f7c725077a142e5751f48c2686c7321f75
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      SPLIT_NAME: ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+      - name: Typecheck changed test files with Node-compatible target and app declarations
+        shell: python
+        run: |
+          import subprocess,json,pathlib,os,re,sys
+          root=pathlib.Path.cwd(); frontend=root/'frontend'
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'test-types';out.mkdir()
+          source='84b9b95da4e2ba4285c6b3b8b6ceb0af7897eaea';base='7753f9f7c725077a142e5751f48c2686c7321f75'
+          paths=subprocess.check_output(['git','diff','--name-only',base,source],text=True).splitlines()
+          tests=[p[len('frontend/'):] for p in paths if p.startswith('frontend/') and p.endswith(('.ts','.tsx')) and ('/__tests__/' in p or '.test.' in p) and (root/p).exists()]
+          config=frontend/'tsconfig.split-test-types.json'
+          config.write_text(json.dumps({'extends':'./tsconfig.json','compilerOptions':{'incremental':False,'target':'ES2022'},'include':['next-env.d.ts','types/**/*.d.ts',*tests],'exclude':['node_modules','electron','ee']},indent=2)+'\n')
+          try:
+            p=subprocess.run(['node','node_modules/typescript/bin/tsc','--noEmit','--pretty','false','-p',config.name],cwd=frontend,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,text=True)
+          finally: config.unlink()
+          (out/'typecheck.log').write_text(p.stdout)
+          report={'name':os.environ['SPLIT_NAME'],'scope':'Changed test files with Node-compatible ES2022 target and app ambient declarations; no test suppressions','files':len(tests),'exit_code':p.returncode,'diagnostic_count':len(re.findall(r'error TS\d+:',p.stdout))}
+          (out/'result.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report));print(p.stdout)
+          sys.exit(p.returncode)
+      - name: Preserve diagnostics even when the original tests have typing errors
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-test-types-${{ matrix.name }}
+          path: ${{ runner.temp }}/test-types
+          retention-days: 30
