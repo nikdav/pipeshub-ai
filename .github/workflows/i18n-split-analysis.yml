@@ -1,0 +1,52 @@
+name: Fork-only i18n split analysis
+on:
+  push:
+    branches: ['verify/i18n-split-20260929']
+    paths: ['.github/workflows/i18n-split-analysis.yml']
+permissions:
+  contents: read
+jobs:
+  analyze:
+    if: github.repository == 'nikdav/pipeshub-ai'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Exact file and catalogue inventory
+        shell: python
+        run: |
+          import subprocess, json, collections, re
+          def git(*a): return subprocess.check_output(['git', *a], text=True)
+          source='84b9b95da4e2ba4285c6b3b8b6ceb0af7897eaea'
+          base='7753f9f7c725077a142e5751f48c2686c7321f75'
+          def group(p):
+            if '/locales/' in p: return 'catalogues'
+            if '/__tests__/' in p or '.test.' in p: return 'tests'
+            if p.startswith('frontend/lib/'): return 'core'
+            if '/app/(public)/' in p or '/onboarding/' in p or '/app/(main)/components/' in p: return 'auth-onboarding'
+            if '/workspace/' in p or '/components/team/' in p: return 'workspace'
+            if '/chat/' in p or '/agents/' in p or '/projects/' in p: return 'chat-agents-projects'
+            if '/knowledge-base/' in p or '/record/' in p or '/file-preview/' in p or '/indexing-stats/' in p or p.endswith('upload-progress-tracker.tsx'): return 'knowledge-upload-preview'
+            return 'shared'
+          counts=collections.defaultdict(lambda:[0,0,0])
+          for line in git('diff','--numstat',base,source).splitlines():
+            a,d,p=line.split('\t',2)
+            c=counts[group(p)]; c[0]+=1; c[1]+=int(a) if a.isdigit() else 0; c[2]+=int(d) if d.isdigit() else 0
+            print('FILE',group(p),a,d,p)
+          print('COUNTS',json.dumps(counts))
+          for p in ['frontend/lib/i18n/localized-text.ts','frontend/lib/utils/formatters.ts','frontend/lib/utils/platform.ts','frontend/lib/store/toast-store.ts','frontend/lib/api/user-account-api-error.ts','frontend/tsconfig.json','frontend/package.json','frontend/vitest.config.ts']:
+            print('\n--- CORE DIFF',p,'---\n',git('diff',base,source,'--',p))
+          def flat(o, prefix=''):
+            if isinstance(o,dict):
+              return {k:v for a,b in o.items() for k,v in flat(b,prefix+'.'+a if prefix else a).items()}
+            return {prefix:o}
+          for p in git('ls-tree','-r','--name-only',source,'--','frontend/lib/i18n/locales').splitlines():
+            if not p.endswith('.json'): continue
+            s=git('show',source+':'+p); b=git('show',base+':'+p)
+            sf,bf=flat(json.loads(s)),flat(json.loads(b))
+            changed={k:v for k,v in sf.items() if bf.get(k,object())!=v}
+            print('CATALOGUE',p,'changed',len(changed),'removed',len(bf.keys()-sf.keys()),'canonical',s==json.dumps(json.loads(s),ensure_ascii=False,indent=2)+'\n')
+            if p.endswith('en-US.json'): print('EN_KEYS',json.dumps(list(changed)))
