@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 
@@ -35,9 +36,10 @@ export function SelectDropdown({
   value,
   onChange,
   options,
-  placeholder = 'Select an option',
+  placeholder,
   disabled = false,
 }: SelectDropdownProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -103,7 +105,7 @@ export function SelectDropdown({
         }}
       >
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {selectedOption ? selectedOption.label : placeholder}
+          {selectedOption ? selectedOption.label : placeholder ?? t('workspace.selector.selectOption')}
         </span>
         <MaterialIcon
           name={open ? 'expand_less' : 'expand_more'}

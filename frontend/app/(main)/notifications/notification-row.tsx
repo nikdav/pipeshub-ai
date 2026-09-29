@@ -208,7 +208,7 @@ export function NotificationRow({
   compactTime?: boolean;
   pendingAction?: NotificationRowAction | null;
 }) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isTruncated, setIsTruncated] = useState(false);
   // Hidden unclamped clone used solely for measuring the natural text height.
@@ -353,7 +353,7 @@ export function NotificationRow({
                     userSelect: 'none',
                   }}
                 >
-                  show more
+                  {t('filePreview.showMore')}
                 </span>
               )}
             </Box>
@@ -375,7 +375,7 @@ export function NotificationRow({
                   userSelect: 'none',
                 }}
               >
-                show less
+                {t('filePreview.showLess')}
               </span>
             )}
           </Flex>

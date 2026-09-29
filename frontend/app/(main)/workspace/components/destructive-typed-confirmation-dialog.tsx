@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Dialog, Flex, Text, TextField, Button, Box, VisuallyHidden } from '@radix-ui/themes';
 import { LoadingButton } from '@/app/components/ui/loading-button';
+import { useTranslation } from 'react-i18next';
 
 export interface DestructiveTypedConfirmationDialogProps {
   open: boolean;
@@ -37,12 +38,13 @@ export function DestructiveTypedConfirmationDialog({
   confirmationKeyword,
   confirmInputLabel,
   primaryButtonText,
-  cancelLabel = 'Cancel',
+  cancelLabel,
   onConfirm,
   isLoading = false,
-  confirmLoadingLabel = 'ΓÇª',
+  confirmLoadingLabel,
   container,
 }: DestructiveTypedConfirmationDialogProps) {
+  const { t } = useTranslation();
   const [input, setInput] = useState('');
 
   useEffect(() => {
@@ -151,7 +153,7 @@ export function DestructiveTypedConfirmationDialog({
               disabled={isLoading}
               style={{ cursor: isLoading ? 'not-allowed' : 'pointer' }}
             >
-              {cancelLabel}
+              {cancelLabel ?? t('common.cancel')}
             </Button>
             <LoadingButton
               variant="solid"
@@ -160,7 +162,7 @@ export function DestructiveTypedConfirmationDialog({
               onClick={onConfirm}
               disabled={!matches}
               loading={isLoading}
-              loadingLabel={confirmLoadingLabel}
+              loadingLabel={confirmLoadingLabel ?? t('common.loading')}
             >
               {primaryButtonText}
             </LoadingButton>

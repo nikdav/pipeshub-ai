@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Text } from '@radix-ui/themes';
 
 // ========================================
@@ -31,6 +32,7 @@ export function FormField({
   error,
   children,
 }: FormFieldProps) {
+  const { t } = useTranslation();
   return (
     <Flex direction="column" gap="1">
       <Text size="2" weight="medium" style={{ color: 'var(--slate-12)' }}>
@@ -52,7 +54,7 @@ export function FormField({
             style={{ color: 'var(--slate-9)', marginLeft: 'var(--space-1)' }}
             as="span"
           >
-            (optional)
+            ({t('workspace.form.optional')})
           </Text>
         )}
       </Text>

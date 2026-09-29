@@ -383,7 +383,8 @@
     "loading": "正在加载数据...",
     "selectAll": "全选",
     "selected": "已选择 {{count}} 项",
-    "emptyState": "没有可显示的项目"
+    "emptyState": "没有可显示的项目",
+    "selectRow": "选择 {{item}}"
   },
   "status": {
     "indexed": "已索引",
@@ -508,7 +509,9 @@
         "busy": "PipesHub 当前繁忙。请稍后几秒再试。",
         "busyRetry_other": "PipesHub 当前繁忙。请在 {{count}} 秒后重试。"
       }
-    }
+    },
+    "connectorIconAlt": "{{type}} 图标",
+    "submit": "提交"
   },
   "units": {
     "bytes": "字节",
@@ -1262,7 +1265,8 @@
         "pending": "待处理",
         "expired": "已过期",
         "deactivated": "已停用",
-        "blocked": "已封锁"
+        "blocked": "已封锁",
+        "inactive": "未激活"
       },
       "invite": {
         "title": "邀请用户",
@@ -1816,7 +1820,8 @@
     "common": {
       "loadingUsers": "正在加载用户...",
       "noUsersAvailable": "没有可用的用户",
-      "selected": "已选择 {{count}} 项"
+      "selected": "已选择 {{count}} 项",
+      "unknownUser": "未知用户"
     },
     "filters": {
       "role": "角色",
@@ -1830,7 +1835,8 @@
     "pagination": {
       "showing": "显示第 {{from}}-{{to}} 项，共 {{total}} 项",
       "previous": "上一页",
-      "next": "下一页"
+      "next": "下一页",
+      "perPage": "每页 {{value}} 项"
     },
     "sidebar": {
       "backToApp": "返回应用",
@@ -3558,6 +3564,31 @@
       "disableTitle": "停用此服务账号？",
       "disableDescription": "{{name}} 会立即停止工作——包括它已持有的所有令牌，而不只是等到下次登录。在您重新启用之前，使用这些令牌的一切都会持续失败。",
       "disableConfirm": "停用"
+    },
+    "avatar": {
+      "upload": "上传",
+      "remove": "移除"
+    },
+    "entities": {
+      "selectedSummary_other": "已选择 {{count}} 个 {{itemLabel}}"
+    },
+    "form": {
+      "optional": "可选"
+    },
+    "members": {
+      "noItemsFound": "没有找到项目"
+    },
+    "selector": {
+      "searchOrSelect": "搜索或选择",
+      "noOptionsAvailable": "没有可用选项",
+      "selectOption": "选择一个选项",
+      "removeOption": "移除 {{option}}"
+    },
+    "settings": {
+      "discardChanges": "放弃更改"
+    },
+    "tagInput": {
+      "placeholder": "输入值"
     }
   },
   "filePreview": {
@@ -4163,7 +4194,25 @@
   "healthGate": {
     "title": "无法连接到服务器",
     "description": "服务器当前无法访问。它可能正在启动或正在进行维护。我们正在尝试重新连接。",
-    "contactAdmin": "如果此问题持续存在，请联系您的 PipesHub 管理员。"
+    "contactAdmin": "如果此问题持续存在，请联系您的 PipesHub 管理员。",
+    "toast": {
+      "critical": {
+        "title": "部分服务暂不可用",
+        "memberDescription": "部分功能暂时不可用。我们会自动重新连接；如果问题持续，请联系管理员。",
+        "adminDescription": "受影响的服务：{{services}}"
+      },
+      "viewStatus": "查看状态",
+      "nonCritical": {
+        "adminTitle_other": "{{services}} 当前不可用",
+        "memberTitle": "部分功能暂时不可用"
+      }
+    },
+    "serviceGate": {
+      "title": "服务不可用",
+      "adminDescription_other": "此页面需要使用 {{services}}，但这些服务目前不可用。服务恢复后，页面会自动恢复使用。",
+      "memberDescription": "此页面暂时不可用。页面会自动恢复；如果问题持续，请联系管理员。",
+      "viewStatus": "查看服务状态"
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "问题：",
@@ -4258,7 +4307,8 @@
     },
     "team": "团队",
     "teamsNoRoles": "团队没有角色",
-    "invite": "邀请加入 Pipeshub"
+    "invite": "邀请加入 Pipeshub",
+    "searchPlaceholder": "电子邮件、团队或姓名（以逗号分隔）"
   },
   "demoData": {
     "badge": {
@@ -4299,5 +4349,27 @@
       "onTitle": "已为所有人重新开启演示数据",
       "errorTitle": "无法为所有人更改演示数据"
     }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Ctrl"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "日期为",
+      "between": "介于",
+      "before": "早于",
+      "after": "晚于"
+    },
+    "startDateEndDate": "开始日期 - 结束日期",
+    "pickDate": "选择日期",
+    "endDate": "结束日期",
+    "startTime": "开始时间",
+    "endTime": "结束时间",
+    "time": "时间",
+    "apply": "应用",
+    "previousMonth": "上个月",
+    "nextMonth": "下个月"
   }
 }

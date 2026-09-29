@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Flex, Box, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 
 // ========================================
@@ -40,12 +41,13 @@ interface TagInputProps {
 export function TagInput({
   tags,
   onTagsChange,
-  placeholder = 'Enter a value',
+  placeholder,
   validate,
   error,
   disabled = false,
   compact = false,
 }: TagInputProps) {
+  const { t } = useTranslation();
   // No-op fallback when disabled or no handler provided
   const handleTagsChange = onTagsChange ?? (() => {});
   const [inputValue, setInputValue] = useState('');
@@ -191,7 +193,7 @@ export function TagInput({
 
   // Build the error message
   const errorMessage = error || (hasInvalidTags
-    ? 'The email you added is invalid. Please type a valid email.'
+    ? t('form.invalidEmail')
     : undefined);
 
   return (
@@ -247,7 +249,7 @@ export function TagInput({
                 addTag(inputValue);
               }
             }}
-            placeholder={tags.length === 0 ? placeholder : ''}
+            placeholder={tags.length === 0 ? placeholder ?? t('workspace.tagInput.placeholder') : ''}
             style={{
               border: 'none',
               outline: 'none',

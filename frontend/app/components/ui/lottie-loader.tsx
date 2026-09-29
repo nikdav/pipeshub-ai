@@ -3,6 +3,7 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
 import { Flex, Text } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 
 // Lightweight fallback rendered when the Lottie chunk hasn't loaded yet
 // or when it fails to load (e.g. navigation interrupts the download).
@@ -76,8 +77,9 @@ export function LottieLoader({
   autoplay = true,
   style,
   showLabel = false,
-  label = 'Loading...',
+  label,
 }: LottieLoaderProps) {
+  const { t } = useTranslation();
   const lottie = (
     <LottieErrorBoundary fallbackSize={size}>
       <DotLottieReact
@@ -99,7 +101,7 @@ export function LottieLoader({
     <Flex direction="column" align="center" gap="2">
       {lottie}
       <Text size="2" weight="medium" style={{ color: 'var(--slate-11)' }}>
-        {label}
+        {label ?? t('common.loading')}
       </Text>
     </Flex>
   );

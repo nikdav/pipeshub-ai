@@ -371,7 +371,8 @@
     "loading": "Daten werden geladen...",
     "selectAll": "Alle auswählen",
     "selected": "{{count}} ausgewählt",
-    "emptyState": "Keine Elemente zum Anzeigen"
+    "emptyState": "Keine Elemente zum Anzeigen",
+    "selectRow": "{{item}} auswählen"
   },
   "status": {
     "indexed": "Indiziert",
@@ -498,7 +499,9 @@
         "busyRetry_one": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in {{count}} Sekunde erneut.",
         "busyRetry_other": "PipesHub ist gerade ausgelastet. Bitte versuchen Sie es in {{count}} Sekunden erneut."
       }
-    }
+    },
+    "connectorIconAlt": "{{type}}-Symbol",
+    "submit": "Absenden"
   },
   "units": {
     "bytes": "Bytes",
@@ -1249,7 +1252,8 @@
         "pending": "Ausstehend",
         "expired": "Abgelaufen",
         "deactivated": "Deaktiviert",
-        "blocked": "Gesperrt"
+        "blocked": "Gesperrt",
+        "inactive": "Inaktiv"
       },
       "invite": {
         "title": "Benutzer einladen",
@@ -1749,7 +1753,8 @@
     "common": {
       "loadingUsers": "Benutzer werden geladen...",
       "noUsersAvailable": "Keine Benutzer verfügbar",
-      "selected": "{{count}} Ausgewählt"
+      "selected": "{{count}} Ausgewählt",
+      "unknownUser": "Unbekannter Benutzer"
     },
     "filters": {
       "role": "Rolle",
@@ -1763,7 +1768,8 @@
     "pagination": {
       "showing": "Zeige {{from}}-{{to}} von {{total}} Einträgen",
       "previous": "Zurück",
-      "next": "Weiter"
+      "next": "Weiter",
+      "perPage": "{{value}} pro Seite"
     },
     "sidebar": {
       "backToApp": "Zurück zur App",
@@ -3554,6 +3560,32 @@
       "disableTitle": "Dieses Dienstkonto deaktivieren?",
       "disableDescription": "{{name}} funktioniert sofort nicht mehr – einschließlich aller bereits vorhandenen Tokens, nicht erst bei der nächsten Anmeldung. Alles, was eines dieser Tokens verwendet, schlägt fehl, bis Sie das Konto wieder aktivieren.",
       "disableConfirm": "Deaktivieren"
+    },
+    "avatar": {
+      "upload": "Hochladen",
+      "remove": "Entfernen"
+    },
+    "entities": {
+      "selectedSummary_one": "{{count}} {{itemLabel}} ausgewählt",
+      "selectedSummary_other": "{{count}} {{itemLabel}} ausgewählt"
+    },
+    "form": {
+      "optional": "optional"
+    },
+    "members": {
+      "noItemsFound": "Keine Elemente gefunden"
+    },
+    "selector": {
+      "searchOrSelect": "Suchen oder auswählen",
+      "noOptionsAvailable": "Keine Optionen verfügbar",
+      "selectOption": "Option auswählen",
+      "removeOption": "{{option}} entfernen"
+    },
+    "settings": {
+      "discardChanges": "Änderungen verwerfen"
+    },
+    "tagInput": {
+      "placeholder": "Wert eingeben"
     }
   },
   "filePreview": {
@@ -4161,7 +4193,27 @@
   "healthGate": {
     "title": "Verbindung zum Server nicht möglich",
     "description": "Der Server ist derzeit nicht erreichbar. Möglicherweise wird er gerade gestartet oder gewartet. Wir versuchen, die Verbindung wiederherzustellen.",
-    "contactAdmin": "Falls das Problem weiterhin besteht, wenden Sie sich bitte an Ihren PipesHub-Administrator."
+    "contactAdmin": "Falls das Problem weiterhin besteht, wenden Sie sich bitte an Ihren PipesHub-Administrator.",
+    "toast": {
+      "critical": {
+        "title": "Einige Dienste sind nicht verfügbar",
+        "memberDescription": "Einige Funktionen sind vorübergehend nicht verfügbar. Die Verbindung wird automatisch wiederhergestellt. Falls das Problem bestehen bleibt, wenden Sie sich an Ihre Administration.",
+        "adminDescription": "Betroffen: {{services}}"
+      },
+      "viewStatus": "Status anzeigen",
+      "nonCritical": {
+        "adminTitle_one": "{{services}} ist derzeit nicht verfügbar",
+        "adminTitle_other": "{{services}} sind derzeit nicht verfügbar",
+        "memberTitle": "Einige Funktionen sind vorübergehend nicht verfügbar"
+      }
+    },
+    "serviceGate": {
+      "title": "Dienst nicht verfügbar",
+      "adminDescription_one": "Diese Seite benötigt {{services}}, der derzeit nicht verfügbar ist. Sie wird automatisch wieder verfügbar, sobald der Dienst wieder funktioniert.",
+      "adminDescription_other": "Diese Seite benötigt {{services}}, die derzeit nicht verfügbar sind. Sie wird automatisch wieder verfügbar, sobald die Dienste wieder funktionieren.",
+      "memberDescription": "Diese Seite ist vorübergehend nicht verfügbar. Sie wird automatisch wieder verfügbar. Falls das Problem bestehen bleibt, wenden Sie sich an Ihre Administration.",
+      "viewStatus": "Dienststatus anzeigen"
+    }
   },
   "askUserQuestion": {
     "questionsHeadingSingular": "Frage :",
@@ -4275,7 +4327,8 @@
     },
     "team": "Team",
     "teamsNoRoles": "Teams haben keine Rollen",
-    "invite": "Zu PipesHub einladen"
+    "invite": "Zu PipesHub einladen",
+    "searchPlaceholder": "E-Mail-Adressen, Teams oder Namen (durch Kommas getrennt)"
   },
   "demoData": {
     "badge": {
@@ -4316,5 +4369,27 @@
       "onTitle": "Demodaten für alle wieder eingeschaltet",
       "errorTitle": "Die Demodaten konnten nicht für alle geändert werden"
     }
+  },
+  "keyboard": {
+    "modifier": {
+      "ctrl": "Strg"
+    }
+  },
+  "dateRangePicker": {
+    "type": {
+      "on": "Am",
+      "between": "Zwischen",
+      "before": "Vor",
+      "after": "Nach"
+    },
+    "startDateEndDate": "Startdatum – Enddatum",
+    "pickDate": "Datum auswählen",
+    "endDate": "Enddatum",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "time": "Uhrzeit",
+    "apply": "Anwenden",
+    "previousMonth": "Vorheriger Monat",
+    "nextMonth": "Nächster Monat"
   }
 }

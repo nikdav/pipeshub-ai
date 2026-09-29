@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text, Button, Popover, IconButton, Tabs } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 
@@ -91,15 +92,17 @@ function mergeDateTime(dateYYYYMMDD: string, timeHHmm: string): string {
   return `${dateYYYYMMDD}T${t}`;
 }
 
-function formatBoundaryForDisplay(raw: string, withTime: boolean): string {
+function formatBoundaryForDisplay(raw: string, withTime: boolean, locale: string): string {
   if (!raw) return '';
   const d = dateKey(raw);
   if (!d) return '';
   const [year, month, day] = d.split('-').map(Number);
-  const displayDay = day.toString().padStart(2, '0');
-  const displayMonth = month.toString().padStart(2, '0');
-  const displayYear = year.toString().slice(-2);
-  const datePart = `${displayDay}/${displayMonth}/${displayYear}`;
+  // Construct from local date parts so formatting cannot shift the selected
+  // calendar day through UTC or the user's time zone.
+  const datePart = new Intl.DateTimeFormat(locale, {
+    dateStyle: 'short',
+    calendar: 'gregory',
+  }).format(new Date(year, month - 1, day));
   if (withTime && raw.includes('T')) {
     const { time } = parseDateTimeBoundary(raw);
     return `${datePart} · ${time}`;
@@ -119,19 +122,6 @@ const getDaysInMonth = (year: number, month: number): number => {
  */
 const getFirstDayOfMonth = (year: number, month: number): number => {
   return new Date(year, month, 1).getDay();
-};
-
-const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-const DATE_TYPE_LABELS: Record<DateFilterType, string> = {
-  on: 'On',
-  between: 'Between',
-  before: 'Before',
-  after: 'After',
 };
 
 /**
@@ -186,6 +176,23 @@ export function DateRangePicker({
   triggerVariant = 'toolbar',
   summaryBelowTrigger = false,
 }: DateRangePickerProps) {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.resolvedLanguage || i18n.language;
+  const dateTypeLabels: Record<DateFilterType, string> = {
+    on: t('dateRangePicker.type.on'),
+    between: t('dateRangePicker.type.between'),
+    before: t('dateRangePicker.type.before'),
+    after: t('dateRangePicker.type.after'),
+  };
+  const monthFormatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric', calendar: 'gregory' }),
+    [locale],
+  );
+  const weekdays = useMemo(() => {
+    const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short', calendar: 'gregory' });
+    // January 1, 2023 was Sunday, matching the existing calendar column order.
+    return Array.from({ length: 7 }, (_, index) => formatter.format(new Date(2023, 0, 1 + index)));
+  }, [locale]);
   const effectiveDateType = fixedDateType ?? dateType ?? defaultDateType;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -370,12 +377,12 @@ export function DateRangePicker({
   // Get formatted date value for the applied chip
   const getDateValue = (): string => {
     if (dateType === 'before') {
-      return endDate ? formatBoundaryForDisplay(endDate, withTime) : '';
+      return endDate ? formatBoundaryForDisplay(endDate, withTime, locale) : '';
     }
     if (!startDate) return '';
-    const formattedStart = formatBoundaryForDisplay(startDate, withTime);
+    const formattedStart = formatBoundaryForDisplay(startDate, withTime, locale);
     if (dateType === 'between' && endDate) {
-      return `${formattedStart} · ${formatBoundaryForDisplay(endDate, withTime)}`;
+      return `${formattedStart} · ${formatBoundaryForDisplay(endDate, withTime, locale)}`;
     }
     return formattedStart;
   };
@@ -384,7 +391,7 @@ export function DateRangePicker({
   const getFieldTriggerSummary = (): string => {
     const valuePart = getDateValue();
     if (!dateType) return valuePart;
-    const mode = DATE_TYPE_LABELS[dateType];
+    const mode = dateTypeLabels[dateType];
     return valuePart ? `${mode} · ${valuePart}` : mode;
   };
 
@@ -433,7 +440,7 @@ export function DateRangePicker({
           handleClear(e);
         }}
       >
-        Clear
+        {t('common.clear')}
       </Button>
     </Flex>
   );
@@ -481,7 +488,7 @@ export function DateRangePicker({
         }}
       >
         <Text size="1" style={{ color: 'var(--gray-11)', whiteSpace: 'nowrap' }}>
-          {dateType ? DATE_TYPE_LABELS[dateType].toLowerCase() : 'on'}
+          {dateType ? dateTypeLabels[dateType] : dateTypeLabels.on}
         </Text>
       </Flex>
       <Flex
@@ -618,7 +625,7 @@ export function DateRangePicker({
                     cursor: 'pointer',
                   }}
                 >
-                  {DATE_TYPE_LABELS[type]}
+                  {dateTypeLabels[type]}
                 </Tabs.Trigger>
               ))}
             </Tabs.List>
@@ -640,18 +647,18 @@ export function DateRangePicker({
           <Text size="2" style={{ color: 'var(--slate-11)' }}>
             {(() => {
               const primary = selectedStart || selectedEnd;
-              if (selectedDateType === 'between' && !primary) return 'Start Date - End Date';
-              if (!primary) return 'Pick a date';
+              if (selectedDateType === 'between' && !primary) return t('dateRangePicker.startDateEndDate');
+              if (!primary) return t('dateRangePicker.pickDate');
               if (selectedDateType === 'between' && selectedStart && selectedEnd) {
-                return `${formatBoundaryForDisplay(selectedStart, withTime)} - ${formatBoundaryForDisplay(selectedEnd, withTime)}`;
+                return `${formatBoundaryForDisplay(selectedStart, withTime, locale)} - ${formatBoundaryForDisplay(selectedEnd, withTime, locale)}`;
               }
               if (selectedDateType === 'between' && isSelectingEnd && hoveredDay) {
-                return `${formatBoundaryForDisplay(selectedStart!, withTime)} - ${formatBoundaryForDisplay(hoveredDay, withTime)}`;
+                return `${formatBoundaryForDisplay(selectedStart!, withTime, locale)} - ${formatBoundaryForDisplay(hoveredDay, withTime, locale)}`;
               }
               if (selectedDateType === 'between' && isSelectingEnd) {
-                return `${formatBoundaryForDisplay(selectedStart!, withTime)} - End Date`;
+                return `${formatBoundaryForDisplay(selectedStart!, withTime, locale)} - ${t('dateRangePicker.endDate')}`;
               }
-              return formatBoundaryForDisplay(primary, withTime);
+              return formatBoundaryForDisplay(primary, withTime, locale);
             })()}
           </Text>
           <MaterialIcon name="calendar_today" size={20} color="var(--slate-9)" />
@@ -663,7 +670,7 @@ export function DateRangePicker({
               <Flex align="center" gap="3" wrap="wrap">
                 <Flex direction="column" gap="1" style={{ flex: '1 1 120px', minWidth: 0 }}>
                   <Text size="1" style={{ color: 'var(--slate-11)' }}>
-                    Start time
+                    {t('dateRangePicker.startTime')}
                   </Text>
                   <input
                     type="time"
@@ -689,7 +696,7 @@ export function DateRangePicker({
                 </Flex>
                 <Flex direction="column" gap="1" style={{ flex: '1 1 120px', minWidth: 0 }}>
                   <Text size="1" style={{ color: 'var(--slate-11)' }}>
-                    End time
+                    {t('dateRangePicker.endTime')}
                   </Text>
                   <input
                     type="time"
@@ -717,7 +724,7 @@ export function DateRangePicker({
             ) : (
               <Flex direction="column" gap="1" style={{ width: '100%' }}>
                 <Text size="1" style={{ color: 'var(--slate-11)' }}>
-                  Time
+                  {t('dateRangePicker.time')}
                 </Text>
                 <input
                   type="time"
@@ -768,18 +775,20 @@ export function DateRangePicker({
               size="1"
               color="gray"
               onClick={goToPreviousMonth}
+              aria-label={t('dateRangePicker.previousMonth')}
               style={{ cursor: 'pointer' }}
             >
               <MaterialIcon name="chevron_left" size={16} color="var(--slate-11)" />
             </IconButton>
             <Text size="2" weight="bold" style={{ color: 'var(--slate-12)' }}>
-              {MONTHS[currentMonth]} {currentYear}
+              {monthFormatter.format(new Date(currentYear, currentMonth, 1))}
             </Text>
             <IconButton
               variant="outline"
               size="1"
               color="gray"
               onClick={goToNextMonth}
+              aria-label={t('dateRangePicker.nextMonth')}
               style={{ cursor: 'pointer' }}
             >
               <MaterialIcon name="chevron_right" size={16} color="var(--slate-11)" />
@@ -795,7 +804,7 @@ export function DateRangePicker({
               marginBottom: '4px',
             }}
           >
-            {WEEKDAYS.map((day) => (
+            {weekdays.map((day) => (
               <Flex
                 key={day}
                 align="center"
@@ -884,7 +893,7 @@ export function DateRangePicker({
             disabled={isApplyDisabled}
             onClick={handleApply}
           >
-            Apply
+            {t('dateRangePicker.apply')}
           </Button>
         </Flex>
       </Popover.Content>

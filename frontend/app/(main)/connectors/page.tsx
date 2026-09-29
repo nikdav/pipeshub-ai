@@ -1,9 +1,11 @@
 'use client';
 
+import { useTranslation } from 'react-i18next';
 import { Flex, Text, Heading } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 
 export default function ConnectorsPage() {
+  const { t } = useTranslation();
   return (
     <Flex
       direction="column"
@@ -17,10 +19,10 @@ export default function ConnectorsPage() {
     >
       <MaterialIcon name="hub" size={64} color="var(--slate-9)" />
       <Heading size="6" style={{ marginTop: '16px', color: 'var(--slate-12)' }}>
-        Connectors
+        {t('nav.connectors')}
       </Heading>
       <Text size="2" style={{ marginTop: '8px', color: 'var(--slate-11)' }}>
-        Coming soon
+        {t('agents.comingSoon')}
       </Text>
     </Flex>
   );

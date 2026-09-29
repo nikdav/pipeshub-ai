@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Flex, Avatar, IconButton, DropdownMenu } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 
 export interface AvatarUploadWidgetProps {
@@ -37,6 +38,7 @@ export function AvatarUploadWidget({
   onDeleteClick,
   triggerAriaLabel,
 }: AvatarUploadWidgetProps) {
+  const { t } = useTranslation();
   const showDropdown = !!src && !!onDeleteClick;
 
   return (
@@ -67,13 +69,13 @@ export function AvatarUploadWidget({
             <DropdownMenu.Item onClick={onEditClick}>
               <Flex align="center" gap="2">
                 <MaterialIcon name="upload" size={14} color="var(--gray-11)" />
-                Upload
+                {t('workspace.avatar.upload')}
               </Flex>
             </DropdownMenu.Item>
             <DropdownMenu.Item color="red" onClick={onDeleteClick}>
               <Flex align="center" gap="2">
                 <MaterialIcon name="delete" size={14} color="var(--red-11)" />
-                Remove
+                {t('workspace.avatar.remove')}
               </Flex>
             </DropdownMenu.Item>
           </DropdownMenu.Content>
