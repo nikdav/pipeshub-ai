@@ -1,9 +1,32 @@
 import { isElectron } from '@/lib/electron';
 import { i18n } from '@/lib/i18n';
+import { localizedText, type LocalizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { ConnectorsApi } from '../api';
 import { CONNECTOR_INSTANCE_STATUS } from '../constants';
 import { useConnectorsStore } from '../store';
 import type { ConnectorInstance } from '../types';
+
+export class LocalizedConnectorActionError extends Error {
+  readonly messageText: LocalizedText;
+
+  constructor(message: string, messageText: LocalizedText) {
+    super(message);
+    this.name = 'LocalizedConnectorActionError';
+    this.messageText = messageText;
+  }
+}
+
+/** Maps local API invariants to presentation descriptors at connector UI boundaries. */
+export function getConnectorActionErrorText(error: unknown): LocalizedText | undefined {
+  const code = (error as { code?: unknown } | null)?.code;
+  if (code === 'CONNECTOR_INSTANCE_UNAVAILABLE') {
+    return localizedText('workspace.connectors.errors.connectorInstanceUnavailable');
+  }
+  if (code === 'CONNECTOR_TYPE_REQUIRED') {
+    return localizedText('workspace.connectors.errors.connectorTypeRequired');
+  }
+  return undefined;
+}
 import {
   isLocalFsConnectorType,
   readDesktopRefusal,
@@ -100,8 +123,17 @@ export async function assertLocalFsRootPathAvailable(
 
   const result = await checkLocalRootPathConflict(connectorId, rootPath);
   if (!result.available) {
-    const owner = result.ownerConnectorName || result.ownerConnectorId || 'another connector';
-    throw new Error(`Local sync root is already synced by connector "${owner}": ${rootPath}`);
+    const ownerName = result.ownerConnectorName || result.ownerConnectorId;
+    const owner: LocalizedTextValue = ownerName ||
+      localizedText('workspace.connectors.localFsDesktop.anotherConnector');
+    const messageText = localizedText('workspace.connectors.localFsDesktop.rootPathConflict', {
+      owner,
+      rootPath,
+    });
+    throw new LocalizedConnectorActionError(
+      `Local sync root is already synced by connector "${ownerName || 'another connector'}": ${rootPath}`,
+      messageText,
+    );
   }
 }
 

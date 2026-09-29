@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Text, Separator, Callout } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LoadingButton } from '@/app/components/ui/loading-button';
@@ -32,6 +33,7 @@ export type AuthorizeTabProps = {
  * `postMessage` listener stays mounted while the panel is open (Radix Tabs may unmount this tab).
  */
 export function AuthorizeTab({ startOAuthPopup, isAuthenticating }: AuthorizeTabProps) {
+  const { t } = useTranslation();
   const panelConnector = useConnectorsStore((s) => s.panelConnector);
   const panelConnectorId = useConnectorsStore((s) => s.panelConnectorId);
   const connectorConfig = useConnectorsStore((s) => s.connectorConfig);
@@ -63,12 +65,10 @@ export function AuthorizeTab({ startOAuthPopup, isAuthenticating }: AuthorizeTab
         <Flex direction="column" gap="4" style={sectionCardStyle}>
           <Flex direction="column" gap="1">
             <Text size="3" weight="medium" style={{ color: 'var(--gray-12)' }}>
-              Sign in with your provider
+              {t('workspace.connectors.authorizeTab.signInHeading')}
             </Text>
             <Text size="1" style={{ color: 'var(--gray-10)', lineHeight: 1.55 }}>
-              Open your identity provider&apos;s sign-in window and approve access. When sign-in
-              succeeds, choose <Text weight="medium">Continue to configuration</Text> in the footer
-              to set up sync, filters, and records.
+              {t('workspace.connectors.authorizeTab.signInDescription')}
             </Text>
           </Flex>
 
@@ -85,11 +85,10 @@ export function AuthorizeTab({ startOAuthPopup, isAuthenticating }: AuthorizeTab
         <Flex direction="column" gap="4" style={sectionCardStyle}>
           <Flex direction="column" gap="1">
             <Text size="3" weight="medium" style={{ color: 'var(--gray-12)' }}>
-              Authorization status
+              {t('workspace.connectors.authorizeTab.authorizationStatus')}
             </Text>
             <Text size="1" style={{ color: 'var(--gray-10)', lineHeight: 1.55 }}>
-              This instance can access your data at the provider. Continue to configure sync and
-              indexing, or sign in again if you revoked access or rotated credentials.
+              {t('workspace.connectors.authorizeTab.authorizationStatusDescription')}
             </Text>
           </Flex>
 
@@ -98,7 +97,7 @@ export function AuthorizeTab({ startOAuthPopup, isAuthenticating }: AuthorizeTab
               <MaterialIcon name="check_circle" size={16} color="var(--green-11)" />
             </Callout.Icon>
             <Callout.Text size="2" weight="medium" style={{ color: 'var(--green-12)' }}>
-              Connected — you can continue to Configure records
+              {t('workspace.connectors.authorizeTab.connected')}
             </Callout.Text>
           </Callout.Root>
 
@@ -108,7 +107,7 @@ export function AuthorizeTab({ startOAuthPopup, isAuthenticating }: AuthorizeTab
                 <MaterialIcon name="error_outline" size={16} color="var(--red-11)" />
               </Callout.Icon>
               <Callout.Text size="2" style={{ color: 'var(--red-11)', lineHeight: 1.5 }}>
-                Sign-in did not complete. Try again, or check your identity provider settings.
+                {t('workspace.connectors.authorizeTab.signInFailed')}
               </Callout.Text>
             </Callout.Root>
           ) : null}
@@ -117,10 +116,10 @@ export function AuthorizeTab({ startOAuthPopup, isAuthenticating }: AuthorizeTab
 
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium" style={{ color: 'var(--gray-12)' }}>
-              Refresh access
+              {t('workspace.connectors.authorizeTab.refreshAccess')}
             </Text>
             <Text size="1" style={{ color: 'var(--gray-10)', lineHeight: 1.55 }}>
-              Same as the legacy Reauthenticate action when tokens need to be renewed.
+              {t('workspace.connectors.authorizeTab.refreshAccessDescription')}
             </Text>
             <LoadingButton
               type="button"
@@ -128,7 +127,7 @@ export function AuthorizeTab({ startOAuthPopup, isAuthenticating }: AuthorizeTab
               color="gray"
               size="2"
               loading={reauthOauthBusy}
-              loadingLabel="Authenticating…"
+              loadingLabel={t('workspace.connectors.authorizeTab.authenticating')}
               style={{
                 width: '100%',
                 display: 'inline-flex',
@@ -139,7 +138,7 @@ export function AuthorizeTab({ startOAuthPopup, isAuthenticating }: AuthorizeTab
               onClick={() => void startOAuthPopup()}
             >
               <MaterialIcon name="vpn_key" size={16} color="var(--gray-11)" />
-              Re-authenticate with provider
+              {t('workspace.connectors.authorizeTab.reauthenticate')}
             </LoadingButton>
           </Flex>
         </Flex>

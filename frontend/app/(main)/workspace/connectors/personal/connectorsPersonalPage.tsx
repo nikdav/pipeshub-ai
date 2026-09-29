@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useCallback, useMemo, useState, Suspense, u
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useToastStore } from '@/lib/store/toast-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 import { isProcessedError } from '@/lib/api';
 import { ServiceGate } from '@/app/components/ui/service-gate';
 import { isElectron } from '@/lib/electron';
@@ -13,6 +14,8 @@ import { ConnectorsApi } from '../api';
 import {
   startConnectorSync,
   toggleConnectorSyncOn,
+  getConnectorActionErrorText,
+  type LocalizedConnectorActionError,
 } from '../utils/connector-sync-actions';
 import { filterConnectorsForScope } from '../utils/filter-connectors-by-scope';
 import { fetchFilteredConnectorLists } from '../utils/fetch-filtered-connector-lists';
@@ -450,7 +453,12 @@ function PersonalConnectorsPageContent() {
         }
         addToast({
           variant: 'success',
-          title: instance.isActive ? 'Connector sync disabled' : 'Connector sync enabled',
+          title: t(instance.isActive
+            ? 'workspace.connectors.toasts.syncToggleDisabled'
+            : 'workspace.connectors.toasts.syncToggleEnabled'),
+          titleText: localizedText(instance.isActive
+            ? 'workspace.connectors.toasts.syncToggleDisabled'
+            : 'workspace.connectors.toasts.syncToggleEnabled'),
           duration: 2500,
         });
         try {
@@ -463,7 +471,8 @@ function PersonalConnectorsPageContent() {
         }
       } catch (err: unknown) {
         if (!isProcessedError(err)) {
-          addToast({ variant: 'error', title: 'Could not update connector' });
+          const titleText = localizedText('workspace.connectors.toasts.syncToggleError');
+          addToast({ variant: 'error', title: t(titleText.key), titleText });
         }
       }
     },
@@ -519,13 +528,25 @@ function PersonalConnectorsPageContent() {
         duration: 3000,
       });
     } catch (error) {
+      const localizedDescription =
+        error && typeof error === 'object' && 'messageText' in error
+          ? (error as LocalizedConnectorActionError).messageText
+          : getConnectorActionErrorText(error);
+      const rawDescription =
+        error instanceof Error && error.message.trim() ? error.message.trim() : undefined;
+      const titleText = localizedText('workspace.connectors.toasts.syncError');
       addToast({
         variant: 'error',
-        title: t('workspace.connectors.toasts.syncError'),
-        description:
-          error instanceof Error && error.message.trim()
-            ? error.message.trim()
-            : undefined,
+        title: t(titleText.key),
+        titleText,
+        ...(localizedDescription
+          ? {
+              description: t(localizedDescription.key, localizedDescription.values),
+              descriptionText: localizedDescription,
+            }
+          : rawDescription
+            ? { description: rawDescription }
+            : {}),
       });
     }
   }, [

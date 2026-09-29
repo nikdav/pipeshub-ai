@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Flex, Box, Text, Switch, TextField, Callout } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 
@@ -27,12 +28,13 @@ export function SendImagesRow({
   onMaxImagesCommit,
   disabled = false,
 }: SendImagesRowProps) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(String(maxImages));
-  const [error, setError] = useState<string | null>(null);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     setInputValue(String(maxImages));
-    setError(null);
+    setHasError(false);
   }, [maxImages]);
 
   const validate = (text: string): number | null => {
@@ -46,11 +48,11 @@ export function SendImagesRow({
   const handleCommit = () => {
     const parsed = validate(inputValue);
     if (parsed === null) {
-      setError('Enter a whole number between 1 and 500');
+      setHasError(true);
       setInputValue(String(maxImages));
       return;
     }
-    setError(null);
+    setHasError(false);
     if (parsed !== maxImages) {
       onMaxImagesCommit(parsed);
     }
@@ -85,7 +87,7 @@ export function SendImagesRow({
 
         <Box style={{ flex: 1, minWidth: 0 }}>
           <Text size="2" weight="medium" style={{ color: 'var(--slate-12)', display: 'block' }}>
-            Send images to LLM
+            {t('workspace.webSearch.sendImages')}
           </Text>
           <Text
             size="1"
@@ -96,7 +98,7 @@ export function SendImagesRow({
               fontWeight: 300,
             }}
           >
-            Control whether images are sent to the LLM during web search
+            {t('workspace.webSearch.sendImagesDescription')}
           </Text>
         </Box>
 
@@ -105,6 +107,7 @@ export function SendImagesRow({
             color="jade"
             size="2"
             checked={enabled}
+            aria-label={t('workspace.webSearch.sendImages')}
             disabled={disabled}
             onCheckedChange={onToggle}
           />
@@ -124,7 +127,7 @@ export function SendImagesRow({
           }}
         >
           <Text size="1" weight="medium" style={{ color: 'var(--slate-12)' }}>
-            Maximum input images per LLM call
+            {t('workspace.webSearch.images.maxImages')}
           </Text>
           <TextField.Root
             type="number"
@@ -142,15 +145,17 @@ export function SendImagesRow({
             disabled={disabled}
             style={{ maxWidth: 220 }}
           />
-          <Text size="1" style={{ color: error ? 'var(--red-10)' : 'var(--slate-10)', fontWeight: 300 }}>
-            {error ?? 'Enter a whole number between 1 and 500'}
+          <Text size="1" style={{ color: hasError ? 'var(--red-10)' : 'var(--slate-10)', fontWeight: 300 }}>
+            {hasError
+              ? t('workspace.webSearch.images.invalidMaxImages')
+              : t('workspace.webSearch.images.maxImagesHelp')}
           </Text>
           <Callout.Root color="amber" size="1" variant="soft">
             <Callout.Icon>
               <MaterialIcon name="warning" size={14} color="var(--amber-11)" />
             </Callout.Icon>
             <Callout.Text>
-              Including images may increase cost and add latency to web search queries.
+              {t('workspace.webSearch.images.costWarning')}
             </Callout.Text>
           </Callout.Root>
         </Flex>

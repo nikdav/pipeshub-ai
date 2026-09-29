@@ -2004,6 +2004,8 @@
         "authenticatedMany": "{{count}}명 인증됨",
         "needsAuthOne": "1명 로그인 필요",
         "needsAuthMany": "{{count}}명 로그인 필요",
+        "active_other": "활성 인스턴스 {{count}}개",
+        "inactive_other": "비활성 인스턴스 {{count}}개",
         "addInstance": "인스턴스 추가"
       },
       "typeDetail": {
@@ -2421,7 +2423,10 @@
         "configSaveError": "설정을 저장하지 못했습니다",
         "oauthAppUnavailableTitle": "이 커넥터에 사용할 수 있는 OAuth 앱이 없습니다",
         "oauthAppUnavailableDescription": "먼저 워크스페이스 관리자에게 {{name}}용 OAuth 앱 생성을 요청한 후 다시 시도하세요.",
-        "thisConnectorFallback": "이 커넥터"
+        "thisConnectorFallback": "이 커넥터",
+        "syncToggleDisabled": "커넥터 동기화가 비활성화되었습니다",
+        "syncToggleEnabled": "커넥터 동기화가 활성화되었습니다",
+        "syncToggleError": "커넥터를 업데이트하지 못했습니다"
       },
       "tabs": {
         "authenticate": "인스턴스 인증",
@@ -2522,7 +2527,36 @@
         "oauthAppNamePlaceholder": "예: {{name}} OAuth",
         "oauthAppNameHelper": "이 이름은 OAuth 등록과 함께 저장되며, 사용자가 다른 인스턴스에서 저장된 앱을 선택할 때 표시됩니다.",
         "oauthAppNameRequired": "새 OAuth 앱의 이름을 입력하세요.",
-        "oauthAppChangeReauthWarning": "OAuth 앱 또는 자격 증명을 변경하면 커넥터를 다시 인증해야 합니다."
+        "oauthAppChangeReauthWarning": "OAuth 앱 또는 자격 증명을 변경하면 커넥터를 다시 인증해야 합니다.",
+        "authTypes": {
+          "oauth": "OAuth 2.0",
+          "oauthAdminConsent": "OAuth(관리자 동의)",
+          "oauthCertificate": "OAuth(인증서)",
+          "apiToken": "API 토큰",
+          "usernamePassword": "사용자 이름 및 비밀번호",
+          "basicAuth": "기본 인증",
+          "bearerToken": "Bearer 토큰",
+          "custom": "사용자 지정",
+          "none": "없음"
+        },
+        "redirectCallbackUrlCopyErrorTitle": "복사하지 못했습니다",
+        "redirectCallbackUrlCopyErrorDescription": "URL을 직접 복사하거나 이 사이트의 클립보드 액세스를 허용하세요.",
+        "methodDescription": "{{name}}에 인증하는 방법을 선택하세요.",
+        "oauthAppUnnamed": "이름 없는 OAuth 앱",
+        "oauthAppsLoadFailed": "이 커넥터의 OAuth 앱을 불러오지 못했습니다.",
+        "oauthAppLinkedNamed": "{{name}}(연결됨)",
+        "oauthAppLinkedRegistration": "연결된 OAuth 등록",
+        "oauthAppsEmptyLinkedAdminExisting": "이 인스턴스는 목록에 표시되지 않는 OAuth 등록에 연결되어 있습니다. 아래에서 다른 저장된 앱을 선택하거나 현재 연결을 유지하세요.",
+        "oauthAppsEmptyLinkedAdminNew": "이 인스턴스는 목록에 표시되지 않는 OAuth 등록에 연결되어 있습니다. 아래에서 다른 앱을 선택하거나 새로 만들기를 선택하거나 현재 연결을 유지하세요.",
+        "oauthAppsEmptyLinkedUser": "이 인스턴스는 목록에 표시되지 않는 OAuth 등록에 연결되어 있습니다. 관리자가 저장된 앱을 더 추가하면 전환할 수 있습니다.",
+        "oauthAppsEmptyRegisteredNone": "등록된 OAuth 앱이 없습니다. 관리자에게 워크스페이스 커넥터 설정에서 앱을 추가해 달라고 요청하세요.",
+        "oauthAppsEmptyCredentials": "아래에 OAuth 클라이언트 자격 증명을 입력하거나, 사용 가능한 저장된 앱을 선택하세요.",
+        "oauthAppLabel": "OAuth 앱",
+        "oauthAppsLoading": "OAuth 구성을 불러오는 중…",
+        "oauthAppPlaceholderAdmin": "OAuth 앱을 선택하거나 새로 만드세요…",
+        "oauthAppPlaceholder": "OAuth 앱을 선택하세요(필수)…",
+        "oauthAppNew": "새 OAuth 앱 만들기",
+        "oauthAppSelectionRequired": "OAuth 앱을 선택하세요."
       },
       "docSection": {
         "title": "설정 문서",
@@ -2553,7 +2587,8 @@
       "instancePanel": {
         "overview": "개요",
         "settings": "설정",
-        "manageConfig": "설정 관리"
+        "manageConfig": "설정 관리",
+        "syncedAt": "{{lastSynced}} 동기화됨"
       },
       "overview": {
         "progressPercent": "{{n}}% 완료",
@@ -2581,7 +2616,16 @@
         "recordsByType": "유형별 레코드",
         "noRecordTypes": "사용 가능한 레코드 유형이 없습니다",
         "localWatcherLabel": "로컬 워처",
-        "localWatcherStatus": "{{state}} · 대기 {{pending}}건 · 실패 {{failed}}건"
+        "localWatcherStatus": "{{state}} · 대기 {{pending}}건 · 실패 {{failed}}건",
+        "actions": {
+          "syncStarted": "동기화가 시작되었습니다",
+          "syncStartFailed": "동기화를 시작하지 못했습니다",
+          "unexpectedError": "예기치 않은 오류가 발생했습니다.",
+          "reindexFailedStarted": "실패한 레코드를 다시 색인하는 중…",
+          "reindexFailedError": "실패한 레코드의 색인을 다시 생성하지 못했습니다",
+          "manualIndexStarted": "수동 색인 대상 레코드의 색인을 생성하는 중…",
+          "manualIndexError": "수동 색인을 시작하지 못했습니다"
+        }
       },
       "settingsTab": {
         "instanceName": "인스턴스 이름",
@@ -2613,7 +2657,23 @@
         "removing": "이 커넥터를 제거하는 중입니다.",
         "configureFirst": "동기화를 사용하려면 먼저 구성을 완료하세요.",
         "authenticateFirst": "동기화를 사용하려면 먼저 이 커넥터를 인증하세요.",
-        "selected": "{{field}} 선택됨"
+        "selected": "{{field}} 선택됨",
+        "syncAction": {
+          "label": "동기화",
+          "syncing": "동기화 중...",
+          "retry": "동기화 실패, 다시 시도",
+          "started": "동기화가 시작되었습니다",
+          "failed": "동기화에 실패했습니다",
+          "unexpectedError": "예기치 않은 오류가 발생했습니다."
+        },
+        "fullSyncAction": {
+          "label": "전체 동기화",
+          "syncing": "전체 동기화 중…",
+          "retry": "전체 동기화에 실패했습니다. 다시 시도",
+          "started": "전체 동기화가 시작되었습니다",
+          "failed": "전체 동기화에 실패했습니다"
+        },
+        "connect": "연결"
       },
       "instanceStatus": {
         "setup": {
@@ -2644,14 +2704,40 @@
         "unclaimedToast": "이 커넥터는 아직 데스크톱에서 설정되지 않았습니다. 이 폴더를 관리하는 컴퓨터에서 PipesHub 데스크톱 앱을 열고 동기화를 한 번 활성화하세요.",
         "ownedByOtherDeviceToast": "이 커넥터는 {{deviceName}}에 속해 있습니다. 해당 기기의 PipesHub 데스크톱 앱에서 동기화를 활성화하세요.",
         "ownedByOtherDeviceUnknownToast": "이 커넥터는 다른 기기에 속해 있습니다. 해당 기기의 PipesHub 데스크톱 앱에서 동기화를 활성화하세요.",
-        "deviceIdentityError": "이 기기를 식별할 수 없습니다: {{error}}"
+        "deviceIdentityError": "이 기기를 식별할 수 없습니다: {{error}}",
+        "anotherConnector": "다른 커넥터",
+        "rootPathConflict": "로컬 동기화 루트는 이미 커넥터 \"{{owner}}\"에서 동기화 중입니다: {{rootPath}}"
       },
       "schemaForm": {
         "tagsPlaceholder": "입력 후 Enter 키를 눌러 태그를 추가하세요",
         "removeTagAriaLabel": "{{tag}} 제거",
         "chooseFolder": "폴더 선택",
         "folderPickerUnavailableTitle": "폴더 선택기를 사용할 수 없습니다",
-        "folderPickerUnavailableDescription": "데스크톱 앱을 다시 시작하거나 최신 빌드로 업데이트하세요."
+        "folderPickerUnavailableDescription": "데스크톱 앱을 다시 시작하거나 최신 빌드로 업데이트하세요.",
+        "examples": {
+          "copyFailed": "복사하지 못했습니다",
+          "heading": "예시",
+          "headingPlural": "예시",
+          "copied": "복사됨",
+          "copyToClipboard": "클립보드에 복사",
+          "copyExample": "예시 {{label}} 복사"
+        },
+        "selectPlaceholder": "선택...",
+        "fileUpload": {
+          "invalidJson": "파일은 올바른 JSON 형식이어야 합니다.",
+          "missingRequiredFields": "필수 항목이 없습니다: {{missing}}",
+          "fieldMustEqual": "\"{{field}}\" 필드의 값은 \"{{value}}\"이어야 합니다.",
+          "contentMustContain": "콘텐츠에 다음 항목이 포함되어야 합니다: {{pattern}}",
+          "contentMustNotContain": "콘텐츠에 다음 항목이 포함되면 안 됩니다: {{pattern}}",
+          "tooLarge": "파일이 너무 큽니다({{size}}KB). 키, 인증서 또는 JSON 파일의 최대 크기는 {{max}}KB입니다.",
+          "invalidFile": "잘못된 파일입니다.",
+          "readFailed": "파일을 읽지 못했습니다.",
+          "optional": "(선택 사항)",
+          "alreadyConfigured": "이미 구성됨",
+          "replace": "바꾸기",
+          "clickToUpload": "파일을 업로드하려면 클릭하세요",
+          "maxSize": "최대 {{max}}KB"
+        }
       },
       "personal": {
         "desktopRequiredTitle": "데스크톱 앱 필요",
@@ -2667,7 +2753,10 @@
       "errors": {
         "missingCreatedId": "생성에는 성공했지만 커넥터 ID가 반환되지 않았습니다",
         "createdConfigUnavailable": "커넥터는 생성되었지만 구성을 불러오지 못했습니다. 패널을 다시 열어 보세요.",
-        "authenticateFirst": "커넥터 ID를 찾을 수 없습니다. 먼저 인증을 완료하세요."
+        "authenticateFirst": "커넥터 ID를 찾을 수 없습니다. 먼저 인증을 완료하세요.",
+        "connectorInstanceUnavailable": "이 커넥터 인스턴스를 사용할 수 없습니다. 페이지를 새로고침한 후 다시 시도하세요.",
+        "connectorTypeRequired": "커넥터 유형이 없어 동기화를 시작하지 못했습니다.",
+        "settingsLoadFallback": "이 커넥터의 설정을 불러오지 못했습니다. 잠시 후 다시 시도하세요."
       },
       "syncIntervals": {
         "5": "5분마다",
@@ -2754,7 +2843,9 @@
           "title": "모든 임베딩을 삭제할까요?",
           "body": "공유 벡터 컬렉션을 삭제하고 비운 상태로 다시 만듭니다.",
           "warning": "모든 사용자에게 검색 결과가 나오지 않으며, 다시 인덱싱이 끝날 때까지 그 상태가 유지됩니다. 대규모 배포에서는 다시 인덱싱에 몇 시간이 걸릴 수 있습니다. 레코드는 삭제되지 않고 임베딩만 삭제됩니다.",
-          "confirm": "임베딩 삭제"
+          "confirm": "임베딩 삭제",
+          "started": "정리가 시작되었습니다",
+          "startedDetail": "컬렉션을 다시 만들고 있습니다. 색인 생성이 완료될 때까지 검색 결과가 표시되지 않습니다."
         },
         "reindex": {
           "label": "임베딩 다시 인덱싱",
@@ -2763,12 +2854,28 @@
           "title": "모든 레코드를 다시 인덱싱할까요?",
           "body": "저장된 콘텐츠에서 모든 레코드의 임베딩을 다시 생성합니다. 소스를 다시 다운로드하거나 구문 분석하지 않습니다.",
           "warning": "대규모 배포에서는 오래 걸릴 수 있으며 백그라운드에서 실행됩니다.",
-          "confirm": "다시 인덱싱 시작"
+          "confirm": "다시 인덱싱 시작",
+          "started": "색인 생성이 다시 시작되었습니다",
+          "startedDetail": "레코드를 백그라운드에서 다시 임베딩합니다. 시간이 걸릴 수 있습니다."
         },
         "typePrompt": "확인하려면 {{token}}을(를) 입력하세요."
       },
+      "authorizeTab": {
+        "signInHeading": "공급자 계정으로 로그인",
+        "signInDescription": "ID 공급자의 로그인 창을 열어 액세스를 승인하세요. 로그인에 성공하면 바닥글에서 구성 계속을 선택해 동기화, 필터 및 레코드를 설정하세요.",
+        "authorizationStatus": "인증 상태",
+        "authorizationStatusDescription": "이 인스턴스는 공급자의 데이터에 액세스할 수 있습니다. 동기화 및 색인 생성을 계속 설정하거나, 액세스를 취소했거나 자격 증명을 교체했다면 다시 로그인하세요.",
+        "connected": "연결됨 — 레코드 구성으로 계속할 수 있습니다",
+        "signInFailed": "로그인이 완료되지 않았습니다. 다시 시도하거나 ID 공급자 설정을 확인하세요.",
+        "refreshAccess": "액세스 갱신",
+        "refreshAccessDescription": "토큰을 갱신해야 할 때 기존의 재인증 작업과 동일합니다.",
+        "authenticating": "인증 중…",
+        "reauthenticate": "공급자 계정으로 다시 인증"
+      },
       "validation": {
-        "syncFilterRequired": "저장하기 전에 {{field, lowercase}} 항목을 선택하세요. 각 커넥터 인스턴스에서는 {{field, lowercase}} 항목 하나만 동기화합니다."
+        "syncFilterRequired": "저장하기 전에 {{field, lowercase}} 항목을 선택하세요. 각 커넥터 인스턴스에서는 {{field, lowercase}} 항목 하나만 동기화합니다.",
+        "syncFilterSingleSelection": "{{field}} 항목이 {{count}}개 선택되어 있습니다. 각 커넥터 인스턴스에서는 {{field, lowercase}} 항목 하나만 동기화하므로 하나만 선택하세요.",
+        "syncFilterUnsupportedOperator": "저장된 구성에서 지원되지 않는 '{{operator}}' 규칙을 사용합니다. 계속하려면 {{field, lowercase}} 항목을 다시 선택하세요."
       }
     },
     "mcpServers": {
@@ -3314,7 +3421,8 @@
         "default": "기본값",
         "configured": "구성됨",
         "notConfigured": "구성되지 않음",
-        "active": "구성됨"
+        "active": "구성됨",
+        "builtIn": "기본 제공"
       },
       "heading": "웹 검색 구성",
       "methodsSection": "다양한 웹 검색 방식",
@@ -3323,7 +3431,99 @@
       "verifying": "연결을 확인하는 중...",
       "disabledReasonConfigure": "활성화하기 전에 먼저 이 공급자를 구성하세요.",
       "disabledReasonActive": "이 공급자를 활성화하기 전에 현재 활성화된 공급자를 비활성화하세요.",
-      "configureTip": "구성"
+      "configureTip": "구성",
+      "errors": {
+        "updateSettings": "웹 검색 설정을 업데이트하지 못했습니다",
+        "addProvider": "제공자를 추가하지 못했습니다",
+        "updateProvider": "제공자를 업데이트하지 못했습니다",
+        "deleteProvider": "제공자를 삭제하지 못했습니다",
+        "setDefaultProvider": "기본 제공자를 설정하지 못했습니다"
+      },
+      "actions": {
+        "configureBeforeDefault": "기본 제공자로 설정하기 전에 먼저 이 제공자를 구성하세요.",
+        "setAsDefault": "기본값으로 설정",
+        "setting": "설정 중...",
+        "editConfiguration": "구성 수정",
+        "deleteConfiguration": "구성 삭제"
+      },
+      "providers": {
+        "builtInDescription": "기본 제공이며 구성이 필요하지 않음"
+      },
+      "configure": {
+        "update": "업데이트",
+        "defaultKeyNotice": "현재 이 제공자가 기본값입니다. API 키를 업데이트해도 기본값은 유지됩니다.",
+        "editNotice": "기존 구성을 수정하고 있습니다. 저장하면 변경 사항이 즉시 적용됩니다.",
+        "apiKeyLabel": "API 키",
+        "apiKeyPlaceholder": "{{provider}} API 키 입력",
+        "apiKeyHelp": "{{url}}에서 API 키를 발급받으세요",
+        "secret": {
+          "show": "API 키 표시",
+          "hide": "API 키 숨기기"
+        },
+        "errors": {
+          "save": "제공자를 저장하지 못했습니다",
+          "delete": "제공자를 삭제하지 못했습니다"
+        },
+        "dangerZone": "위험 작업",
+        "removeDescription": "이 제공자의 구성을 삭제합니다. 기본 제공자인 경우 DuckDuckGo가 대신 사용됩니다.",
+        "deleteProvider": "제공자 삭제",
+        "delete": {
+          "cannotDelete": "{{provider}}을(를) 삭제할 수 없습니다",
+          "title": "{{provider}} 구성을 삭제할까요?",
+          "checkingUsage": "에이전트 사용 현황 확인 중…",
+          "usage_other": "현재 {{count}}개 에이전트에서 이 제공자를 사용 중입니다.",
+          "createdBy": "({{creator}}이(가) 만듦)",
+          "removeFromAgents": "이 제공자를 삭제하기 전에 해당 에이전트에서 웹 검색 구성을 제거하세요.",
+          "defaultDescription": "{{provider}} API 키가 영구적으로 삭제됩니다. DuckDuckGo가 기본 웹 검색 제공자가 됩니다.",
+          "description": "{{provider}} API 키가 영구적으로 삭제됩니다. 나중에 다시 구성할 수 있습니다."
+        }
+      },
+      "images": {
+        "maxImages": "LLM 호출당 최대 입력 이미지 수",
+        "invalidMaxImages": "1에서 500 사이의 정수를 입력하세요",
+        "maxImagesHelp": "1에서 500 사이의 정수를 입력하세요",
+        "costWarning": "이미지를 포함하면 웹 검색 쿼리 비용이 증가하고 응답이 지연될 수 있습니다."
+      },
+      "page": {
+        "toasts": {
+          "loadFailed": "웹 검색 설정을 불러오지 못했습니다",
+          "providerUpdated": "{{provider}}을(를) 업데이트했습니다",
+          "providerAdded": "{{provider}}을(를) 추가했습니다",
+          "configurationSaved": "구성을 저장했습니다.",
+          "providerConfigured": "{{provider}} 구성이 완료되었습니다. 사용하려면 기본값으로 설정을 클릭하세요.",
+          "providerRemoved": "{{provider}}을(를) 제거했습니다",
+          "duckDuckGoDefault": "DuckDuckGo가 기본 웹 검색 제공자로 설정되었습니다.",
+          "configurationDeleted": "구성을 삭제했습니다.",
+          "resetDefaultFailed": "기본 제공자를 재설정하지 못했습니다",
+          "configureProviderFirst": "먼저 {{provider}}을(를) 구성하세요",
+          "providerDefault": "{{provider}}이(가) 이제 기본값입니다",
+          "setDefaultFailed": "기본 제공자를 설정하지 못했습니다",
+          "deleteFailed": "제공자를 삭제하지 못했습니다",
+          "imageSettingsFailed": "이미지 설정을 업데이트하지 못했습니다",
+          "imagesEnabled": "이미지가 LLM으로 전송됩니다",
+          "imagesDisabled": "이미지가 LLM으로 전송되지 않습니다",
+          "maxImagesUpdated_other": "최대 이미지 수를 {{count}}개로 설정했습니다."
+        },
+        "providers": {
+          "heading": "웹 검색 제공자",
+          "description": "원하는 제공자를 구성한 다음 하나를 기본값으로 선택하세요"
+        },
+        "images": {
+          "heading": "이미지 설정",
+          "description": "웹 검색 중 LLM으로 이미지를 전송할지 설정합니다"
+        },
+        "delete": {
+          "cannotDelete": "{{provider}}을(를) 삭제할 수 없습니다",
+          "title": "{{provider}} 구성을 삭제할까요?",
+          "providerTitle": "제공자를 삭제할까요?",
+          "checkingUsage": "에이전트 사용 현황 확인 중…",
+          "usage_other": "현재 {{count}}개 에이전트에서 이 제공자를 사용 중입니다.",
+          "createdBy": "({{creator}}이(가) 만듦)",
+          "removeFromAgents": "이 제공자를 삭제하기 전에 해당 에이전트에서 웹 검색 구성을 제거하세요.",
+          "defaultDescription": "이 제공자는 현재 기본값입니다. 삭제하면 기본값이 DuckDuckGo로 재설정됩니다.",
+          "description": "제공자 구성이 영구적으로 삭제됩니다. 나중에 다시 구성할 수 있습니다."
+        }
+      }
     },
     "profile": {
       "subtitle": "개인 프로필 정보를 여기에서 관리합니다",
@@ -4666,6 +4866,15 @@
         "saveFailed": "이름을 저장하지 못했습니다. 다시 시도해 주세요."
       },
       "saveAndContinue": "저장 후 계속"
+    }
+  },
+  "connectors": {
+    "oauthCallback": {
+      "errors": {
+        "serverConfirmation": "서버에서 OAuth 완료를 확인하지 못했습니다.",
+        "authenticationFailed": "인증에 실패했습니다. 다시 시도하거나 관리자에게 문의해 주세요.",
+        "rejected": "서버에서 OAuth 인증을 거부했습니다."
+      }
     }
   },
   "keyboard": {

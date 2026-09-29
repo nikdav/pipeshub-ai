@@ -1932,6 +1932,10 @@
         "authenticatedMany": "{{count}} authenticated",
         "needsAuthOne": "1 needs sign-in",
         "needsAuthMany": "{{count}} need sign-in",
+        "active_one": "{{count}} active instance",
+        "active_other": "{{count}} active instances",
+        "inactive_one": "{{count}} inactive instance",
+        "inactive_other": "{{count}} inactive instances",
         "addInstance": "Add instance"
       },
       "typeDetail": {
@@ -2345,7 +2349,10 @@
         "configSaveError": "Failed to save configuration",
         "oauthAppUnavailableTitle": "No OAuth apps are available for this connector",
         "oauthAppUnavailableDescription": "Ask your workspace administrator to create an OAuth app for {{name}} first, then try again.",
-        "thisConnectorFallback": "this connector"
+        "thisConnectorFallback": "this connector",
+        "syncToggleDisabled": "Connector sync disabled",
+        "syncToggleEnabled": "Connector sync enabled",
+        "syncToggleError": "Could not update connector"
       },
       "tabs": {
         "authenticate": "Authenticate Instance",
@@ -2446,7 +2453,36 @@
         "oauthAppNamePlaceholder": "e.g., {{name}} OAuth",
         "oauthAppNameHelper": "This name is stored with the OAuth registration and appears when users pick a saved app for other instances.",
         "oauthAppNameRequired": "Enter a name for the new OAuth app.",
-        "oauthAppChangeReauthWarning": "Changing the OAuth app or its credentials will require you to authenticate your connector again."
+        "oauthAppChangeReauthWarning": "Changing the OAuth app or its credentials will require you to authenticate your connector again.",
+        "authTypes": {
+          "oauth": "OAuth 2.0",
+          "oauthAdminConsent": "OAuth (Admin Consent)",
+          "oauthCertificate": "OAuth (Certificate)",
+          "apiToken": "API Token",
+          "usernamePassword": "Username & Password",
+          "basicAuth": "Basic authentication",
+          "bearerToken": "Bearer Token",
+          "custom": "Custom",
+          "none": "None"
+        },
+        "redirectCallbackUrlCopyErrorTitle": "Could not copy",
+        "redirectCallbackUrlCopyErrorDescription": "Copy the URL manually or allow clipboard access for this site.",
+        "methodDescription": "Choose how this connector instance will authenticate to {{name}}.",
+        "oauthAppUnnamed": "Unnamed OAuth app",
+        "oauthAppsLoadFailed": "Could not load OAuth apps for this connector.",
+        "oauthAppLinkedNamed": "{{name}} (linked)",
+        "oauthAppLinkedRegistration": "Linked OAuth registration",
+        "oauthAppsEmptyLinkedAdminExisting": "This instance is linked to an OAuth registration that does not appear in the list. Choose another saved app below or keep the current link.",
+        "oauthAppsEmptyLinkedAdminNew": "This instance is linked to an OAuth registration that does not appear in the list. Choose another app below, use Create new, or keep the current link.",
+        "oauthAppsEmptyLinkedUser": "This instance is linked to an OAuth registration that does not appear in the list. You can switch once your administrator adds more saved apps.",
+        "oauthAppsEmptyRegisteredNone": "No OAuth apps are registered yet. Ask an administrator to add one in workspace connector settings.",
+        "oauthAppsEmptyCredentials": "Enter OAuth client credentials below, or pick a saved app once one is available.",
+        "oauthAppLabel": "OAuth app",
+        "oauthAppsLoading": "Loading OAuth configurations…",
+        "oauthAppPlaceholderAdmin": "Select OAuth app or create new…",
+        "oauthAppPlaceholder": "Select an OAuth app (required)…",
+        "oauthAppNew": "Create new OAuth app",
+        "oauthAppSelectionRequired": "Please select an OAuth app."
       },
       "docSection": {
         "title": "Setup Documentation",
@@ -2477,7 +2513,8 @@
       "instancePanel": {
         "overview": "Overview",
         "settings": "Settings",
-        "manageConfig": "Manage Configuration"
+        "manageConfig": "Manage Configuration",
+        "syncedAt": "Synced {{lastSynced}}"
       },
       "overview": {
         "progressPercent": "{{n}}% Complete",
@@ -2505,7 +2542,16 @@
         "recordsByType": "Records by Type",
         "noRecordTypes": "No record types available",
         "localWatcherLabel": "LOCAL WATCHER",
-        "localWatcherStatus": "{{state}} · {{pending}} pending · {{failed}} failed"
+        "localWatcherStatus": "{{state}} · {{pending}} pending · {{failed}} failed",
+        "actions": {
+          "syncStarted": "Sync started",
+          "syncStartFailed": "Failed to start sync",
+          "unexpectedError": "An unexpected error occurred.",
+          "reindexFailedStarted": "Reindexing failed records…",
+          "reindexFailedError": "Failed to reindex failed records",
+          "manualIndexStarted": "Indexing manual-indexing records…",
+          "manualIndexError": "Failed to start manual indexing"
+        }
       },
       "settingsTab": {
         "instanceName": "Instance Name",
@@ -2537,7 +2583,23 @@
         "removing": "This connector is being removed.",
         "configureFirst": "Finish configuration before you can enable sync.",
         "authenticateFirst": "Authenticate this connector before you can enable sync.",
-        "selected": "{{field}} selected"
+        "selected": "{{field}} selected",
+        "syncAction": {
+          "label": "Sync",
+          "syncing": "Syncing...",
+          "retry": "Sync Failed, Try Again",
+          "started": "Sync started",
+          "failed": "Sync failed",
+          "unexpectedError": "An unexpected error occurred."
+        },
+        "fullSyncAction": {
+          "label": "Full sync",
+          "syncing": "Full syncing…",
+          "retry": "Full sync failed, retry",
+          "started": "Full sync started",
+          "failed": "Full sync failed"
+        },
+        "connect": "Connect"
       },
       "instanceStatus": {
         "setup": {
@@ -2568,14 +2630,40 @@
         "unclaimedToast": "This connector has not been set up on a desktop yet. Open the PipesHub desktop app on the machine that owns this folder and enable sync there once.",
         "ownedByOtherDeviceToast": "This connector belongs to {{deviceName}}. Enable sync from the PipesHub desktop app on that device.",
         "ownedByOtherDeviceUnknownToast": "This connector belongs to another device. Enable sync from the PipesHub desktop app on that device.",
-        "deviceIdentityError": "Could not identify this device: {{error}}"
+        "deviceIdentityError": "Could not identify this device: {{error}}",
+        "anotherConnector": "another connector",
+        "rootPathConflict": "Local sync root is already synced by connector \"{{owner}}\": {{rootPath}}"
       },
       "schemaForm": {
         "tagsPlaceholder": "Type and press Enter to add tags",
         "removeTagAriaLabel": "Remove {{tag}}",
         "chooseFolder": "Choose folder",
         "folderPickerUnavailableTitle": "Folder picker unavailable",
-        "folderPickerUnavailableDescription": "Restart the desktop app or update to the latest build."
+        "folderPickerUnavailableDescription": "Restart the desktop app or update to the latest build.",
+        "examples": {
+          "copyFailed": "Failed to copy",
+          "heading": "Example",
+          "headingPlural": "Examples",
+          "copied": "Copied",
+          "copyToClipboard": "Copy to clipboard",
+          "copyExample": "Copy example {{label}}"
+        },
+        "selectPlaceholder": "Select...",
+        "fileUpload": {
+          "invalidJson": "File must be valid JSON.",
+          "missingRequiredFields": "Missing required fields: {{missing}}",
+          "fieldMustEqual": "Field \"{{field}}\" must equal \"{{value}}\".",
+          "contentMustContain": "Content must contain: {{pattern}}",
+          "contentMustNotContain": "Content must not contain: {{pattern}}",
+          "tooLarge": "File is too large ({{size}} KB). Maximum size is {{max}} KB for key, certificate, or JSON uploads.",
+          "invalidFile": "Invalid file.",
+          "readFailed": "Failed to read file.",
+          "optional": "(optional)",
+          "alreadyConfigured": "Already configured",
+          "replace": "Replace",
+          "clickToUpload": "Click to upload file",
+          "maxSize": "Max {{max}} KB"
+        }
       },
       "personal": {
         "desktopRequiredTitle": "Desktop app required",
@@ -2591,7 +2679,10 @@
       "errors": {
         "missingCreatedId": "Create succeeded but no connector id was returned",
         "createdConfigUnavailable": "Connector was created but configuration could not be loaded. Try reopening the panel.",
-        "authenticateFirst": "No connector ID found. Please complete authentication first."
+        "authenticateFirst": "No connector ID found. Please complete authentication first.",
+        "connectorInstanceUnavailable": "This connector instance is unavailable. Refresh the page and try again.",
+        "connectorTypeRequired": "Could not start sync because the connector type is missing.",
+        "settingsLoadFallback": "We couldn't load this connector's settings. Please try again in a moment."
       },
       "syncIntervals": {
         "5": "Every 5 Minutes",
@@ -2678,7 +2769,9 @@
           "title": "Delete all embeddings?",
           "body": "This drops the shared vector collection and recreates it empty.",
           "warning": "Search will stop returning results for everyone and stays broken until a reindex has finished. Reindexing large deployments can take hours. Your records are not deleted — only their embeddings.",
-          "confirm": "Delete embeddings"
+          "confirm": "Delete embeddings",
+          "started": "Cleanup started",
+          "startedDetail": "The collection is being recreated. Search stays empty until a reindex completes."
         },
         "reindex": {
           "label": "Reindex embeddings",
@@ -2687,12 +2780,28 @@
           "title": "Reindex all records?",
           "body": "This re-embeds every record from its stored content. Sources are not downloaded or parsed again.",
           "warning": "This can take a long time on large deployments and runs in the background.",
-          "confirm": "Start reindex"
+          "confirm": "Start reindex",
+          "started": "Reindex started",
+          "startedDetail": "Records are being re-embedded in the background. This can take a while."
         },
         "typePrompt": "Type {{token}} to confirm."
       },
+      "authorizeTab": {
+        "signInHeading": "Sign in with your provider",
+        "signInDescription": "Open your identity provider's sign-in window and approve access. When sign-in succeeds, choose Continue to configuration in the footer to set up sync, filters, and records.",
+        "authorizationStatus": "Authorization status",
+        "authorizationStatusDescription": "This instance can access your data at the provider. Continue to configure sync and indexing, or sign in again if you revoked access or rotated credentials.",
+        "connected": "Connected — you can continue to Configure records",
+        "signInFailed": "Sign-in did not complete. Try again, or check your identity provider settings.",
+        "refreshAccess": "Refresh access",
+        "refreshAccessDescription": "Same as the legacy Reauthenticate action when tokens need to be renewed.",
+        "authenticating": "Authenticating…",
+        "reauthenticate": "Re-authenticate with provider"
+      },
       "validation": {
-        "syncFilterRequired": "Select a {{field, lowercase}} before saving. Each connector instance syncs exactly one {{field, lowercase}}."
+        "syncFilterRequired": "Select a {{field, lowercase}} before saving. Each connector instance syncs exactly one {{field, lowercase}}.",
+        "syncFilterSingleSelection": "{{field}} has {{count}} selections. Narrow it down to one to continue, as each connector instance syncs exactly one {{field, lowercase}}.",
+        "syncFilterUnsupportedOperator": "Re-select the {{field, lowercase}} to continue. The saved configuration uses an unsupported '{{operator}}' rule."
       }
     },
     "mcpServers": {
@@ -3074,7 +3183,8 @@
         "default": "Default",
         "configured": "Configured",
         "notConfigured": "Not Configured",
-        "active": "Configured"
+        "active": "Configured",
+        "builtIn": "Built-in"
       },
       "heading": "Web Search Configuration",
       "methodsSection": "Different Web Search Methods",
@@ -3083,7 +3193,102 @@
       "verifying": "Verifying connection...",
       "disabledReasonConfigure": "Configure this provider first before enabling it.",
       "disabledReasonActive": "Disable the currently active provider before enabling this one.",
-      "configureTip": "Configure"
+      "configureTip": "Configure",
+      "errors": {
+        "updateSettings": "Failed to update web search settings",
+        "addProvider": "Failed to add provider",
+        "updateProvider": "Failed to update provider",
+        "deleteProvider": "Failed to delete provider",
+        "setDefaultProvider": "Failed to set default provider"
+      },
+      "actions": {
+        "configureBeforeDefault": "Configure this provider first before setting it as default.",
+        "setAsDefault": "Set as default",
+        "setting": "Setting...",
+        "editConfiguration": "Edit configuration",
+        "deleteConfiguration": "Delete configuration"
+      },
+      "providers": {
+        "builtInDescription": "Built-in, no configuration required"
+      },
+      "configure": {
+        "update": "Update",
+        "defaultKeyNotice": "This provider is currently set as default. Updating the API key will keep it as default.",
+        "editNotice": "Editing an existing configuration. Changes take effect immediately after saving.",
+        "apiKeyLabel": "API Key",
+        "apiKeyPlaceholder": "Enter your {{provider}} API key",
+        "apiKeyHelp": "Get your API key from {{url}}",
+        "secret": {
+          "show": "Show API key",
+          "hide": "Hide API key"
+        },
+        "errors": {
+          "save": "Failed to save provider",
+          "delete": "Failed to delete provider"
+        },
+        "dangerZone": "Danger zone",
+        "removeDescription": "Remove this provider's configuration. If it is the default, DuckDuckGo will be used instead.",
+        "deleteProvider": "Delete provider",
+        "delete": {
+          "cannotDelete": "Cannot delete {{provider}}",
+          "title": "Delete {{provider}} configuration?",
+          "checkingUsage": "Checking agent usage…",
+          "usage_one": "This provider is currently used by {{count}} agent:",
+          "usage_other": "This provider is currently used by {{count}} agents:",
+          "createdBy": "(created by {{creator}})",
+          "removeFromAgents": "Please remove the web search configuration from these agents before deleting this provider.",
+          "defaultDescription": "This will permanently remove your {{provider}} API key. DuckDuckGo will become the default web search provider.",
+          "description": "This will permanently remove your {{provider}} API key. You can reconfigure it later."
+        }
+      },
+      "images": {
+        "maxImages": "Maximum input images per LLM call",
+        "invalidMaxImages": "Enter a whole number between 1 and 500",
+        "maxImagesHelp": "Enter a whole number between 1 and 500",
+        "costWarning": "Including images may increase cost and add latency to web search queries."
+      },
+      "page": {
+        "toasts": {
+          "loadFailed": "Failed to load web search settings",
+          "providerUpdated": "{{provider}} updated",
+          "providerAdded": "{{provider}} added",
+          "configurationSaved": "Configuration saved successfully.",
+          "providerConfigured": "{{provider}} is now configured. Click \"Set as default\" to start using it.",
+          "providerRemoved": "{{provider}} removed",
+          "duckDuckGoDefault": "DuckDuckGo is now the default web search provider.",
+          "configurationDeleted": "Configuration deleted successfully.",
+          "resetDefaultFailed": "Failed to reset default provider",
+          "configureProviderFirst": "Configure {{provider}} first",
+          "providerDefault": "{{provider}} is now the default",
+          "setDefaultFailed": "Failed to set default provider",
+          "deleteFailed": "Failed to delete provider",
+          "imageSettingsFailed": "Failed to update image settings",
+          "imagesEnabled": "Images will be sent to LLM",
+          "imagesDisabled": "Images will not be sent to LLM",
+          "maxImagesUpdated_one": "Maximum image count set to {{count}}.",
+          "maxImagesUpdated_other": "Maximum image count set to {{count}}."
+        },
+        "providers": {
+          "heading": "Web Search Providers",
+          "description": "Configure any providers you want, then pick one as the default"
+        },
+        "images": {
+          "heading": "Image Settings",
+          "description": "Control whether images are sent to the LLM during web search"
+        },
+        "delete": {
+          "cannotDelete": "Cannot delete {{provider}}",
+          "title": "Delete {{provider}} configuration?",
+          "providerTitle": "Delete provider?",
+          "checkingUsage": "Checking agent usage…",
+          "usage_one": "This provider is currently used by {{count}} agent:",
+          "usage_other": "This provider is currently used by {{count}} agents:",
+          "createdBy": "(created by {{creator}})",
+          "removeFromAgents": "Please remove the web search configuration from these agents before deleting this provider.",
+          "defaultDescription": "This provider is currently the default. Deleting it will reset the default to DuckDuckGo.",
+          "description": "This will permanently remove the provider configuration. You can reconfigure it later."
+        }
+      }
     },
     "profile": {
       "subtitle": "Manage all your personal profile details here",
@@ -4687,6 +4892,15 @@
         "saveFailed": "Failed to save your name. Please try again."
       },
       "saveAndContinue": "Save & continue"
+    }
+  },
+  "connectors": {
+    "oauthCallback": {
+      "errors": {
+        "serverConfirmation": "The server did not confirm OAuth completion.",
+        "authenticationFailed": "Authentication failed. Please try again or contact your administrator.",
+        "rejected": "The server rejected the OAuth authentication."
+      }
     }
   },
   "keyboard": {

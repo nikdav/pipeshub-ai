@@ -8,8 +8,9 @@ import { useConnectorsStore } from '../../store';
 import { ConnectorsApi } from '../../api';
 import { fetchInstanceStats } from '../../utils/fetch-instance-stats';
 import { useToastStore } from '@/lib/store/toast-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 import { deriveSyncStatus } from '../instance-card/utils';
-import { runConnectorResync } from '../../utils/connector-sync-actions';
+import { getConnectorActionErrorText, runConnectorResync } from '../../utils/connector-sync-actions';
 import { isElectron } from '@/lib/electron';
 import { isLocalFsConnectorType, localFsDesktopToast } from '../../utils/local-fs-helpers';
 import { getElectronLocalSyncStatus } from '../../utils/electron-local-sync';
@@ -133,23 +134,39 @@ export function OverviewTab({
         addToast(localFsDesktopToast(outcome));
         return;
       }
-      addToast({ variant: 'success', title: 'Sync started' });
+      const titleText = localizedText('workspace.connectors.overview.actions.syncStarted');
+      addToast({ variant: 'success', title: t(titleText.key), titleText });
       bumpCatalogRefresh();
     } catch (error) {
       console.error('Failed to start sync', { connectorId, error });
-      const message =
-        error instanceof Error && error.message.trim()
-          ? error.message.trim()
-          : 'An unexpected error occurred.';
+      const storedMessageText = (error as { messageText?: unknown } | null)?.messageText;
+      const messageText =
+        storedMessageText && typeof storedMessageText === 'object' && 'key' in storedMessageText
+          ? (storedMessageText as { key: string; values?: Record<string, unknown> })
+          : getConnectorActionErrorText(error);
+      const message = error instanceof Error && error.message.trim() ? error.message.trim() : undefined;
+      const titleText = localizedText('workspace.connectors.overview.actions.syncStartFailed');
+      const fallbackText = localizedText('workspace.connectors.overview.actions.unexpectedError');
       addToast({
         variant: 'error',
-        title: 'Failed to start sync',
-        description: message,
+        title: t(titleText.key),
+        titleText,
+        ...(messageText
+          ? {
+              description: t(messageText.key, messageText.values),
+              descriptionText: messageText,
+            }
+          : message
+          ? { description: message }
+          : {
+              description: t(fallbackText.key),
+              descriptionText: fallbackText,
+            }),
       });
     } finally {
       setIsHeaderSyncBusy(false);
     }
-  }, [instance._key, instance.type, instance.isActive, isHeaderSyncBusy, addToast, bumpCatalogRefresh]);
+  }, [instance._key, instance.type, instance.isActive, isHeaderSyncBusy, addToast, bumpCatalogRefresh, t]);
 
   const handleReindexFailed = useCallback(async () => {
     const connectorId = instance._key;
@@ -157,15 +174,17 @@ export function OverviewTab({
     try {
       setIsReindexFailedBusy(true);
       await ConnectorsApi.reindexConnector(connectorId, ['FAILED']);
-      addToast({ variant: 'success', title: 'Reindexing failed records…' });
+      const titleText = localizedText('workspace.connectors.overview.actions.reindexFailedStarted');
+      addToast({ variant: 'success', title: t(titleText.key), titleText });
       await fetchInstanceStats(connectorId, { force: true });
     } catch (error) {
       console.error('Failed to reindex failed records', { connectorId, error });
-      addToast({ variant: 'error', title: 'Failed to reindex failed records' });
+      const titleText = localizedText('workspace.connectors.overview.actions.reindexFailedError');
+      addToast({ variant: 'error', title: t(titleText.key), titleText });
     } finally {
       setIsReindexFailedBusy(false);
     }
-  }, [instance._key, instance.isActive, isReindexFailedBusy, addToast, fetchInstanceStats]);
+  }, [instance._key, instance.isActive, isReindexFailedBusy, addToast, fetchInstanceStats, t]);
 
   const handleManualIndex = useCallback(async () => {
     const connectorId = instance._key;
@@ -173,15 +192,17 @@ export function OverviewTab({
     try {
       setIsManualIndexBusy(true);
       await ConnectorsApi.reindexConnector(connectorId, ['AUTO_INDEX_OFF']);
-      addToast({ variant: 'success', title: 'Indexing manual-indexing records…' });
+      const titleText = localizedText('workspace.connectors.overview.actions.manualIndexStarted');
+      addToast({ variant: 'success', title: t(titleText.key), titleText });
       await fetchInstanceStats(connectorId, { force: true });
     } catch (error) {
       console.error('Failed to start manual indexing', { connectorId, error });
-      addToast({ variant: 'error', title: 'Failed to start manual indexing' });
+      const titleText = localizedText('workspace.connectors.overview.actions.manualIndexError');
+      addToast({ variant: 'error', title: t(titleText.key), titleText });
     } finally {
       setIsManualIndexBusy(false);
     }
-  }, [instance._key, instance.isActive, isManualIndexBusy, addToast, fetchInstanceStats]);
+  }, [instance._key, instance.isActive, isManualIndexBusy, addToast, fetchInstanceStats, t]);
 
   // Show sync progress bar for syncing
   const showProgressBar = isSyncing && instance.syncProgress;

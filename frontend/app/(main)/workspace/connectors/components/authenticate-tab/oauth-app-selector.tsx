@@ -4,6 +4,7 @@ import React, { useCallback, useContext, useEffect, useMemo } from 'react';
 import { Callout, Flex, Text, Select, Spinner, TextField } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { useTranslation } from 'react-i18next';
+import { localizedText, resolveLocalizedText } from '@/lib/i18n/localized-text';
 import { WorkspaceRightPanelBodyPortalContext } from '@/app/(main)/workspace/components/workspace-right-panel';
 import { FormField } from '@/app/(main)/workspace/components/form-field';
 import { useUserStore, selectIsAdmin, selectIsProfileInitialized } from '@/lib/store/user-store';
@@ -24,8 +25,8 @@ function resolveOAuthInstanceName(source: OAuthInstanceNameSource | undefined): 
   return (source?.oauthInstanceName || source?.oauth_instance_name || '').trim();
 }
 
-function rowLabel(row: ConnectorOAuthAppListRow): string {
-  return resolveOAuthInstanceName(row) || 'Unnamed OAuth app';
+function rowLabel(row: ConnectorOAuthAppListRow, t: (key: string) => string): string {
+  return resolveOAuthInstanceName(row) || t('workspace.connectors.authTab.oauthAppUnnamed');
 }
 
 function oauthConfigPayload(full: Record<string, unknown>): Record<string, unknown> {
@@ -58,6 +59,9 @@ export function OAuthAppSelector() {
   const oauthInstanceNameError = useConnectorsStore((s) => s.formErrors.oauthInstanceName);
   const setAuthFormValue = useConnectorsStore((s) => s.setAuthFormValue);
   const oauthConfigError = useConnectorsStore((s) => s.formErrors.oauthConfigId);
+  const oauthConfigErrorMessage = oauthConfigError === 'oauthAppSelectionRequired'
+    ? t('workspace.connectors.authTab.oauthAppSelectionRequired')
+    : oauthConfigError;
   const oauthApps = useConnectorsStore((s) => s.oauthAppsList);
   const oauthAppsListPhase = useConnectorsStore((s) => s.oauthAppsListPhase);
   const fetchError = useConnectorsStore((s) => s.oauthAppsListFetchError);
@@ -119,7 +123,7 @@ export function OAuthAppSelector() {
         if (!cancelled) {
           finishOAuthAppsListFetch(connectorType, {
             ok: false,
-            error: 'Could not load OAuth apps for this connector.',
+            error: localizedText('workspace.connectors.authTab.oauthAppsLoadFailed'),
           });
         }
       });
@@ -262,8 +266,10 @@ export function OAuthAppSelector() {
     const name = resolveOAuthInstanceName(
       connectorConfig?.config?.auth as OAuthInstanceNameSource | undefined
     );
-    return name ? `${name} (linked)` : 'Linked OAuth registration';
-  }, [connectorConfig?.config?.auth]);
+    return name
+      ? t('workspace.connectors.authTab.oauthAppLinkedNamed', { name })
+      : t('workspace.connectors.authTab.oauthAppLinkedRegistration');
+  }, [connectorConfig?.config?.auth, t]);
 
   const showUnlistedRegistrationItem = useMemo(() => {
     if (!selectedIdTrimmed || loading) return false;
@@ -321,26 +327,26 @@ export function OAuthAppSelector() {
           if (showUnlistedRegistrationItem) {
             if (isAdmin === true) {
               return isExistingConnector
-                ? 'This instance is linked to an OAuth registration that does not appear in the list. Choose another saved app below or keep the current link.'
-                : 'This instance is linked to an OAuth registration that does not appear in the list. Choose another app below, use Create new, or keep the current link.';
+                ? t('workspace.connectors.authTab.oauthAppsEmptyLinkedAdminExisting')
+                : t('workspace.connectors.authTab.oauthAppsEmptyLinkedAdminNew');
             }
-            return 'This instance is linked to an OAuth registration that does not appear in the list. You can switch once your administrator adds more saved apps.';
+            return t('workspace.connectors.authTab.oauthAppsEmptyLinkedUser');
           }
           if (isProfileInitialized && isAdmin === false) {
-            return 'No OAuth apps are registered yet. Ask an administrator to add one in workspace connector settings.';
+            return t('workspace.connectors.authTab.oauthAppsEmptyRegisteredNone');
           }
           if (isAdmin === true) {
             return null;
           }
-          return 'Enter OAuth client credentials below, or pick a saved app once one is available.';
+          return t('workspace.connectors.authTab.oauthAppsEmptyCredentials');
         })()
       : null;
 
   return (
     <Flex direction="column" gap="3" style={{ width: '100%' }}>
       <Flex direction="column" gap="1">
-        <Text size="2" weight="medium" style={{ color: 'var(--gray-12)' }}>
-          OAuth app
+  <Text size="2" weight="medium" style={{ color: 'var(--gray-12)' }}>
+          {t('workspace.connectors.authTab.oauthAppLabel')}
         </Text>
         {oauthAppAuxiliaryDescription ? (
           <Text size="1" style={{ color: 'var(--gray-10)', lineHeight: 1.55, maxWidth: '100%' }}>
@@ -351,7 +357,7 @@ export function OAuthAppSelector() {
 
       {fetchError && (
         <Text size="1" color="red">
-          {fetchError}
+          {resolveLocalizedText(fetchError ?? undefined, t)}
         </Text>
       )}
 
@@ -359,7 +365,7 @@ export function OAuthAppSelector() {
         <Flex align="center" gap="2" py="2">
           <Spinner />
           <Text size="2" color="gray">
-            Loading OAuth configurations…
+            {t('workspace.connectors.authTab.oauthAppsLoading')}
           </Text>
         </Flex>
       ) : showOAuthSelect ? (
@@ -367,8 +373,8 @@ export function OAuthAppSelector() {
           <Select.Root value={radixValue} onValueChange={handleValueChange}>
             <Select.Trigger
               data-ph-oauth-app-select
-              color={oauthConfigError ? 'red' : undefined}
-              data-invalid={oauthConfigError ? true : undefined}
+              color={oauthConfigErrorMessage ? 'red' : undefined}
+              data-invalid={oauthConfigErrorMessage ? true : undefined}
               style={{
                 width: '100%',
                 minHeight: 40,
@@ -376,11 +382,11 @@ export function OAuthAppSelector() {
                 minWidth: 0,
                 alignItems: 'center',
               }}
-              placeholder={
+              placeholder={t(
                 isAdmin === true
-                  ? 'Select OAuth app or create new…'
-                  : 'Select an OAuth app (required)…'
-              }
+                  ? 'workspace.connectors.authTab.oauthAppPlaceholderAdmin'
+                  : 'workspace.connectors.authTab.oauthAppPlaceholder',
+              )}
             />
             <Select.Content
               position="popper"
@@ -388,11 +394,13 @@ export function OAuthAppSelector() {
               container={panelBodyPortal ?? undefined}
             >
               {isAdmin === true ? (
-                <Select.Item value={MANUAL_VALUE}>Create new OAuth app</Select.Item>
+                <Select.Item value={MANUAL_VALUE}>
+                  {t('workspace.connectors.authTab.oauthAppNew')}
+                </Select.Item>
               ) : null}
               {oauthApps.map((app) => (
                 <Select.Item key={app._id} value={app._id}>
-                  {rowLabel(app)}
+                  {rowLabel(app, t)}
                 </Select.Item>
               ))}
               {showUnlistedRegistrationItem ? (
@@ -400,9 +408,9 @@ export function OAuthAppSelector() {
               ) : null}
             </Select.Content>
           </Select.Root>
-          {oauthConfigError ? (
+          {oauthConfigErrorMessage ? (
             <Text size="1" color="red">
-              {oauthConfigError}
+              {oauthConfigErrorMessage}
             </Text>
           ) : null}
         </Flex>

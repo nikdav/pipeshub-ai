@@ -2004,6 +2004,8 @@
         "authenticatedMany": "{{count}} 個已驗證",
         "needsAuthOne": "1 個需要登入",
         "needsAuthMany": "{{count}} 個需要登入",
+        "active_other": "{{count}} 個作用中的執行個體",
+        "inactive_other": "{{count}} 個非作用中的執行個體",
         "addInstance": "新增執行個體"
       },
       "typeDetail": {
@@ -2421,7 +2423,10 @@
         "configSaveError": "無法儲存設定",
         "oauthAppUnavailableTitle": "此連接器沒有可用的 OAuth 應用程式",
         "oauthAppUnavailableDescription": "請先請您的工作區管理員為 {{name}} 建立 OAuth 應用程式，然後再試一次。",
-        "thisConnectorFallback": "此連接器"
+        "thisConnectorFallback": "此連接器",
+        "syncToggleDisabled": "已停用連接器同步",
+        "syncToggleEnabled": "已啟用連接器同步",
+        "syncToggleError": "無法更新連接器"
       },
       "tabs": {
         "authenticate": "驗證執行個體",
@@ -2522,7 +2527,36 @@
         "oauthAppNamePlaceholder": "例如：{{name}} OAuth",
         "oauthAppNameHelper": "此名稱會與 OAuth 註冊一起儲存，並在使用者為其他執行個體挑選已儲存的應用程式時顯示。",
         "oauthAppNameRequired": "請為新的 OAuth 應用程式輸入名稱。",
-        "oauthAppChangeReauthWarning": "變更 OAuth 應用程式或其憑證後，您必須重新驗證您的連接器。"
+        "oauthAppChangeReauthWarning": "變更 OAuth 應用程式或其憑證後，您必須重新驗證您的連接器。",
+        "authTypes": {
+          "oauth": "OAuth 2.0",
+          "oauthAdminConsent": "OAuth（管理員同意）",
+          "oauthCertificate": "OAuth（憑證）",
+          "apiToken": "API 權杖",
+          "usernamePassword": "使用者名稱與密碼",
+          "basicAuth": "基本驗證",
+          "bearerToken": "Bearer 權杖",
+          "custom": "自訂",
+          "none": "無"
+        },
+        "redirectCallbackUrlCopyErrorTitle": "無法複製",
+        "redirectCallbackUrlCopyErrorDescription": "請手動複製 URL，或允許此網站存取剪貼簿。",
+        "methodDescription": "選擇此連接器執行個體向 {{name}} 驗證的方式。",
+        "oauthAppUnnamed": "未命名的 OAuth 應用程式",
+        "oauthAppsLoadFailed": "無法載入此連接器的 OAuth 應用程式。",
+        "oauthAppLinkedNamed": "{{name}}（已連結）",
+        "oauthAppLinkedRegistration": "已連結的 OAuth 註冊",
+        "oauthAppsEmptyLinkedAdminExisting": "此執行個體已連結至未顯示在清單中的 OAuth 註冊。請在下方選擇其他已儲存的應用程式，或保留目前連結。",
+        "oauthAppsEmptyLinkedAdminNew": "此執行個體已連結至未顯示在清單中的 OAuth 註冊。請在下方選擇其他應用程式、選擇「建立新應用程式」，或保留目前連結。",
+        "oauthAppsEmptyLinkedUser": "此執行個體已連結至未顯示在清單中的 OAuth 註冊。管理員新增已儲存的應用程式後，您就能切換。",
+        "oauthAppsEmptyRegisteredNone": "目前尚未註冊任何 OAuth 應用程式。請洽管理員，在工作區連接器設定中新增應用程式。",
+        "oauthAppsEmptyCredentials": "請在下方輸入 OAuth 用戶端憑證，或在有可用項目時選取已儲存的應用程式。",
+        "oauthAppLabel": "OAuth 應用程式",
+        "oauthAppsLoading": "正在載入 OAuth 設定…",
+        "oauthAppPlaceholderAdmin": "選取 OAuth 應用程式或建立新應用程式…",
+        "oauthAppPlaceholder": "選取 OAuth 應用程式（必填）…",
+        "oauthAppNew": "建立新的 OAuth 應用程式",
+        "oauthAppSelectionRequired": "請選取 OAuth 應用程式。"
       },
       "docSection": {
         "title": "設定文件",
@@ -2553,7 +2587,8 @@
       "instancePanel": {
         "overview": "總覽",
         "settings": "設定",
-        "manageConfig": "管理設定"
+        "manageConfig": "管理設定",
+        "syncedAt": "同步時間：{{lastSynced}}"
       },
       "overview": {
         "progressPercent": "已完成 {{n}}%",
@@ -2581,7 +2616,16 @@
         "recordsByType": "依類型統計的記錄",
         "noRecordTypes": "沒有可用的記錄類型",
         "localWatcherLabel": "本機監看程式",
-        "localWatcherStatus": "{{state}} · {{pending}} 個待處理 · {{failed}} 個失敗"
+        "localWatcherStatus": "{{state}} · {{pending}} 個待處理 · {{failed}} 個失敗",
+        "actions": {
+          "syncStarted": "同步已開始",
+          "syncStartFailed": "無法啟動同步",
+          "unexpectedError": "發生未預期的錯誤。",
+          "reindexFailedStarted": "正在重新索引失敗的記錄…",
+          "reindexFailedError": "重新索引失敗的記錄失敗",
+          "manualIndexStarted": "正在索引手動索引的記錄…",
+          "manualIndexError": "無法啟動手動索引"
+        }
       },
       "settingsTab": {
         "instanceName": "執行個體名稱",
@@ -2613,7 +2657,23 @@
         "removing": "正在移除此連接器。",
         "configureFirst": "請先完成設定，才能啟用同步。",
         "authenticateFirst": "請先驗證此連接器，才能啟用同步。",
-        "selected": "已選取 {{field}}"
+        "selected": "已選取 {{field}}",
+        "syncAction": {
+          "label": "同步",
+          "syncing": "同步中…",
+          "retry": "同步失敗，請再試一次",
+          "started": "同步已開始",
+          "failed": "同步失敗",
+          "unexpectedError": "發生未預期的錯誤。"
+        },
+        "fullSyncAction": {
+          "label": "完整同步",
+          "syncing": "完整同步中…",
+          "retry": "完整同步失敗，請再試一次",
+          "started": "完整同步已開始",
+          "failed": "完整同步失敗"
+        },
+        "connect": "連線"
       },
       "instanceStatus": {
         "setup": {
@@ -2644,14 +2704,40 @@
         "unclaimedToast": "此連接器尚未在桌面端設定。請在擁有此資料夾的電腦上開啟 PipesHub 桌面應用程式，並在其中啟用一次同步。",
         "ownedByOtherDeviceToast": "此連接器屬於 {{deviceName}}。請在該裝置上的 PipesHub 桌面應用程式中啟用同步。",
         "ownedByOtherDeviceUnknownToast": "此連接器屬於另一台裝置。請在該裝置上的 PipesHub 桌面應用程式中啟用同步。",
-        "deviceIdentityError": "無法識別此裝置：{{error}}"
+        "deviceIdentityError": "無法識別此裝置：{{error}}",
+        "anotherConnector": "其他連接器",
+        "rootPathConflict": "本機同步根目錄已由連接器「{{owner}}」同步：{{rootPath}}"
       },
       "schemaForm": {
         "tagsPlaceholder": "輸入文字後按 Enter 鍵新增標籤",
         "removeTagAriaLabel": "移除 {{tag}}",
         "chooseFolder": "選擇資料夾",
         "folderPickerUnavailableTitle": "資料夾選取器無法使用",
-        "folderPickerUnavailableDescription": "請重新啟動桌面應用程式，或更新至最新版本。"
+        "folderPickerUnavailableDescription": "請重新啟動桌面應用程式，或更新至最新版本。",
+        "examples": {
+          "copyFailed": "複製失敗",
+          "heading": "範例",
+          "headingPlural": "範例",
+          "copied": "已複製",
+          "copyToClipboard": "複製到剪貼簿",
+          "copyExample": "複製範例 {{label}}"
+        },
+        "selectPlaceholder": "選取…",
+        "fileUpload": {
+          "invalidJson": "檔案必須是有效的 JSON。",
+          "missingRequiredFields": "缺少必要欄位：{{missing}}",
+          "fieldMustEqual": "欄位「{{field}}」必須等於「{{value}}」。",
+          "contentMustContain": "內容必須包含：{{pattern}}",
+          "contentMustNotContain": "內容不得包含：{{pattern}}",
+          "tooLarge": "檔案過大（{{size}} KB）。金鑰、憑證或 JSON 上傳的大小上限為 {{max}} KB。",
+          "invalidFile": "檔案無效。",
+          "readFailed": "讀取檔案失敗。",
+          "optional": "（選填）",
+          "alreadyConfigured": "已設定",
+          "replace": "取代",
+          "clickToUpload": "按一下以上傳檔案",
+          "maxSize": "上限 {{max}} KB"
+        }
       },
       "personal": {
         "desktopRequiredTitle": "需要桌面應用程式",
@@ -2667,7 +2753,10 @@
       "errors": {
         "missingCreatedId": "建立成功，但未傳回連接器 ID",
         "createdConfigUnavailable": "連接器已建立，但無法載入其設定。請嘗試重新開啟面板。",
-        "authenticateFirst": "找不到連接器 ID。請先完成驗證。"
+        "authenticateFirst": "找不到連接器 ID。請先完成驗證。",
+        "connectorInstanceUnavailable": "此連接器執行個體無法使用。請重新整理頁面後再試一次。",
+        "connectorTypeRequired": "缺少連接器類型，無法啟動同步。",
+        "settingsLoadFallback": "無法載入此連接器的設定。請稍後再試一次。"
       },
       "syncIntervals": {
         "5": "每 5 分鐘",
@@ -2754,7 +2843,9 @@
           "title": "刪除所有嵌入？",
           "body": "此操作會刪除共用的向量集合並重新建立一個空白集合。",
           "warning": "所有人的搜尋都將無法傳回結果，並會持續如此，直到重新索引完成。在大型部署中，重新索引可能需要數小時。您的記錄不會被刪除——只會刪除其嵌入。",
-          "confirm": "刪除嵌入"
+          "confirm": "刪除嵌入",
+          "started": "清理已開始",
+          "startedDetail": "正在重建集合。重新索引完成前，搜尋結果會是空的。"
         },
         "reindex": {
           "label": "重新索引嵌入",
@@ -2763,12 +2854,28 @@
           "title": "重新索引所有記錄？",
           "body": "此操作會依每筆記錄已儲存的內容重新產生其嵌入。不會重新下載或剖析來源。",
           "warning": "在大型部署中這可能需要很長時間，且會在背景執行。",
-          "confirm": "開始重新索引"
+          "confirm": "開始重新索引",
+          "started": "重新索引已開始",
+          "startedDetail": "正在背景重新嵌入記錄，可能需要一些時間。"
         },
         "typePrompt": "請輸入 {{token}} 以確認。"
       },
+      "authorizeTab": {
+        "signInHeading": "使用您的 provider 登入",
+        "signInDescription": "開啟身分識別 provider 的登入視窗並核准存取權。登入成功後，請選取頁尾的「繼續設定」，以設定同步、篩選器和記錄。",
+        "authorizationStatus": "授權狀態",
+        "authorizationStatusDescription": "此執行個體可存取 provider 上的資料。請繼續設定同步與索引；如果您已撤銷存取權或輪替憑證，請重新登入。",
+        "connected": "已連線 — 您可以繼續設定記錄",
+        "signInFailed": "登入未完成。請再試一次，或檢查身分識別 provider 設定。",
+        "refreshAccess": "重新整理存取權",
+        "refreshAccessDescription": "等同舊版的「重新驗證」操作，可在權杖需要更新時使用。",
+        "authenticating": "驗證中…",
+        "reauthenticate": "重新向 provider 驗證"
+      },
       "validation": {
-        "syncFilterRequired": "儲存前請選取 {{field, lowercase}}。每個連接器執行個體只會同步一個 {{field, lowercase}}。"
+        "syncFilterRequired": "儲存前請選取 {{field, lowercase}}。每個連接器執行個體只會同步一個 {{field, lowercase}}。",
+        "syncFilterSingleSelection": "{{field}}目前有 {{count}} 個選取項目。請縮減為一個再繼續，因為每個連接器執行個體只會同步一個 {{field, lowercase}}。",
+        "syncFilterUnsupportedOperator": "請重新選取 {{field, lowercase}} 以繼續。已儲存的設定使用不支援的「{{operator}}」規則。"
       }
     },
     "mcpServers": {
@@ -3314,7 +3421,8 @@
         "default": "預設",
         "configured": "已設定",
         "notConfigured": "尚未設定",
-        "active": "已設定"
+        "active": "已設定",
+        "builtIn": "內建"
       },
       "heading": "網頁搜尋設定",
       "methodsSection": "各種網頁搜尋方式",
@@ -3323,7 +3431,99 @@
       "verifying": "正在驗證連線...",
       "disabledReasonConfigure": "請先設定此提供者後再啟用。",
       "disabledReasonActive": "請先停用目前啟用的提供者，再啟用此提供者。",
-      "configureTip": "設定"
+      "configureTip": "設定",
+      "errors": {
+        "updateSettings": "更新網頁搜尋設定失敗",
+        "addProvider": "新增供應商失敗",
+        "updateProvider": "更新供應商失敗",
+        "deleteProvider": "刪除供應商失敗",
+        "setDefaultProvider": "設定預設供應商失敗"
+      },
+      "actions": {
+        "configureBeforeDefault": "請先設定此供應商，再將其設為預設。",
+        "setAsDefault": "設為預設",
+        "setting": "設定中…",
+        "editConfiguration": "編輯設定",
+        "deleteConfiguration": "刪除設定"
+      },
+      "providers": {
+        "builtInDescription": "內建，無需設定"
+      },
+      "configure": {
+        "update": "更新",
+        "defaultKeyNotice": "此供應商目前是預設項目。更新 API 金鑰後仍會維持為預設項目。",
+        "editNotice": "正在編輯現有設定。儲存後變更會立即生效。",
+        "apiKeyLabel": "API 金鑰",
+        "apiKeyPlaceholder": "輸入您的 {{provider}} API 金鑰",
+        "apiKeyHelp": "請從 {{url}} 取得 API 金鑰",
+        "secret": {
+          "show": "顯示 API 金鑰",
+          "hide": "隱藏 API 金鑰"
+        },
+        "errors": {
+          "save": "儲存供應商失敗",
+          "delete": "刪除供應商失敗"
+        },
+        "dangerZone": "危險區域",
+        "removeDescription": "移除此供應商的設定。如果它是預設項目，將改用 DuckDuckGo。",
+        "deleteProvider": "刪除供應商",
+        "delete": {
+          "cannotDelete": "無法刪除 {{provider}}",
+          "title": "要刪除 {{provider}} 設定嗎？",
+          "checkingUsage": "正在檢查代理程式使用情況…",
+          "usage_other": "目前有 {{count}} 個代理程式使用此供應商：",
+          "createdBy": "（由 {{creator}} 建立）",
+          "removeFromAgents": "刪除此供應商前，請先從這些代理程式移除網頁搜尋設定。",
+          "defaultDescription": "這會永久移除您的 {{provider}} API 金鑰，並將 DuckDuckGo 設為預設網頁搜尋供應商。",
+          "description": "這會永久移除您的 {{provider}} API 金鑰。您之後可以重新設定。"
+        }
+      },
+      "images": {
+        "maxImages": "每次 LLM 呼叫的輸入圖片上限",
+        "invalidMaxImages": "請輸入 1 到 500 之間的整數",
+        "maxImagesHelp": "請輸入 1 到 500 之間的整數",
+        "costWarning": "加入圖片可能會提高費用，並增加網頁搜尋查詢的延遲時間。"
+      },
+      "page": {
+        "toasts": {
+          "loadFailed": "載入網頁搜尋設定失敗",
+          "providerUpdated": "已更新 {{provider}}",
+          "providerAdded": "已新增 {{provider}}",
+          "configurationSaved": "設定已成功儲存。",
+          "providerConfigured": "已設定 {{provider}}。請按一下「設為預設」開始使用。",
+          "providerRemoved": "已移除 {{provider}}",
+          "duckDuckGoDefault": "DuckDuckGo 現在是預設的網頁搜尋供應商。",
+          "configurationDeleted": "設定已成功刪除。",
+          "resetDefaultFailed": "重設預設供應商失敗",
+          "configureProviderFirst": "請先設定 {{provider}}",
+          "providerDefault": "{{provider}} 現在是預設項目",
+          "setDefaultFailed": "設定預設供應商失敗",
+          "deleteFailed": "刪除供應商失敗",
+          "imageSettingsFailed": "更新圖片設定失敗",
+          "imagesEnabled": "圖片將傳送至 LLM",
+          "imagesDisabled": "圖片不會傳送至 LLM",
+          "maxImagesUpdated_other": "圖片數量上限已設為 {{count}}。"
+        },
+        "providers": {
+          "heading": "網頁搜尋供應商",
+          "description": "設定需要的供應商，然後選擇一個設為預設"
+        },
+        "images": {
+          "heading": "圖片設定",
+          "description": "控制網頁搜尋時是否將圖片傳送至 LLM"
+        },
+        "delete": {
+          "cannotDelete": "無法刪除 {{provider}}",
+          "title": "要刪除 {{provider}} 設定嗎？",
+          "providerTitle": "要刪除供應商嗎？",
+          "checkingUsage": "正在檢查代理程式使用情況…",
+          "usage_other": "目前有 {{count}} 個代理程式使用此供應商：",
+          "createdBy": "（由 {{creator}} 建立）",
+          "removeFromAgents": "刪除此供應商前，請先從這些代理程式移除網頁搜尋設定。",
+          "defaultDescription": "此供應商目前是預設項目。刪除後，預設值會重設為 DuckDuckGo。",
+          "description": "這會永久移除供應商設定。您之後可以重新設定。"
+        }
+      }
     },
     "profile": {
       "subtitle": "在此管理您所有的個人資料詳細內容",
@@ -4666,6 +4866,15 @@
         "saveFailed": "儲存姓名失敗。請再試一次。"
       },
       "saveAndContinue": "儲存並繼續"
+    }
+  },
+  "connectors": {
+    "oauthCallback": {
+      "errors": {
+        "serverConfirmation": "伺服器未確認 OAuth 流程已完成。",
+        "authenticationFailed": "驗證失敗。請再試一次，或聯絡管理員。",
+        "rejected": "伺服器拒絕了 OAuth 驗證。"
+      }
     }
   },
   "keyboard": {

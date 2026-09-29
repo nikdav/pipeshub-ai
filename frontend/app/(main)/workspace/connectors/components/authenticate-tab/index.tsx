@@ -19,6 +19,7 @@ import { resolveAuthFields, formatAuthTypeName } from './helpers';
 import { WorkspaceRightPanelBodyPortalContext } from '@/app/(main)/workspace/components/workspace-right-panel';
 import { useUserStore, selectIsAdmin, selectIsProfileInitialized } from '@/lib/store/user-store';
 import { useToastStore } from '@/lib/store/toast-store';
+import { localizedText } from '@/lib/i18n/localized-text';
 import { ConnectorsApi } from '../../api';
 import { FormField } from '@/app/(main)/workspace/components/form-field';
 import {
@@ -343,10 +344,18 @@ export function AuthenticateTab() {
                       duration: 2500,
                     });
                   } catch {
+                    const titleText = localizedText(
+                      'workspace.connectors.authTab.redirectCallbackUrlCopyErrorTitle',
+                    );
+                    const descriptionText = localizedText(
+                      'workspace.connectors.authTab.redirectCallbackUrlCopyErrorDescription',
+                    );
                     addToast({
                       variant: 'error',
-                      title: 'Could not copy',
-                      description: 'Copy the URL manually or allow clipboard access for this site.',
+                      title: t(titleText.key),
+                      titleText,
+                      description: t(descriptionText.key),
+                      descriptionText,
                       duration: 4000,
                     });
                   }
@@ -406,7 +415,7 @@ export function AuthenticateTab() {
         <Flex direction="column" gap="1">
           <Text size="3" weight="medium" style={{ color: 'var(--gray-12)' }}>
             {t('workspace.connectors.authTab.credentialsHeading', {
-              name: formatAuthTypeName(selectedAuthType),
+              name: formatAuthTypeName(selectedAuthType, t),
             })}
           </Text>
           <Text size="1" style={{ color: 'var(--gray-10)', lineHeight: 1.55 }}>
@@ -528,10 +537,10 @@ export function AuthenticateTab() {
         <Flex direction="column" gap="4" style={configureCardShell}>
           <Flex direction="column" gap="1">
             <Text size="3" weight="medium" style={{ color: 'var(--gray-12)' }}>
-              Authentication method
+              {t('workspace.connectors.authTab.methodLabel')}
             </Text>
             <Text size="1" style={{ color: 'var(--gray-10)', lineHeight: 1.55 }}>
-              Choose how this connector instance will authenticate to {panelConnector.name}.
+              {t('workspace.connectors.authTab.methodDescription', { name: panelConnector.name })}
             </Text>
           </Flex>
           <Select.Root
@@ -549,7 +558,7 @@ export function AuthenticateTab() {
             >
               {supportedAuthTypes.map((type) => (
                 <Select.Item key={type} value={type}>
-                  {formatAuthTypeName(type)}
+                  {formatAuthTypeName(type, t)}
                 </Select.Item>
               ))}
             </Select.Content>

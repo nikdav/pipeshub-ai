@@ -1,5 +1,7 @@
 import type { ConnectorAuthConfig, AuthSchemaField } from '../../types';
 
+type TranslateText = (key: string, options?: Record<string, unknown>) => string;
+
 /**
  * Resolve auth fields from schema based on selected auth type.
  * Handles both single-schema and multi-schema formats.
@@ -26,17 +28,18 @@ export function resolveAuthFields(
 /**
  * Format auth type enum to display name.
  */
-export function formatAuthTypeName(authType: string): string {
+export function formatAuthTypeName(authType: string, t: TranslateText): string {
   const map: Record<string, string> = {
-    OAUTH: 'OAuth 2.0',
-    OAUTH_ADMIN_CONSENT: 'OAuth (Admin Consent)',
-    OAUTH_CERTIFICATE: 'OAuth (Certificate)',
-    API_TOKEN: 'API Token',
-    USERNAME_PASSWORD: 'Username & Password',
-    BASIC_AUTH: 'Basic authentication',
-    BEARER_TOKEN: 'Bearer Token',
-    CUSTOM: 'Custom',
-    NONE: 'None',
+    OAUTH: 'oauth',
+    OAUTH_ADMIN_CONSENT: 'oauthAdminConsent',
+    OAUTH_CERTIFICATE: 'oauthCertificate',
+    API_TOKEN: 'apiToken',
+    USERNAME_PASSWORD: 'usernamePassword',
+    BASIC_AUTH: 'basicAuth',
+    BEARER_TOKEN: 'bearerToken',
+    CUSTOM: 'custom',
+    NONE: 'none',
   };
-  return map[authType] || authType;
+  const key = map[authType];
+  return key ? t(`workspace.connectors.authTab.authTypes.${key}`) : authType;
 }

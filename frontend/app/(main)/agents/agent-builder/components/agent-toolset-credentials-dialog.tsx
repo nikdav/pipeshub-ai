@@ -16,6 +16,7 @@ import {
 } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { LoadingButton } from '@/app/components/ui/loading-button';
+import { resolveLocalizedText, type LocalizedTextValue, type TranslateText } from '@/lib/i18n/localized-text';
 import { SchemaFormField } from '@/app/(main)/workspace/connectors/components/schema-form-field';
 import type { AuthSchemaField } from '@/app/(main)/workspace/connectors/types';
 import { isNoneAuthType, isOAuthType, isCredentialAuthType } from '@/app/(main)/workspace/connectors/utils/auth-helpers';
@@ -77,7 +78,7 @@ export function AgentToolsetCredentialsDialog({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalizedTextValue | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(toolset.isAuthenticated ?? false);
 
   useEffect(() => {
@@ -335,7 +336,7 @@ export function AgentToolsetCredentialsDialog({
                 ) : null}
                 <Flex gap="2" wrap="wrap" mt="2">
                   <Badge size="1" color="gray">
-                    {formatAuthTypeName(authType)}
+                    {formatAuthTypeName(authType, t)}
                   </Badge>
                   <Badge size="1" color="gray" variant="surface">
                     {t('agentBuilder.toolsetCredentialsBadge')}
@@ -378,7 +379,9 @@ export function AgentToolsetCredentialsDialog({
 
           {!schemaLoading && error ? (
             <Callout.Root color="red" variant="surface" size="1" mb="3">
-              <Callout.Text style={{ flex: 1, minWidth: 0 }}>{error}</Callout.Text>
+              <Callout.Text style={{ flex: 1, minWidth: 0 }}>
+                {resolveLocalizedText(error, t as TranslateText)}
+              </Callout.Text>
             </Callout.Root>
           ) : null}
 

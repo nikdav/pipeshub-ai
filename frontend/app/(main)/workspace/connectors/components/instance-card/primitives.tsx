@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { localizedText, type LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { Button, Flex, Text } from '@radix-ui/themes';
 import { MaterialIcon } from '@/app/components/ui/MaterialIcon';
 import { ConfirmationDialog } from '@/app/(main)/workspace/components/confirmation-dialog';
 import { useToastStore } from '@/lib/store/toast-store';
-import { runConnectorResync } from '../../utils/connector-sync-actions';
+import { getConnectorActionErrorText, runConnectorResync } from '../../utils/connector-sync-actions';
 import { localFsDesktopToast } from '../../utils/local-fs-helpers';
 
 // ========================================
@@ -82,10 +83,22 @@ export function PillDivider() {
 
 type SyncState = 'idle' | 'syncing' | 'failed';
 
-function syncErrorMessage(error: unknown, fallback: string): string {
+function syncErrorMessage(error: unknown): LocalizedTextValue {
+  const messageText = (error as { messageText?: unknown } | null)?.messageText;
+  if (messageText && typeof messageText === 'object' && 'key' in messageText) {
+    return messageText as LocalizedTextValue;
+  }
+  const invariantText = getConnectorActionErrorText(error);
+  if (invariantText) return invariantText;
   if (error instanceof Error && error.message.trim()) return error.message.trim();
   if (typeof error === 'string' && error.trim()) return error.trim();
-  return fallback;
+  return localizedText('workspace.connectors.instanceCard.syncAction.unexpectedError');
+}
+
+function errorDescriptionFields(value: LocalizedTextValue, t: (key: string, options?: Record<string, unknown>) => string) {
+  return typeof value === 'string'
+    ? { description: value }
+    : { description: t(value.key, value.values), descriptionText: value };
 }
 
 /** Self-contained button that triggers resync API and manages its own state */
@@ -97,6 +110,7 @@ export function SyncButton({
   /** Registry connector type (e.g. "Google Drive"), not the instance display name */
   connectorType: string;
 }) {
+  const { t } = useTranslation();
   const [state, setState] = useState<SyncState>('idle');
   const addToast = useToastStore((s) => s.addToast);
 
@@ -110,17 +124,21 @@ export function SyncButton({
         addToast(localFsDesktopToast(outcome));
         return;
       }
-      addToast({ variant: 'success', title: 'Sync started' });
+      const titleText = localizedText('workspace.connectors.instanceCard.syncAction.started');
+      addToast({ variant: 'success', title: t(titleText.key), titleText });
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setState('idle');
     } catch (error) {
       console.error('Sync failed', { connectorId, error });
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setState('failed');
+      const titleText = localizedText('workspace.connectors.instanceCard.syncAction.failed');
+      const description = syncErrorMessage(error);
       addToast({
         variant: 'error',
-        title: 'Sync failed',
-        description: syncErrorMessage(error, 'An unexpected error occurred.'),
+        title: t(titleText.key),
+        titleText,
+        ...errorDescriptionFields(description, t),
       });
     }
   };
@@ -129,17 +147,17 @@ export function SyncButton({
     idle: {
       color: 'white',
       icon: 'sync' as const,
-      label: 'Sync',
+      label: t('workspace.connectors.instanceCard.syncAction.label'),
     },
     syncing: {
       color: 'var(--gray-a11)',
       icon: 'sync' as const,
-      label: 'Syncing...',
+      label: t('workspace.connectors.instanceCard.syncAction.syncing'),
     },
     failed: {
       color: 'white',
       icon: 'sync' as const,
-      label: 'Sync Failed, Try Again',
+      label: t('workspace.connectors.instanceCard.syncAction.retry'),
     },
   }[state];
 
@@ -185,17 +203,21 @@ export function FullSyncButton({
         addToast(localFsDesktopToast(outcome));
         return;
       }
-      addToast({ variant: 'success', title: 'Full sync started' });
+      const titleText = localizedText('workspace.connectors.instanceCard.fullSyncAction.started');
+      addToast({ variant: 'success', title: t(titleText.key), titleText });
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setState('idle');
     } catch (error) {
       console.error('Full sync failed', { connectorId, error });
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setState('failed');
+      const titleText = localizedText('workspace.connectors.instanceCard.fullSyncAction.failed');
+      const description = syncErrorMessage(error);
       addToast({
         variant: 'error',
-        title: 'Full sync failed',
-        description: syncErrorMessage(error, 'An unexpected error occurred.'),
+        title: t(titleText.key),
+        titleText,
+        ...errorDescriptionFields(description, t),
       });
     } finally {
       setConfirmOpen(false);
@@ -206,17 +228,17 @@ export function FullSyncButton({
     idle: {
       color: 'white',
       icon: 'cloud_sync' as const,
-      label: 'Full sync',
+      label: t('workspace.connectors.instanceCard.fullSyncAction.label'),
     },
     syncing: {
       color: 'var(--gray-a11)',
       icon: 'cloud_sync' as const,
-      label: 'Full syncing…',
+      label: t('workspace.connectors.instanceCard.fullSyncAction.syncing'),
     },
     failed: {
       color: 'white',
       icon: 'cloud_sync' as const,
-      label: 'Full sync failed, retry',
+      label: t('workspace.connectors.instanceCard.fullSyncAction.retry'),
     },
   }[state];
 
@@ -263,6 +285,7 @@ export function FullSyncButton({
 
 /** Green "Connect" button for the auth-incomplete banner */
 export function ConnectButton({ onClick }: { onClick?: () => void }) {
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -293,7 +316,7 @@ export function ConnectButton({ onClick }: { onClick?: () => void }) {
         flexShrink: 0,
       }}
     >
-      Connect
+      {t('workspace.connectors.instanceCard.connect')}
     </button>
   );
 }

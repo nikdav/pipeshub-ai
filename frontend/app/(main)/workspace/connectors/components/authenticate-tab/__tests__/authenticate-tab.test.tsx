@@ -1,7 +1,8 @@
 import React from 'react';
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { screen, fireEvent, cleanup, waitFor, act } from '@testing-library/react';
-import '@/lib/__tests__/test-i18n';
+import { I18nextProvider } from 'react-i18next';
+import testI18n from '@/lib/__tests__/test-i18n';
 
 const listOAuthConfigs = vi.fn();
 const getOAuthConfig = vi.fn();
@@ -136,13 +137,13 @@ describe('AuthenticateTab: credential form', () => {
     });
     openCreate(schema);
     const { unmount } = renderInTheme(<AuthenticateTab />);
-    expect(screen.getByText('Authentication method')).toBeTruthy();
+    expect(screen.getByText('Authentication Method')).toBeTruthy();
     expect(screen.getByRole('combobox')).toBeTruthy();
     unmount();
 
     openExisting(schema);
     renderInTheme(<AuthenticateTab />);
-    expect(screen.queryByText('Authentication method')).toBeNull();
+    expect(screen.queryByText('Authentication Method')).toBeNull();
     expect(screen.queryByPlaceholderText('e.g. Production Slack')).toBeNull();
   });
 
@@ -234,6 +235,41 @@ describe('AuthenticateTab: OAuth app', () => {
     renderInTheme(<AuthenticateTab />);
 
     expect(await screen.findByText('Could not load OAuth apps for this connector.')).toBeTruthy();
+  });
+
+  it('updates the saved OAuth load error when language changes without repeating the request', async () => {
+    testI18n.addResource(
+      'en-US',
+      'translation',
+      'workspace.connectors.authTab.oauthAppsLoadFailed',
+      'Could not load OAuth apps for this connector.',
+    );
+    testI18n.addResource(
+      'es-ES',
+      'translation',
+      'workspace.connectors.authTab.oauthAppsLoadFailed',
+      'No se pudieron cargar las aplicaciones OAuth.',
+    );
+    listOAuthConfigs.mockRejectedValue(new Error('provider details stay hidden'));
+    openCreate(makeSchema({ OAUTH: oauthFields }));
+    renderInTheme(
+      <I18nextProvider i18n={testI18n}>
+        <AuthenticateTab />
+      </I18nextProvider>
+    );
+
+    expect(await screen.findByText('Could not load OAuth apps for this connector.')).toBeTruthy();
+    expect(listOAuthConfigs).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      await testI18n.changeLanguage('es-ES');
+    });
+
+    expect(screen.getByText('No se pudieron cargar las aplicaciones OAuth.')).toBeTruthy();
+    expect(listOAuthConfigs).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      await testI18n.changeLanguage('en-US');
+    });
   });
 
   it('shows the OAuth app error the save step raised', async () => {

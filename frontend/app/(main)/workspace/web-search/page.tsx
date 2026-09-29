@@ -10,7 +10,10 @@ import { SettingsSaveBar } from '../components/settings-save-bar';
 import { ConfirmationDialog } from '../components/confirmation-dialog';
 import { useUserStore, selectIsAdmin, selectIsProfileInitialized } from '@/lib/store/user-store';
 import { ServiceGate } from '@/app/components/ui/service-gate';
-import { useToastStore } from '@/lib/store/toast-store';
+import { toast } from '@/lib/store/toast-store';
+import { getUserFacingErrorText } from '@/lib/api/api-error';
+import { localizedText } from '@/lib/i18n/localized-text';
+import type { LocalizedTextValue } from '@/lib/i18n/localized-text';
 import { WebSearchApi } from './api';
 import { WebSearchProviderRow, ConfigurePanel, SendImagesRow } from './components';
 import {
@@ -30,7 +33,6 @@ import {
 export default function WebSearchPage() {
   const { t } = useTranslation();
   const router = useRouter();
-  const addToast = useToastStore((s) => s.addToast);
   const isAdmin = useUserStore(selectIsAdmin);
   const isProfileInitialized = useUserStore(selectIsProfileInitialized);
 
@@ -88,18 +90,15 @@ export default function WebSearchPage() {
         setInherited(config?.inherited ?? false);
 
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Please try again.';
-        addToast({
-          variant: 'error',
-          title: 'Failed to load web search settings',
-          description: message,
+        toast.error(localizedText('workspace.webSearch.page.toasts.loadFailed'), {
+          description: getUserFacingErrorText(err, localizedText('action.tryAgain')),
           duration: 5000,
         });
       } finally {
         if (showLoading) setIsLoading(false);
       }
     },
-    [addToast],
+    [],
   );
 
   useEffect(() => {
@@ -121,17 +120,20 @@ export default function WebSearchPage() {
     ({ provider, isEdit }: { provider: ConfigurableProvider; isEdit: boolean }) => {
       const meta = WEB_SEARCH_PROVIDER_META.find((m) => m.type === provider);
       const label = meta?.label ?? provider;
-      addToast({
-        variant: 'success',
-        title: isEdit ? `${label} updated` : `${label} added`,
+      toast.success(localizedText(
+        isEdit
+          ? 'workspace.webSearch.page.toasts.providerUpdated'
+          : 'workspace.webSearch.page.toasts.providerAdded',
+        { provider: label },
+      ), {
         description: isEdit
-          ? 'Configuration saved successfully.'
-          : `${label} is now configured. Click "Set as default" to start using it.`,
+          ? localizedText('workspace.webSearch.page.toasts.configurationSaved')
+          : localizedText('workspace.webSearch.page.toasts.providerConfigured', { provider: label }),
         duration: 5000,
       });
       loadData(false);
     },
-    [addToast, loadData],
+    [loadData],
   );
 
   const handleConfigureDeleteSuccess = useCallback(
@@ -142,27 +144,22 @@ export default function WebSearchPage() {
         if (wasDefault) {
           await WebSearchApi.setDefaultProvider(DUCKDUCKGO_PROVIDER_ID);
         }
-        addToast({
-          variant: 'success',
-          title: `${label} removed`,
+        toast.success(localizedText('workspace.webSearch.page.toasts.providerRemoved', { provider: label }), {
           description: wasDefault
-            ? 'DuckDuckGo is now the default web search provider.'
-            : 'Configuration deleted successfully.',
+            ? localizedText('workspace.webSearch.page.toasts.duckDuckGoDefault')
+            : localizedText('workspace.webSearch.page.toasts.configurationDeleted'),
           duration: 4000,
         });
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Please try again.';
-        addToast({
-          variant: 'error',
-          title: 'Failed to reset default provider',
-          description: message,
+        toast.error(localizedText('workspace.webSearch.page.toasts.resetDefaultFailed'), {
+          description: getUserFacingErrorText(err, localizedText('action.tryAgain')),
           duration: 5000,
         });
       } finally {
         loadData(false);
       }
     },
-    [addToast, loadData],
+    [loadData],
   );
 
   const handleSetDefault = useCallback(
@@ -178,33 +175,26 @@ export default function WebSearchPage() {
         } else if (type === DUCKDUCKGO_PROVIDER_ID) {
           await WebSearchApi.setDefaultProvider(DUCKDUCKGO_PROVIDER_ID);
         } else {
-          addToast({
-            variant: 'error',
-            title: `Configure ${label} first`,
+          toast.error(localizedText('workspace.webSearch.page.toasts.configureProviderFirst', { provider: label }), {
             duration: 4000,
           });
           return;
         }
 
-        addToast({
-          variant: 'success',
-          title: `${label} is now the default`,
+        toast.success(localizedText('workspace.webSearch.page.toasts.providerDefault', { provider: label }), {
           duration: 3000,
         });
         await loadData(false);
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Please try again.';
-        addToast({
-          variant: 'error',
-          title: 'Failed to set default provider',
-          description: message,
+        toast.error(localizedText('workspace.webSearch.page.toasts.setDefaultFailed'), {
+          description: getUserFacingErrorText(err, localizedText('action.tryAgain')),
           duration: 5000,
         });
       } finally {
         setSettingDefaultType(null);
       }
     },
-    [providerMap, addToast, loadData],
+    [providerMap, loadData],
   );
 
   const handleRowDelete = useCallback(async (configured: ConfiguredWebSearchProvider) => {
@@ -232,64 +222,56 @@ export default function WebSearchPage() {
       if (wasDefault) {
         await WebSearchApi.setDefaultProvider(DUCKDUCKGO_PROVIDER_ID);
       }
-      addToast({
-        variant: 'success',
-        title: `${label} removed`,
+      toast.success(localizedText('workspace.webSearch.page.toasts.providerRemoved', { provider: label }), {
         description: wasDefault
-          ? 'DuckDuckGo is now the default web search provider.'
-          : 'Configuration deleted successfully.',
+          ? localizedText('workspace.webSearch.page.toasts.duckDuckGoDefault')
+          : localizedText('workspace.webSearch.page.toasts.configurationDeleted'),
         duration: 4000,
       });
       setDeleteTarget(null);
       setDeleteUsageAgents([]);
       await loadData(false);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Please try again.';
-      addToast({
-        variant: 'error',
-        title: 'Failed to delete provider',
-        description: message,
+      toast.error(localizedText('workspace.webSearch.page.toasts.deleteFailed'), {
+        description: getUserFacingErrorText(err, localizedText('action.tryAgain')),
         duration: 5000,
       });
     } finally {
       setIsDeleting(false);
     }
-  }, [deleteTarget, addToast, loadData]);
+  }, [deleteTarget, loadData]);
 
   // ── Handlers: settings (send images) ──────────────────────
   const saveSettings = useCallback(
-    async (next: WebSearchSettings, successMessage: string) => {
+    async (next: WebSearchSettings, successMessage: LocalizedTextValue) => {
       setIsSettingsSaving(true);
       const previous = settings;
       setSettings(next);
       try {
         const updated = await WebSearchApi.updateSettings(next);
         setSettings(updated);
-        addToast({
-          variant: 'success',
-          title: successMessage,
-          duration: 3000,
-        });
+        toast.success(successMessage, { duration: 3000 });
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Please try again.';
         setSettings(previous);
-        addToast({
-          variant: 'error',
-          title: 'Failed to update image settings',
-          description: message,
+        toast.error(localizedText('workspace.webSearch.page.toasts.imageSettingsFailed'), {
+          description: getUserFacingErrorText(err, localizedText('action.tryAgain')),
           duration: 5000,
         });
       } finally {
         setIsSettingsSaving(false);
       }
     },
-    [settings, addToast],
+    [settings],
   );
 
   const handleSendImagesToggle = useCallback(
     (enabled: boolean) => {
       const next = { ...settings, includeImages: enabled };
-      const message = enabled ? 'Images will be sent to LLM' : 'Images will not be sent to LLM';
+      const message = localizedText(
+        enabled
+          ? 'workspace.webSearch.page.toasts.imagesEnabled'
+          : 'workspace.webSearch.page.toasts.imagesDisabled',
+      );
       saveSettings(next, message);
     },
     [settings, saveSettings],
@@ -298,7 +280,7 @@ export default function WebSearchPage() {
   const handleMaxImagesCommit = useCallback(
     (maxImages: number) => {
       const next = { ...settings, maxImages };
-      saveSettings(next, `Max images updated to ${maxImages}`);
+      saveSettings(next, localizedText('workspace.webSearch.page.toasts.maxImagesUpdated', { count: maxImages }));
     },
     [settings, saveSettings],
   );
@@ -372,13 +354,13 @@ export default function WebSearchPage() {
           >
             <Box>
               <Text size="3" weight="medium" style={{ color: 'var(--slate-12)', display: 'block' }}>
-                Web Search Providers
+                {t('workspace.webSearch.page.providers.heading')}
               </Text>
               <Text
                 size="1"
                 style={{ color: 'var(--slate-10)', display: 'block', marginTop: 2, fontWeight: 300 }}
               >
-                Configure any providers you want, then pick one as the default
+                {t('workspace.webSearch.page.providers.description')}
               </Text>
             </Box>
           </Flex>
@@ -389,7 +371,7 @@ export default function WebSearchPage() {
           {isLoading ? (
             <Flex align="center" justify="center" style={{ padding: '40px 0' }}>
               <Text size="2" style={{ color: 'var(--slate-10)' }}>
-                Loading web search settings…
+                {t('workspace.webSearch.loading')}
               </Text>
             </Flex>
           ) : (
@@ -433,13 +415,13 @@ export default function WebSearchPage() {
           >
             <Box>
               <Text size="3" weight="medium" style={{ color: 'var(--slate-12)', display: 'block' }}>
-                Image Settings
+                {t('workspace.webSearch.page.images.heading')}
               </Text>
               <Text
                 size="1"
                 style={{ color: 'var(--slate-10)', display: 'block', marginTop: 2, fontWeight: 300 }}
               >
-                Control whether images are sent to the LLM during web search
+                {t('workspace.webSearch.page.images.description')}
               </Text>
             </Box>
           </Flex>
@@ -480,21 +462,19 @@ export default function WebSearchPage() {
         title={
           deleteTarget
             ? !isCheckingUsage && deleteUsageAgents.length > 0
-              ? `Cannot delete ${
-                  WEB_SEARCH_PROVIDER_META.find((m) => m.type === deleteTarget.provider)?.label ??
-                  deleteTarget.provider
-                }`
-              : `Delete ${
-                  WEB_SEARCH_PROVIDER_META.find((m) => m.type === deleteTarget.provider)?.label ??
-                  deleteTarget.provider
-                } configuration?`
-            : 'Delete provider?'
+              ? t('workspace.webSearch.page.delete.cannotDelete', {
+                  provider: WEB_SEARCH_PROVIDER_META.find((m) => m.type === deleteTarget.provider)?.label ?? deleteTarget.provider,
+                })
+              : t('workspace.webSearch.page.delete.title', {
+                  provider: WEB_SEARCH_PROVIDER_META.find((m) => m.type === deleteTarget.provider)?.label ?? deleteTarget.provider,
+                })
+            : t('workspace.webSearch.page.delete.providerTitle')
         }
         message={
           <Flex direction="column" gap="2">
             {isCheckingUsage && (
               <Text size="2" style={{ color: 'var(--slate-10)', fontStyle: 'italic' }}>
-                Checking agent usage…
+                {t('workspace.webSearch.page.delete.checkingUsage')}
               </Text>
             )}
             {!isCheckingUsage && deleteUsageAgents.length > 0 && (
@@ -509,8 +489,7 @@ export default function WebSearchPage() {
                 }}
               >
                 <Text size="1" weight="medium" style={{ color: 'var(--red-11)' }}>
-                  This provider is currently used by {deleteUsageAgents.length}{' '}
-                  {deleteUsageAgents.length === 1 ? 'agent' : 'agents'}:
+                  {t('workspace.webSearch.page.delete.usage', { count: deleteUsageAgents.length })}
                 </Text>
                 <Flex direction="column" gap="1" style={{ paddingLeft: 4 }}>
                   {deleteUsageAgents.map((agent) => (
@@ -518,29 +497,29 @@ export default function WebSearchPage() {
                       • <Text weight="medium" size="1">{agent.name}</Text>
                       {agent.creatorName && (
                         <Text size="1" style={{ color: 'var(--slate-10)' }}>
-                          {' '}(created by {agent.creatorName})
+                          {' '}{t('workspace.webSearch.page.delete.createdBy', { creator: agent.creatorName })}
                         </Text>
                       )}
                     </Text>
                   ))}
                 </Flex>
                 <Text size="1" style={{ color: 'var(--red-11)', marginTop: 2 }}>
-                  Please remove the web search configuration from these agents before deleting this provider.
+                  {t('workspace.webSearch.page.delete.removeFromAgents')}
                 </Text>
               </Flex>
             )}
             {!isCheckingUsage && deleteUsageAgents.length === 0 && (
               <Text size="2" style={{ color: 'var(--slate-12)', lineHeight: '20px' }}>
                 {deleteTarget?.isDefault
-                  ? 'This provider is currently the default. Deleting it will reset the default to DuckDuckGo.'
-                  : 'This will permanently remove the provider configuration. You can reconfigure it later.'}
+                  ? t('workspace.webSearch.page.delete.defaultDescription')
+                  : t('workspace.webSearch.page.delete.description')}
               </Text>
             )}
           </Flex>
         }
         hideConfirm={isCheckingUsage || deleteUsageAgents.length > 0}
-        confirmLabel="Delete"
-        confirmLoadingLabel="Deleting..."
+        confirmLabel={t('action.delete')}
+        confirmLoadingLabel={t('action.deleting')}
         confirmVariant="danger"
         isLoading={isDeleting}
         onConfirm={handleDeleteConfirm}

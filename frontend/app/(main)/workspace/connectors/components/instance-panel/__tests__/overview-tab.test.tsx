@@ -14,6 +14,7 @@ vi.mock('../../../utils/fetch-instance-stats', () => ({
 const runConnectorResync = vi.fn();
 vi.mock('../../../utils/connector-sync-actions', () => ({
   runConnectorResync: (...args: unknown[]) => runConnectorResync(...args),
+  getConnectorActionErrorText: () => undefined,
 }));
 const routerPush = vi.fn();
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: routerPush }) }));
