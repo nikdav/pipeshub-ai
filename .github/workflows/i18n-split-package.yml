@@ -1,0 +1,111 @@
+name: Fork-only verified split package
+on:
+  push:
+    branches: ['verify/i18n-split-20260929']
+    paths: ['.github/workflows/i18n-split-package.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  package:
+    if: github.repository == 'nikdav/pipeshub-ai'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Require completed successful standard verification before packaging
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: python
+        run: |
+          import urllib.request,json,os,time
+          url='https://api.github.com/repos/nikdav/pipeshub-ai/actions/runs/36604481135'
+          request=urllib.request.Request(url,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+          for attempt in range(36):
+            with urllib.request.urlopen(request) as response: run=json.load(response)
+            if run['status']=='completed': break
+            time.sleep(5)
+          assert run['status']=='completed' and run['conclusion']=='success', (run['status'],run['conclusion'])
+          print('All original/base/intermediate standard verification jobs passed:',run['html_url'])
+      - uses: actions/download-artifact@v4
+        with:
+          repository: nikdav/pipeshub-ai
+          run-id: 36604481135
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/split-delivery/verification
+      - uses: actions/download-artifact@v4
+        with:
+          repository: nikdav/pipeshub-ai
+          run-id: 36603898260
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/split-delivery/browser
+      - uses: actions/download-artifact@v4
+        with:
+          repository: nikdav/pipeshub-ai
+          run-id: 36604817245
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/split-delivery/test-typing
+      - name: Re-verify identities and export portable patches and bundle
+        shell: python
+        run: |
+          import subprocess,pathlib,json,os,hashlib
+          def git(*args,check=True):
+            p=subprocess.run(['git',*args],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+            if check and p.returncode: raise RuntimeError(p.stderr.decode())
+            return p.stdout if check else p
+          root=pathlib.Path(os.environ['RUNNER_TEMP'])/'split-delivery'
+          manifest=json.loads((root/'verification/i18n-split-manifest/split-manifest.json').read_text())
+          source=manifest['source'];base=manifest['base'];stages=manifest['stages']
+          expected=[('source',source),('base',base)]+[(f'{s["stage"]:02d}-{s["name"]}',s['sha']) for s in stages]
+          results=[]
+          for name,sha in expected:
+            result=json.loads((root/f'verification/i18n-split-check-{name}/results.json').read_text())
+            assert result['sha']==sha and result['standard_checks_passed'],name
+            results.append(result)
+          assert git('rev-parse',source+'^{tree}').decode().strip()==stages[-1]['tree']
+          assert not git('diff','--name-only',source,stages[-1]['sha'])
+          original=git('ls-remote','--heads','origin','fix/frontend-hardcoded-ui-i18n').decode().split()[0]
+          assert original==source,'Original branch unexpectedly changed'
+          patchdir=root/'patches';patchdir.mkdir()
+          refs=[]
+          for s in stages:
+            assert git('rev-parse',s['sha']+'^').decode().strip()==s['base']
+            assert git('diff','--check',s['base'],s['sha'],check=False).returncode==0
+            paths=git('diff','--name-only',s['base'],s['sha']).decode().splitlines()
+            assert paths==s['files'] and all(p.startswith('frontend/') for p in paths)
+            (patchdir/f'{s["stage"]:02d}-{s["name"]}.patch').write_bytes(git('format-patch','-1','--stdout','--binary',s['sha']))
+            ref='refs/heads/'+s['branch'];git('update-ref',ref,s['sha']);refs.append(ref)
+          git('bundle','create',str(root/'i18n-split.bundle'),*refs,'^'+base)
+          p=git('bundle','verify',str(root/'i18n-split.bundle'),check=False)
+          assert p.returncode==0
+          (root/'bundle-verification.txt').write_bytes(p.stdout+p.stderr)
+          upstream=manifest['upstream_checked']
+          git('fetch','--no-tags','https://github.com/pipeshub-ai/pipeshub-ai.git',upstream)
+          merge=git('merge-tree','--write-tree','--name-only',upstream,source,check=False)
+          (root/'upstream-integration.txt').write_bytes(merge.stdout+merge.stderr)
+          proof={'source_sha':source,'base_sha':base,'final_sha':stages[-1]['sha'],
+                 'source_tree':git('rev-parse',source+'^{tree}').decode().strip(),
+                 'final_tree':stages[-1]['tree'],'root_tree_byte_identical':True,
+                 'original_branch_unchanged':True,'frontend_only':True,
+                 'all_standard_checks_passed':True,'upstream_sha':upstream,
+                 'upstream_merge_exit_code':merge.returncode,
+                 'note':'Expanded test typing is diagnostic and remains failing in the original source. Browser proof covers a public production error screen, not full E2E.'}
+          (root/'proof.json').write_text(json.dumps(proof,indent=2)+'\n')
+          (root/'split-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          (root/'verification-summary.json').write_text(json.dumps(results,indent=2)+'\n')
+          lines=[]
+          for path in sorted(root.rglob('*')):
+            if path.is_file(): lines.append(hashlib.sha256(path.read_bytes()).hexdigest()+'  '+str(path.relative_to(root)))
+          (root/'SHA256SUMS').write_text('\n'.join(lines)+'\n')
+          print('DELIVERY_PROOF',json.dumps(proof))
+      - name: Preserve complete split and verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-i18n-split-delivery
+          path: ${{ runner.temp }}/split-delivery
+          retention-days: 30
+          if-no-files-found: error
