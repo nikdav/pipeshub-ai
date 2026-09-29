@@ -1,0 +1,99 @@
+name: Fork-only i18n browser smoke
+on:
+  push:
+    branches: ['verify/i18n-split-20260929']
+    paths: ['.github/workflows/i18n-split-browser-smoke.yml']
+permissions:
+  contents: read
+jobs:
+  browser:
+    if: github.repository == 'nikdav/pipeshub-ai'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 84b9b95da4e2ba4285c6b3b8b6ceb0af7897eaea
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked frontend and Chromium
+        working-directory: frontend
+        run: |
+          npm ci --no-audit --no-fund
+          npx --no-install playwright install --with-deps chromium
+      - name: Build actual production frontend
+        working-directory: frontend
+        run: npm run build
+      - name: Test real public callback error screen without backend or credentials
+        working-directory: frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/browser-smoke"
+          if [ -d out ]; then
+            python -m http.server 4173 --bind 127.0.0.1 --directory out > "$RUNNER_TEMP/browser-smoke/server.log" 2>&1 &
+            if [ -f out/auth/oauth/callback.html ]; then
+              export SMOKE_PATH=/auth/oauth/callback.html
+            else
+              export SMOKE_PATH=/auth/oauth/callback/
+            fi
+          else
+            node node_modules/next/dist/bin/next start -p 4173 -H 127.0.0.1 > "$RUNNER_TEMP/browser-smoke/server.log" 2>&1 &
+            export SMOKE_PATH=/auth/oauth/callback/
+          fi
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" || true; rm -f split-browser-smoke.mjs' EXIT
+          for i in $(seq 1 60); do curl -fsS "http://127.0.0.1:4173${SMOKE_PATH}" >/dev/null && break || sleep 1; done
+          cat > split-browser-smoke.mjs <<'JS'
+          import { chromium } from '@playwright/test';
+          import fs from 'node:fs';
+          import path from 'node:path';
+          const out = path.join(process.env.RUNNER_TEMP, 'browser-smoke');
+          const browser = await chromium.launch();
+          const results = [];
+          try {
+            for (const language of ['en-US','de-DE','zh-CN']) {
+              const context = await browser.newContext({ locale: language, viewport: {width:1280,height:800} });
+              await context.addInitScript((lang) => {
+                try {
+                  localStorage.setItem('i18nextLng',lang);
+                  localStorage.setItem('pipeshub-lang-state',JSON.stringify({state:{language:lang},version:0}));
+                } catch {}
+              }, language);
+              const page = await context.newPage();
+              const errors = [], consoleErrors = [];
+              page.on('pageerror', e => errors.push(e.message));
+              page.on('console', m => {if(m.type()==='error') consoleErrors.push(m.text());});
+              const expected = JSON.parse(fs.readFileSync(`lib/i18n/locales/${language}.json`,'utf8')).auth.oauth.callback;
+              const response = await page.goto('http://127.0.0.1:4173'+process.env.SMOKE_PATH,{waitUntil:'domcontentloaded'});
+              let passed = true, failure = null;
+              try {
+                for (const text of [expected.signInFailed,expected.noCode,expected.closeAndRetry]) {
+                  await page.getByText(text,{exact:true}).waitFor({state:'visible',timeout:15000});
+                }
+              } catch(e) { passed=false; failure=e.message; }
+              await page.screenshot({path:path.join(out,language+'.png'),fullPage:true});
+              results.push({language,httpStatus:response?.status(),passed,failure,errors,consoleErrors,
+                body:await page.locator('body').innerText()});
+              await context.close();
+            }
+          } finally {await browser.close();}
+          const report={source:'84b9b95da4e2ba4285c6b3b8b6ceb0af7897eaea',
+            scope:'Chromium production public OAuth missing-code error screen; three locales; no live backend or full E2E',results};
+          fs.writeFileSync(path.join(out,'browser-results.json'),JSON.stringify(report,null,2)+'\n');
+          console.log(JSON.stringify(report));
+          if(results.some(r=>!r.passed || r.httpStatus!==200 || r.errors.length)) process.exitCode=1;
+          JS
+          node split-browser-smoke.mjs
+      - name: Preserve browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-browser-smoke
+          path: ${{ runner.temp }}/browser-smoke
+          retention-days: 30
